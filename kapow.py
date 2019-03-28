@@ -134,7 +134,6 @@ def get_manager(resource, context):
                     try:
                         async with aiofiles.open(filename, 'rb') as fifo:
                             while True:
-                                print("Reading stream")
                                 chunk = await fifo.read(128)
                                 if chunk:
                                     if not initialized:
@@ -146,8 +145,7 @@ def get_manager(resource, context):
                                         context["stream"] = response
                                         await response.prepare(context["request"])
                                         initialized = True
-                                        print("initialized!")
-                                    await response.write(b"hola")
+                                    await response.write(chunk)
                                 else:
                                     break
                     finally:
@@ -216,9 +214,10 @@ class KapowTemplate(Template):
                 print(code)
                 print('-'*80)
 
-            shell_task = await asyncio.create_subprocess_shell(code)
             manager_tasks = [asyncio.create_task(v.coro)
                              for v in resources.values()]
+            await asyncio.sleep(0)
+            shell_task = await asyncio.create_subprocess_shell(code)
 
             await shell_task.wait()  # Run the subshell process
             done, pending = await asyncio.wait(manager_tasks, timeout=1)  # XXX: Managers commit changes 
@@ -226,7 +225,7 @@ class KapowTemplate(Template):
                 # print(f"Warning: Resources not consumed ({len(pending)})")
                 for task in pending:
                     task.cancel()
-
+            await asyncio.sleep(0)
 
 def create_runner(code):
     return KapowTemplate(code).run
@@ -243,8 +242,7 @@ def create_context(request):
 
 
 async def response_from_context(context):
-    if context["stream"]:
-        print("is stream!")
+    if context["stream"] is not None:
         await context["stream"].write_eof()
         return context["stream"]
     else:
