@@ -266,11 +266,11 @@ def generate_endpoint(code):
 def path_server(path):
     # At initialization check
     if not os.path.isfile(path):
-        raise NotImplementedError("Cannot serve whole directories yet.")
+        raise NotImplementedError("Only files can be served.")
 
     async def serve_path(request):
         # Per request check
-        if not os.path.isfile(path):
+        if os.path.isdir(path):
             raise NotImplementedError("Cannot serve whole directories yet.")
         return web.FileResponse(path)
     return serve_path
@@ -292,10 +292,17 @@ def register_path_endpoint(app, methods, pattern, path):
 
 
 @click.command()
-@click.argument('program', type=click.File())
-def main(program):
+@click.option('--expression', '-e')
+@click.argument('program', type=click.File(), required=False)
+@click.pass_context
+def main(ctx, program, expression):
+    if program is None and expression is None:
+        click.echo(ctx.get_help())
+        ctx.exit()
+
+    source = expression if program is None else program.read()
     app = web.Application()
-    for ep, _, _ in kapow_program.scanString(program.read()):
+    for ep, _, _ in kapow_program.scanString(source):
         if ep.body:
             register_code_endpoint(app,
                                    ep.method.asList()[0].split('|'),
