@@ -116,7 +116,15 @@ def get_manager(resource, context):
 
     @contextlib.asynccontextmanager
     async def manager():
-        if view == 'value':
+        if view == 'raw':
+            if not is_readable(path):
+                raise ValueError(f'Non-readable path "{path}".')
+            else:
+                value = await get_value(context, path)
+                yield ResourceManager(
+                    shell_repr=value.decode('utf-8'),
+                    coro=asyncio.sleep(0))
+        elif view == 'value':
             if not is_readable(path):
                 raise ValueError(f'Non-readable path "{path}".')
             else:
@@ -130,13 +138,16 @@ def get_manager(resource, context):
             filename = tempfile.mktemp()
             os.mkfifo(filename)
 
-            if path == 'response/stream':
+            if path.startswith('response/stream'):
                 async def manage_fifo():
                     initialized = False
                     try:
                         async with aiofiles.open(filename, 'rb') as fifo:
                             while True:
-                                chunk = await fifo.read(128)
+                                if path.endswith('/lines'):
+                                    chunk = await fifo.readline()
+                                else:
+                                    chunk = await fifo.read(128)
                                 if chunk:
                                     if not initialized:
                                         # Give a chance to other coroutines
