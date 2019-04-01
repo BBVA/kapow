@@ -143,7 +143,10 @@ def get_manager(resource, context):
                                         # to write changes to response
                                         # (headers, etc)
                                         await asyncio.sleep(0)
-                                        response = web.StreamResponse(status=200)
+                                        response = web.StreamResponse(
+                                            status=200,
+                                            headers=context["response_headers"],
+                                            reason="OK")
                                         context["stream"] = response
                                         await response.prepare(context["request"])
                                         initialized = True
