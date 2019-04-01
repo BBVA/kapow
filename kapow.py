@@ -43,14 +43,16 @@ urlpattern = Combine(OneOrMore(p_pattern | p_path))(name="urlpattern")
 # Body
 body = (Suppress('{') + SkipTo(Combine(LineStart() + '}' + LineEnd()))(name="body"))
 
-# Endpoint
 endpoint = (Optional(method_spec + Suppress(White()),
                      default='*')(name="method")
-           + urlpattern
-           + Suppress(White())
-           + body)(name="endpoint")
+            + urlpattern
+            + Suppress(White()))
 
-kapow_program = OneOrMore(endpoint)
+# Endpoint
+code_ep = (endpoint + body)(name="code_ep")
+path_ep = (endpoint + '=' + SkipTo(LineEnd())(name="path"))(name="path_ep")
+
+kapow_program = OneOrMore(code_ep | path_ep)
 
 
 ########################################################################
@@ -261,15 +263,32 @@ def generate_endpoint(code):
     return endpoint
 
 
+def path_server(path):
+    # At initialization check
+    if not os.path.isfile(path):
+        raise NotImplementedError("Cannot serve whole directories yet.")
+
+    async def serve_path(request):
+        # Per request check
+        if not os.path.isfile(path):
+            raise NotImplementedError("Cannot serve whole directories yet.")
+        return web.FileResponse(path)
+    return serve_path
+
 ########################################################################
 #                              Webserver                               #
 ########################################################################
 
-def register_endpoint(app, methods, pattern, code):
-    print(f"Registering methods={methods!r} pattern={pattern!r}")
+def register_code_endpoint(app, methods, pattern, code):
+    print(f"Registering [code] methods={methods!r} pattern={pattern!r}")
     endpoint = generate_endpoint(code)
     for method in methods:  # May be '*'
         app.add_routes([web.route(method, pattern, endpoint)])
+
+def register_path_endpoint(app, methods, pattern, path):
+    print(f"Registering [path] methods={methods!r} pattern={pattern!r}")
+    for method in methods:  # May be '*'
+        app.add_routes([web.route(method, pattern, path_server(path))])
 
 
 @click.command()
@@ -277,10 +296,16 @@ def register_endpoint(app, methods, pattern, code):
 def main(program):
     app = web.Application()
     for ep, _, _ in kapow_program.scanString(program.read()):
-        register_endpoint(app,
-                          ep.method.asList()[0].split('|'),
-                          ''.join(ep.urlpattern),
-                          ep.body)
+        if ep.body:
+            register_code_endpoint(app,
+                                   ep.method.asList()[0].split('|'),
+                                   ''.join(ep.urlpattern),
+                                   ep.body)
+        else:
+            register_path_endpoint(app,
+                                   ep.method.asList()[0].split('|'),
+                                   ''.join(ep.urlpattern),
+                                   ep.path)
     web.run_app(app)
 
 if __name__ == '__main__':
