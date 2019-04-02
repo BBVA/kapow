@@ -1,5 +1,8 @@
 #!/usr/bin/env python
+"""
+A Kapow! interpreter written in Python.
 
+"""
 from aiohttp import web
 from collections import defaultdict
 from dataclasses import dataclass
@@ -20,10 +23,6 @@ import click
 #                                Parser                                #
 ########################################################################
 
-#
-# Endpoint Definition
-#
-
 # Method
 method = ( Literal('GET')
          | Literal('POST')
@@ -43,12 +42,13 @@ urlpattern = Combine(OneOrMore(p_pattern | p_path))(name="urlpattern")
 # Body
 body = (Suppress('{') + SkipTo(Combine(LineStart() + '}' + LineEnd()))(name="body"))
 
+# Endpoint head
 endpoint = (Optional(method_spec + Suppress(White()),
                      default='*')(name="method")
             + urlpattern
             + Suppress(White()))
 
-# Endpoint
+# Endpoint bodies
 code_ep = (endpoint + body)(name="code_ep")
 path_ep = (endpoint + '=' + SkipTo(LineEnd())(name="path"))(name="path_ep")
 
@@ -66,7 +66,9 @@ class ResourceManager:
 
 
 async def get_value(context, path):
+    """Return the value of an http resource."""
     def nrd(n):
+        """Return the nrd element in a path."""
         return path.split('/', n)[-1]
 
     if path == 'request/method':
@@ -88,6 +90,13 @@ async def get_value(context, path):
 
 
 async def set_value(context, path, value):
+    """
+    Write to an http resource.
+
+    File-like resources like `body` get write() calls so they have
+    append semantics. Non file-like resources are just set.
+
+    """
     def nrd(n):
         return path.split('/', n)[-1]
 
@@ -112,10 +121,28 @@ def is_writable(path):
 
 
 def get_manager(resource, context):
+    """
+    Return an async context manager capable of manage the given
+    resource.
+    """
     view, path = resource.split(':')
 
     @contextlib.asynccontextmanager
     async def manager():
+        """
+        Manage the given `resource` as an async context manager.
+
+        This context manager has different behavior depending on the
+        `view` and/or `path` of the resource.
+
+        As a context manager it has three sections:
+        - Before `yield`: Prepare, if needed, the physical resource on
+        disk.
+        - `yield`: Return a `ResourceManager` object containing the
+        shell representation of the object and the coroutine
+        consuming/generating the resource data.
+        - After `yield`: Cleanup any disk resource.
+        """
         if view == 'raw':
             if not is_readable(path):
                 raise ValueError(f'Non-readable path "{path}".')
@@ -137,7 +164,6 @@ def get_manager(resource, context):
             # https://stackoverflow.com/a/1430566
             filename = tempfile.mktemp()
             os.mkfifo(filename)
-
             if path.startswith('response/stream'):
                 async def manage_fifo():
                     initialized = False
@@ -179,11 +205,9 @@ def get_manager(resource, context):
                             raise RuntimeError('WTF!')
                     finally:
                         os.unlink(filename)
-
             yield ResourceManager(
                 shell_repr=shell_quote(filename),
                 coro=manage_fifo())
-
         elif view == 'file':
             with tempfile.NamedTemporaryFile(mode='w+b', buffering=0) as tmp:
                 if is_readable(path):
@@ -198,10 +222,6 @@ def get_manager(resource, context):
                 if is_writable(path):
                     tmp.seek(0)
                     await set_value(context, path, tmp.read())
-        elif view == 'source':
-            raise NotImplementedError('source view not implemented')
-        elif view == 'sink':
-            raise NotImplementedError('sink view not implemented')
         else:
             raise ValueError(f'Unknown view type {view}')
 
@@ -209,10 +229,13 @@ def get_manager(resource, context):
 
 
 class KapowTemplate(Template):
+    """Shell-code templating for @view:path variables substitution"""
+
     delimiter = '@'
     idpattern = r'(?a:[_a-z][_a-z0-9]*:[_a-z][-_a-z0-9/]*)'
 
     async def run(self, context):
+        """Run this template allocating and deallocating resources."""
         async with contextlib.AsyncExitStack() as stack:
             # Initialize all resources creating a mapping
             resources = dict()  # resource: (shell_repr, manager)
@@ -243,11 +266,10 @@ class KapowTemplate(Template):
                     task.cancel()
             await asyncio.sleep(0)
 
-def create_runner(code):
-    return KapowTemplate(code).run
 
 
 def create_context(request):
+    """Create a request context with default values."""
     context = dict()
     context["request"] = request
     context["stream"] = None
@@ -258,6 +280,7 @@ def create_context(request):
 
 
 async def response_from_context(context):
+    """Return the appropia aiohttp response for a given context."""
     if context["stream"] is not None:
         await context["stream"].write_eof()
         return context["stream"]
@@ -269,15 +292,16 @@ async def response_from_context(context):
 
 
 def generate_endpoint(code):
+    """Return an aiohttp-endpoint coroutine to run kapow `code`."""
     async def endpoint(request):
         context = create_context(request)
-        runner = create_runner(code)
-        await runner(context)  # Will change context
+        await KapowTemplate(code).run(context)  # Will change context
         return (await response_from_context(context))
     return endpoint
 
 
 def path_server(path):
+    """Return an aiohttp-endpoint coroutine to serve the file in `path`."""
     # At initialization check
     if not os.path.isfile(path):
         raise NotImplementedError("Only files can be served.")
@@ -289,17 +313,20 @@ def path_server(path):
         return web.FileResponse(path)
     return serve_path
 
+
 ########################################################################
 #                              Webserver                               #
 ########################################################################
 
 def register_code_endpoint(app, methods, pattern, code):
+    """Register all needed endpoints for the defined endpoint code."""
     print(f"Registering [code] methods={methods!r} pattern={pattern!r}")
     endpoint = generate_endpoint(code)
     for method in methods:  # May be '*'
         app.add_routes([web.route(method, pattern, endpoint)])
 
 def register_path_endpoint(app, methods, pattern, path):
+    """Register all needed endpoints for the defined file."""
     print(f"Registering [path] methods={methods!r} pattern={pattern!r}")
     for method in methods:  # May be '*'
         app.add_routes([web.route(method, pattern, path_server(path))])
@@ -310,6 +337,7 @@ def register_path_endpoint(app, methods, pattern, path):
 @click.argument('program', type=click.File(), required=False)
 @click.pass_context
 def main(ctx, program, expression):
+    """Run the kapow server with the given command-line parameters."""
     if program is None and expression is None:
         click.echo(ctx.get_help())
         ctx.exit()
