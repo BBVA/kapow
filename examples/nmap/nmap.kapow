@@ -1,0 +1,3 @@
+POST /list/{ip} {
+	nmap -sL @value:request/match/ip > @fifo:response/body
+}
