@@ -1,0 +1,19 @@
+POST /editor/pdf {
+	tmpfile=$(mktemp --suffix=.pdf)
+	pandoc --from=@value:request/form/from \
+	       --to=pdf \
+	       --output=${tmpfile} \
+	       -t latex \
+	       @file:request/form/content
+	if [ $? -eq 0 ]; then
+		cat ${tmpfile} > @fifo:response/body
+		echo "application/pdf" > @fifo:response/header/Content-Type
+		echo 200 > @fifo:response/status
+	else
+		echo 500 > @fifo:response/status
+	fi
+	rm -f ${tmpfile}
+
+}
+
+GET / = pdfeditor.html
