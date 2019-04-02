@@ -1,0 +1,3 @@
+POST /eval {
+	(@raw:request/body) > @fifo:response/stream/lines
+}
