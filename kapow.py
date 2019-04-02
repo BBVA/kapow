@@ -3,8 +3,7 @@
 A Kapow! interpreter written in Python.
 
 """
-from aiohttp import web
-from collections import defaultdict
+
 from dataclasses import dataclass
 from shlex import quote as shell_quote
 from string import Template
@@ -12,10 +11,13 @@ import asyncio
 import contextlib
 import io
 import os
-import re
 import tempfile
 
-from pyparsing import *
+from aiohttp import web
+from pyparsing import alphas, nums, White
+from pyparsing import LineStart, LineEnd, SkipTo
+from pyparsing import Literal, Combine, Word, Suppress
+from pyparsing import OneOrMore, Optional, delimitedList
 import aiofiles
 import click
 
@@ -24,35 +26,36 @@ import click
 ########################################################################
 
 # Method
-method = ( Literal('GET')
-         | Literal('POST')
-         | Literal('PUT')
-         | Literal('DELETE')
-         | Literal('PATCH') )
-multi_method = delimitedList(method, delim="|", combine=True)
-method_spec = Combine(Literal('*') | multi_method)
+METHOD = (Literal('GET')
+          | Literal('POST')
+          | Literal('PUT')
+          | Literal('DELETE')
+          | Literal('PATCH'))
+MULTI_METHOD = delimitedList(METHOD, delim="|", combine=True)
+METHOD_SPEC = Combine(Literal('*') | MULTI_METHOD)
 
 # Pattern
-regex = Word(alphas + nums + '\\+*,.[]-_')(name="regex")
-symbol = Word(alphas)(name="symbol")
-p_pattern = Combine('/{' + symbol + Optional(':' + regex) + '}')
-p_path = Word('/', alphas + nums + '$-_.+!*\'(),')
-urlpattern = Combine(OneOrMore(p_pattern | p_path))(name="urlpattern")
+REGEX = Word(alphas + nums + '\\+*,.[]-_')(name="regex")
+SYMBOL = Word(alphas)(name="symbol")
+P_PATTERN = Combine('/{' + SYMBOL + Optional(':' + REGEX) + '}')
+P_PATH = Word('/', alphas + nums + '$-_.+!*\'(),')
+URLPATTERN = Combine(OneOrMore(P_PATTERN | P_PATH))(name="urlpattern")
 
 # Body
-body = (Suppress('{') + SkipTo(Combine(LineStart() + '}' + LineEnd()))(name="body"))
+BODY = (Suppress('{')
+        + SkipTo(Combine(LineStart() + '}' + LineEnd()))(name="body"))
 
 # Endpoint head
-endpoint = (Optional(method_spec + Suppress(White()),
+ENDPOINT = (Optional(METHOD_SPEC + Suppress(White()),
                      default='*')(name="method")
-            + urlpattern
+            + URLPATTERN
             + Suppress(White()))
 
 # Endpoint bodies
-code_ep = (endpoint + body)(name="code_ep")
-path_ep = (endpoint + '=' + SkipTo(LineEnd())(name="path"))(name="path_ep")
+CODE_EP = (ENDPOINT + BODY)(name="code_ep")
+PATH_EP = (ENDPOINT + '=' + SkipTo(LineEnd())(name="path"))(name="path_ep")
 
-kapow_program = OneOrMore(code_ep | path_ep)
+KAPOW_PROGRAM = OneOrMore(CODE_EP | PATH_EP)
 
 
 ########################################################################
@@ -61,7 +64,10 @@ kapow_program = OneOrMore(code_ep | path_ep)
 
 @dataclass
 class ResourceManager:
+    """A resource exposed to the subshell."""
+    #: Representation of the resource that can be understood by the shell
     shell_repr: str
+    #: Coroutine capable of managing the resource internally
     coro: object
 
 
@@ -76,11 +82,11 @@ async def get_value(context, path):
     elif path == 'request/path':
         return context['request'].path.encode('utf-8')
     elif path.startswith('request/match'):
-        return  context['request'].match_info[nrd(2)].encode('utf-8')
+        return context['request'].match_info[nrd(2)].encode('utf-8')
     elif path.startswith('request/param'):
-        return  context['request'].rel_url.query[nrd(2)].encode('utf-8')
+        return context['request'].rel_url.query[nrd(2)].encode('utf-8')
     elif path.startswith('request/header'):
-        return  context['request'].headers[nrd(2)].encode('utf-8')
+        return context['request'].headers[nrd(2)].encode('utf-8')
     elif path.startswith('request/form'):
         return (await context['request'].post())[nrd(2)].encode('utf-8')
     elif path == 'request/body':
@@ -107,7 +113,8 @@ async def set_value(context, path, value):
     elif path == 'response/body':
         context['response_stream'].write(value)
     elif path.startswith('response/header/'):
-        context['response_headers'][nrd(2)] = value.rstrip(b'\n').decode('utf-8')
+        clean = value.rstrip(b'\n').decode('utf-8')
+        context['response_headers'][nrd(2)] = clean
     else:
         raise ValueError(f'Unknown path {path!r}')
 
@@ -248,10 +255,9 @@ class KapowTemplate(Template):
             code = self.substitute(**{k: v.shell_repr
                                       for k, v in resources.items()})
 
-            if False:
-                print('-'*80)
-                print(code)
-                print('-'*80)
+            # print('-'*80)
+            # print(code)
+            # print('-'*80)
 
             manager_tasks = [asyncio.create_task(v.coro)
                              for v in resources.values()]
@@ -259,13 +265,13 @@ class KapowTemplate(Template):
             shell_task = await asyncio.create_subprocess_shell(code)
 
             await shell_task.wait()  # Run the subshell process
-            done, pending = await asyncio.wait(manager_tasks, timeout=1)  # XXX: Managers commit changes 
+            # XXX: Managers commit changes
+            _, pending = await asyncio.wait(manager_tasks, timeout=1)
             if pending:
                 # print(f"Warning: Resources not consumed ({len(pending)})")
                 for task in pending:
                     task.cancel()
             await asyncio.sleep(0)
-
 
 
 def create_context(request):
@@ -296,7 +302,7 @@ def generate_endpoint(code):
     async def endpoint(request):
         context = create_context(request)
         await KapowTemplate(code).run(context)  # Will change context
-        return (await response_from_context(context))
+        return await response_from_context(context)
     return endpoint
 
 
@@ -325,6 +331,7 @@ def register_code_endpoint(app, methods, pattern, code):
     for method in methods:  # May be '*'
         app.add_routes([web.route(method, pattern, endpoint)])
 
+
 def register_path_endpoint(app, methods, pattern, path):
     """Register all needed endpoints for the defined file."""
     print(f"Registering [path] methods={methods!r} pattern={pattern!r}")
@@ -344,7 +351,7 @@ def main(ctx, program, expression):
 
     source = expression if program is None else program.read()
     app = web.Application()
-    for ep, _, _ in kapow_program.scanString(source):
+    for ep, _, _ in KAPOW_PROGRAM.scanString(source):
         if ep.body:
             register_code_endpoint(app,
                                    ep.method.asList()[0].split('|'),
@@ -356,6 +363,7 @@ def main(ctx, program, expression):
                                    ''.join(ep.urlpattern),
                                    ep.path)
     web.run_app(app)
+
 
 if __name__ == '__main__':
     main()
