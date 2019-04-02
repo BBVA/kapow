@@ -350,18 +350,15 @@ def main(ctx, program, expression):
         ctx.exit()
 
     source = expression if program is None else program.read()
+
     app = web.Application()
     for ep, _, _ in KAPOW_PROGRAM.scanString(source):
+        methods = ep.method.asList()[0].split('|')
+        pattern = ''.join(ep.urlpattern)
         if ep.body:
-            register_code_endpoint(app,
-                                   ep.method.asList()[0].split('|'),
-                                   ''.join(ep.urlpattern),
-                                   ep.body)
+            register_code_endpoint(app, methods, pattern, ep.body)
         else:
-            register_path_endpoint(app,
-                                   ep.method.asList()[0].split('|'),
-                                   ''.join(ep.urlpattern),
-                                   ep.path)
+            register_path_endpoint(app, methods, pattern, ep.path)
     web.run_app(app)
 
 
