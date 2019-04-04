@@ -1,0 +1,14 @@
+GET /ps {
+   ps -fax > @fifo:response/body
+}
+
+GET /ls {
+    echo "text/plain" > @fifo:response/header/Content-Type
+    ls -la @value:request/params/path > @fifo:response/body
+}
+
+GET / = index.html
+
+GET /cmdline {
+   cat /proc/cmdline > @fifo:response/body
+}
