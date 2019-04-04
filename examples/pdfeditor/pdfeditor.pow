@@ -16,4 +16,4 @@ POST /editor/pdf {
 
 }
 
-GET / = pdfeditor.html
+GET / = index.html

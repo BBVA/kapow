@@ -3,7 +3,6 @@ GET /ps {
 }
 
 GET /ls {
-    echo "text/plain" > @fifo:response/header/Content-Type
     ls -la @value:request/params/path > @fifo:response/body
 }
 
