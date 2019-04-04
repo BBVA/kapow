@@ -291,10 +291,20 @@ async def response_from_context(context):
         await context["stream"].write_eof()
         return context["stream"]
     else:
-        return web.Response(
-            body=context["response_body"].getbuffer(),
-            status=context["response_status"],
-            headers=context["response_headers"])
+        body = context["response_body"].getvalue()
+        status = context["response_status"]
+        headers = context["response_headers"]
+
+        # Content-Type guessing (for demo only)
+        if "Content-Type" not in headers:
+            try:
+                body = body.decode("utf-8")
+            except UnicodeDecodeError:
+                pass
+            else:
+                headers["Content-Type"] = "text/plain"
+
+        return web.Response(body=body, status=status, headers=headers)
 
 
 def generate_endpoint(code):
