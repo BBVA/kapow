@@ -61,7 +61,7 @@ ENDPOINT = (Optional(METHOD_SPEC + Suppress(White()),
 
 # Endpoint bodies
 CODE_EP = (ENDPOINT + BODY)(name="code_ep")
-PATH_EP = (ENDPOINT + '=' + SkipTo(LineEnd())(name="path") + Suppress(LineStart()))(name="path_ep")
+PATH_EP = (ENDPOINT + '=' + SkipTo(LineEnd())(name="path"))(name="path_ep")
 
 KAPOW_PROGRAM = CODE_EP | PATH_EP | COMMENT
 
