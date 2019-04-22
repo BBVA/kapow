@@ -31,6 +31,8 @@ log = logging.getLogger('kapow')
 #                                Parser                                #
 ########################################################################
 
+COMMENT = (Literal('#') + SkipTo(LineEnd()))(name="comment")
+
 # Method
 METHOD = (Literal('GET')
           | Literal('POST')
@@ -59,9 +61,9 @@ ENDPOINT = (Optional(METHOD_SPEC + Suppress(White()),
 
 # Endpoint bodies
 CODE_EP = (ENDPOINT + BODY)(name="code_ep")
-PATH_EP = (ENDPOINT + '=' + SkipTo(LineEnd())(name="path"))(name="path_ep")
+PATH_EP = (ENDPOINT + '=' + SkipTo(LineEnd())(name="path") + Suppress(LineStart()))(name="path_ep")
 
-KAPOW_PROGRAM = OneOrMore(CODE_EP | PATH_EP)
+KAPOW_PROGRAM = CODE_EP | PATH_EP | COMMENT
 
 
 ########################################################################
@@ -486,6 +488,8 @@ def main(ctx, program, verbose, expression):
     source = expression if program is None else program.read()
 
     for ep, _, _ in KAPOW_PROGRAM.scanString(source):
+        if 'comment' in ep:
+            continue
         methods = ep.method.asList()[0].split('|')
         pattern = ''.join(ep.urlpattern)
         if ep.body:
