@@ -1,0 +1,48 @@
+#!/usr/bin/env python
+import sys
+
+import click
+import requests
+
+@click.group()
+def kroute():
+    pass
+
+@kroute.command()
+@click.option("-c", "--command", nargs=1)
+@click.option("-e", "--entrypoint", default="/bin/sh -c")
+@click.option("-X", "--method", default="GET")
+@click.option("--url", envvar='KAPOW_URL')
+@click.argument("url_pattern", nargs=1)
+@click.argument("command_file")
+def add(url_pattern, entrypoint, command, method, url, command_file):
+    if command:
+        source = command
+    elif command_file == '-':
+        source = sys.stdin.read()
+    elif command_file is not None:
+        with open(command_file, 'r', encoding='utf-8') as handler:
+            source = handler.read()
+    else:
+        source = ""
+
+    response = requests.post(f"{url}/routes",
+                             json={"method": method,
+                                   "url_pattern": url_pattern,
+                                   "entrypoint": entrypoint,
+                                   "command": source})
+    response.raise_for_status()
+    print(response.json())
+
+
+@kroute.command()
+@click.option("--url", envvar='KAPOW_URL')
+@click.argument("route-id")
+def remove(route_id, url):
+    response = requests.delete(f"{url}/routes/{route_id}")
+    response.raise_for_status()
+    print(response.json())
+
+
+if __name__ == '__main__':
+    kroute()
