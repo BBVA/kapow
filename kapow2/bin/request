@@ -1,0 +1,2 @@
+#!/bin/sh
+curl -sf ${KAPOW_URL}/connections/${KAPOW_CONNECTION}/request$1

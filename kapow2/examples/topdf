@@ -1,0 +1,12 @@
+#!/usr/bin/zsh
+
+tmpfile=$(mktemp --suffix=.pdf)
+pandoc --from=$(request /match/from) --to=pdf --output=${tmpfile} -t latex =(request /body)
+if [ $? -eq 0 ]; then
+	cat ${tmpfile} | response /body
+	echo "application/pdf" | response /header/Content-Type
+	echo 200 | response /status
+else
+	echo 500 | response /status
+fi
+rm -f ${tmpfile}

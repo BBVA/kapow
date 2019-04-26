@@ -1,0 +1,2 @@
+#!/bin/sh
+curl -sf -X PUT --data-binary @- ${KAPOW_URL}/connections/${KAPOW_CONNECTION}/response$1
