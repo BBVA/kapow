@@ -149,7 +149,9 @@ disable=print-statement,
         unused-argument,
         no-value-for-parameter,
         missing-docstring,
-        fixme
+        fixme,
+	broad-except,
+	redefined-builtin
 
 
 # Enable the message, report, category or checker with the given id(s). You can

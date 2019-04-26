@@ -1,30 +1,14 @@
 #!/bin/bash
 
-touch input
-touch output
-tail -F input | tr '[:lower:]' '[:upper:]' > output &
+kroute add -X POST --entrypoint ./topdf '/convert/{from}/pdf' 
 
 
-kroute add -X POST --entrypoint /home/nil/Project/kapow/kapow2/examples/topdf '/convert/{from}/pdf' 
-
-
-kroute add -X POST --entrypoint /bin/zsh '/convert/{from}/{to}' - <<-'EOF'
+kroute add -X POST --entrypoint '/bin/zsh -c' '/convert/{from}/{to}' - <<-'EOF'
 	pandoc --from=$(request /match/from) --to=$(request /match/to) --output=>(response /body) =(request /body)
 EOF
 
-kroute add -X GET '/formats/input' - <<-EOF
+kroute add -X GET '/formats/input' - <<-'EOF'
 	pandoc --list-input-formats | response /body
 EOF
 
-kroute add '/formats/output' - <<-EOF
-	pandoc --list-output-formats | grep -v pdf | response /body
-EOF
-
-kroute add '/tail' - <<-EOF
-	tail -f /tmp/mispelotas | response /stream
-EOF
-
-kroute add -X POST '/tr' --command '
-	request /body >> input
-	tail -n1 output | response /body
-'
+kroute add -X GET '/formats/output' -c 'pandoc --list-output-formats | grep -v pdf | response /body'

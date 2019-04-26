@@ -161,18 +161,18 @@ def handle_route(entrypoint, command):
         connection = CONNECTIONS[id] = ConnectionHandler(request)
 
         executable, *params = shlex.split(entrypoint)
-        args = ' '.join([shlex.quote(token) for token in params] + [shlex.quote(command)])
+        args = ' '.join([executable] + [shlex.quote(token) for token in params] + [shlex.quote(command)])
+
         # Run the source
-        shell_task = await asyncio.create_subprocess_exec(
+        shell_task = await asyncio.create_subprocess_shell(
             args,
-            executable=executable,
             env={**os.environ,
                  "KAPOW_URL": "http://localhost:8080/kapow",
                  "KAPOW_CONNECTION": id,
                  "PATH": ":".join([os.path.join(os.path.dirname(os.path.realpath(__file__)), "bin"),
                                    os.environ["PATH"]]),
                  },
-            shell=False)
+            stdin=asyncio.subprocess.DEVNULL)
         await shell_task.wait()
 
         del CONNECTIONS[id]
@@ -193,7 +193,6 @@ async def get_routes(request):
 async def create_route(request):
     request.app.router._frozen = False
     content = await request.json()
-    print(f'Defined new route {content["method"]} {content["url_pattern"]}')
     name = "ROUTE_" + str(uuid4()).replace('-', '_')
     request.app.router.add_route(content["method"],
                                  content["url_pattern"],
@@ -215,13 +214,7 @@ async def delete_route(request):
 ########################################################################
 
 async def run_init_script():
-    if len(sys.argv) > 1:
-        # Script given
-        # with open(sys.argv[1], 'r') as scriptfile:
-        #     script = scriptfile.read()
-        pass
-    else:
-        # script = sys.stdin.read()
+    if len(sys.argv) < 2:
         raise RuntimeError("Script file is mandatory.")
 
     shell_task = await asyncio.create_subprocess_shell(

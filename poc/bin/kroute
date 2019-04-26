@@ -14,17 +14,21 @@ def kroute():
 @click.option("-X", "--method", default="GET")
 @click.option("--url", envvar='KAPOW_URL')
 @click.argument("url_pattern", nargs=1)
-@click.argument("command_file")
+@click.argument("command_file", required=False)
 def add(url_pattern, entrypoint, command, method, url, command_file):
     if command:
+        # Command is given inline
         source = command
+    elif command_file is None:
+        # No command
+        source = ""
     elif command_file == '-':
+        # Read commands from stdin
         source = sys.stdin.read()
-    elif command_file is not None:
+    else:
+        # Read commands from a file
         with open(command_file, 'r', encoding='utf-8') as handler:
             source = handler.read()
-    else:
-        source = ""
 
     response = requests.post(f"{url}/routes",
                              json={"method": method,
