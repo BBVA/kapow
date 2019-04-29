@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env python
 
 #
 # Copyright 2019 Banco Bilbao Vizcaya Argentaria, S.A.
@@ -16,11 +16,31 @@
 # limitations under the License.
 #
 
-if [ $# -lt 1 ]; then
-	echo "Response object is mandatory" >&2
-	exit 1
-elif [ $# -eq 1 ]; then
-	curl -N -sf -X PUT --data-binary @- ${KAPOW_URL}/connections/${KAPOW_CONNECTION}/response$1
-else
-	curl -sf -X PUT --data-binary "$2" ${KAPOW_URL}/connections/${KAPOW_CONNECTION}/response$1
-fi
+import sys
+
+import click
+import requests
+
+
+@click.command()
+@click.option("--url", envvar='KAPOW_URL')
+@click.option("--connection", envvar='KAPOW_CONNECTION')
+@click.argument("path", nargs=1)
+@click.argument("value", required=False)
+def response(url, connection, path, value):
+    if value is None:
+        data = sys.stdin.buffer
+    else:
+        data = value.encode('utf-8')
+
+    try:
+        response = requests.put(f"{url}/connections/{connection}/response{path}",
+                                data=data)
+    except requests.exceptions.ConnectionError:
+        return False
+    else:
+        response.raise_for_status()
+
+
+if __name__ == '__main__':
+    response()

@@ -159,7 +159,11 @@ async def get_resource(request):
 async def set_resource(request):
     id = request.match_info["id"]
     resource = request.match_info["resource"]
-    await CONNECTIONS[id].set(resource, request.content)
+    try:
+        await CONNECTIONS[id].set(resource, request.content)
+    except ConnectionResetError:
+        # Raised when trying to write to an already-closed stream.
+        request.transport.close()
     return web.Response(body=b'')
 
 
