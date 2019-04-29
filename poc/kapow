@@ -110,7 +110,7 @@ class ConnectionHandler:
                 self._stream = web.StreamResponse(status=self._status,
                                                   reason="OK",
                                                   headers=self._headers)
-                for name, value in self._cookies:
+                for name, value in self._cookies.items():
                     self._stream.set_cookie(name, value)
                 await self._stream.prepare(self.request)
 
