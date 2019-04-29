@@ -1,0 +1,41 @@
+<html>
+  <head>
+  <title>PDF Editor</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/siimple/dist/siimple.min.css">
+  <head>
+  <body>
+    <div class="siimple-content siimple-content--extra-large">
+      <div class="siimple-grid">
+	<div class="siimple-grid-row">
+	  <div class="siimple-grid-col siimple-grid-col--12">
+	    <div class="siimple-grid-col siimple-grid-col--6">
+	      <div class="siimple-form">
+		<form action="/editor/pdf" method="post" target="result" id="editor">
+		  <div class="siimple-form-title">AWYSIWYG PDF Editor</div>
+		  <div class="siimple-form-field">
+		    <div class="siimple-form-field-label">InputFormat</div>
+		    <select name="from">
+		      <option value="markdown">Markdown</option>
+		      <option value="rst">ReStructuredText</option>
+		    </select>
+		  </div>
+		  <div class="siimple-form-field">
+		    <div class="siimple-form-field-label">InputFormat</div>
+		    <textarea class="siimple-textarea siimple-textarea--fluid" rows="25" name="content">Example text</textarea>
+		  </div>
+		  <div class="siimple-form-field">
+		    <div class="siimple-btn siimple-btn--blue" onclick="document.getElementById('editor').submit();">Preview!</div>
+		  </div>
+		</form>
+	      </div>
+	    </div>
+	    <div class="siimple-grid-col siimple-grid-col--6">
+	      <iframe name="result" src="" style="height: 100%; width: 100%;"></iframe>
+	    </div>
+	  </div>
+	</div>
+      </div>
+    </div>
+  </body>
+</html>
+

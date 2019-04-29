@@ -16,15 +16,11 @@
 # limitations under the License.
 #
 
-kroute add -X POST --entrypoint ./topdf '/convert/{from}/pdf' 
-
-
 kroute add -X POST --entrypoint '/bin/zsh -c' '/convert/{from}/{to}' - <<-'EOF'
-	pandoc --from=$(request /match/from) --to=$(request /match/to) --output=>(response /body) =(request /body)
+	pandoc --from=$(request /match/from) \
+	       --to=$(request /match/to) \
+	       --output=>(response /body) \
+	       =(request /body)
 EOF
-
-kroute add -X GET '/formats/input' - <<-'EOF'
-	pandoc --list-input-formats | response /body
-EOF
-
+kroute add -X GET '/formats/input' -c 'pandoc --list-input-formats | response /body'
 kroute add -X GET '/formats/output' -c 'pandoc --list-output-formats | grep -v pdf | response /body'

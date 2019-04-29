@@ -17,12 +17,12 @@
 #
 
 tmpfile=$(mktemp --suffix=.pdf)
-pandoc --from=$(request /match/from) --to=pdf --output=${tmpfile} -t latex =(request /body)
+pandoc --from=$(request /form/from) --to=pdf --output=${tmpfile} -t latex =(request /form/content)
 if [ $? -eq 0 ]; then
-	cat ${tmpfile} | response /body
-	echo "application/pdf" | response /header/Content-Type
-	echo 200 | response /status
+	response /header/Content-Type application/pdf
+	response /body < ${tmpfile}
+	response /status 200
 else
-	echo 500 | response /status
+	response /status 500
 fi
 rm -f ${tmpfile}
