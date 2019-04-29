@@ -63,7 +63,7 @@ class ConnectionHandler:
         elif res.path.startswith('request/match/'):
             return self.request.match_info[nrd(2)].encode('utf-8')
         elif res.path.startswith('request/param/'):
-            return self.request.context['request'].rel_url.query[nrd(2)].encode('utf-8')
+            return self.request.rel_url.query[nrd(2)].encode('utf-8')
         elif res.path.startswith('request/header/'):
             return self.request.headers[nrd(2)].encode('utf-8')
         elif res.path.startswith('request/cookie/'):
