@@ -38,7 +38,14 @@ log = logging.getLogger('kapow')
 CONNECTIONS = {}
 
 
-class ConnectionHandler:
+class Connection:
+    """
+    Manages the lifecycle of a kapow connection.
+
+    Behaves like a memory for the "fields" available in HTTP
+    connections.
+
+    """
     def __init__(self, request):
         self._stream = None
         self._body = io.BytesIO()
@@ -49,6 +56,7 @@ class ConnectionHandler:
         self.request = request
 
     async def get(self, key):
+        """Get the content of the field `key`."""
         res = urlparse(key)
 
         def nrd(n):
@@ -91,6 +99,7 @@ class ConnectionHandler:
             raise ValueError('Unknown path')
 
     async def set(self, key, content):
+        """Set the field `key` with the value in `content`."""
         res = urlparse(key)
 
         def nrd(n):
@@ -122,10 +131,12 @@ class ConnectionHandler:
         else:
             raise ValueError(f'Unknown path {res.path!r}')
 
-    async def append(self, key, value):
+    async def append(self, key, content):
+        """Append to field `key` the value in `content`."""
         raise NotImplementedError()
 
     async def build_response(self):
+        """Return the appropriate aiohttp.web.*Response."""
         if self._stream is None:
             response = web.Response(body=self._body.getvalue(),
                                     status=self._status,
@@ -138,7 +149,7 @@ class ConnectionHandler:
             return self._stream
 
 
-async def get_resource(request):
+async def get_field(request):
     id = request.match_info["id"]
     resource = request.match_info["resource"]
 
@@ -165,7 +176,7 @@ async def get_resource(request):
     return response
 
 
-async def set_resource(request):
+async def set_field(request):
     id = request.match_info["id"]
     resource = request.match_info["resource"]
 
@@ -185,7 +196,7 @@ async def set_resource(request):
     return response
 
 
-async def append_resource(request):
+async def append_field(request):
     pass
 
 
@@ -197,7 +208,7 @@ async def append_resource(request):
 def handle_route(entrypoint, command):
     async def _handle(request):
         id = "CONN_" + str(uuid4()).replace('-', '_')
-        connection = CONNECTIONS[id] = ConnectionHandler(request)
+        connection = CONNECTIONS[id] = Connection(request)
 
         executable, *params = shlex.split(entrypoint)
         args = ' '.join([executable] + [shlex.quote(token) for token in params] + [shlex.quote(command)])
@@ -288,9 +299,9 @@ def main():
         web.get('/kapow/routes', get_routes),
         web.post('/kapow/routes', create_route),
         web.delete('/kapow/routes/{id}', delete_route),
-        web.get('/kapow/connections/{id}/{resource:.*}', get_resource),
+        web.get('/kapow/connections/{id}/{resource:.*}', get_field),
         # web.post('/kapow/connections/{id}/{resource:.*}', append_resource),
-        web.put('/kapow/connections/{id}/{resource:.*}', set_resource),
+        web.put('/kapow/connections/{id}/{resource:.*}', set_field),
     ])
     app.on_startup.append(start_background_tasks)
     web.run_app(app)
