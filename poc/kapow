@@ -228,9 +228,7 @@ def handle_route(entrypoint, command):
                 args,
                 env={**os.environ,
                      "KAPOW_URL": "http://localhost:8080/kapow",
-                     "KAPOW_CONNECTION": id,
-                     "PATH": ":".join([os.path.join(os.path.dirname(os.path.realpath(__file__)), "bin"),
-                                       os.environ["PATH"]]),
+                     "KAPOW_CONNECTION": id
                      },
                 stdin=asyncio.subprocess.DEVNULL)
 
@@ -297,12 +295,10 @@ async def run_init_script(app):
         print(f"Usage: sys.argv[0] <init-script>")
         os._exit(1)
 
-    binpath = os.path.join(os.path.dirname(os.path.realpath(__file__)), "bin")
     shell_task = await asyncio.create_subprocess_shell(
         cmd,
         env={**os.environ,
-             "KAPOW_URL": "http://localhost:8080/kapow",
-             "PATH": ":".join([binpath, os.environ["PATH"]]),
+             "KAPOW_URL": "http://localhost:8080/kapow"
              })
 
     await shell_task.wait()
