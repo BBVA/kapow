@@ -1,0 +1,21 @@
+#!/bin/sh
+
+BASE="$1"
+PATHNAME="$2"
+REAL="$(realpath --relative-base="$BASE" "$BASE/$PATHNAME")"
+
+if [ ! -f "$BASE/$PATHNAME" ]; then
+	response /status 404
+	exit
+else
+	case $REAL in
+	  "/"*)
+			response /status 403
+			exit
+			;;
+	  *)
+			response /status 200
+			response /header/Content-Type "$(python -m mimetypes "$BASE/$REAL" | awk '/type:/ {print $2; exit 0}; !/type:/ {print "application/octet-stream"}')"
+			response /body < "$BASE/$REAL"
+	esac
+fi
