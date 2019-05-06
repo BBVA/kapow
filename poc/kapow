@@ -114,7 +114,7 @@ class Connection:
             self._headers[nrd(2)] = clean
         elif res.path.startswith('response/cookie/'):
             clean = (await content.read()).rstrip(b'\n').decode('utf-8')
-            self._headers[nrd(2)] = clean
+            self._cookies[nrd(2)] = clean
         elif res.path == 'response/stream':
             if self._stream is None:
                 self._stream = web.StreamResponse(status=self._status,
