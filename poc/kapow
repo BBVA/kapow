@@ -59,8 +59,8 @@ class Connection:
         """Get the content of the field `key`."""
         res = urlparse(key)
 
-        def nrd(n):
-            """Return the nrd element in a path."""
+        def nth(n):
+            """Return the nth element in a path."""
             return res.path.split('/')[n]
 
         if res.path == 'request/method':
@@ -70,18 +70,18 @@ class Connection:
         elif res.path == 'request/path':
             return self.request.path.encode('utf-8')
         elif res.path.startswith('request/match/'):
-            return self.request.match_info[nrd(2)].encode('utf-8')
+            return self.request.match_info[nth(2)].encode('utf-8')
         elif res.path.startswith('request/param/'):
-            return self.request.rel_url.query[nrd(2)].encode('utf-8')
+            return self.request.rel_url.query[nth(2)].encode('utf-8')
         elif res.path.startswith('request/header/'):
-            return self.request.headers[nrd(2)].encode('utf-8')
+            return self.request.headers[nth(2)].encode('utf-8')
         elif res.path.startswith('request/cookie/'):
-            return self.request.cookies[nrd(2)].encode('utf-8')
+            return self.request.cookies[nth(2)].encode('utf-8')
         elif res.path.startswith('request/form/'):
-            return (await self.request.post())[nrd(2)].encode('utf-8')
+            return (await self.request.post())[nth(2)].encode('utf-8')
         elif res.path.startswith('request/file/'):
-            name = nrd(2)
-            content = nrd(3)  # filename / content
+            name = nth(2)
+            content = nth(3)  # filename / content
             field = (await self.request.post())[name]
             if content == 'filename':
                 try:
@@ -102,7 +102,7 @@ class Connection:
         """Set the field `key` with the value in `content`."""
         res = urlparse(key)
 
-        def nrd(n):
+        def nth(n):
             return res.path.split('/')[n]
 
         if res.path == 'response/status':
@@ -111,10 +111,10 @@ class Connection:
             self._body.write(await content.read())
         elif res.path.startswith('response/header/'):
             clean = (await content.read()).rstrip(b'\n').decode('utf-8')
-            self._headers[nrd(2)] = clean
+            self._headers[nth(2)] = clean
         elif res.path.startswith('response/cookie/'):
             clean = (await content.read()).rstrip(b'\n').decode('utf-8')
-            self._cookies[nrd(2)] = clean
+            self._cookies[nth(2)] = clean
         elif res.path == 'response/stream':
             if self._stream is None:
                 self._stream = web.StreamResponse(status=self._status,
