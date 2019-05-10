@@ -292,7 +292,7 @@ async def run_init_script(app):
     elif len(sys.argv) == 2:
         cmd = f"/bin/bash --init-file {sys.argv[1]}"
     else:
-        print(f"Usage: sys.argv[0] <init-script>")
+        print(f"Usage: {sys.argv[0]} <init-script>")
         os._exit(1)
 
     shell_task = await asyncio.create_subprocess_shell(
