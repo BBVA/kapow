@@ -40,7 +40,7 @@ bash-4.4#
 ## Test /list endpoint
 In another terminal, try running:
 ```bash
-curl -X POST http://localhost:8080/list/github.com
+curl http://localhost:8080/list/github.com
 ```
 which will respond something like:
 ```
