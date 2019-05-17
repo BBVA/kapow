@@ -1,11 +1,18 @@
 # Kapow!
 
-Why is it named Kapow!. You can pronounce it and it is short and
-meaningless... like every good UNIX command ;-)
+## Why?
 
-TODO: Too hard to jump 
+Because we think that:
 
-## Rationale
+- UNIX is great and we love it
+- The UNIX shell is great
+- HTTP interfaces are convenient and everywhere
+- CGI is not a good way to mix them
+
+
+## How?
+
+So, how we can mix the **web** and the **shell**? Let's see...
 
 The **web** and the **shell** are two different beasts, both packed with
 history.
@@ -38,11 +45,11 @@ Any tool designed to give an HTTP interface to an existing shell command
 - "Stdout" to "Response body"
 
 Kapow! is not opinionated about the different ways you can map both worlds.
-Instead it provides a concise language used to express the mapping and a set
-of common defaults.
+Instead it provides a concise set of tools used to express the mapping and a
+set of common defaults.
 
 
-### Why not tool...?
+### Why not tool "X"?
 
 All the alternatives we found are **rigid** about how they match between HTTP
 and shell concepts.
@@ -62,11 +69,11 @@ only)
 
 Tools with a rigid matching **can't evade** *[impedance
 mismatch](https://haacked.com/archive/2004/06/15/impedance-mismatch.aspx/)*.
-Resulting is an easy-to-use software, convenient in some scenarios but
+Resulting in an easy-to-use software, convenient in some scenarios but
 incapable in others.
 
 
-### Why not my good-old programming language...?
+### Why not my good-old programming language "X"?
 
 * Boilerplate
 * Custom code = More bugs
@@ -74,11 +81,14 @@ incapable in others.
 * Dependency on developers
 * **"A programming language is low level when its programs require attention to
   the irrelevant"** *Alan Perlis*
+* **There is more Unix-nature in one line of shell script than there is in ten
+  thousand lines of C** *Master Foo*
 
-Kapow! aims to be halfway from one of the mentioned tools and a general
-programming language. A limited scripting language. Think of *awk*, 20 years
-later, for HTTP.
 
+## What?
+
+We named it Kapow!. It is pronounceable, short and meaningless... like every
+good UNIX command ;-)
 
 TODO: Definition
 TODO: Intro to Architecture
