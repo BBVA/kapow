@@ -85,6 +85,11 @@ incapable in others.
   thousand lines of C** *Master Foo*
 
 
+### Why not CGI?
+
+TODO: Small explanation and example.
+
+
 ## What?
 
 We named it Kapow!. It is pronounceable, short and meaningless... like every
@@ -94,7 +99,95 @@ TODO: Definition
 TODO: Intro to Architecture
 
 
-# API
+# HTTP API
+
+Kapow! server interacts with the outside world only through its HTTP API. Any
+program making the correct HTTP request to a Kapow! server, can change its
+behavior.
+
+### Servers
+
+TODO: Define servers' API
+
+### Routes
+
+Routes are the mechanism that allows Kapow! to find the correct program to
+respond to an external event (e.g. an incomming HTTP request).
+
+#### List of current routes
+##### URL
+##### Method
+##### URL Params
+##### Data Params
+##### Success Response
+##### Error Response
+##### Sample Call
+##### Notes
+
+#### Append a new route
+##### URL
+##### Method
+##### URL Params
+##### Data Params
+##### Success Response
+##### Error Response
+##### Sample Call
+##### Notes
+
+#### Insert a route
+##### URL
+##### Method
+##### URL Params
+##### Data Params
+##### Success Response
+##### Error Response
+##### Sample Call
+##### Notes
+
+#### Delete a route
+##### URL
+##### Method
+##### URL Params
+##### Data Params
+##### Success Response
+##### Error Response
+##### Sample Call
+##### Notes
+
+### Handlers
+
+#### Get the value for a handler key
+##### URL
+##### Method
+##### URL Params
+##### Data Params
+##### Success Response
+##### Error Response
+##### Sample Call
+##### Notes
+
+#### Overwrite the value for a handler key
+##### URL
+##### Method
+POST
+##### URL Params
+##### Data Params
+##### Success Response
+##### Error Response
+##### Sample Call
+##### Notes
+
+#### Append to the value for a handler key
+##### URL
+##### Method
+PUT
+##### URL Params
+##### Data Params
+##### Success Response
+##### Error Response
+##### Sample Call
+##### Notes
+
 ## Spec'ing the endpoints
 
 ## Usage Example
