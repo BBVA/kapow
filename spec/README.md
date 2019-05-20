@@ -114,7 +114,10 @@ TODO: Define servers' API
 Routes are the mechanism that allows Kapow! to find the correct program to
 respond to an external event (e.g. an incomming HTTP request).
 
-#### List of current routes
+#### List routes
+
+Returns JSON data about the current routes.
+
 ##### URL
 ##### Method
 ##### URL Params
@@ -188,14 +191,12 @@ PUT
 ##### Sample Call
 ##### Notes
 
-## Spec'ing the endpoints
-
 ## Usage Example
 
 ## Test Suite Notes
 
 The test suite is located on [blebleble] directory.
-You can run it...
+You can run it by ...
 
 
 # Framework

@@ -315,12 +315,17 @@ def kapow():
     """Start aiohttp app."""
     app = web.Application(client_max_size=1024**3)
     app.add_routes([
+        # TODO: Servers
+
+        # Routes
         web.get('/kapow/routes', get_routes),
         web.post('/kapow/routes', create_route),
         web.delete('/kapow/routes/{id}', delete_route),
-        web.get('/kapow/connections/{id}/{field:.*}', get_field),
+
+        # Handlers
+        web.get('/kapow/handlers/{id}/{field:.*}', get_field),
         # web.post('/kapow/connections/{id}/{field:.*}', append_field),
-        web.put('/kapow/connections/{id}/{field:.*}', set_field),
+        web.put('/kapow/handlers/{id}/{field:.*}', set_field),
     ])
     app.on_startup.append(start_background_tasks)
     web.run_app(app)
