@@ -128,8 +128,8 @@ Returns JSON data about the current routes.
 
 * **Success Response**
 
-  * **Code**: 200<br />
-    **Content**: `{ TODO: maybe list of objects }`
+  * **Code**: `200 OK`<br />
+    **Content**: TODO
 
 * **Sample Call**
 
@@ -151,9 +151,7 @@ Returns JSON data about the current routes.
 
   POST
 
-* **Headers**
-
-  * **Content-Type**: application/json
+* **Header**: `Content-Type: application/json`
 
 * **Data Params**
 
@@ -171,7 +169,16 @@ Returns JSON data about the current routes.
 
   * **Code**: `200 OK`<br />
     **Header**: `Content-Type: application/json`<br />
-    **Content**: `"ROUTE_8ed01c48_bf23_455a_8186_a1df7ab09e48"`
+    **Content**:
+  ```json
+  {
+    "method": "GET",
+    "url_pattern": "/hello",
+    "entrypoint": null,
+    "command": "echo Hello World | response /body",
+    "index": 0
+  }
+  ```
 
 * **Error Response**
 
@@ -190,14 +197,67 @@ TODO
 TODEL if NIL
 
 #### Insert a route
+
+  Accepts JSON data that defines a new route to be inserted at the specified
+  index to the current routes.
+
 * **URL**
+
+  /routes
+
 * **Method**
-* **URL Params**
+
+  PUT
+
+* **Header**: `Content-Type: application/json`
+
 * **Data Params**
+
+  * **Content**:
+  ```json
+  {
+    "method": "GET",
+    "url_pattern": "/hello",
+    "entrypoint": null,
+    "command": "echo Hello World | response /body",
+  }
+  ```
+
 * **Success Response**
+
+  * **Code**: `200 OK`<br />
+    **Header**: `Content-Type: application/json`<br />
+    **Content**:
+  ```json
+  {
+    "method": "GET",
+    "url_pattern": "/hello",
+    "entrypoint": null,
+    "command": "echo Hello World | response /body",
+    "index": 0
+  }
+  ```
+
 * **Error Response**
+
+  * **Code**: `400 Bad Request`<br />
+    **Header**: `Content-Type: application/json`<br />
+    **Content**: `{ "error": "Malformed JSON." }`
+
+  * **Code**: `422 Unprocessable Entity`<br />
+    **Header**: `Content-Type: application/json`<br />
+    **Content**: `{ "error": "Mandatory field(s) not provided." }`
+
 * **Sample Call**
+TODO
+
 * **Notes**
+
+  * Route numbering starts at zero.
+  * When `index` is not provided or is less than 0 the route will be inserted
+    first, effectively making it index 0.
+  * Conversely when `index` is greater than the number of entries on the route
+    table it will be inserted last.
 
 #### Delete a route
 * **URL**
