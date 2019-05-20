@@ -156,7 +156,7 @@ Returns JSON data about the current routes.
 * **Data Params**
 
   * **Content**:
-  ```json
+  ```
   {
     "method": "GET",
     "url_pattern": "/hello",
@@ -170,7 +170,7 @@ Returns JSON data about the current routes.
   * **Code**: `200 OK`<br />
     **Header**: `Content-Type: application/json`<br />
     **Content**:
-  ```json
+  ```
   {
     "method": "GET",
     "url_pattern": "/hello",
@@ -194,7 +194,9 @@ Returns JSON data about the current routes.
 TODO
 
 * **Notes**
-TODEL if NIL
+
+  * A successful request will yield a response containing all the effective
+    parameters that were applied.
 
 #### Insert a route
 
@@ -214,7 +216,7 @@ TODEL if NIL
 * **Data Params**
 
   * **Content**:
-  ```json
+  ```
   {
     "method": "GET",
     "url_pattern": "/hello",
@@ -228,7 +230,7 @@ TODEL if NIL
   * **Code**: `200 OK`<br />
     **Header**: `Content-Type: application/json`<br />
     **Content**:
-  ```json
+  ```
   {
     "method": "GET",
     "url_pattern": "/hello",
@@ -258,6 +260,8 @@ TODO
     first, effectively making it index 0.
   * Conversely when `index` is greater than the number of entries on the route
     table it will be inserted last.
+  * A successful request will yield a response containing all the effective
+    parameters that were applied.
 
 #### Delete a route
 * **URL**
