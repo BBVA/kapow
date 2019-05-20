@@ -118,78 +118,130 @@ respond to an external event (e.g. an incomming HTTP request).
 
 Returns JSON data about the current routes.
 
-##### URL
-##### Method
-##### URL Params
-##### Data Params
-##### Success Response
-##### Error Response
-##### Sample Call
-##### Notes
+* **URL**
 
-#### Append a new route
-##### URL
-##### Method
-##### URL Params
-##### Data Params
-##### Success Response
-##### Error Response
-##### Sample Call
-##### Notes
+  /routes
+
+* **Method**
+
+  GET
+
+* **Success Response**
+
+  * **Code**: 200<br />
+    **Content**: `{ TODO: maybe list of objects }`
+
+* **Sample Call**
+
+  TODO
+
+* **Notes**
+
+  Currently all routes are returned; in the future, a filter may be accepted.
+
+#### Append route
+
+  Accepts JSON data that defines a new route to be appended to the current routes.
+
+* **URL**
+
+  /routes
+
+* **Method**
+
+  POST
+
+* **Headers**
+
+  * **Content-Type**: application/json
+
+* **Data Params**
+
+  * **Content**:
+  ```json
+  {
+    "method": "GET",
+    "url_pattern": "/hello",
+    "entrypoint": null,
+    "command": "echo Hello World | response /body"
+  }
+  ```
+
+* **Success Response**
+
+  * **Code**: `200 OK`<br />
+    **Header**: `Content-Type: application/json`<br />
+    **Content**: `"ROUTE_8ed01c48_bf23_455a_8186_a1df7ab09e48"`
+
+* **Error Response**
+
+  * **Code**: `400 Bad Request`<br />
+    **Header**: `Content-Type: application/json`<br />
+    **Content**: `{ "error": "Malformed JSON." }`
+
+  * **Code**: `422 Unprocessable Entity`<br />
+    **Header**: `Content-Type: application/json`<br />
+    **Content**: `{ "error": "Mandatory field(s) not provided." }`
+
+* **Sample Call**
+TODO
+
+* **Notes**
+TODEL if NIL
 
 #### Insert a route
-##### URL
-##### Method
-##### URL Params
-##### Data Params
-##### Success Response
-##### Error Response
-##### Sample Call
-##### Notes
+* **URL**
+* **Method**
+* **URL Params**
+* **Data Params**
+* **Success Response**
+* **Error Response**
+* **Sample Call**
+* **Notes**
 
 #### Delete a route
-##### URL
-##### Method
-##### URL Params
-##### Data Params
-##### Success Response
-##### Error Response
-##### Sample Call
-##### Notes
+* **URL**
+* **Method**
+* **URL Params**
+* **Data Params**
+* **Success Response**
+* **Error Response**
+* **Sample Call**
+* **Notes**
 
 ### Handlers
 
 #### Get the value for a handler key
-##### URL
-##### Method
-##### URL Params
-##### Data Params
-##### Success Response
-##### Error Response
-##### Sample Call
-##### Notes
+* **URL**
+* **Method**
+* **URL Params**
+* **Data Params**
+* **Success Response**
+* **Error Response**
+* **Sample Call**
+* **Notes**
 
 #### Overwrite the value for a handler key
-##### URL
-##### Method
+* **URL**
+* **Method**
 POST
-##### URL Params
-##### Data Params
-##### Success Response
-##### Error Response
-##### Sample Call
-##### Notes
+* **URL Params**
+* **Data Params**
+* **Success Response**
+* **Error Response**
+* **Sample Call**
+* **Notes**
 
 #### Append to the value for a handler key
-##### URL
-##### Method
+* **URL**
+* **Method**
 PUT
-##### URL Params
-##### Data Params
-##### Success Response
-##### Error Response
-##### Sample Call
-##### Notes
+* **URL Params**
+* **Data Params**
+* **Success Response**
+* **Error Response**
+* **Sample Call**
+* **Notes**
 
 ## Usage Example
 
