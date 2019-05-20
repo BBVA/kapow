@@ -320,6 +320,7 @@ def kapow():
         # Routes
         web.get('/kapow/routes', get_routes),
         web.post('/kapow/routes', create_route),
+        # web.put('/kapow/routes', insert_route),
         web.delete('/kapow/routes/{id}', delete_route),
 
         # Handlers
