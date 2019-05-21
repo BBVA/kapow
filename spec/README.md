@@ -120,11 +120,11 @@ Returns JSON data about the current routes.
 
 * **URL**
 
-  /routes
+  `/routes`
 
 * **Method**
 
-  GET
+  `GET`
 
 * **Success Response**
 
@@ -145,11 +145,11 @@ Returns JSON data about the current routes.
 
 * **URL**
 
-  /routes
+  `/routes`
 
 * **Method**
 
-  POST
+  `POST`
 
 * **Header**: `Content-Type: application/json`
 
@@ -205,11 +205,11 @@ TODO
 
 * **URL**
 
-  /routes
+  `/routes`
 
 * **Method**
 
-  PUT
+  `PUT`
 
 * **Header**: `Content-Type: application/json`
 
