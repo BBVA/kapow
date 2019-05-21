@@ -288,13 +288,30 @@ TODO
 
 #### Delete a route
 * **URL**
+
+  `/routes/:id`
+
 * **Method**
-* **URL Params**
-* **Data Params**
+
+  `DELETE`
+
 * **Success Response**
+
+  * **Code**: `200 OK`<br />
+    **Content**: TODO
+
 * **Error Response**
+
+  * **Code**: `404 Not Found`<br />
+    **Header**: `Content-Type: application/json`<br />
+    **Content**: `{ "error": "Unknown route", "route_id": "{{ :id }}" }`
+
+
 * **Sample Call**
+TODO
+
 * **Notes**
+
 
 ### Handlers
 
