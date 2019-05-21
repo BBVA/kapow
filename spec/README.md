@@ -186,7 +186,7 @@ Returns JSON data about the current routes.
     **Header**: `Content-Type: application/json`<br />
     **Content**: `{ "error": "Malformed JSON." }`
 
-  * **Code**: `422 Unprocessable Entity`<br />
+  * **Code**: `400 Bad Request`<br />
     **Header**: `Content-Type: application/json`<br />
     **Content**: `{ "error": "Mandatory field(s) not provided." }`
 
@@ -246,7 +246,7 @@ TODO
     **Header**: `Content-Type: application/json`<br />
     **Content**: `{ "error": "Malformed JSON." }`
 
-  * **Code**: `422 Unprocessable Entity`<br />
+  * **Code**: `400 Bad Request`<br />
     **Header**: `Content-Type: application/json`<br />
     **Content**: `{ "error": "Mandatory field(s) not provided." }`
 
