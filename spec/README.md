@@ -125,6 +125,9 @@ Let's illustrate these ideas with an example: TODO
 
     FIXME: consider what to do when deleting objects. Isn't it too much to
     return the list of all deleted objects in such a request?
+
+## API elements
+
 ### Servers
 
 TODO: Define servers' API
