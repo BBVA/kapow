@@ -287,6 +287,9 @@ TODO
     parameters that were applied.
 
 #### Delete a route
+
+Removes the route identified by `:id`.
+
 * **URL**
 
   `/routes/:id`
