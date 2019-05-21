@@ -105,6 +105,26 @@ Kapow! server interacts with the outside world only through its HTTP API. Any
 program making the correct HTTP request to a Kapow! server, can change its
 behavior.
 
+## Design Principles
+
+* All requests and responses will leverage JSON as the data encoding method.
+
+* The API calls responses will have two distinct parts:
+  * The HTTP status code (e.g., 400, Bad Request).  The target audience of this
+    information is the client code. The client can thus use this information to
+    control the program flow.
+  * The JSON-encoded message. The target audience in this case is the human
+    operating the client. The human can use this information to make a decision
+    on how to proceed.
+
+Let's illustrate these ideas with an example: TODO
+
+  * All successful API calls will return a representation the *final* state
+    attained by the objects which have been addressed (requested, set or
+    deleted).
+
+    FIXME: consider what to do when deleting objects. Isn't it too much to
+    return the list of all deleted objects in such a request?
 ### Servers
 
 TODO: Define servers' API
