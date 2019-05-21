@@ -318,7 +318,40 @@ TODO
 
 ### Handlers
 
-#### Get the value for a handler key
+Handlers are in-memory data structures exposing the data of the current request
+and response.
+
+Each handler is identified by a `handler_id` and provide access to the
+following keys:
+
+```
+request                 All information related to the HTTP request. Read-Only
+├────   method          Used HTTP Method (GET, POST)
+├────   path            Complete URL path.
+├────   match           Previously matched URL path parts.
+│   └────   .*
+├────   param           URL parameters (post ? symbol)
+│   └────   .*
+├────   header          HTTP request headers
+│   └────   .*
+├────   cookie          HTTP request cookie
+│   └────   .*
+├────   form            form-encoding body data
+│   └────   .*
+├────   body            HTTP request body
+response                All information related to the HTTP request. Write-Only
+├────   status          HTTP status code
+├────   body            Response body. Mutually exclusive with response/stream
+├────   stream          Chunk-encoded body. Streamed response. Mutually exclusive with response/body
+├────   header          HTTP response headers
+└────   └────   .*
+```
+
+**Note**: Parameters under `request` are read-only and, conversely, parameters
+under `response` are write-only.
+
+#### Get handler key
+
 * **URL**
 * **Method**
 * **URL Params**
@@ -332,17 +365,6 @@ TODO
 * **URL**
 * **Method**
 POST
-* **URL Params**
-* **Data Params**
-* **Success Response**
-* **Error Response**
-* **Sample Call**
-* **Notes**
-
-#### Append to the value for a handler key
-* **URL**
-* **Method**
-PUT
 * **URL Params**
 * **Data Params**
 * **Success Response**
