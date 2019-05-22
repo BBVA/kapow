@@ -38,7 +38,7 @@ There are some concepts in HTTP and the shell that **resemble each other**.
 ```
 
 Any tool designed to give an HTTP interface to an existing shell command
-**must map concepts of boths**. For example:
+**must map concepts of boths**.  For example:
 
 - "GET parameters" to "Command line parameters"
 - "Headers" to "Environment variables"
@@ -55,14 +55,14 @@ All the alternatives we found are **rigid** about how they match between HTTP
 and shell concepts.
 
 * [shell2http](https://github.com/msoap/shell2http): HTTP-server to execute
-  shell commands. Designed for development, prototyping or remote control.
+  shell commands.  Designed for development, prototyping or remote control.
 Settings through two command line arguments, path and shell command.
 * [websocketd](https://github.com/joewalnes/websocketd): Turn any program that
-  uses STDIN/STDOUT into a WebSocket server. Like inetd, but for WebSockets.
+  uses STDIN/STDOUT into a WebSocket server.  Like inetd, but for WebSockets.
 * [webhook](https://github.com/adnanh/webhook): webhook is a lightweight
   incoming webhook server to run shell commands.
 * [gotty](https://github.com/yudai/gotty): GoTTY is a simple command line tool
-  that turns your CLI tools into web applications. (For interactive commands
+  that turns your CLI tools into web applications.  (For interactive commands
 only)
 * [shell-microservice-exposer](https://github.com/jaimevalero/shell-microservice-exposer):
   Expose your own scripts as a cool microservice API dockerizing it.
@@ -92,7 +92,7 @@ TODO: Small explanation and example.
 
 ## What?
 
-We named it Kapow!. It is pronounceable, short and meaningless... like every
+We named it Kapow!.  It is pronounceable, short and meaningless...  like every
 good UNIX command ;-)
 
 TODO: Definition
@@ -101,7 +101,7 @@ TODO: Intro to Architecture
 
 # HTTP API
 
-Kapow! server interacts with the outside world only through its HTTP API. Any
+Kapow! server interacts with the outside world only through its HTTP API.  Any
 program making the correct HTTP request to a Kapow! server, can change its
 behavior.
 
@@ -111,11 +111,11 @@ behavior.
 
 * The API calls responses will have two distinct parts:
   * The HTTP status code (e.g., 400, Bad Request).  The target audience of this
-    information is the client code. The client can thus use this information to
+    information is the client code.  The client can thus use this information to
     control the program flow.
-  * The JSON-encoded message. The target audience in this case is the human
-    operating the client. The human can use this information to make a decision
-    on how to proceed.
+  * The JSON-encoded message.  The target audience in this case is the human
+    operating the client.  The human can use this information to make a
+    decision on how to proceed.
 
 Let's illustrate these ideas with an example: TODO
 
@@ -123,7 +123,7 @@ Let's illustrate these ideas with an example: TODO
     attained by the objects which have been addressed (requested, set or
     deleted).
 
-    FIXME: consider what to do when deleting objects. Isn't it too much to
+    FIXME: consider what to do when deleting objects.  Isn't it too much to
     return the list of all deleted objects in such a request?
 
 ## API elements
@@ -135,7 +135,7 @@ TODO: Define servers' API
 ### Routes
 
 Routes are the mechanism that allows Kapow! to find the correct program to
-respond to an external event (e.g. an incomming HTTP request).
+respond to an external event (e.g.  an incomming HTTP request).
 
 #### List routes
 
@@ -325,30 +325,87 @@ Each handler is identified by a `handler_id` and provide access to the
 following keys:
 
 ```
-/                       The root of the keys tree
+/                        The root of the keys tree
 │
-├─ request               All information related to the HTTP request. Read-Only
+├─ request               All information related to the HTTP request.  Read-Only
 │  ├──── method          Used HTTP Method (GET, POST)
-│  ├──── path            Complete URL path.
-│  ├──── match           Previously matched URL path parts.
+│  ├──── path            Complete URL path (URL-unquoted)
+│  ├──── matches         Previously matched URL path parts
 │  │     └──── <key>
-│  ├──── param           URL parameters (post ? symbol)
+│  ├──── params          URL parameters (post ? symbol)
 │  │     └──── <key>
-│  ├──── header          HTTP request headers
+│  ├──── headers         HTTP request headers
 │  │     └──── <key>
-│  ├──── cookie          HTTP request cookie
+│  ├──── cookies         HTTP request cookie
 │  │     └──── <key>
-│  ├──── form            form-encoding body data
+│  ├──── form            form-urlencoded form fields
 │  │     └──── <key>
 │  └──── body            HTTP request body
 │  
-└─ response              All information related to the HTTP request. Write-Only
+└─ response              All information related to the HTTP request.  Write-Only
    ├──── status          HTTP status code
-   ├──── body            Response body. Mutually exclusive with response/stream
-   ├──── stream          Chunk-encoded body. Streamed response. Mutually exclusive with response/body
-   └──── header          HTTP response headers
+   ├──── body            Response body.  Mutually exclusive with response/stream
+   ├──── stream          Chunk-encoded body.  Streamed response.  Mutually exclusive with response/body
+   └──── headers         HTTP response headers
          └──── <key>
 ```
+
+#### Example Keys
+
+1.
+  Scenario: Request URL is `http://localhost:8080/example?q=foo&r=bar`
+  Key: `/request/path`
+  Access: Read-Only
+  Returned Value: `/example?q=foo&r=bar`
+  Comment: That would provide read-only access to the request URL path.
+
+2. 
+  Scenario: Request URL is `http://localhost:8080/example?q=foo&r=bar`
+  Key: `/request/params/q`
+  Access: Read-Only
+  Returned Value: `foo`
+  Comment: That would provide read-only access to the request URL parameter `q`.
+
+3.
+  Scenario: A POST request with a JSON body and the header `Content-Type` set to `application/json`.
+  Key: `/request/headers/Content-Type`
+  Access: Read-Only
+  Returned Value: `application/json`
+  Comment: That would provide read-only access to the value of the request header `Content-Type`.
+
+4.
+  Scenario: A request generated by submitting this form:
+    ```
+    <form method="post">
+      First name:<br>
+      <input type="text" name="firstname" value="Jane"><br>
+      Last name:<br>
+      <input type="text" name="lastname" value="Doe">
+      <input type="submit" value="Submit">
+    </form>
+    ```
+  Key: `/request/form/firstname`
+  Access: Read-Only
+  Returned Value: `Jane`
+  Comment: That would provide read-only access to the value of the field `firstname` of the form.
+
+5.
+  Scenario: A request is being attended.
+  Key: `/response/status`
+  Access: Write-Only
+  Acceptable Value: A 3-digit integer.  Must match `[0-9]{3}`.
+  Default Value: 200
+  Comment: It is customary to use the HTTP status code as defined at [https://www.w3.org/Protocols/rfc2616/rfc2616-sec6.html#sec6.1.1](RFC2616).
+
+6.
+  Scenario: A request is being attended.
+  Key: `/response/body`
+  Access: Write-Only
+  Acceptable Value: Any string of bytes.
+  Default Value: N/A
+  Comment: For media types other than `application/octet-stream` you should
+  specify the appropiate `Content-Type` header.
+
 
 **Note**: Parameters under `request` are read-only and, conversely, parameters under
 `response` are write-only.
