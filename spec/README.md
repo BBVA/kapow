@@ -248,7 +248,7 @@ TODO
   }
   ```
 
-* **Success Response**
+* **Success Responses**
 
   * **Code**: `200 OK`<br />
     **Header**: `Content-Type: application/json`<br />
@@ -263,7 +263,7 @@ TODO
   }
   ```
 
-* **Error Response**
+* **Error Responses**
 
   * **Code**: `400 Bad Request`<br />
     **Header**: `Content-Type: application/json`<br />
@@ -331,15 +331,15 @@ following keys:
 │  ├──── method          Used HTTP Method (GET, POST)
 │  ├──── path            Complete URL path (URL-unquoted)
 │  ├──── matches         Previously matched URL path parts
-│  │     └──── <key>
+│  │     └──── <entry>
 │  ├──── params          URL parameters (post ? symbol)
-│  │     └──── <key>
+│  │     └──── <entry>
 │  ├──── headers         HTTP request headers
-│  │     └──── <key>
+│  │     └──── <entry>
 │  ├──── cookies         HTTP request cookie
-│  │     └──── <key>
+│  │     └──── <entry>
 │  ├──── form            form-urlencoded form fields
-│  │     └──── <key>
+│  │     └──── <entry>
 │  └──── body            HTTP request body
 │  
 └─ response              All information related to the HTTP request.  Write-Only
@@ -347,7 +347,7 @@ following keys:
    ├──── body            Response body.  Mutually exclusive with response/stream
    ├──── stream          Chunk-encoded body.  Streamed response.  Mutually exclusive with response/body
    └──── headers         HTTP response headers
-         └──── <key>
+         └──── <entry>
 ```
 
 #### Example Keys
@@ -412,14 +412,42 @@ following keys:
 
 #### Get handler key
 
+  Returns the value of the requested key, or an error if the key doesn't exist or is invalid.
+
 * **URL**
+
+  `/handlers/{:handler_id}{:key}`
+
 * **Method**
+
+  `GET`
+
 * **URL Params**
-* **Data Params**
-* **Success Response**
-* **Error Response**
+
+  FIXME: We think that here should be options to cook the value in some way, or get it raw.
+
+* **Success Responses**
+
+  * **Code**: `200 OK`<br />
+    **Header**: `Content-Type: application/octet-stream`<br />
+    **Content**: The value for that key.  Note that it may be empty.
+
+* **Error Responses**
+
+  * Key is invalid.
+    **Code**: `400 Bad Request`<br />
+    **Content**: None.<br />
+    **Notes**: Check the list of valid keys at the top of this section.
+
+  * Entry not found.
+    **Code**: `404 Not Found`<br />
+    **Content**: None.<br />
+
 * **Sample Call**
+TODO
+
 * **Notes**
+
 
 #### Overwrite the value for a handler key
 * **URL**
