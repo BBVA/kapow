@@ -325,27 +325,29 @@ Each handler is identified by a `handler_id` and provide access to the
 following keys:
 
 ```
-request               All information related to the HTTP request. Read-Only
-├──── method          Used HTTP Method (GET, POST)
-├──── path            Complete URL path.
-├──── match           Previously matched URL path parts.
-│     └──── <key>
-├──── param           URL parameters (post ? symbol)
-│     └──── <key>
-├──── header          HTTP request headers
-│     └──── <key>
-├──── cookie          HTTP request cookie
-│     └──── <key>
-├──── form            form-encoding body data
-│     └──── <key>
-└──── body            HTTP request body
-
-response              All information related to the HTTP request. Write-Only
-├──── status          HTTP status code
-├──── body            Response body. Mutually exclusive with response/stream
-├──── stream          Chunk-encoded body. Streamed response. Mutually exclusive with response/body
-└──── header          HTTP response headers
-      └──── <key>
+/                       The root of the keys tree
+│
+├─ request               All information related to the HTTP request. Read-Only
+│  ├──── method          Used HTTP Method (GET, POST)
+│  ├──── path            Complete URL path.
+│  ├──── match           Previously matched URL path parts.
+│  │     └──── <key>
+│  ├──── param           URL parameters (post ? symbol)
+│  │     └──── <key>
+│  ├──── header          HTTP request headers
+│  │     └──── <key>
+│  ├──── cookie          HTTP request cookie
+│  │     └──── <key>
+│  ├──── form            form-encoding body data
+│  │     └──── <key>
+│  └──── body            HTTP request body
+│  
+└─ response              All information related to the HTTP request. Write-Only
+   ├──── status          HTTP status code
+   ├──── body            Response body. Mutually exclusive with response/stream
+   ├──── stream          Chunk-encoded body. Streamed response. Mutually exclusive with response/body
+   └──── header          HTTP response headers
+         └──── <key>
 ```
 
 **Note**: Parameters under `request` are read-only and, conversely, parameters under
