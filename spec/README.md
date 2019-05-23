@@ -149,7 +149,7 @@ Returns JSON data about the current routes.
 
 * **URL**: `/routes`
 * **Method**: `GET`
-* **Success Response**:
+* **Success Responses**:
   * **Code**: `200 OK`<br />
     **Content**: TODO
 * **Sample Call**: TODO
@@ -186,12 +186,11 @@ Accepts JSON data that defines a new route to be appended to the current routes.
     }
     ```
 * **Error Responses**:
-  * **Code**: `400 Bad Request`<br />
+  * **Code**: `400 Malformed JSON`
+  * **Code**: `400 Invalid Data Type`
+  * **Code**: `400 Missing Mandatory Field`<br />
     **Header**: `Content-Type: application/json`<br />
-    **Content**: `{ "error": "Malformed JSON." }`
-  * **Code**: `400 Bad Request`<br />
-    **Header**: `Content-Type: application/json`<br />
-    **Content**: `{ "error": "Mandatory field(s) not provided." }`
+    **Content**: `{ "mandatory_fields": ["field1", "field2", "and so on"] }`
 * **Sample Call**: TODO
 * **Notes**:
   * A successful request will yield a response containing all the effective
@@ -229,12 +228,12 @@ Accepts JSON data that defines a new route to be appended to the current routes.
     }
     ```
 * **Error Responses**:
-  * **Code**: `400 Bad Request`<br />
+  * **Code**: `400 Malformed JSON`
+  * **Code**: `400 Invalid Data Type`
+  * **Code**: `400 Missing Mandatory Field`<br />
     **Header**: `Content-Type: application/json`<br />
-    **Content**: `{ "error": "Malformed JSON." }`
-  * **Code**: `400 Bad Request`<br />
-    **Header**: `Content-Type: application/json`<br />
-    **Content**: `{ "error": "Mandatory field(s) not provided." }`
+    **Content**: `{ "mandatory_fields": ["field1", "field2", "and so on"] }`
+  * **Code**: `400 Invalid Index Type`
 * **Sample Call**: TODO
 * **Notes**:
   * Route numbering starts at zero.
@@ -252,13 +251,11 @@ Removes the route identified by `:id`.
 
 * **URL**: `/routes/:id`
 * **Method**: `DELETE`
-* **Success Response**:
+* **Success Responses**:
   * **Code**: `200 OK`<br />
     **Content**: TODO
-* **Error Response**:
-  * **Code**: `404 Not Found`<br />
-    **Header**: `Content-Type: application/json`<br />
-    **Content**: `{ "error": "Unknown route", "route_id": "{{ :id }}" }`
+* **Error Responses**:
+  * **Code**: `404 Not Found`
 * **Sample Call**: TODO
 * **Notes**:
 
@@ -269,24 +266,24 @@ Handlers are in-memory data structures exposing the data of the current request
 and response.
 
 Each handler is identified by a `handler_id` and provide access to the
-following keys:
+following resource paths:
 
 ```
-/                        The root of the keys tree
+/                        The root of the resource paths tree
 │
 ├─ request               All information related to the HTTP request.  Read-Only
 │  ├──── method          Used HTTP Method (GET, POST)
 │  ├──── path            Complete URL path (URL-unquoted)
 │  ├──── matches         Previously matched URL path parts
-│  │     └──── <entry>
+│  │     └──── <name>
 │  ├──── params          URL parameters (post ? symbol)
-│  │     └──── <entry>
+│  │     └──── <name>
 │  ├──── headers         HTTP request headers
-│  │     └──── <entry>
+│  │     └──── <name>
 │  ├──── cookies         HTTP request cookie
-│  │     └──── <entry>
+│  │     └──── <name>
 │  ├──── form            form-urlencoded form fields
-│  │     └──── <entry>
+│  │     └──── <name>
 │  └──── body            HTTP request body
 │  
 └─ response              All information related to the HTTP request.  Write-Only
@@ -294,7 +291,7 @@ following keys:
    ├──── body            Response body.  Mutually exclusive with response/stream
    ├──── stream          Chunk-encoded body.  Streamed response.  Mutually exclusive with response/body
    └──── headers         HTTP response headers
-         └──── <entry>
+         └──── <name>
 ```
 
 
@@ -352,48 +349,40 @@ following keys:
 `response` are write-only.
 
 
-#### Get handler key
+#### Get handler resource
 
-Returns the value of the requested key, or an error if the key doesn't exist or is invalid.
+Returns the value of the requested resource path, or an error if the resource path doesn't exist or is invalid.
 
-* **URL**: `/handlers/{:handler_id}{:key}`
+* **URL**: `/handlers/{:handler_id}{:resource_path}`
 * **Method**: `GET`
 * **URL Params**: FIXME: We think that here should be options to cook the value in some way, or get it raw.
 * **Success Responses**:
   * **Code**: `200 OK`<br />
     **Header**: `Content-Type: application/octet-stream`<br />
-    **Content**: The value for that key.  Note that it may be empty.
+    **Content**: The value of the resource.  Note that it may be empty.
 * **Error Responses**:
-  * Key is invalid.<br />
-    **Code**: `400 Bad Request`<br />
-    **Content**: None.<br />
-    **Notes**: Check the list of valid keys at the top of this section.
-  * Entry not found.<br />
-    **Code**: `404 Not Found`<br />
-    **Content**: None.<br />
+    **Code**: `400 Invalid Resource Path`<br />
+    **Notes**: Check the list of valid resource paths at the top of this section.
+  * **Code**: `404 Not Found`
 * **Sample Call**: TODO
 * **Notes**: TODO
 
 
-#### Overwrite the value for a handler key
+#### Overwrite the value of a resource
 
-* **URL**: `/handlers/{:handler_id}{:key}`
+* **URL**: `/handlers/{:handler_id}{:resource_path}`
 * **Method**: `PUT`
 * **URL Params**: FIXME: We think that here should be options to cook the value in some way, or pass it raw.
 * **Data Params**: Binary payload.
 * **Success Responses**:
   * **Code**: `200 OK`
-* **Error Response**:
-  * Key is invalid.<br />
-    **Code**: `400 Bad Request`<br />
-    **Content**: None.<br />
-    **Notes**: Check the list of valid keys at the top of this section.
-  * Entry not found.<br />
-    **Code**: `404 Not Found`<br />
-    **Content**: None.<br />
-  * Invalid value.<br />
-    **Code**: `400 Invalid Payload`<br />
-    **Content**: None.<br />
+* **Error Responses**:
+  * **Code**: `400 Invalid Payload`
+  * **Code**: `400 Invalid Resource Path`<br />
+    **Notes**: Check the list of valid resource paths at the top of this section.
+  * **Code**: `404 Handler Not Found`
+  * **Code**: `404 Name Not Found`<br />
+    **Notes**: Although the resource path is correct, no such name is present in the request.  For instance, `/request/headers/Foo`, when no `Foo` header is not present in the request.
 * **Sample Call**:
 * **Notes**:
 
