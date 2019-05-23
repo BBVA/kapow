@@ -1,5 +1,6 @@
 # Kapow!
 
+
 ## Why?
 
 Because we think that:
@@ -105,14 +106,15 @@ Kapow! server interacts with the outside world only through its HTTP API.  Any
 program making the correct HTTP request to a Kapow! server, can change its
 behavior.
 
+
 ## Design Principles
 
 * All requests and responses will leverage JSON as the data encoding method.
 
 * The API calls responses will have two distinct parts:
-  * The HTTP status code (e.g., 400, Bad Request).  The target audience of this
-    information is the client code.  The client can thus use this information to
-    control the program flow.
+  * The HTTP status code (e.g., `400`, which is a bad request).  The target
+    audience of this information is the client code.  The client can thus use
+    this information to control the program flow.
   * The JSON-encoded message.  The target audience in this case is the human
     operating the client.  The human can use this information to make a
     decision on how to proceed.
@@ -126,59 +128,42 @@ Let's illustrate these ideas with an example: TODO
     FIXME: consider what to do when deleting objects.  Isn't it too much to
     return the list of all deleted objects in such a request?
 
-## API elements
+
+## API Elements
+
 
 ### Servers
 
 TODO: Define servers' API
+
 
 ### Routes
 
 Routes are the mechanism that allows Kapow! to find the correct program to
 respond to an external event (e.g.  an incomming HTTP request).
 
+
 #### List routes
 
 Returns JSON data about the current routes.
 
-* **URL**
-
-  `/routes`
-
-* **Method**
-
-  `GET`
-
-* **Success Response**
-
+* **URL**: `/routes`
+* **Method**: `GET`
+* **Success Response**:
   * **Code**: `200 OK`<br />
     **Content**: TODO
+* **Sample Call**: TODO
+* **Notes**: Currently all routes are returned; in the future, a filter may be accepted.
 
-* **Sample Call**
-
-  TODO
-
-* **Notes**
-
-  Currently all routes are returned; in the future, a filter may be accepted.
 
 #### Append route
 
-  Accepts JSON data that defines a new route to be appended to the current routes.
+Accepts JSON data that defines a new route to be appended to the current routes.
 
-* **URL**
-
-  `/routes`
-
-* **Method**
-
-  `POST`
-
+* **URL**: `/routes`
+* **Method**: `POST`
 * **Header**: `Content-Type: application/json`
-
-* **Data Params**
-
-  * **Content**:
+* **Data Params**:<br />
   ```
   {
     "method": "GET",
@@ -187,58 +172,41 @@ Returns JSON data about the current routes.
     "command": "echo Hello World | response /body"
   }
   ```
-
-* **Success Response**
-
+* **Success Responses**:
   * **Code**: `200 OK`<br />
     **Header**: `Content-Type: application/json`<br />
-    **Content**:
-  ```
-  {
-    "method": "GET",
-    "url_pattern": "/hello",
-    "entrypoint": null,
-    "command": "echo Hello World | response /body",
-    "index": 0
-  }
-  ```
-
-* **Error Response**
-
+    **Content**:<br />
+    ```
+    {
+      "method": "GET",
+      "url_pattern": "/hello",
+      "entrypoint": null,
+      "command": "echo Hello World | response /body",
+      "index": 0
+    }
+    ```
+* **Error Responses**:
   * **Code**: `400 Bad Request`<br />
     **Header**: `Content-Type: application/json`<br />
     **Content**: `{ "error": "Malformed JSON." }`
-
   * **Code**: `400 Bad Request`<br />
     **Header**: `Content-Type: application/json`<br />
     **Content**: `{ "error": "Mandatory field(s) not provided." }`
-
-* **Sample Call**
-TODO
-
-* **Notes**
-
+* **Sample Call**: TODO
+* **Notes**:
   * A successful request will yield a response containing all the effective
     parameters that were applied.
+
 
 #### Insert a route
 
   Accepts JSON data that defines a new route to be inserted at the specified
   index to the current routes.
 
-* **URL**
-
-  `/routes`
-
-* **Method**
-
-  `PUT`
-
+* **URL**: `/routes`
+* **Method**: `PUT`
 * **Header**: `Content-Type: application/json`
-
-* **Data Params**
-
-  * **Content**:
+* **Data Params**:<br />
   ```
   {
     "method": "GET",
@@ -247,73 +215,52 @@ TODO
     "command": "echo Hello World | response /body",
   }
   ```
-
-* **Success Responses**
-
+* **Success Responses**:
   * **Code**: `200 OK`<br />
     **Header**: `Content-Type: application/json`<br />
-    **Content**:
-  ```
-  {
-    "method": "GET",
-    "url_pattern": "/hello",
-    "entrypoint": null,
-    "command": "echo Hello World | response /body",
-    "index": 0
-  }
-  ```
-
-* **Error Responses**
-
+    **Content**:<br />
+    ```
+    {
+      "method": "GET",
+      "url_pattern": "/hello",
+      "entrypoint": null,
+      "command": "echo Hello World | response /body",
+      "index": 0
+    }
+    ```
+* **Error Responses**:
   * **Code**: `400 Bad Request`<br />
     **Header**: `Content-Type: application/json`<br />
     **Content**: `{ "error": "Malformed JSON." }`
-
   * **Code**: `400 Bad Request`<br />
     **Header**: `Content-Type: application/json`<br />
     **Content**: `{ "error": "Mandatory field(s) not provided." }`
-
-* **Sample Call**
-TODO
-
-* **Notes**
-
+* **Sample Call**: TODO
+* **Notes**:
   * Route numbering starts at zero.
   * When `index` is not provided or is less than 0 the route will be inserted
     first, effectively making it index 0.
-  * Conversely when `index` is greater than the number of entries on the route
-    table it will be inserted last.
+  * Conversely, when `index` is greater than the number of entries on the route
+    table, it will be inserted last.
   * A successful request will yield a response containing all the effective
     parameters that were applied.
+
 
 #### Delete a route
 
 Removes the route identified by `:id`.
 
-* **URL**
-
-  `/routes/:id`
-
-* **Method**
-
-  `DELETE`
-
-* **Success Response**
-
+* **URL**: `/routes/:id`
+* **Method**: `DELETE`
+* **Success Response**:
   * **Code**: `200 OK`<br />
     **Content**: TODO
-
-* **Error Response**
-
+* **Error Response**:
   * **Code**: `404 Not Found`<br />
     **Header**: `Content-Type: application/json`<br />
     **Content**: `{ "error": "Unknown route", "route_id": "{{ :id }}" }`
-
-
-* **Sample Call**
-TODO
-
-* **Notes**
+* **Sample Call**: TODO
+* **Notes**:
 
 
 ### Handlers
@@ -350,31 +297,29 @@ following keys:
          └──── <entry>
 ```
 
+
 #### Example Keys
 
-1. Read the request URL path.
+- Read the request URL path.
   - Scenario: Request URL is `http://localhost:8080/example?q=foo&r=bar`
   - Key: `/request/path`
   - Access: Read-Only
   - Returned Value: `/example?q=foo&r=bar`
   - Comment: That would provide read-only access to the request URL path.
-
-2. Read an specific URL parameter.
-  Scenario: Request URL is `http://localhost:8080/example?q=foo&r=bar`
-  Key: `/request/params/q`
-  Access: Read-Only
-  Returned Value: `foo`
-  Comment: That would provide read-only access to the request URL parameter `q`.
-
-3. Obtain the `Content-Type` header of the request.
-  Scenario: A POST request with a JSON body and the header `Content-Type` set to `application/json`.
-  Key: `/request/headers/Content-Type`
-  Access: Read-Only
-  Returned Value: `application/json`
-  Comment: That would provide read-only access to the value of the request header `Content-Type`.
-
-4. Read a field from a form.
-  Scenario: A request generated by submitting this form:
+- Read an specific URL parameter.
+  - Scenario: Request URL is `http://localhost:8080/example?q=foo&r=bar`
+  - Key: `/request/params/q`
+  - Access: Read-Only
+  - Returned Value: `foo`
+  - Comment: That would provide read-only access to the request URL parameter `q`.
+- Obtain the `Content-Type` header of the request.
+  - Scenario: A POST request with a JSON body and the header `Content-Type` set to `application/json`.
+  - Key: `/request/headers/Content-Type`
+  - Access: Read-Only
+  - Returned Value: `application/json`
+  - Comment: That would provide read-only access to the value of the request header `Content-Type`.
+- Read a field from a form.
+  - Scenario: A request generated by submitting this form:<br />
     ```
     <form method="post">
       First name:<br>
@@ -384,83 +329,66 @@ following keys:
       <input type="submit" value="Submit">
     </form>
     ```
-  Key: `/request/form/firstname`
-  Access: Read-Only
-  Returned Value: `Jane`
-  Comment: That would provide read-only access to the value of the field `firstname` of the form.
-
-5. Set the response status code.
-  Scenario: A request is being attended.
-  Key: `/response/status`
-  Access: Write-Only
-  Acceptable Value: A 3-digit integer.  Must match `[0-9]{3}`.
-  Default Value: 200
-  Comment: It is customary to use the HTTP status code as defined at [https://www.w3.org/Protocols/rfc2616/rfc2616-sec6.html#sec6.1.1](RFC2616).
-
-6. Set the response body.
-  Scenario: A request is being attended.
-  Key: `/response/body`
-  Access: Write-Only
-  Acceptable Value: Any string of bytes.
-  Default Value: N/A
-  Comment: For media types other than `application/octet-stream` you should
-  specify the appropiate `Content-Type` header.
-
+  - Key: `/request/form/firstname`
+  - Access: Read-Only
+  - Returned Value: `Jane`
+  - Comment: That would provide read-only access to the value of the field `firstname` of the form.
+- Set the response status code.
+  - Scenario: A request is being attended.
+  - Key: `/response/status`
+  - Access: Write-Only
+  - Acceptable Value: A 3-digit integer.  Must match `[0-9]{3}`.
+  - Default Value: `200`
+  - Comment: It is customary to use the HTTP status code as defined at [RFC2616](https://www.w3.org/Protocols/rfc2616/rfc2616-sec6.html#sec6.1.1).
+- Set the response body.
+  - Scenario: A request is being attended.
+  - Key: `/response/body`
+  - Access: Write-Only
+  - Acceptable Value: Any string of bytes.
+  - Default Value: N/A
+  - Comment: For media types other than `application/octet-stream` you should specify the appropiate `Content-Type` header.
 
 **Note**: Parameters under `request` are read-only and, conversely, parameters under
 `response` are write-only.
 
+
 #### Get handler key
 
-  Returns the value of the requested key, or an error if the key doesn't exist or is invalid.
+Returns the value of the requested key, or an error if the key doesn't exist or is invalid.
 
-* **URL**
-
-  `/handlers/{:handler_id}{:key}`
-
-* **Method**
-
-  `GET`
-
-* **URL Params**
-
-  FIXME: We think that here should be options to cook the value in some way, or get it raw.
-
-* **Success Responses**
-
+* **URL**: `/handlers/{:handler_id}{:key}`
+* **Method**: `GET`
+* **URL Params**: FIXME: We think that here should be options to cook the value in some way, or get it raw.
+* **Success Responses**:
   * **Code**: `200 OK`<br />
     **Header**: `Content-Type: application/octet-stream`<br />
     **Content**: The value for that key.  Note that it may be empty.
-
-* **Error Responses**
-
-  * Key is invalid.
+* **Error Responses**:
+  * Key is invalid.<br />
     **Code**: `400 Bad Request`<br />
     **Content**: None.<br />
     **Notes**: Check the list of valid keys at the top of this section.
-
-  * Entry not found.
+  * Entry not found.<br />
     **Code**: `404 Not Found`<br />
     **Content**: None.<br />
-
-* **Sample Call**
-TODO
-
-* **Notes**
+* **Sample Call**: TODO
+* **Notes**: TODO
 
 
 #### Overwrite the value for a handler key
-* **URL**
-* **Method**
-POST
-* **URL Params**
-* **Data Params**
-* **Success Response**
-* **Error Response**
-* **Sample Call**
-* **Notes**
+
+* **URL**:
+* **Method**: `POST`
+* **URL Params**:
+* **Data Params**:
+* **Success Response**:
+* **Error Response**:
+* **Sample Call**:
+* **Notes**:
+
 
 ## Usage Example
+
 
 ## Test Suite Notes
 
@@ -469,31 +397,45 @@ You can run it by ...
 
 
 # Framework
+
+
 ## Commands
 Any compliant implementation of Kapow! must provide these commands:
 
+
 ### `kapow`
+
 This implements the server, yaddayadda
 
+
 #### Example
+
 
 ### `kroute`
+
 TODISCUSS: maybe consider using `kapow route` instead
 
+
 #### Example
+
 
 ### `request`
 
+
 #### Example
+
 
 ### `response`
 
+
 #### Example
 
-## Full-fledged example  (TODO: express it more simply)
+
+## An End-to-End Example
 
 
 ## Test Suite Notes
+
 
 # Server
 
