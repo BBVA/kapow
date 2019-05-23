@@ -339,7 +339,7 @@ following keys:
   - Access: Write-Only
   - Acceptable Value: A 3-digit integer.  Must match `[0-9]{3}`.
   - Default Value: `200`
-  - Comment: It is customary to use the HTTP status code as defined at [RFC2616](https://www.w3.org/Protocols/rfc2616/rfc2616-sec6.html#sec6.1.1).
+  - Comment: It is customary to use the HTTP status code as defined at [https://www.w3.org/Protocols/rfc2616/rfc2616-sec6.html#sec6.1.1](RFC2616).
 - Set the response body.
   - Scenario: A request is being attended.
   - Key: `/response/body`
@@ -377,17 +377,30 @@ Returns the value of the requested key, or an error if the key doesn't exist or 
 
 #### Overwrite the value for a handler key
 
-* **URL**:
-* **Method**: `POST`
-* **URL Params**:
-* **Data Params**:
-* **Success Response**:
+* **URL**: `/handlers/{:handler_id}{:key}`
+* **Method**: `PUT`
+* **URL Params**: FIXME: We think that here should be options to cook the value in some way, or pass it raw.
+* **Data Params**: Binary payload.
+* **Success Responses**:
+  * **Code**: `200 OK`
 * **Error Response**:
+  * Key is invalid.<br />
+    **Code**: `400 Bad Request`<br />
+    **Content**: None.<br />
+    **Notes**: Check the list of valid keys at the top of this section.
+  * Entry not found.<br />
+    **Code**: `404 Not Found`<br />
+    **Content**: None.<br />
+  * Invalid value.<br />
+    **Code**: `400 Invalid Payload`<br />
+    **Content**: None.<br />
 * **Sample Call**:
 * **Notes**:
 
 
 ## Usage Example
+
+TODO
 
 
 ## Test Suite Notes
@@ -400,6 +413,7 @@ You can run it by ...
 
 
 ## Commands
+
 Any compliant implementation of Kapow! must provide these commands:
 
 
@@ -413,7 +427,7 @@ This implements the server, yaddayadda
 
 ### `kroute`
 
-TODISCUSS: maybe consider using `kapow route` instead
+TODO: discuss: maybe consider using `kapow route` instead
 
 
 #### Example
