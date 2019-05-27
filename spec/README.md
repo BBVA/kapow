@@ -46,8 +46,8 @@ Any tool designed to give an HTTP interface to an existing shell command
 - "Stdout" to "Response body"
 
 Kapow! is not opinionated about the different ways you can map both worlds.
-Instead it provides a concise set of tools used to express the mapping and a
-set of common defaults.
+Instead, it provides a concise set of tools, with a set of sensible defaults,
+allowing the user to express the desired mapping in an explicit way.
 
 
 ### Why not tool "X"?
@@ -63,8 +63,8 @@ Settings through two command line arguments, path and shell command.
 * [webhook](https://github.com/adnanh/webhook): webhook is a lightweight
   incoming webhook server to run shell commands.
 * [gotty](https://github.com/yudai/gotty): GoTTY is a simple command line tool
-  that turns your CLI tools into web applications.  (For interactive commands
-only)
+  that turns your CLI tools into web applications.  Note that this tool works
+  only with interactive commands.
 * [shell-microservice-exposer](https://github.com/jaimevalero/shell-microservice-exposer):
   Expose your own scripts as a cool microservice API dockerizing it.
 
@@ -88,7 +88,14 @@ incapable in others.
 
 ### Why not CGI?
 
-TODO: Small explanation and example.
+* CGI is also **rigid** about how it matches between HTTP and UNIX process
+  concepts.  Notably CGI *meta-variables* are injected into the script's
+  environment; this behavior can and has been exploited by nasty attacks such as
+  [Shellshock](https://en.wikipedia.org/wiki/Shellshock_(software_bug)).
+* Trying to leverage CGI from a shell script could be less cumbersome in some
+  cases but possibly being more error-prone.  For instance, since in CGI
+  everything written to the standard output becomes the body of the response,
+  any leaked command output would corrupt the HTTP response.
 
 
 ## What?
@@ -97,20 +104,29 @@ We named it Kapow!.  It is pronounceable, short and meaningless...  like every
 good UNIX command ;-)
 
 TODO: Definition
+
 TODO: Intro to Architecture
 
 
-# HTTP API
+### API
 
 Kapow! server interacts with the outside world only through its HTTP API.  Any
 program making the correct HTTP request to a Kapow! server, can change its
 behavior.
 
+Kapow! exposes two distinct APIs, a control API and a data API, described
+below.
+
+
+# HTTP Control API
+
+It allows you to configure the Kapow! service. This API is available during the
+whole lifetime of the server.
+
 
 ## Design Principles
 
 * All requests and responses will leverage JSON as the data encoding method.
-
 * The API calls responses will have two distinct parts:
   * The HTTP status code (e.g., `400`, which is a bad request).  The target
     audience of this information is the client code.  The client can thus use
@@ -118,23 +134,36 @@ behavior.
   * The JSON-encoded message.  The target audience in this case is the human
     operating the client.  The human can use this information to make a
     decision on how to proceed.
+* All successful API calls will return a representation of the *final* state
+  attained by the objects which have been addressed (requested, set or
+  deleted).
 
-Let's illustrate these ideas with an example: TODO
+For instance, given this request:
+```
+HTTP/1.1 GET /routes
+```
 
-  * All successful API calls will return a representation the *final* state
-    attained by the objects which have been addressed (requested, set or
-    deleted).
+an appropiate reponse may look like this:
+```
+200 OK
+Content-Type: application/json
+Content-Length: 189
 
-    FIXME: consider what to do when deleting objects.  Isn't it too much to
-    return the list of all deleted objects in such a request?
+[
+  {
+    "method": "GET",
+    "url_pattern": "/hello",
+    "entrypoint": null,
+    "command": "echo Hello World | response /body",
+    "index": 0
+  }
+]
+```
 
 
 ## API Elements
 
-
-### Servers
-
-TODO: Define servers' API
+Kapow! provides a way to control its internal state through these elements.
 
 
 ### Routes
@@ -260,6 +289,35 @@ Removes the route identified by `:id`.
 * **Notes**:
 
 
+# HTTP Data API
+
+It is the channel through which the actual HTTP data flows during the
+request/response cycle, both reading from the request as well as writing to the
+response.
+
+
+## Design Principles
+
+* According to established best practices we use the HTTP methods as follows:
+  * `GET`: Read data without any side-effects.
+  * `PUT`: Overwrite existing data.
+* The API calls responses will have two distinct parts:
+  * The HTTP status code (e.g., `400`, which is a bad request).  The target
+    audience of this information is the client code.  The client can thus use
+    this information to control the program flow.
+  * The HTTP reason phrase.  The target audience in this case is the human
+    operating the client.  The human can use this information to make a
+    decision on how to proceed.
+* Regarding HTTP request and response bodies:
+  * The response body will be empty in case of error.
+  * It will transport binary data in other case.
+
+
+## API Elements
+
+The data API consists of a single element, the handler.
+
+
 ### Handlers
 
 Handlers are in-memory data structures exposing the data of the current request
@@ -285,7 +343,7 @@ following resource paths:
 │  ├──── form            form-urlencoded form fields
 │  │     └──── <name>
 │  └──── body            HTTP request body
-│  
+│
 └─ response              All information related to the HTTP request.  Write-Only
    ├──── status          HTTP status code
    ├──── body            Response body.  Mutually exclusive with response/stream
@@ -389,7 +447,7 @@ Returns the value of the requested resource path, or an error if the resource pa
 
 ## Usage Example
 
-TODO
+TODO: End-to-end example of the data API.
 
 
 ## Test Suite Notes
@@ -408,15 +466,14 @@ Any compliant implementation of Kapow! must provide these commands:
 
 ### `kapow`
 
-This implements the server, yaddayadda
+This implements the server, XXX
 
 
 #### Example
 
 
-### `kroute`
+### `kapow route`
 
-TODO: discuss: maybe consider using `kapow route` instead
 
 
 #### Example
