@@ -327,28 +327,32 @@ Each handler is identified by a `handler_id` and provide access to the
 following resource paths:
 
 ```
-/                        The root of the resource paths tree
+/                               The root of the resource paths tree
 │
-├─ request               All information related to the HTTP request.  Read-Only
-│  ├──── method          Used HTTP Method (GET, POST)
-│  ├──── path            Complete URL path (URL-unquoted)
-│  ├──── matches         Previously matched URL path parts
+├─ request                      All information related to the HTTP request.  Read-Only
+│  ├──── method                 Used HTTP Method (GET, POST)
+│  ├──── path                   Complete URL path (URL-unquoted)
+│  ├──── matches                Previously matched URL path parts
 │  │     └──── <name>
-│  ├──── params          URL parameters (post ? symbol)
+│  ├──── params                 URL parameters (post ? symbol)
 │  │     └──── <name>
-│  ├──── headers         HTTP request headers
+│  ├──── headers                HTTP request headers
 │  │     └──── <name>
-│  ├──── cookies         HTTP request cookie
+│  ├──── cookies                HTTP request cookie
 │  │     └──── <name>
-│  ├──── form            form-urlencoded form fields
+│  ├──── form                   form-urlencoded form fields
 │  │     └──── <name>
-│  └──── body            HTTP request body
+│  ├──── files                  Files uploaded via multi-part form fields
+│  │     └──── <name>
+│  │           └──── filename   Original file name
+│  │           └──── content    The file content
+│  └──── body                   HTTP request body
 │
-└─ response              All information related to the HTTP request.  Write-Only
-   ├──── status          HTTP status code
-   ├──── body            Response body.  Mutually exclusive with response/stream
-   ├──── stream          Chunk-encoded body.  Streamed response.  Mutually exclusive with response/body
-   └──── headers         HTTP response headers
+└─ response                     All information related to the HTTP request.  Write-Only
+   ├──── status                 HTTP status code
+   ├──── body                   Response body.  Mutually exclusive with response/stream
+   ├──── stream                 Chunk-encoded body.  Streamed response.  Mutually exclusive with response/body
+   └──── headers                HTTP response headers
          └──── <name>
 ```
 
