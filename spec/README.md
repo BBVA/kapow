@@ -340,7 +340,7 @@ following resource paths:
 │  │     └──── <name>
 │  ├──── cookies                HTTP request cookie
 │  │     └──── <name>
-│  ├──── form                   form-urlencoded form fields
+│  ├──── form                   Form-urlencoded form fields
 │  │     └──── <name>
 │  ├──── files                  Files uploaded via multi-part form fields
 │  │     └──── <name>
@@ -350,10 +350,12 @@ following resource paths:
 │
 └─ response                     All information related to the HTTP request.  Write-Only
    ├──── status                 HTTP status code
+   ├──── headers                HTTP response headers
+   │     └──── <name>
+   ├──── cookies                HTTP request cookie
+   │     └──── <name>
    ├──── body                   Response body.  Mutually exclusive with response/stream
-   ├──── stream                 Chunk-encoded body.  Streamed response.  Mutually exclusive with response/body
-   └──── headers                HTTP response headers
-         └──── <name>
+   └──── stream                 Chunk-encoded body.  Streamed response.  Mutually exclusive with response/body
 ```
 
 
