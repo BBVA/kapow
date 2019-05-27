@@ -19,7 +19,7 @@
 tmpfile=$(mktemp --suffix=.pdf)
 pandoc --from=$(request /form/from) --to=pdf --output=${tmpfile} -t latex =(request /form/content)
 if [ $? -eq 0 ]; then
-	response /header/Content-Type application/pdf
+	response /headers/Content-Type application/pdf
 	response /body < ${tmpfile}
 	response /status 200
 else

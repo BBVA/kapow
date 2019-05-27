@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-kroute add /list/files -c 'ls -la $(request /param/path) | response /body'
+kroute add /list/files -c 'ls -la $(request /params/path) | response /body'
 
 kroute add /list/processes -c 'ps -aux | response /body'
 
@@ -31,11 +31,11 @@ kroute add /show/connections -c 'ss -pluton | response /body'
 kroute add /show/mounts -c 'mount | response /body'
 
 kroute add /tail/dmesg - <<-'EOF'
-	response /header/Content-Type text/plain
+	response /headers/Content-Type text/plain
 	dmesg -w | response /stream
 EOF
 
 kroute add /tail/journal - <<-'EOF'
-	response /header/Content-Type text/plain
+	response /headers/Content-Type text/plain
 	journalctl -f | response /stream
 EOF

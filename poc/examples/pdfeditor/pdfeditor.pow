@@ -17,4 +17,4 @@
 #
 
 kroute add -X POST --entrypoint ./topdf '/editor/pdf' 
-kroute add / -c 'response /header/Content-Type text/html && response /body < pdfeditor.html'
+kroute add / -c 'response /headers/Content-Type text/html && response /body < pdfeditor.html'
