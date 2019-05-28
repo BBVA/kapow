@@ -13,7 +13,7 @@ Because we think that:
 
 ## How?
 
-So, how we can mix the **web** and the **shell**? Let's see...
+So, how we can mix the **web** and the **shell**?  Let's see...
 
 The **web** and the **shell** are two different beasts, both packed with
 history.
@@ -22,14 +22,14 @@ There are some concepts in HTTP and the shell that **resemble each other**.
 
 ```
                  +------------------------+-------------------------+
-                 | HTTP                   | SHELL                   |
+                 | HTTP                   | Shell                   |
   +--------------+------------------------+-------------------------+
   | Input        | POST form-encoding     | Command line parameters |
   | Parameters   | GET parameters         | Environment variables   |
   |              | Headers                |                         |
   |              | Serialized body (JSON) |                         |
   +--------------+------------------------+-------------------------+
-  | Data Streams | Response/Request Body  | Stdin/Stdout/Stderr     |
+  | Data Streams | Response/Request Body  | stdin/stdout/stderr     |
   |              | Websocket              | Input/Output files      |
   |              | Uploaded files         |                         |
   +--------------+------------------------+-------------------------+
@@ -39,11 +39,11 @@ There are some concepts in HTTP and the shell that **resemble each other**.
 ```
 
 Any tool designed to give an HTTP interface to an existing shell command
-**must map concepts of boths**.  For example:
+**must map concepts from both domains**.  For example:
 
 - "GET parameters" to "Command line parameters"
 - "Headers" to "Environment variables"
-- "Stdout" to "Response body"
+- "stdout" to "Response body"
 
 Kapow! is not opinionated about the different ways you can map both worlds.
 Instead, it provides a concise set of tools, with a set of sensible defaults,
@@ -52,8 +52,8 @@ allowing the user to express the desired mapping in an explicit way.
 
 ### Why not tool "X"?
 
-All the alternatives we found are **rigid** about how they match between HTTP
-and shell concepts.
+All the alternatives we found are **rigid** about the way they match between
+HTTP and shell concepts.
 
 * [shell2http](https://github.com/msoap/shell2http): HTTP-server to execute
   shell commands.  Designed for development, prototyping or remote control.
@@ -78,7 +78,7 @@ incapable in others.
 
 * Boilerplate
 * Custom code = More bugs
-* Security issues (Command injection, etc)
+* Security issues (command injection, etc)
 * Dependency on developers
 * **"A programming language is low level when its programs require attention to
   the irrelevant"** *Alan Perlis*
@@ -111,7 +111,7 @@ TODO: Intro to Architecture
 ### API
 
 Kapow! server interacts with the outside world only through its HTTP API.  Any
-program making the correct HTTP request to a Kapow! server, can change its
+program making the correct HTTP request to a Kapow! server can change its
 behavior.
 
 Kapow! exposes two distinct APIs, a control API and a data API, described
@@ -135,7 +135,7 @@ whole lifetime of the server.
     operating the client.  The human can use this information to make a
     decision on how to proceed.
 * All successful API calls will return a representation of the *final* state
-  attained by the objects which have been addressed (requested, set or
+  attained by the objects which have been addressed (either requested, set or
   deleted).
 
 For instance, given this request:
@@ -169,7 +169,7 @@ Kapow! provides a way to control its internal state through these elements.
 ### Routes
 
 Routes are the mechanism that allows Kapow! to find the correct program to
-respond to an external event (e.g.  an incomming HTTP request).
+respond to an external event (e.g.  an incoming HTTP request).
 
 
 #### List routes
@@ -266,8 +266,8 @@ Accepts JSON data that defines a new route to be appended to the current routes.
 * **Sample Call**: TODO
 * **Notes**:
   * Route numbering starts at zero.
-  * When `index` is not provided or is less than 0 the route will be inserted
-    first, effectively making it index 0.
+  * When `index` is not provided or is less than `0` the route will be inserted
+    first, effectively making it index `0`.
   * Conversely, when `index` is greater than the number of entries on the route
     table, it will be inserted last.
   * A successful request will yield a response containing all the effective
