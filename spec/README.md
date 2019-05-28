@@ -539,32 +539,167 @@ Any compliant implementation of Kapow! must provide these commands:
 
 ### `kapow`
 
-This implements the server, XXX
+This is the master command, that shows the help if invoked without args, and
+runs the sub-commands when provided to it.
 
 
 #### Example
+```sh
+$ kapow
+Usage: kapow [OPTIONS] COMMAND [ARGS]...
+
+Options:
+  TBD
+
+Commands:
+  start    starts a Kapow! server
+  route    operates on routes
+...
+```
+
+
+### `kapow start`
+
+This command runs the Kapow! server, which is the core of Kapow!.  If
+run without parameters, it will run an unconfigured server.  It can accept a path
+to a `.pow` file, which is a shell script that contains commands to configure
+the Kapow! server.
+
+The `.pow` can leverage the `kapow route` command, which is used to define a route.
+The `kapow route` command needs a way to reach the Kapow! server, and for that,
+`kapow` provides the `KAPOW_URL` variable in the environment of the
+aforementioned shell script.
+
+Every time the kapow server receives a request, it will spawn a process to
+handle it, according to the specified entrypoint, `/bin/sh -c` by default, and then
+execute the specified command.  This command is tasked with processing the
+incoming request, and can leverage the `request` and `response` commands to
+easily access the `HTTP Request` and `HTTP Response`, respectively.
+
+In order for `request` and `response` to do their job, they require a way to
+reach the Kapow! server, as well as a way to identify the current request being
+served.  Thus, the Kapow! server adds the `KAPOW_URL` and `KAPOW_HANDLER_ID` to the
+process' environment.
+
+
+#### Example
+```sh
+$ kapow start /path/to/service.pow
+```
 
 
 ### `kapow route`
 
+To serve an endpoint, you must first register it.
+
+`kapow route` registers/deregisters a route, which maps an
+`HTTP` method and a URL pattern to the code that will handle the request.
+
+When registering, you can specify an *entrypoint*, which defaults to `/bin/sh -c`,
+and an argument to it, the *command*.
+
+To deregister a route you must provide a *route_id*.
+
+**Notes**:
+ * The entrypoint definition matches *Docker*'s.
+ * The index matches the way *netfilter*'s `iptables` handles rule numbering.
+
+
+#### **Environment**
+- `KAPOW_URL`
+
+
+#### **Help**
+```sh
+$ kapow route --help
+Usage: kapow route [OPTIONS] COMMAND [ARGS]...
+
+Options:
+  --help  Show this message and exit.
+
+Commands:
+  add
+  remove
+```
+```sh
+$ kapow route add --help
+Usage: kapow route add [OPTIONS] URL_PATTERN [COMMAND_FILE]
+
+Options:
+  -c, --command TEXT
+  -e, --entrypoint TEXT
+  -X, --method TEXT
+  --url TEXT
+  --help                 Show this message and exit.
+```
+```sh
+$ kapow route remove --help
+Usage: kapow route remove [OPTIONS] ROUTE_ID
+
+Options:
+  --url TEXT
+  --help      Show this message and exit.
+```
 
 
 #### Example
-
+```sh
+kroute add -X GET '/list/{ip}' -c 'nmap -sL $(request /matches/ip) | response /body'
+```
 
 ### `request`
 
+Exposes the requests' resources.
+
+
+#### **Environment**
+- `KAPOW_URL`
+- `KAPOW_HANDLER_ID`
+
 
 #### Example
+```sh
+# Access the body of the request
+request /body
+```
 
 
 ### `response`
 
+Exposes the response's resources.
+
+
+#### **Environment**
+- `KAPOW_URL`
+- `KAPOW_HANDLER_ID`
+
 
 #### Example
+```sh
+# Write to the body of the response
+echo 'Hello, World!' | response /body
+```
 
 
 ## An End-to-End Example
+```sh
+$ cat nmap.kpow
+kroute add -X GET '/list/{ip}' -c 'nmap -sL $(request /matches/ip) | response /body'
+```
+```sh
+$ kapow ./nmap.kapow
+```
+```sh
+$ curl $KAPOW_URL/list/127.0.0.1
+Starting Nmap 7.70 ( https://nmap.org ) at 2019-05-30 14:45 CEST
+Nmap scan report for localhost (127.0.0.1)
+Host is up (0.00011s latency).
+Not shown: 999 closed ports
+PORT   STATE SERVICE
+22/tcp open  ssh
+
+Nmap done: 1 IP address (1 host up) scanned in 0.06 seconds
+```
 
 
 ## Test Suite Notes
