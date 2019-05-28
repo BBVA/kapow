@@ -202,7 +202,7 @@ Accepts JSON data that defines a new route to be appended to the current routes.
   }
   ```
 * **Success Responses**:
-  * **Code**: `200 OK`<br />
+  * **Code**: `201 Created`<br />
     **Header**: `Content-Type: application/json`<br />
     **Content**:<br />
     ```
