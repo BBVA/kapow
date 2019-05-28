@@ -489,7 +489,10 @@ Returns the value of the requested resource path, or an error if the resource pa
     **Code**: `400 Invalid Resource Path`<br />
     **Notes**: Check the list of valid resource paths at the top of this section.
   * **Code**: `404 Not Found`
-* **Sample Call**: TODO
+* **Sample Call**:
+  ```
+  $ curl /handlers/$KAPOW_HANDLER_ID/request/body
+  ```
 * **Notes**: TODO
 
 
@@ -509,6 +512,10 @@ Returns the value of the requested resource path, or an error if the resource pa
   * **Code**: `404 Name Not Found`<br />
     **Notes**: Although the resource path is correct, no such name is present in the request.  For instance, `/request/headers/Foo`, when no `Foo` header is not present in the request.
 * **Sample Call**:
+  ```
+  FIXME: python snippet instead?
+  $ curl -X PUT /handlers/$KAPOW_HANDLER_ID/response/body < /tmp/some_file
+  ```
 * **Notes**:
 
 
