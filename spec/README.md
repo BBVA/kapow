@@ -20,23 +20,11 @@ history.
 
 There are some concepts in HTTP and the shell that **resemble each other**.
 
-```
-                 +------------------------+-------------------------+
-                 | HTTP                   | Shell                   |
-  +--------------+------------------------+-------------------------+
-  | Input        | POST form-encoding     | Command line parameters |
-  | Parameters   | GET parameters         | Environment variables   |
-  |              | Headers                |                         |
-  |              | Serialized body (JSON) |                         |
-  +--------------+------------------------+-------------------------+
-  | Data Streams | Response/Request Body  | stdin/stdout/stderr     |
-  |              | Websocket              | Input/Output files      |
-  |              | Uploaded files         |                         |
-  +--------------+------------------------+-------------------------+
-  | Control      | Status codes           | Signals                 |
-  |              | HTTP Methods           | Exit Codes              |
-  +--------------+------------------------+-------------------------+
-```
+  |                        | HTTP                                                                           | Shell                                              |
+  |------------------------|--------------------------------------------------------------------------------|----------------------------------------------------|
+  | Input<br /> Parameters | POST form-encoding<br >Get parameters<br />Headers<br />Serialized body (JSON) | Command line parameters<br />Environment variables |
+  | Data Streams           | Response/Request Body<br />Websocket<br />Uploaded files                       | stdin/stdout/stderr<br />Input/Output files        |
+  | Control                | Status codes<br />HTTP Methods                                                 | Signals<br />Exit Codes                            |
 
 Any tool designed to give an HTTP interface to an existing shell command
 **must map concepts from both domains**.  For example:
