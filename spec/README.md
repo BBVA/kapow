@@ -180,8 +180,24 @@ Returns JSON data about the current routes.
 * **Method**: `GET`
 * **Success Responses**:
   * **Code**: `200 OK`<br />
-    **Content**: TODO
-* **Sample Call**: TODO
+    **Content**:<br />
+    ```
+    [
+      {
+        "method": "GET",
+        "url_pattern": "/hello",
+        "entrypoint": null,
+        "command": "echo Hello World | response /body"
+      },
+      {
+        "method": "POST",
+        "url_pattern": "/bye",
+        "entrypoint": null,
+        "command": "echo Bye World | response /body"
+      }
+    ]
+    ```
+* **Sample Call**: `$ curl $KAPOW_URL/routes`
 * **Notes**: Currently all routes are returned; in the future, a filter may be accepted.
 
 
@@ -217,13 +233,35 @@ Accepts JSON data that defines a new route to be appended to the current routes.
 * **Error Responses**:
   * **Code**: `400 Malformed JSON`
   * **Code**: `400 Invalid Data Type`
+  * **Code**: `400 Invalid Route Spec`
   * **Code**: `400 Missing Mandatory Field`<br />
     **Header**: `Content-Type: application/json`<br />
-    **Content**: `{ "mandatory_fields": ["field1", "field2", "and so on"] }`
-* **Sample Call**: TODO
+    **Content**:
+    ```
+    {
+      "missing_mandatory_fields": [
+        "url_pattern",
+        "command"
+      ]
+    }
+    ```
+* **Sample Call**:
+    ```
+    $ curl -X POST --data-binary @- $KAPOW_URL/routes <<EOF
+    {
+      "method": "GET",
+      "url_pattern": "/hello",
+      "entrypoint": null,
+      "command": "echo Hello World | response /body",
+      "index": 0
+    }
+    EOF
+    ```
 * **Notes**:
   * A successful request will yield a response containing all the effective
     parameters that were applied.
+  * Kapow! won't try to validate the submitted command.  Any errors will happen
+    at runtime, and trigger a `500` status code.
 
 
 #### Insert a route
@@ -259,11 +297,34 @@ Accepts JSON data that defines a new route to be appended to the current routes.
 * **Error Responses**:
   * **Code**: `400 Malformed JSON`
   * **Code**: `400 Invalid Data Type`
+  * **Code**: `400 Invalid Route Spec`
   * **Code**: `400 Missing Mandatory Field`<br />
     **Header**: `Content-Type: application/json`<br />
-    **Content**: `{ "mandatory_fields": ["field1", "field2", "and so on"] }`
+    **Content**:
+    ```
+    {
+      "missing_mandatory_fields": [
+        "url_pattern",
+        "command"
+      ]
+    }
+    ```
   * **Code**: `400 Invalid Index Type`
-* **Sample Call**: TODO
+  * **Code**: `400 Index Already in Use`
+  * **Code**: `404 Invalid Index`
+  * **Code**: `404 Invalid Route Spec`
+* **Sample Call**:
+    ```
+    $ curl -X PUT --data-binary @- $KAPOW_URL/routes <<EOF`
+    {
+      "method": "GET",
+      "url_pattern": "/hello",
+      "entrypoint": null,
+      "command": "echo Hello World | response /body",
+      "index": 0
+    }
+    EOF
+    ```
 * **Notes**:
   * Route numbering starts at zero.
   * When `index` is not provided or is less than `0` the route will be inserted
@@ -282,10 +343,22 @@ Removes the route identified by `:id`.
 * **Method**: `DELETE`
 * **Success Responses**:
   * **Code**: `200 OK`<br />
-    **Content**: TODO
+    **Content**:
+    ```
+    {
+      "method": "GET",
+      "url_pattern": "/hello",
+      "entrypoint": null,
+      "command": "echo Hello World | response /body",
+      "index": 0
+    }
+    ```
 * **Error Responses**:
   * **Code**: `404 Not Found`
-* **Sample Call**: TODO
+* **Sample Call**:
+  ```
+  $ curl -X DELETE $KAPOW_URL/routes/ROUTE_1f186c92_f906_4506_9788_a1f541b11d0f
+  ```
 * **Notes**:
 
 
