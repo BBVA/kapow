@@ -493,7 +493,7 @@ Returns the value of the requested resource path, or an error if the resource pa
   ```sh
   $ curl /handlers/$KAPOW_HANDLER_ID/request/body
   ```
-* **Notes**: TODO
+* **Notes**: The content may be empty.
 
 
 #### Overwrite the value of a resource
