@@ -513,8 +513,7 @@ Returns the value of the requested resource path, or an error if the resource pa
     **Notes**: Although the resource path is correct, no such name is present in the request.  For instance, `/request/headers/Foo`, when no `Foo` header is not present in the request.
 * **Sample Call**:<br />
   ```sh
-  FIXME: python snippet instead?
-  $ curl -X PUT /handlers/$KAPOW_HANDLER_ID/response/body < /tmp/some_file
+  $ curl -X --data-binary '<h1>Hello!</h1>' PUT /handlers/$KAPOW_HANDLER_ID/response/body
   ```
 * **Notes**:
 
