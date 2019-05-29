@@ -224,7 +224,7 @@ Accepts JSON data that defines a new route to be appended to the current routes.
   * **Code**: `400 Invalid Route Spec`
   * **Code**: `400 Missing Mandatory Field`<br />
     **Header**: `Content-Type: application/json`<br />
-    **Content**:
+    **Content**:<br />
     ```json
     {
       "missing_mandatory_fields": [
@@ -233,7 +233,7 @@ Accepts JSON data that defines a new route to be appended to the current routes.
       ]
     }
     ```
-* **Sample Call**:
+* **Sample Call**:<br />
     ```sh
     $ curl -X POST --data-binary @- $KAPOW_URL/routes <<EOF
     {
@@ -288,7 +288,7 @@ Accepts JSON data that defines a new route to be appended to the current routes.
   * **Code**: `400 Invalid Route Spec`
   * **Code**: `400 Missing Mandatory Field`<br />
     **Header**: `Content-Type: application/json`<br />
-    **Content**:
+    **Content**:<br />
     ```json
     {
       "missing_mandatory_fields": [
@@ -301,7 +301,7 @@ Accepts JSON data that defines a new route to be appended to the current routes.
   * **Code**: `400 Index Already in Use`
   * **Code**: `404 Invalid Index`
   * **Code**: `404 Invalid Route Spec`
-* **Sample Call**:
+* **Sample Call**:<br />
     ```sh
     $ curl -X PUT --data-binary @- $KAPOW_URL/routes <<EOF`
     {
@@ -331,7 +331,7 @@ Removes the route identified by `:id`.
 * **Method**: `DELETE`
 * **Success Responses**:
   * **Code**: `200 OK`<br />
-    **Content**:
+    **Content**:<br />
     ```json
     {
       "method": "GET",
@@ -343,7 +343,7 @@ Removes the route identified by `:id`.
     ```
 * **Error Responses**:
   * **Code**: `404 Not Found`
-* **Sample Call**:
+* **Sample Call**:<br />
   ```sh
   $ curl -X DELETE $KAPOW_URL/routes/ROUTE_1f186c92_f906_4506_9788_a1f541b11d0f
   ```
@@ -489,7 +489,7 @@ Returns the value of the requested resource path, or an error if the resource pa
     **Code**: `400 Invalid Resource Path`<br />
     **Notes**: Check the list of valid resource paths at the top of this section.
   * **Code**: `404 Not Found`
-* **Sample Call**:
+* **Sample Call**:<br />
   ```sh
   $ curl /handlers/$KAPOW_HANDLER_ID/request/body
   ```
@@ -511,7 +511,7 @@ Returns the value of the requested resource path, or an error if the resource pa
   * **Code**: `404 Handler Not Found`
   * **Code**: `404 Name Not Found`<br />
     **Notes**: Although the resource path is correct, no such name is present in the request.  For instance, `/request/headers/Foo`, when no `Foo` header is not present in the request.
-* **Sample Call**:
+* **Sample Call**:<br />
   ```sh
   FIXME: python snippet instead?
   $ curl -X PUT /handlers/$KAPOW_HANDLER_ID/response/body < /tmp/some_file
