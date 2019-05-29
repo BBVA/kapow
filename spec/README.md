@@ -5,8 +5,8 @@
 
 Because we think that:
 
-- UNIX is great and we love it
-- The UNIX shell is great
+- UNIX® is great and we love it
+- The UNIX® shell is great
 - HTTP interfaces are convenient and everywhere
 - CGI is not a good way to mix them
 
@@ -76,7 +76,7 @@ incapable in others.
 
 ### Why not CGI?
 
-* CGI is also **rigid** about how it matches between HTTP and UNIX process
+* CGI is also **rigid** about how it matches between HTTP and UNIX® process
   concepts.  Notably CGI *meta-variables* are injected into the script's
   environment; this behavior can and has been exploited by nasty attacks such as
   [Shellshock](https://en.wikipedia.org/wiki/Shellshock_(software_bug)).
@@ -89,7 +89,7 @@ incapable in others.
 ## What?
 
 We named it Kapow!.  It is pronounceable, short and meaningless...  like every
-good UNIX command ;-)
+good UNIX® command ;-)
 
 TODO: Definition
 
