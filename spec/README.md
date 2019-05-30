@@ -68,10 +68,10 @@ incapable in others.
 * Custom code = More bugs
 * Security issues (command injection, etc)
 * Dependency on developers
-* **"A programming language is low level when its programs require attention to
-  the irrelevant"** *Alan Perlis*
-* **There is more Unix-nature in one line of shell script than there is in ten
-  thousand lines of C** *Master Foo*
+* *"A programming language is low level when its programs require attention to
+  the irrelevant."<br />&mdash;Alan Perlis*
+* *"There is more Unix-nature in one line of shell script than there is in ten
+  thousand lines of C."<br />&mdash;Master Foo*
 
 
 ### Why not CGI?
