@@ -470,7 +470,7 @@ You can run it by ...
 Any compliant implementation of Kapow! must provide these commands:
 
 
-### `kapow`
+### `kapow server`
 
 This implements the server, XXX
 

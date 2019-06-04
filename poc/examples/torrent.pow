@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-kroute add / - <<-'EOF'
+kapow route add / - <<-'EOF'
 	response /header/Content-Type text/html
 	response /body <<-HTML
 		<html>
@@ -27,7 +27,7 @@ kroute add / - <<-'EOF'
 	HTML
 EOF
 
-kroute add /save/magnet -e '/bin/bash -c' - <<-'EOF'
+kapow route add /save/magnet -e '/bin/bash -c' - <<-'EOF'
 	link=$(request /param/link)
 	[ -z $link ] && response /status 400 && exit 0
 
@@ -40,4 +40,4 @@ kroute add /save/magnet -e '/bin/bash -c' - <<-'EOF'
 	response /header/Location /torrent/list
 EOF
 
-kroute add /torrent/list -c 'response /body "Not Implemented Yet"'
+kapow route add /torrent/list -c 'response /body "Not Implemented Yet"'
