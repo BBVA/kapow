@@ -657,7 +657,7 @@ Options:
 
 #### Example
 ```sh
-kroute add -X GET '/list/{ip}' -c 'nmap -sL $(request /matches/ip) | response /body'
+kapow route add -X GET '/list/{ip}' -c 'nmap -sL $(request /matches/ip) | response /body'
 ```
 
 ### `request`
@@ -697,7 +697,7 @@ echo 'Hello, World!' | response /body
 ## An End-to-End Example
 ```sh
 $ cat nmap.kpow
-kroute add -X GET '/list/{ip}' -c 'nmap -sL $(request /matches/ip) | response /body'
+kapow route add -X GET '/list/{ip}' -c 'nmap -sL $(request /matches/ip) | response /body'
 ```
 ```sh
 $ kapow ./nmap.kapow
