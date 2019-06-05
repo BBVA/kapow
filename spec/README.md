@@ -96,6 +96,18 @@ TODO: Definition
 TODO: Intro to Architecture
 
 
+### Core Concepts
+
+In this section we are going to define several concepts that will be used frequently throughout the spec.
+
+
+#### `entrypoint`
+
+The entrypoint definition matches *Docker*'s shell form of it.
+Technically it's a string which is to be passed to the `command` (`/bin/bash -c`
+by default) as the code to be interpreted or executed when attending requests.
+
+
 ### API
 
 Kapow! server interacts with the outside world only through its HTTP API.  Any
@@ -114,6 +126,7 @@ whole lifetime of the server.
 
 ## Design Principles
 
+* We reuse conventions of well-established software projects, such as Docker.
 * All requests and responses will leverage JSON as the data encoding method.
 * The API calls responses will have two distinct parts:
   * The HTTP status code (e.g., `400`, which is a bad request).  The target
@@ -601,7 +614,7 @@ and an argument to it, the *command*.
 To deregister a route you must provide a *route_id*.
 
 **Notes**:
- * The entrypoint definition matches *Docker*'s.
+ * The entrypoint definition matches *Docker*'s shell form of it.
  * The index matches the way *netfilter*'s `iptables` handles rule numbering.
 
 
