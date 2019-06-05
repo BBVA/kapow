@@ -16,26 +16,26 @@
 # limitations under the License.
 #
 
-kroute add /list/files -c 'ls -la $(request /params/path) | response /body'
+kapow route add /list/files -c 'ls -la $(request /params/path) | response /body'
 
-kroute add /list/processes -c 'ps -aux | response /body'
+kapow route add /list/processes -c 'ps -aux | response /body'
 
-kroute add /show/cpuinfo -c 'response /body < /proc/cpuinfo'
+kapow route add /show/cpuinfo -c 'response /body < /proc/cpuinfo'
 
-kroute add /show/memory -c 'free -m | response /body'
+kapow route add /show/memory -c 'free -m | response /body'
 
-kroute add /show/disk -c 'df -h | response /body'
+kapow route add /show/disk -c 'df -h | response /body'
 
-kroute add /show/connections -c 'ss -pluton | response /body'
+kapow route add /show/connections -c 'ss -pluton | response /body'
 
-kroute add /show/mounts -c 'mount | response /body'
+kapow route add /show/mounts -c 'mount | response /body'
 
-kroute add /tail/dmesg - <<-'EOF'
+kapow route add /tail/dmesg - <<-'EOF'
 	response /headers/Content-Type text/plain
 	dmesg -w | response /stream
 EOF
 
-kroute add /tail/journal - <<-'EOF'
+kapow route add /tail/journal - <<-'EOF'
 	response /headers/Content-Type text/plain
 	journalctl -f | response /stream
 EOF

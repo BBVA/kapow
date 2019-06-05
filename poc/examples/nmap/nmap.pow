@@ -16,4 +16,4 @@
 # limitations under the License.
 #
 
-kroute add -X GET '/list/{ip}' -c 'nmap -sL $(request /matches/ip) | response /body'
+kapow route add -X GET '/list/{ip}' -c 'nmap -sL $(request /matches/ip) | response /body'

@@ -537,7 +537,7 @@ You can run it by ...
 Any compliant implementation of Kapow! must provide these commands:
 
 
-### `kapow`
+### `kapow server`
 
 This is the master command, that shows the help if invoked without args, and
 runs the sub-commands when provided to it.

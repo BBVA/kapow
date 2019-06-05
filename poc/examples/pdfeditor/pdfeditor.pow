@@ -16,5 +16,5 @@
 # limitations under the License.
 #
 
-kroute add -X POST --entrypoint ./topdf '/editor/pdf' 
-kroute add / -c 'response /headers/Content-Type text/html && response /body < pdfeditor.html'
+kapow route add -X POST --entrypoint ./topdf '/editor/pdf' 
+kapow route add / -c 'response /headers/Content-Type text/html && response /body < pdfeditor.html'
