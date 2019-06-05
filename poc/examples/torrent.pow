@@ -17,7 +17,7 @@
 #
 
 kapow route add / - <<-'EOF'
-	response /header/Content-Type text/html
+	response /headers/Content-Type text/html
 	response /body <<-HTML
 		<html>
 		<body>
@@ -28,7 +28,7 @@ kapow route add / - <<-'EOF'
 EOF
 
 kapow route add /save/magnet -e '/bin/bash -c' - <<-'EOF'
-	link=$(request /param/link)
+	link=$(request /params/link)
 	[ -z $link ] && response /status 400 && exit 0
 
 	watch_folder=/tmp
@@ -37,7 +37,7 @@ kapow route add /save/magnet -e '/bin/bash -c' - <<-'EOF'
 	echo "d10:magnet-uri${#link}:${link}e" > "meta-${BASH_REMATCH[1]}.torrent"
 
 	response /status 302
-	response /header/Location /torrent/list
+	response /headers/Location /torrent/list
 EOF
 
 kapow route add /torrent/list -c 'response /body "Not Implemented Yet"'

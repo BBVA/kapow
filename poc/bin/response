@@ -24,17 +24,17 @@ import requests
 
 @click.command()
 @click.option("--url", envvar='KAPOW_URL')
-@click.option("--connection", envvar='KAPOW_CONNECTION')
+@click.option("--handler-id", envvar='KAPOW_HANDLER_ID')
 @click.argument("path", nargs=1)
 @click.argument("value", required=False)
-def response(url, connection, path, value):
+def response(url, handler_id, path, value):
     if value is None:
         data = sys.stdin.buffer
     else:
         data = value.encode('utf-8')
 
     try:
-        response = requests.put(f"{url}/connections/{connection}/response{path}",
+        response = requests.put(f"{url}/handlers/{handler_id}/response{path}",
                                 data=data)
     except requests.exceptions.ConnectionError:
         return False

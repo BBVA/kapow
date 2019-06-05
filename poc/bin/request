@@ -16,4 +16,4 @@
 # limitations under the License.
 #
 
-curl -sf ${KAPOW_URL}/connections/${KAPOW_CONNECTION}/request$1
+curl -sf "${KAPOW_URL}/handlers/${KAPOW_HANDLER_ID}/request$1"
