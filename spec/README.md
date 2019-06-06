@@ -340,7 +340,7 @@ Accepts JSON data that defines a new route to be appended to the current routes.
 
 Removes the route identified by `:id`.
 
-* **URL**: `/routes/:id`
+* **URL**: `/routes/:id` # FIXME: Héctor points out that this seems inconsistent, since there are no previous mentions to route_id
 * **Method**: `DELETE`
 * **Success Responses**:
   * **Code**: `200 OK`<br />
