@@ -1,0 +1,11 @@
+kapow route add '/' -c 'static /assets slides.html'
+
+kapow route add '/tour/assets/{filename:.*}' -c 'static /assets "$(request /matches/filename)"'
+
+kapow route add '/tour/terminal/frame' -c 'response /headers/Location "//$(request /host | sed 's/:8080/:9000/g')" && response /status 302'
+kapow route add '/tour/terminal/sendkeys' -c 'tmux send-keys -t tutorial.0 "$(request /params/s)" ENTER && response /status 204'
+kapow route add '/tour/terminal/clearshell' -c 'tmux send-keys -t tutorial.0 C-l && response /status 204'
+
+./gotty --port 9000 -w -- tmux new-session -A -s tutorial /bin/bash --login
+
+exit

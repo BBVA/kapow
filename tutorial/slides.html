@@ -1,0 +1,65 @@
+<!doctype html>
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Kapow! Guided Tour</title>
+		<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/reveal.js@3.8.0/css/reveal.css">
+			<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/reveal.js@3.8.0/lib/css/monokai.css">
+		<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/reveal.js@3.8.0/css/theme/white.css">
+
+		<!--[if lt IE 9]>
+		<script src="//cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+		<![endif]-->
+	</head>
+
+	<body onLoad="self.focus()">
+		<div class="reveal" style="height: 80%">
+			<div class="slides">
+				<section data-markdown="/tour/assets/kapow.md"
+					 data-separator="^---$"
+					 data-separator-vertical="^--$"
+					 data-separator-notes="^Note:"
+					 data-charset="utf-8"
+					 data-background-image="/tour/assets/sbackground.png"
+					 data-background-opacity=".20">
+				    <!--
+					Note that Windows uses `\r\n` instead of `\n` as its linefeed character.
+					For a regex that supports all operating systems, use `\r?\n` instead of `\n`.
+				    -->
+				</section>
+			</div>
+		</div>
+
+		<iframe src="/tour/terminal/frame" style="width: 100%; height: 20%"></iframe>
+
+		<script src="//cdn.jsdelivr.net/npm/reveal.js@3.8.0/js/reveal.min.js"></script>
+		<script src="//cdn.jsdelivr.net/npm/reveal.js@3.8.0/plugin/markdown/marked.js"></script>
+		<script src="//cdn.jsdelivr.net/npm/reveal.js@3.8.0/plugin/markdown/markdown.js"></script>
+
+		<script>
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				controlsTutorial: true,
+				controlsBackArrows: 'faded',
+				slideNumber: true,
+				progress: true,
+				center: true,
+				touch: true,
+				transition: 'slide',
+				hash: true,
+				fragments: true,
+				fragmentInURL: true,
+				history: true,
+				embedded: true,
+				// More info https://github.com/hakimel/reveal.js#dependencies
+				dependencies: [
+					{ src: '//cdn.jsdelivr.net/npm/reveal.js@3.8.0/plugin/highlight/highlight.js', async: true },
+				]
+			});
+			Reveal.addEventListener('clearshell', () => fetch('/tour/terminal/clearshell'));
+		</script>
+	</body>
+</html>
