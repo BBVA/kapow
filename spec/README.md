@@ -405,6 +405,7 @@ following resource paths:
 │
 ├─ request                      All information related to the HTTP request.  Read-Only
 │  ├──── method                 Used HTTP Method (GET, POST)
+│  ├──── host                   Host part of the URL
 │  ├──── path                   Complete URL path (URL-unquoted)
 │  ├──── matches                Previously matched URL path parts
 │  │     └──── <name>

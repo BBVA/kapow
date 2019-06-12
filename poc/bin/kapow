@@ -72,6 +72,8 @@ class Connection:
             return self.request.content
         elif res.path == 'request/path':
             return self.request.path.encode('utf-8')
+        elif res.path == 'request/host':
+            return self.request.host.encode('utf-8')
         elif res.path.startswith('request/matches/'):
             return self.request.match_info[nth(2)].encode('utf-8')
         elif res.path.startswith('request/params/'):
