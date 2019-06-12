@@ -15,7 +15,7 @@ else
 			;;
 	  *)
 			response /status 200
-			response /header/Content-Type "$(python -m mimetypes "$BASE/$REAL" | awk '/type:/ {print $2; exit 0}; !/type:/ {print "application/octet-stream"}')"
+			response /headers/Content-Type "$(python -m mimetypes "$BASE/$REAL" | awk '/type:/ {print $2; exit 0}; !/type:/ {print "application/octet-stream"}')"
 			response /body < "$BASE/$REAL"
 	esac
 fi
