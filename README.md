@@ -116,7 +116,8 @@ mechanism that we can leverage precisely for this purpose.
 Let's write a `multiline.pow` file with the following content:
 
 ```bash
-	kapow route add /log_and_love - <<- 'EOF'
+kapow route add /log_and_love - <<- 'EOF'
+	echo "[$(date)] and stuff" >> stuff.log
 	echo love | response /body
 EOF
 ```
