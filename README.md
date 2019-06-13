@@ -2,98 +2,145 @@
 
 **Kapow!** allows you to leverage the Ultimate Power™ of the UNIX® shell via HTTP.
 
-# Warning!!!
 
-**Warning!! Kapow!** is in the process of being defined by a [specification](/spec/) the provided code it's an unstable Proof of Concept. 
+# CAVEAT EMPTOR
 
-## How Kapow! born
+**Warning!!! Kapow!** is in the process of being defined by a
+[specification](/spec/); the provided code is an *unsupported* Proof of Concept.
+Ye be warned.
 
-Some awesome history it's comming.
+
+## How Kapow! was born
+
+Some awesome history is coming.
+
 
 # What is Kapow!
-Kapow! is an adapter between the world of Pure Unix Shell and a HTTP service.
 
-Some tasks are more convenient in the shell. Like cloud interactions, or some adminstration tools. In the other side some tasks are more convenient as a service. Like DevSecOps tooling.
+Kapow! is an adapter between the world of Pure UNIX® Shell and an HTTP service.
 
-Kapow! lies between this two worlds, making you life easier. Maybe you wonder about how kind of magic happen, if you want to know the very last detail just read our [spec](/spec/). If you need to know how Kapow! can you help first, let start with a common situation.
+Some tasks are more convenient in the shell, like cloud interactions, or some
+administrative tools.  On the other hand, some tasks are more convenient as a
+service, like DevSecOps tooling.
 
-Think about that awesome command that you use every day, something very confortable, like `cloudx storage ls /backups`. Then someone ask you for an specific backup, so you go into the machine throught ssh, execute your command (maybe you `grep` it), copy the result and send it. And everything it's ok... for the 100 first times.
+Kapow! lies between these two worlds, making your life easier.  Maybe you wonder
+about how this kind of magic can happen; if you want to know the nitty-gritty
+details, just read our [spec](/spec/).  Or, if you want to know how Kapow! can
+help you first, let's start with a common situation.
 
-Then you decide, let's use the API for this and generate an awesome web server with it. So, create a proyect, manage their dependencies, code the server, parse the request, learn how to use the API, call the API and deploy somewere. And everything it's ok... until you find again in the same situation with another awesome command.
+Think about that awesome command that you use every day, something very
+familiar, like `cloudx storage ls /backups`.  Then someone asks you for an
+specific backup, so you log into the host via ssh, execute your command
+(maybe you `grep` it), copy the result and send it.  And that's fine...
+for the 100 first times.
 
-The awensomeness of unix commands it's infinite, so you'll be in this situation infinite times!!. Let's put Kapow! in this equation.
+Then you decide, let's use an API for this and generate an awesome web server
+with it.  So, you create a project, manage its dependencies, code the server,
+parse the request, learn how to use the API, call the API and deploy it
+somewhere.  And that's fine... until you find yourself again in the same
+situation with another awesome command.
 
-With Kapow! when someone ask you for an specific backup (remember your confortable command?) you create a pow file named "backups.pow" that contains:
+The awesomeness of UNIX® commands is infinite, so you'll be in this situation
+an infinite number of times!  Instead, let's put Kapow! into action.
+
+With Kapow!, when someone asks you for an specific backup (remember your
+familiar command?) you just need to create a `.pow` file named `backups.pow`
+that contains:
+
 ```bash
-kapow route add '/backups' \
+kapow route add /backups \
     -c 'cloudx storage ls /backups | grep $(request /params/query) | response /body'
 ```
 
-And execute in the machine with the command:
+And execute it in the host with the command:
 ```bash
 kapow server backups.pow
 ```
 
-And that's it. Done. Do you like it? yes? let's start learning a litte more.
+and that's it.  Done.  Do you like it? yes?  Then let's start learning a little
+more.
 
-## The obligatory Hello World (for www boys)
 
-First you must create a pow file named "hello.pow" with the following contents:
+## The mandatory Hello World (for WWW boys&girls)
+
+First you must create a pow file named `hello.pow` with the following contents:
+
 ```bash
-kapow route add "/greet" -c "echo 'hello world' | response /body"
+kapow route add /greet -c "echo 'hello world' | response /body"
 ```
 
-Then you must execute:
+then, you must execute:
+
 ```bash
 kapow server hello.pow
 ```
-And you can check the works as intented with our good old curl:
+
+and you can check that it works as intended with good ole' `curl`:
+
 ```bash
 curl localhost:8080/greet
 ```
 
-## The obligatory Echo (for UNIX boys)
-First you must create a pow file named "echo.pow" with the following contents:
+
+## The mandatory Echo (for UNIX boys&girls)
+
+First you must create a pow file named `echo.pow` with the following contents:
+
 ```bash
-kapow route add -X POST "/echo" -c "request /body | response /body"
+kapow route add -X POST /echo -c 'request /body | response /body'
 ```
 
-Then you must execute:
+then, you must execute:
+
 ```bash
 kapow server echo.pow
 ```
-And you can check the works as intented with our good old curl:
+
+and you can check that it works as intended with good ole `curl`:
+
 ```bash
-curl -X POST -d "1,2,3... testing" localhost:8080/echo
+curl -X POST -d '1,2,3... testing' localhost:8080/echo
 ```
 
+
 ## The multiline fun
-Unless you're a hardcore Perl boy, you need write your stuff in more than one line.
 
-Don't worry, we need write several lines too. Bash, in their magnificent UNIX flavour bring us HERE doc.
+Unless you're a hardcore Perl hacker, you'll probably need to write your stuff
+over more than one line.
 
-Let's write a "multiline.pow" file with the following content:
+Don't worry, we need to write several lines, too.  Bash, in its magnificent
+UNIX® style, provides us with the HERE doc mechanism that we can leverage
+precisely for this purpose.
+
+Let's write a `multiline.pow` file with the following content:
+
 ```bash
-kapow route add "/log_and_love" - <<-'EOF'
+kapow route add /log_and_love - <<-'EOF'
 echo "[$(date)] and stuff" >> stuff.log
-echo "love" | response /body
+echo love | response /body
 EOF
 ```
 
-And then we serve it with kapow:
+and then we serve it with `kapow``:
+
 ```bash
 kapow server multiline.pow
 ```
 
-As simple as that.
+Yup.  As simple as that.
+
 
 # Sample Docker usage
+
 ## Clone the project
+
 ```bash
 # clone this project
 ```
 
+
 ## Build the kapow! docker image
+
 ```bash
 docker build -t bbva/kapow:0.1 /path/to/kapow/poc
 ```
