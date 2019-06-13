@@ -109,15 +109,15 @@ Unless you're a hardcore Perl hacker, you'll probably need to write your stuff
 over more than one line.
 
 Don't worry, we need to write several lines, too.  Bash, in its magnificent
-UNIX® style, provides us with the HERE doc mechanism that we can leverage
-precisely for this purpose.
+UNIX® style, provides us with the
+[here-documents](https://www.gnu.org/software/bash/manual/bash.html#Here-Documents)
+mechanism that we can leverage precisely for this purpose.
 
 Let's write a `multiline.pow` file with the following content:
 
 ```bash
-kapow route add /log_and_love - <<-'EOF'
-echo "[$(date)] and stuff" >> stuff.log
-echo love | response /body
+	kapow route add /log_and_love - <<- 'EOF'
+	echo love | response /body
 EOF
 ```
 
