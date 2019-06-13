@@ -121,7 +121,7 @@ echo love | response /body
 EOF
 ```
 
-and then we serve it with `kapow``:
+and then we serve it with `kapow`:
 
 ```bash
 kapow server multiline.pow
