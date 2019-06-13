@@ -31,7 +31,7 @@ help you first, let's start with a common situation.
 Think about that awesome command that you use every day, something very
 familiar, like `cloudx storage ls /backups`.  Then someone asks you for an
 specific backup, so you `ssh` into the host, execute your command, possibly
-`grepping` through its output, copy the result and send it to him.  And that's fine...
+`grepping` through its output, copy the result and send it back to him. And that's fine...
 for the 100 first times.
 
 Then you decide, let's use an API for this and generate an awesome web server
