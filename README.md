@@ -52,7 +52,7 @@ kapow route add /backups \
     -c 'cloudx storage ls /backups | grep $(request /params/query) | response /body'
 ```
 
-And execute it in the host with the command:
+and execute it in the host with the command:
 ```bash
 kapow server backups.pow
 ```
@@ -61,7 +61,7 @@ and that's it.  Done.  Do you like it? yes?  Then let's start learning a little
 more.
 
 
-## The mandatory Hello World (for WWW boys&girls)
+## The mandatory Hello World (for WWW fans)
 
 First you must create a pow file named `hello.pow` with the following contents:
 
@@ -82,7 +82,7 @@ curl localhost:8080/greet
 ```
 
 
-## The mandatory Echo (for UNIX boys&girls)
+## The mandatory Echo (for UNIX fans)
 
 First you must create a pow file named `echo.pow` with the following contents:
 
