@@ -30,9 +30,9 @@ help you first, let's start with a common situation.
 
 Think about that awesome command that you use every day, something very
 familiar, like `cloudx storage ls /backups`.  Then someone asks you for an
-specific backup, so you log into the host via ssh, execute your command
-(maybe you `grep` it), copy the result and send it.  And that's fine...
-for the 100 first times.
+specific backup, so you log into the host via ssh, execute your command,
+possibly `grep`ping through its output, copy the result and send it.  And that's
+fine... for the 100 first times.
 
 Then you decide, let's use an API for this and generate an awesome web server
 with it.  So, you create a project, manage its dependencies, code the server,
