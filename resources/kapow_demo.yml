@@ -1,0 +1,411 @@
+# The configurations that used for the recording, feel free to edit them
+config:
+
+  # Specify a command to be executed
+  # like `/bin/bash -l`, `ls`, or any other commands
+  # the default is bash for Linux
+  # or powershell.exe for Windows
+  command: bash -l
+  
+  # Specify the current working directory path
+  # the default is the current working directory path
+  cwd: /tmp/kapow
+  
+  # Export additional ENV variables
+  env:
+    recording: true
+  
+  # Explicitly set the number of columns
+  # or use `auto` to take the current
+  # number of columns of your shell
+  cols: 174
+  
+  # Explicitly set the number of rows
+  # or use `auto` to take the current
+  # number of rows of your shell
+  rows: 42
+  
+  # Amount of times to repeat GIF
+  # If value is -1, play once
+  # If value is 0, loop indefinitely
+  # If value is a positive number, loop n times
+  repeat: 0
+  
+  # Quality
+  # 1 - 100
+  quality: 100
+  
+  # Delay between frames in ms
+  # If the value is `auto` use the actual recording delays
+  frameDelay: 100 
+  
+  # Maximum delay between frames in ms
+  # Ignored if the `frameDelay` isn't set to `auto`
+  # Set to `auto` to prevent limiting the max idle time
+  maxIdleTime: 2000
+  
+  # The surrounding frame box
+  # The `type` can be null, window, floating, or solid`
+  # To hide the title use the value null
+  # Don't forget to add a backgroundColor style with a null as type
+  frameBox:
+    type: floating
+    title: Kapow!
+    style:
+      border: 0px black solid
+      # boxShadow: none
+      # margin: 0px
+  
+  # Add a watermark image to the rendered gif
+  # You need to specify an absolute path for
+  # the image on your machine or a URL, and you can also
+  # add your own CSS styles
+  watermark:
+    imagePath: null
+    style:
+      position: absolute
+      right: 15px
+      bottom: 15px
+      width: 100px
+      opacity: 0.9
+  
+  # Cursor style can be one of
+  # `block`, `underline`, or `bar`
+  cursorStyle: block
+  
+  # Font family
+  # You can use any font that is installed on your machine
+  # in CSS-like syntax
+  fontFamily: "Monaco, Lucida Console, Ubuntu Mono, Monospace"
+  
+  # The size of the font
+  fontSize: 12
+  
+  # The height of lines
+  lineHeight: 1
+  
+  # The spacing between letters
+  letterSpacing: 0
+  
+  # Theme
+  theme:
+    background: "transparent"
+    foreground: "#afafaf"
+    cursor: "#c7c7c7"
+    black: "#232628"
+    red: "#fc4384"
+    green: "#b3e33b"
+    yellow: "#ffa727"
+    blue: "#75dff2"
+    magenta: "#ae89fe"
+    cyan: "#708387"
+    white: "#d5d5d0"
+    brightBlack: "#626566"
+    brightRed: "#ff7fac"
+    brightGreen: "#c8ed71"
+    brightYellow: "#ebdf86"
+    brightBlue: "#75dff2"
+    brightMagenta: "#ae89fe"
+    brightCyan: "#b1c6ca"
+    brightWhite: "#f9f9f4"
+  
+# Records, feel free to edit them
+records:
+  - delay: 357
+    content: "\e]0;cesar@eris:/tmp/kapow\a\e[01;32m[cesar@eris\e[01;37m kapow\e[01;32m]$\e[00m "
+  - delay: 997
+    content: v
+  - delay: 151
+    content: i
+  - delay: 232
+    content: m
+  - delay: 310
+    content: ' '
+  - delay: 372
+    content: h
+  - delay: 157
+    content: e
+  - delay: 225
+    content: l
+  - delay: 387
+    content: l
+  - delay: 255
+    content: o
+  - delay: 497
+    content: .
+  - delay: 280
+    content: p
+  - delay: 233
+    content: o
+  - delay: 188
+    content: w
+  - delay: 593
+    content: "\r\n"
+  - delay: 48
+    content: "\e[?1049h\e[?1h\e=\e[?2004h\e[1;42r\e[?12h\e[?12l\e[22;2t\e[22;1t\e[27m\e[23m\e[29m\e[m\e[H\e[2J\e[?25l\e[42;1H\"hello.pow\" [New File]\e[2;1H▽\e[6n\e[2;1H  \e[1;1H\e[>c\e]10;?\a\e]11;?\a\e[1;1H\e[38;5;11m1   \e[m\e[80C\e[48;5;1m \e[m\r\n\e[38;5;12m~                                                                                                                                                                             \e[3;1H~                                                                                                                                                                             \e[4;1H~                                                                                                                                                                             \e[5;1H~                                                                                                                                                                             \e[6;1H~                                                                                                                                                                             \e[7;1H~                                                                                                                                                                             \e[8;1H~                                                                                                                                                                             \e[9;1H~                                                                                                                                                                             \e[10;1H~                                                                                                                                                                             \e[11;1H~                                                                                                                                                                             \e[12;1H~                                                                                                                                                                             \e[13;1H~                                                                                                                                                                             \e[14;1H~                                                                                                                                                                             \e[15;1H~                                                                                                                                                                             \e[16;1H~                                                                                                                                                                             \e[17;1H~                                                                                                                                                                             \e[18;1H~                                                                                                                                                                             \e[19;1H~                                                                                                                                                                             \e[20;1H~                                                                                                                                                                             \e[21;1H~                                                                                                                                                                             \e[22;1H~                                                                                                                                                                             \e[23;1H~                                                                                                                                                                             \e[24;1H~                                                                                                                                                                             \e[25;1H~                                                                                                                                                                             \e[26;1H~                                                                                                                                                                             \e[27;1H~                                                                                                                                                                             \e[28;1H~                                                                                                                                                                             \e[29;1H~                                                                                                                                                                             \e[30;1H~                                                                                                                                                                             \e[31;1H~                                                                                                                                                                             \e[32;1H~                                                                                                                                                                             \e[33;1H~                                                                                                                                                                             \e[34;1H~                                                                                                                                                                             \e[35;1H~                                                                                                                                                                             \e[36;1H~                                                                                                                                                                             \e[37;1H~                                                                                                                                                                             \e[38;1H~                                                                                                                                                                             \e[39;1H~                                                                                                                                                                             \e[40;1H~                                                                                                                                                                             \e[41;1H~                                                                                                                                                                             \e[m\e[42;157H0,0-1\e[9CAll\e]2;hello.pow (/tmp/kapow) - VIM\a\e]1;hello.pow\a\e[1;5H\e[?25h\e[?12$p"
+  - delay: 903
+    content: "\e[?25l\e[42;1H\e[1m-- INSERT --\e[m\e[42;13H\e[K\e[42;157H0,1\e[11CAll\e[1;5H\e[?25h"
+  - delay: 3021
+    content: "\e[?25lk\e[42;157H1,2\e]2;hello.pow + (/tmp/kapow) - VIM\a\e]1;hello.pow\a\e[1;6H\e[?25h"
+  - delay: 308
+    content: "\e[?25la\e[42;159H3\e[1;7H\e[?25h"
+  - delay: 353
+    content: "\e[?25lp\e[42;159H4\e[1;8H\e[?25h"
+  - delay: 255
+    content: "\e[?25lo\e[42;159H5\e[1;9H\e[?25h"
+  - delay: 502
+    content: "\e[?25lw\e[42;159H6\e[1;10H\e[?25h"
+  - delay: 1179
+    content: "\e[?25l\e[42;159H7\e[1;11H\e[?25h"
+  - delay: 626
+    content: "\e[?25lr\e[42;159H8\e[1;12H\e[?25h"
+  - delay: 261
+    content: "\e[?25lo\e[42;159H9\e[1;13H\e[?25h"
+  - delay: 598
+    content: "\e[?25lu\e[42;159H10\e[1;14H\e[?25h"
+  - delay: 315
+    content: "\e[?25lt\e[42;160H1\e[1;15H\e[?25h"
+  - delay: 251
+    content: "\e[?25le\e[42;160H2\e[1;16H\e[?25h"
+  - delay: 887
+    content: "\e[?25l\e[42;160H3\e[1;17H\e[?25h"
+  - delay: 271
+    content: "\e[?25la\e[42;160H4\e[1;18H\e[?25h"
+  - delay: 255
+    content: "\e[?25ld\e[42;160H5\e[1;19H\e[?25h"
+  - delay: 197
+    content: "\e[?25ld\e[42;160H6\e[1;20H\e[?25h"
+  - delay: 352
+    content: "\e[?25l\e[42;160H7\e[1;21H\e[?25h"
+  - delay: 484
+    content: "\e[?25l/\e[42;160H8\e[1;22H\e[?25h"
+  - delay: 767
+    content: "\e[?25lg\e[42;160H9\e[1;23H\e[?25h"
+  - delay: 575
+    content: "\e[?25lr\e[42;159H20\e[1;24H\e[?25h"
+  - delay: 386
+    content: "\e[?25le\e[42;160H1\e[1;25H\e[?25h"
+  - delay: 198
+    content: "\e[?25le\e[42;160H2\e[1;26H\e[?25h"
+  - delay: 276
+    content: "\e[?25lt\e[42;160H3\e[1;27H\e[?25h"
+  - delay: 980
+    content: "\e[?25l\e[42;160H4\e[1;28H\e[?25h"
+  - delay: 821
+    content: "\e[?25l.\e[42;160H5\e[1;29H\e[?25h"
+  - delay: 502
+    content: "\e[?25l\b \e[42;160H4\e[1;28H\e[?25h"
+  - delay: 693
+    content: "\e[?25l-\e[42;160H5\e[1;29H\e[?25h"
+  - delay: 223
+    content: "\e[?25lc\e[42;160H6\e[1;30H\e[?25h"
+  - delay: 630
+    content: "\e[?25l\e[42;160H7\e[1;31H\e[?25h"
+  - delay: 363
+    content: "\e[?25l\"\e[42;160H8\e[1;32H\e[?25h"
+  - delay: 857
+    content: "\e[?25le\e[42;160H9\e[1;33H\e[?25h"
+  - delay: 238
+    content: "\e[?25lc\e[42;159H30\e[1;34H\e[?25h"
+  - delay: 109
+    content: "\e[?25lh\e[42;160H1\e[1;35H\e[?25h"
+  - delay: 407
+    content: "\e[?25lo\e[42;160H2\e[1;36H\e[?25h"
+  - delay: 516
+    content: "\e[?25l\e[42;160H3\e[1;37H\e[?25h"
+  - delay: 385
+    content: "\e[?25l'\e[42;160H4\e[1;38H\e[?25h"
+  - delay: 425
+    content: "\e[?25lH\e[42;160H5\e[1;39H\e[?25h"
+  - delay: 134
+    content: "\e[?25le\e[42;160H6\e[1;40H\e[?25h"
+  - delay: 200
+    content: "\e[?25ll\e[42;160H7\e[1;41H\e[?25h"
+  - delay: 197
+    content: "\e[?25ll\e[42;160H8\e[1;42H\e[?25h"
+  - delay: 190
+    content: "\e[?25lo\e[42;160H9\e[1;43H\e[?25h"
+  - delay: 1277
+    content: "\e[?25l\e[42;159H40\e[1;44H\e[?25h"
+  - delay: 235
+    content: "\e[?25lK\e[42;160H1\e[1;45H\e[?25h"
+  - delay: 258
+    content: "\e[?25la\e[42;160H2\e[1;46H\e[?25h"
+  - delay: 211
+    content: "\e[?25lp\e[42;160H3\e[1;47H\e[?25h"
+  - delay: 204
+    content: "\e[?25lo\e[42;160H4\e[1;48H\e[?25h"
+  - delay: 204
+    content: "\e[?25lw\e[42;160H5\e[1;49H\e[?25h"
+  - delay: 869
+    content: "\e[?25l!\e[42;160H6\e[1;50H\e[?25h"
+  - delay: 1188
+    content: "\e[?25l'\e[42;160H7\e[1;51H\e[?25h"
+  - delay: 510
+    content: "\e[?25l\e[42;160H8\e[1;52H\e[?25h"
+  - delay: 855
+    content: "\e[?25l|\e[42;160H9\e[1;53H\e[?25h"
+  - delay: 523
+    content: "\e[?25l\e[42;159H50\e[1;54H\e[?25h"
+  - delay: 501
+    content: "\e[?25lr\e[42;160H1\e[1;55H\e[?25h"
+  - delay: 179
+    content: "\e[?25le\e[42;160H2\e[1;56H\e[?25h"
+  - delay: 241
+    content: "\e[?25ls\e[42;160H3\e[1;57H\e[?25h"
+  - delay: 251
+    content: "\e[?25lp\e[42;160H4\e[1;58H\e[?25h"
+  - delay: 216
+    content: "\e[?25lo\e[42;160H5\e[1;59H\e[?25h"
+  - delay: 259
+    content: "\e[?25ln\e[42;160H6\e[1;60H\e[?25h"
+  - delay: 242
+    content: "\e[?25ls\e[42;160H7\e[1;61H\e[?25h"
+  - delay: 296
+    content: "\e[?25le\e[42;160H8\e[1;62H\e[?25h"
+  - delay: 369
+    content: "\e[?25l\e[42;160H9\e[1;63H\e[?25h"
+  - delay: 328
+    content: "\e[?25l/\e[42;159H60\e[1;64H\e[?25h"
+  - delay: 598
+    content: "\e[?25lb\e[42;160H1\e[1;65H\e[?25h"
+  - delay: 257
+    content: "\e[?25lo\e[42;160H2\e[1;66H\e[?25h"
+  - delay: 270
+    content: "\e[?25ld\e[42;160H3\e[1;67H\e[?25h"
+  - delay: 352
+    content: "\e[?25ly\e[42;160H4\e[1;68H\e[?25h"
+  - delay: 1312
+    content: "\e[?25l\"\e[42;160H5\e[1;69H\e[?25h"
+  - delay: 590
+    content: "\e[?25l\r\e[38;5;11m  1\r\n2   \e[m                                                                                \e[48;5;1m \e[m\e[2;86H\e[K\e[42;157H2,1 \e[2;5H\e[?25h"
+  - delay: 544
+    content: "\e[42;1H\e[K\e[2;5H"
+  - delay: 538
+    content: "\e[?25l\e[42;157H2,0-1\e[9CAll\e[2;5H\e[?25h\e[?25l\e[42;157H\e[K\e[42;1H:\e[?2004h\e[?25h"
+  - delay: 200
+    content: "w\e[?25l\e[?25h"
+  - delay: 130
+    content: "q\e[?25l\e[?25h"
+  - delay: 355
+    content: "\r\e[?25l\e[?2004l\"hello.pow\" [New] 2L, 66C written\r\e]2;cesar@eris:/tmp/kapow\a\e]1;cesar@eris:/tmp/kapow\a\e[23;2t\e[23;1t\e[22;2t\e[22;1t\e[23;2t\e[23;1t\r\r\n\e[?2004l\e[?1l\e>\e[?25h\e[r\e[?1049l\e]0;cesar@eris:/tmp/kapow\a\e[01;32m[cesar@eris\e[01;37m kapow\e[01;32m]$\e[00m "
+  - delay: 2279
+    content: k
+  - delay: 174
+    content: a
+  - delay: 277
+    content: p
+  - delay: 198
+    content: o
+  - delay: 675
+    content: w
+  - delay: 692
+    content: ' '
+  - delay: 175
+    content: s
+  - delay: 110
+    content: e
+  - delay: 68
+    content: r
+  - delay: 262
+    content: v
+  - delay: 202
+    content: e
+  - delay: 87
+    content: r
+  - delay: 109
+    content: ' '
+  - delay: 185
+    content: h
+  - delay: 128
+    content: e
+  - delay: 203
+    content: l
+  - delay: 183
+    content: l
+  - delay: 177
+    content: o
+  - delay: 236
+    content: .
+  - delay: 202
+    content: p
+  - delay: 175
+    content: o
+  - delay: 173
+    content: w
+  - delay: 520
+    content: "\r\n"
+  - delay: 412
+    content: "======== Running on http://0.0.0.0:8080 ========\r\n(Press CTRL+C to quit)\r\n"
+  - delay: 352
+    content: "Route created GET /greet\r\nROUTE_52213f4c_8574_4668_aa98_dce1198272a2\r\n"
+  - delay: 35
+    content: "\e]0;cesar@eris:/tmp/kapow\a[cesar@eris kapow]$ "
+  - delay: 548
+    content: c
+  - delay: 171
+    content: u
+  - delay: 233
+    content: r
+  - delay: 390
+    content: l
+  - delay: 256
+    content: ' '
+  - delay: 1445
+    content: l
+  - delay: 208
+    content: o
+  - delay: 151
+    content: c
+  - delay: 107
+    content: a
+  - delay: 112
+    content: l
+  - delay: 627
+    content: h
+  - delay: 45
+    content: o
+  - delay: 66
+    content: s
+  - delay: 132
+    content: t
+  - delay: 612
+    content: ':'
+  - delay: 410
+    content: '8'
+  - delay: 108
+    content: '0'
+  - delay: 231
+    content: '8'
+  - delay: 87
+    content: '0'
+  - delay: 582
+    content: /
+  - delay: 325
+    content: g
+  - delay: 277
+    content: r
+  - delay: 216
+    content: e
+  - delay: 178
+    content: e
+  - delay: 162
+    content: t
+  - delay: 705
+    content: "\r\n"
+  - delay: 215
+    content: "Hello Kapow!\r\n\e]0;cesar@eris:/tmp/kapow\a[cesar@eris kapow]$ "
+  - delay: 2769
+    content: e
+  - delay: 192
+    content: x
+  - delay: 110
+    content: i
+  - delay: 159
+    content: t
+  - delay: 255
+    content: "\r\nexit\r\n"
+  - delay: 11
+    content: "\e]0;cesar@eris:/tmp/kapow\a\e[01;32m[cesar@eris\e[01;37m kapow\e[01;32m]$\e[00m "
+  - delay: 1259
+    content: "logout\r\n"

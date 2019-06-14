@@ -15,6 +15,33 @@ Ye be warned.
 Some awesome history is coming.
 
 
+# Kapow! for the impatient
+Kapow! allows you to write a litte script that will serve an executable.
+This script will let you define how connect HTTP to Shell using Kapow!'s shell
+abstractions to the HTTP world. See it to believe:
+
+![Kapow! in action](https://trello-attachments.s3.amazonaws.com/5c824318411d973812cbef67/5ca1af818bc9b53e31696de3/b5e2554ff02fd9dba5ed2cec5c5d41e1/hello_kapow.gif)
+
+On a simple schematics you can understand where Kapow! lives:
+
+![Kapow! lives](https://trello-attachments.s3.amazonaws.com/5c824318411d973812cbef67/5ca1af818bc9b53e31696de3/784a183fba3f24872dd97ee28e765922/Kapow!.png)
+
+
+## Kapow! Features
+
+Kapow! gives you:
+
+ * A very simple way of APIfy any shell executable
+ * A remote administration API
+ * Opinion free shell integration
+
+When Kapow! is your best ally:
+
+ * Easy command + Hard API = Kapow! to the rescue
+ * SSH for one command? Kapow! allow you to share only that command
+ * Remote instrumentation of several machines? make it easy with Kapow!
+
+
 # What is Kapow!
 
 Kapow! is an adapter between the world of Pure UNIX® Shell and an HTTP service.
@@ -31,8 +58,8 @@ help you first, let's start with a common situation.
 Think about that awesome command that you use every day, something very
 familiar, like `cloudx storage ls /backups`.  Then someone asks you for an
 specific backup, so you `ssh` into the host, execute your command, possibly
-`grepping` through its output, copy the result and send it back to him. And that's fine...
-for the 100 first times.
+`grepping` through its output, copy the result and send it back to him. 
+And that's fine... for the 100 first times.
 
 Then you decide, let's use an API for this and generate an awesome web server
 with it.  So, you create a project, manage its dependencies, code the server,
