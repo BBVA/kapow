@@ -31,7 +31,7 @@ On a simple schematics you can understand where Kapow! lives:
 
 Kapow! gives you:
 
- * A very simple way of APIfy any shell executable
+ * A very simple way turning any shell script into an API
  * A remote administration API
  * Opinion free shell integration
 
