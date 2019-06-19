@@ -1,4 +1,4 @@
-FROM bbva/kapow:0.2
+FROM bbva/kapow:0.1
 
 RUN apk add nmap
 
