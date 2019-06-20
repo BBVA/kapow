@@ -37,7 +37,6 @@ Kapow! gives you:
  * A remote administration API
  * Opinion free shell integration
 
-
 ## Kapow! Curses
 
 Kapow! can't help when:
