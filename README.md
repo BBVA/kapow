@@ -26,7 +26,7 @@ Kapow! allows you to write a litte script that will **serve an executable as RES
 service**.  This script will let you define how to connect HTTP and the  Shell
 using Kapow!'s shell abstractions to the HTTP world. See it to believe:
 
-![Kapow! in action](https://raw.githubusercontent.com/BBVA/kapow/blob/develop/resources/kapow.gif)
+![Kapow! in action](https://github.com/BBVA/kapow/blob/develop/resources/kapow.gif?raw=true)
 
 
 ## Kapow! Superpowers
