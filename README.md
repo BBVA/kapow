@@ -35,23 +35,25 @@ Kapow! gives you:
 
  * A very simple way to turn any shell executable into an API
  * A remote administration API
- * A way to define the integration in you own terms, no obligations by our side
+ * A way to define the integration in you own terms, obligations-free!
+
 
 ## Kapow! Curses
 
 Kapow! can't help when:
 
- * You need high throughput: Kapow! spawn a new executable every HTTP call
+ * You need high throughput: Kapow! spawns a new executable for every HTTP call
  * You must perform complex logic to attend the request: never use Kapow! if
-   your executables doesn't perform al least 90% of the hard work
+   your executables don't perform al least 90% of the hard work
  * You are building a huge application
 
 
 ## When Kapow! is your best ally:
 
  * Easy command + Hard API = Kapow! to the rescue
- * SSH for one command? Kapow! allow you to share only that command
+ * SSH for one command? Kapow! allows you to share only that command
  * Remote instrumentation of several machines? make it easy with Kapow!
+
 
 # Kapow! The more you know
 
