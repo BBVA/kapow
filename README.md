@@ -1,4 +1,4 @@
-![Kapow!](https://trello-attachments.s3.amazonaws.com/5c6edee98297dc18aa4e2b63/960x720/ff8d28fc24af11e3295afa5a9665bdc0/kapow-1601675_960_720.png)
+![Kapow!](https://trello-attachments.s3.amazonaws.com/5c824318411d973812cbef67/5ca1af818bc9b53e31696de3/f51eb40412bf09c8c800511d7bbe5634/kapow-1601675_480.png)
 
 **Kapow!** If you can script it, you can HTTP it.
 
