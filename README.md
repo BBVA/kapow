@@ -10,7 +10,7 @@ the provided code is a Proof of Concept and the final version will not even
 share programming language.  Ye be warned.
 
 
-## How Kapow! was born
+## How was born
 
 Some awesome history is coming.
 
@@ -29,7 +29,7 @@ using Kapow!'s shell abstractions to the HTTP world. See it to believe:
 ![Kapow! in action](https://github.com/BBVA/kapow/blob/develop/resources/kapow.gif?raw=true)
 
 
-## Kapow! Superpowers
+## Superpowers
 
 Kapow! gives you:
 
@@ -38,7 +38,7 @@ Kapow! gives you:
  * A way to define the integration in you own terms, obligations-free!
 
 
-## Kapow! Curses
+## Curses
 
 Kapow! can't help when:
 
@@ -48,13 +48,13 @@ Kapow! can't help when:
  * You are building a huge application
 
 
-## When Kapow! is your best ally:
+## When is your best ally:
 
  * Easy command + Hard API = Kapow! to the rescue
  * SSH for one command? Kapow! allows you to share only that command
  * Remote instrumentation of several machines? make it easy with Kapow!
 
 
-# Kapow! The more you know
+# The more you know
 
 If you want to know more, please follow our [documentation](/doc).
