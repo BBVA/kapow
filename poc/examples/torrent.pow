@@ -16,8 +16,8 @@
 # limitations under the License.
 #
 
-kroute add / - <<-'EOF'
-	response /header/Content-Type text/html
+kapow route add / - <<-'EOF'
+	response /headers/Content-Type text/html
 	response /body <<-HTML
 		<html>
 		<body>
@@ -27,8 +27,8 @@ kroute add / - <<-'EOF'
 	HTML
 EOF
 
-kroute add /save/magnet -e '/bin/bash -c' - <<-'EOF'
-	link=$(request /param/link)
+kapow route add /save/magnet -e '/bin/bash -c' - <<-'EOF'
+	link=$(request /params/link)
 	[ -z $link ] && response /status 400 && exit 0
 
 	watch_folder=/tmp
@@ -37,7 +37,7 @@ kroute add /save/magnet -e '/bin/bash -c' - <<-'EOF'
 	echo "d10:magnet-uri${#link}:${link}e" > "meta-${BASH_REMATCH[1]}.torrent"
 
 	response /status 302
-	response /header/Location /torrent/list
+	response /headers/Location /torrent/list
 EOF
 
-kroute add /torrent/list -c 'response /body "Not Implemented Yet"'
+kapow route add /torrent/list -c 'response /body "Not Implemented Yet"'

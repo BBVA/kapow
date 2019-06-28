@@ -26,6 +26,9 @@ import shlex
 import sys
 
 from aiohttp import web, StreamReader
+import click
+import requests
+
 
 log = logging.getLogger('kapow')
 
@@ -69,17 +72,19 @@ class Connection:
             return self.request.content
         elif res.path == 'request/path':
             return self.request.path.encode('utf-8')
-        elif res.path.startswith('request/match/'):
+        elif res.path == 'request/host':
+            return self.request.host.encode('utf-8')
+        elif res.path.startswith('request/matches/'):
             return self.request.match_info[nth(2)].encode('utf-8')
-        elif res.path.startswith('request/param/'):
+        elif res.path.startswith('request/params/'):
             return self.request.rel_url.query[nth(2)].encode('utf-8')
-        elif res.path.startswith('request/header/'):
+        elif res.path.startswith('request/headers/'):
             return self.request.headers[nth(2)].encode('utf-8')
-        elif res.path.startswith('request/cookie/'):
+        elif res.path.startswith('request/cookies/'):
             return self.request.cookies[nth(2)].encode('utf-8')
         elif res.path.startswith('request/form/'):
             return (await self.request.post())[nth(2)].encode('utf-8')
-        elif res.path.startswith('request/file/'):
+        elif res.path.startswith('request/files/'):
             name = nth(2)
             content = nth(3)  # filename / content
             field = (await self.request.post())[name]
@@ -109,10 +114,10 @@ class Connection:
             self._status = int((await content.read()).decode('utf-8'))
         elif res.path == 'response/body':
             self._body.write(await content.read())
-        elif res.path.startswith('response/header/'):
+        elif res.path.startswith('response/headers/'):
             clean = (await content.read()).rstrip(b'\n').decode('utf-8')
             self._headers[nth(2)] = clean
-        elif res.path.startswith('response/cookie/'):
+        elif res.path.startswith('response/cookies/'):
             clean = (await content.read()).rstrip(b'\n').decode('utf-8')
             self._cookies[nth(2)] = clean
         elif res.path == 'response/stream':
@@ -227,8 +232,8 @@ def handle_route(entrypoint, command):
             shell_task = await asyncio.create_subprocess_shell(
                 args,
                 env={**os.environ,
-                     "KAPOW_URL": "http://localhost:8080/kapow",
-                     "KAPOW_CONNECTION": id
+                     "KAPOW_URL": "http://localhost:8080",
+                     "KAPOW_HANDLER_ID": id
                      },
                 stdin=asyncio.subprocess.DEVNULL)
 
@@ -253,7 +258,7 @@ async def get_routes(request):
     return web.json_response(list(request.app.router))
 
 
-async def create_route(request):
+async def append_route(request):
     """Create a new Kapow! route."""
     request.app.router._frozen = False
     content = await request.json()
@@ -281,24 +286,23 @@ async def delete_route(request):
 ########################################################################
 
 
-async def run_init_script(app):
+async def run_init_script(app, scripts):
     """
     Run the init script if given, then wait for the shell to finish.
 
     """
-    if len(sys.argv) == 1:
+    if not scripts:
         # No script given
         cmd = "/bin/bash"
-    elif len(sys.argv) == 2:
-        cmd = f"/bin/bash --init-file {sys.argv[1]}"
     else:
-        print(f"Usage: {sys.argv[0]} <init-script>")
-        os._exit(1)
+        filenames = " ".join(shlex.quote(f) for f in scripts)
+        cmd = f"/bin/bash --init-file <(cat {filenames})"
 
     shell_task = await asyncio.create_subprocess_shell(
         cmd,
+        executable="/bin/bash",
         env={**os.environ,
-             "KAPOW_URL": "http://localhost:8080/kapow"
+             "KAPOW_URL": "http://localhost:8080"
              })
 
     await shell_task.wait()
@@ -308,22 +312,87 @@ async def run_init_script(app):
 
 async def start_background_tasks(app):
     loop = asyncio.get_running_loop()
-    app["debug_tasks"] = loop.create_task(run_init_script(app))
+    app["debug_tasks"] = loop.create_task(run_init_script(app, app["scripts"]))
 
 
-def kapow():
-    """Start aiohttp app."""
+def start_kapow_server(scripts):
     app = web.Application(client_max_size=1024**3)
     app.add_routes([
-        web.get('/kapow/routes', get_routes),
-        web.post('/kapow/routes', create_route),
-        web.delete('/kapow/routes/{id}', delete_route),
-        web.get('/kapow/connections/{id}/{field:.*}', get_field),
-        # web.post('/kapow/connections/{id}/{field:.*}', append_field),
-        web.put('/kapow/connections/{id}/{field:.*}', set_field),
+        # Control API
+        web.get('/routes', get_routes),
+        web.post('/routes', append_route),  # TODO: return route index
+        # web.put('/routes', insert_route),  # TODO: return route index
+        web.delete('/routes/{id}', delete_route),
+
+        # Data API
+        web.get('/handlers/{id}/{field:.*}', get_field),
+        web.put('/handlers/{id}/{field:.*}', set_field),
     ])
+    app["scripts"] = scripts
     app.on_startup.append(start_background_tasks)
     web.run_app(app)
+
+
+########################################################################
+#                          Command Line                                #
+########################################################################
+
+
+@click.group()
+@click.pass_context
+def kapow(ctx):
+    """Start aiohttp app."""
+    pass
+
+
+@kapow.command()
+@click.argument("scripts", nargs=-1)
+def server(scripts):
+    start_kapow_server(scripts)
+
+@kapow.group()
+def route():
+    pass
+
+
+@route.command()
+@click.option("-c", "--command", nargs=1)
+@click.option("-e", "--entrypoint", default="/bin/sh -c")
+@click.option("-X", "--method", default="GET")
+@click.option("--url", envvar='KAPOW_URL')
+@click.argument("url_pattern", nargs=1)
+@click.argument("command_file", required=False)
+def add(url_pattern, entrypoint, command, method, url, command_file):
+    if command:
+        # Command is given inline
+        source = command
+    elif command_file is None:
+        # No command
+        source = ""
+    elif command_file == '-':
+        # Read commands from stdin
+        source = sys.stdin.read()
+    else:
+        # Read commands from a file
+        with open(command_file, 'r', encoding='utf-8') as handler:
+            source = handler.read()
+
+    response = requests.post(f"{url}/routes",
+                             json={"method": method,
+                                   "url_pattern": url_pattern,
+                                   "entrypoint": entrypoint,
+                                   "command": source})
+    response.raise_for_status()
+    print(response.json())
+
+
+@route.command()
+@click.option("--url", envvar='KAPOW_URL')
+@click.argument("route-id")
+def remove(route_id, url):
+    response = requests.delete(f"{url}/routes/{route_id}")
+    response.raise_for_status()
+    print(response.json())
 
 
 if __name__ == '__main__':

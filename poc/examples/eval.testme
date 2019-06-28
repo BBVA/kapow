@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+
+curl -X POST --data-binary @- http://localhost:8080/eval <<EOF
+touch /tmp/kapow_was_here
+EOF
+
+echo 'Proof of success:'
+ls -l /tmp/kapow_was_here

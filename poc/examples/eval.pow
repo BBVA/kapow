@@ -16,4 +16,4 @@
 # limitations under the License.
 #
 
-kroute add -X POST '/eval' -c '$($(request /body) | response /stream)'
+kapow route add -X POST '/eval' -c '$($(request /body) | response /stream)'

@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+
+curl -X POST --data-binary @- http://localhost:8080/convert/markdown/man <<EOF
+# This is not a pipe
+
+1. hello
+1. goodbye
+EOF
