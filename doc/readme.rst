@@ -136,13 +136,13 @@ Build the kapow! docker image
 
 .. code-block:: bash
 
-    docker build -t bbva/kapow:0.1 /path/to/kapow/poc
+    cd /path/to/kapow/poc; docker build -t bbva/kapow:0.1 .
 
 Build a docker image for running the nmap example
 
 .. code-block:: bash
 
-    docker build -t kapow-nmap /path/to/kapow/poc/examples/nmap
+    cd /path/to/kapow/poc/examples/nmap; docker build -t kapow-nmap .
 
 Run kapow
 ---------
