@@ -19,22 +19,22 @@
 CAVEAT EMPTOR
 =============
 
-**Warning!!! Kapow!** is under **heavy development** and [specification](/spec/);
+**Warning!!! Kapow!** is under **heavy development** and `specification </spec/>`;
 the provided code is a Proof of Concept and the final version will not even
 share programming language.  Ye be warned.
 
 
-How was born
-------------
+How it was born
+---------------
 
 Some awesome history is coming.
 
 
-Kapow! for the impatient 
+Kapow! for the impatient
 ========================
 
 When you need to **share** a ``command`` but **not** a complete remote ``ssh
-access``, Kapow!  will help you by the power of HTTP:
+access``, Kapow!  will help you with the power of HTTP:
 
 .. image:: https://trello-attachments.s3.amazonaws.com/5c824318411d973812cbef67/5ca1af818bc9b53e31696de3/784a183fba3f24872dd97ee28e765922/Kapow!.png
     :alt: Where Kapow! lives
@@ -61,6 +61,7 @@ Curses
 ------
 
 Kapow! can't help when:
+-----------------------
 
  * You need high throughput: Kapow! spawns a new executable for every HTTP call
  * You must perform complex logic to attend the request: never use Kapow! if
@@ -68,12 +69,12 @@ Kapow! can't help when:
  * You are building a huge application
 
 
-When is your best ally:
------------------------
+When it is your best friend:
+--------------------------
 
  * Easy command + Hard API = Kapow! to the rescue
- * SSH for one command? Kapow! allows you to share only that command
- * Remote instrumentation of several machines? make it easy with Kapow!
+ * SSH for one command?  Kapow! allows you to share only that command
+ * Remote instrumentation of several machines?  Make it easy with Kapow!
 
 
 The more you know
