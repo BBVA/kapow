@@ -19,7 +19,7 @@
 CAVEAT EMPTOR
 =============
 
-**Warning!!! Kapow!** is under **heavy development** and `specification </spec/>`;
+**Warning!!! Kapow!** is under **heavy development** and `specification </spec>`_;
 the provided code is a Proof of Concept and the final version will not even
 share programming language.  Ye be warned.
 
