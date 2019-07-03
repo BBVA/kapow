@@ -25,7 +25,7 @@ import os
 import shlex
 import sys
 
-from aiohttp import web, StreamReader
+from aiohttp import web, StreamReader, WSMsgType
 import click
 import requests
 
@@ -50,6 +50,7 @@ class Connection:
 
     """
     def __init__(self, request):
+        self._ws = None
         self._stream = None
         self._body = io.BytesIO()
         self._status = 200
@@ -57,6 +58,11 @@ class Connection:
         self._cookies = dict()
 
         self.request = request
+
+    async def prepare_websocket(self):
+        if self._ws is None:
+            self._ws = web.WebSocketResponse()
+            return await self._ws.prepare(self.request)
 
     async def get(self, key):
         """Get the content of the field `key`."""
@@ -100,6 +106,15 @@ class Connection:
                     return b''
             else:
                 raise ValueError(f'Unknown content type {content!r}')
+        elif res.path == 'websocket/get':
+            await self.prepare_websocket()
+            message = await self._ws.receive()
+            if message.type == WSMsgType.TEXT:
+                return message.data.encode('utf-8')
+            elif message.type == WSMsgType.BINARY:
+                return message.data
+            else:  # Probably ERROR
+                raise RuntimeError(f'Websocket error received {message.data!r}')
         else:
             raise ValueError('Unknown path')
 
@@ -133,6 +148,19 @@ class Connection:
             while chunk:
                 await self._stream.write(chunk)
                 chunk = await content.readany()
+        elif res.path.startswith('websocket/'):
+            await self.prepare_websocket()
+            if res.path == 'websocket/send/bytes':
+                print(res.path)
+                await self._ws.send_bytes(await content.read())
+            elif res.path == 'websocket/send/text':
+                await self._ws.send_str((await content.read()).decode('utf-8'))
+            elif res.path == 'websocket/send/ping':
+                await self._ws.ping(await content.read())
+            elif res.path == 'websocket/send/pong':
+                await self._ws.pong(await content.read())
+            else:
+                raise ValueError(f'Unknown path {res.path!r}')
         else:
             raise ValueError(f'Unknown path {res.path!r}')
 
@@ -142,16 +170,19 @@ class Connection:
 
     async def build_response(self):
         """Return the appropriate aiohttp.web.*Response."""
-        if self._stream is None:
+        if self._ws is not None:
+            await self._ws.close()
+            return self._ws
+        if self._stream is not None:
+            await self._stream.write_eof()
+            return self._stream
+        else:
             response = web.Response(body=self._body.getvalue(),
                                     status=self._status,
                                     headers=self._headers)
             for name, value in self._cookies.items():
                 response.set_cookie(name, value)
             return response
-        else:
-            await self._stream.write_eof()
-            return self._stream
 
 
 async def get_field(request):
