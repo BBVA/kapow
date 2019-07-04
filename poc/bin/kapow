@@ -346,7 +346,7 @@ async def start_kapow_server(scripts):
 
     control_runner = web.AppRunner(control_app)
     await control_runner.setup()
-    control_site = web.TCPSite(control_runner, 'localhost', 8081)
+    control_site = web.TCPSite(control_runner, '127.0.0.1', 8081)
     await control_site.start()
 
 
