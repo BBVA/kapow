@@ -31,7 +31,8 @@ import requests
 
 
 log = logging.getLogger('kapow')
-
+loop = asyncio.new_event_loop()
+asyncio.set_event_loop(loop)
 
 ########################################################################
 #                         Resource Management                          #
@@ -232,7 +233,7 @@ def handle_route(entrypoint, command):
             shell_task = await asyncio.create_subprocess_shell(
                 args,
                 env={**os.environ,
-                     "KAPOW_URL": "http://localhost:8080",
+                     "KAPOW_URL": "http://localhost:8081",
                      "KAPOW_HANDLER_ID": id
                      },
                 stdin=asyncio.subprocess.DEVNULL)
@@ -253,32 +254,38 @@ def handle_route(entrypoint, command):
 #                           Route Management                           #
 ########################################################################
 
-async def get_routes(request):
-    """Return the list of registered routes."""
-    return web.json_response(list(request.app.router))
+def get_routes(app):
+    async def _get_routes(request):
+        """Return the list of registered routes."""
+        return web.json_response(list(app.router))
+    return _get_routes
 
 
-async def append_route(request):
-    """Create a new Kapow! route."""
-    request.app.router._frozen = False
-    content = await request.json()
-    name = "ROUTE_" + str(uuid4()).replace('-', '_')
-    request.app.router.add_route(content["method"],
-                                 content["url_pattern"],
-                                 handle_route(content["entrypoint"],
-                                              content["command"]),
-                                 name=name)
-    print(f'Route created {content["method"]} {content["url_pattern"]}')
-    return web.json_response(name)
+def append_route(app):
+    async def _append_route(request):
+        """Create a new Kapow! route."""
+        app.router._frozen = False
+        content = await request.json()
+        name = "ROUTE_" + str(uuid4()).replace('-', '_')
+        app.router.add_route(content["method"],
+                             content["url_pattern"],
+                             handle_route(content["entrypoint"],
+                                          content["command"]),
+                             name=name)
+        print(f'Route created {content["method"]} {content["url_pattern"]}')
+        return web.json_response(name)
+    return _append_route
 
 
-async def delete_route(request):
-    """Delete the given Kapow! route."""
-    id = request.match_info["id"]
-    route = request.app.router._named_resources.pop(id)
-    request.app.router._resources.remove(route)
-    print(f'Route deleted {id}')
-    return web.json_response(id)
+def delete_route(app):
+    async def _delete_route(request):
+        """Delete the given Kapow! route."""
+        id = request.match_info["id"]
+        route = app.router._named_resources.pop(id)
+        app.router._resources.remove(route)
+        print(f'Route deleted {id}')
+        return web.json_response(id)
+    return _delete_route
 
 
 ########################################################################
@@ -302,7 +309,7 @@ async def run_init_script(app, scripts):
         cmd,
         executable="/bin/bash",
         env={**os.environ,
-             "KAPOW_URL": "http://localhost:8080"
+             "KAPOW_URL": "http://localhost:8081"
              })
 
     await shell_task.wait()
@@ -311,26 +318,37 @@ async def run_init_script(app, scripts):
 
 
 async def start_background_tasks(app):
-    loop = asyncio.get_running_loop()
+    global loop
     app["debug_tasks"] = loop.create_task(run_init_script(app, app["scripts"]))
 
 
-def start_kapow_server(scripts):
-    app = web.Application(client_max_size=1024**3)
-    app.add_routes([
+async def start_kapow_server(scripts):
+    user_app = web.Application(client_max_size=1024**3)
+    user_runner = web.AppRunner(user_app)
+    await user_runner.setup()
+    user_site = web.TCPSite(user_runner, '0.0.0.0', 8080)
+    await user_site.start()
+
+    control_app = web.Application(client_max_size=1024**3)
+    control_app.add_routes([
         # Control API
-        web.get('/routes', get_routes),
-        web.post('/routes', append_route),  # TODO: return route index
-        # web.put('/routes', insert_route),  # TODO: return route index
-        web.delete('/routes/{id}', delete_route),
+        web.get('/routes', get_routes(user_app)),
+        web.post('/routes', append_route(user_app)),  # TODO: return route index
+        # web.put('/routes', insert_route(user_app)),  # TODO: return route index
+        web.delete('/routes/{id}', delete_route(user_app)),
 
         # Data API
         web.get('/handlers/{id}/{field:.*}', get_field),
         web.put('/handlers/{id}/{field:.*}', set_field),
     ])
-    app["scripts"] = scripts
-    app.on_startup.append(start_background_tasks)
-    web.run_app(app)
+    control_app["scripts"] = scripts
+    control_app.on_startup.append(start_background_tasks)
+
+    control_runner = web.AppRunner(control_app)
+    await control_runner.setup()
+    control_site = web.TCPSite(control_runner, '127.0.0.1', 8081)
+    await control_site.start()
+
 
 
 ########################################################################
@@ -348,7 +366,8 @@ def kapow(ctx):
 @kapow.command()
 @click.argument("scripts", nargs=-1)
 def server(scripts):
-    start_kapow_server(scripts)
+    loop.run_until_complete(start_kapow_server(scripts))
+    loop.run_forever()
 
 @kapow.group()
 def route():
