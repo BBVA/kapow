@@ -415,9 +415,9 @@ following resource paths:
 │  │     └──── <name>
 │  ├──── cookies                HTTP request cookie
 │  │     └──── <name>
-│  ├──── form                   Form-urlencoded form fields
-│  │     └──── <name>
-│  ├──── files                  Files uploaded via multi-part form fields
+│  ├──── form                   Form-urlencoded form fields (names only)
+│  │     └──── <name>           Value of the form field with name <name>
+│  ├──── files                  Files uploaded via multi-part form fields (names only)
 │  │     └──── <name>
 │  │           └──── filename   Original file name
 │  │           └──── content    The file content

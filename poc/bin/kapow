@@ -83,8 +83,19 @@ class Connection:
             return self.request.headers[nth(2)].encode('utf-8')
         elif res.path.startswith('request/cookies/'):
             return self.request.cookies[nth(2)].encode('utf-8')
+        elif res.path == 'request/form':
+            data = await self.request.post()
+            files = [fieldname.encode('utf-8')
+                     for fieldname, field in data.items()]
+            return b'\n'.join(files)
         elif res.path.startswith('request/form/'):
             return (await self.request.post())[nth(2)].encode('utf-8')
+        elif res.path == 'request/files':
+            data = await self.request.post()
+            files = [fieldname.encode('utf-8')
+                     for fieldname, field in data.items()
+                     if hasattr(field, 'filename')]
+            return b'\n'.join(files)
         elif res.path.startswith('request/files/'):
             name = nth(2)
             content = nth(3)  # filename / content
