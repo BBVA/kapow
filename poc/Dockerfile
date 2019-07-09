@@ -1,20 +1,14 @@
 FROM python:3.7-alpine
 
-COPY Pipfile Pipfile.lock /tmp/
+RUN apk upgrade --update-cache       \
+ && apk add bash curl coreutils file \
+ && pip install pipenv
+
+COPY Pipfile Pipfile.lock /
+
+RUN pipenv install --system --deploy \
+ && rm -f /Pipfile /Pipfile.lock
 
 COPY bin/* /usr/bin/
-
-WORKDIR /tmp
-
-RUN apk upgrade --update-cache;                 \
-    apk add                                     \
-        bash                                    \
-        curl                                    \
-        coreutils                               \
-        file;                                   \
-                                                \
-    pip install pipenv;                         \
-                                                \
-    pipenv install --system --deploy;
 
 ENTRYPOINT ["/usr/bin/kapow"]
