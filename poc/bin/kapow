@@ -23,6 +23,7 @@ import io
 import logging
 import os
 import shlex
+import ssl
 import sys
 
 from aiohttp import web, StreamReader
@@ -333,11 +334,18 @@ async def start_background_tasks(app):
     app["debug_tasks"] = loop.create_task(run_init_script(app, app["scripts"]))
 
 
-async def start_kapow_server(scripts):
+async def start_kapow_server(bind, scripts, certfile=None, keyfile=None):
     user_app = web.Application(client_max_size=1024**3)
     user_runner = web.AppRunner(user_app)
     await user_runner.setup()
-    user_site = web.TCPSite(user_runner, '0.0.0.0', 8080)
+
+    ssl_context = None
+    if certfile and keyfile:
+        ssl_context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+        ssl_context.load_cert_chain(certfile, keyfile)
+
+    ip, port = bind.split(':')
+    user_site = web.TCPSite(user_runner, ip, int(port), ssl_context=ssl_context)
     await user_site.start()
 
     control_app = web.Application(client_max_size=1024**3)
@@ -375,9 +383,15 @@ def kapow(ctx):
 
 
 @kapow.command()
+@click.option("--certfile", default=None)
+@click.option("--keyfile", default=None)
+@click.option("--bind", default="0.0.0.0:8080")
 @click.argument("scripts", nargs=-1)
-def server(scripts):
-    loop.run_until_complete(start_kapow_server(scripts))
+def server(certfile, keyfile, bind, scripts):
+    if bool(certfile) ^ bool(keyfile):
+        print("For SSL both 'certfile' and 'keyfile' should be provided.")
+        sys.exit(1)
+    loop.run_until_complete(start_kapow_server(bind, scripts, certfile, keyfile))
     loop.run_forever()
 
 @kapow.group()
