@@ -17,6 +17,7 @@
 #
 
 from urllib.parse import urlparse
+from itertools import repeat
 from uuid import uuid4
 import asyncio
 import io
@@ -314,7 +315,11 @@ async def run_init_script(app, scripts):
         # No script given
         cmd = "/bin/bash"
     else:
-        filenames = " ".join(shlex.quote(f) for f in scripts)
+        def build_filenames():
+            for filename in scripts:
+                yield shlex.quote(filename)
+                yield "<(echo)"
+        filenames = " ".join(build_filenames())
         cmd = f"/bin/bash --init-file <(cat {filenames})"
 
     shell_task = await asyncio.create_subprocess_shell(
