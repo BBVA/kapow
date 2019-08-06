@@ -1,8 +1,8 @@
 package main
 
 import (
-	"net/http"
 	"fmt"
+	"net/http"
 	"os/exec"
 )
 
@@ -13,6 +13,7 @@ func main() {
 	}()
 
 	http.ListenAndServe(":8081", &controlApiHandler{})
+
 }
 
 type userServerHandler struct {
