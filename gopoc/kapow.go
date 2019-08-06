@@ -10,9 +10,10 @@ func main() {
 	go func() {
 		fmt.Println("Listening on port 8080")
 		http.ListenAndServe(":8080", &userServerHandler{})
+
 	}()
 
-	http.ListenAndServe(":8081", &controlApiHandler{})
+	http.ListenAndServe(":8081", &controlAPIHandler{})
 
 }
 
@@ -28,9 +29,9 @@ func (m *userServerHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-type controlApiHandler struct {
+type controlAPIHandler struct {
 }
 
-func (m *controlApiHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (m *controlAPIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Welcome to the control API!"))
 }
