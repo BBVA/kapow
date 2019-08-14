@@ -91,7 +91,7 @@ incapable in others.
 We named it Kapow!.  It is pronounceable, short and meaningless...  like every
 good UNIX® command ;-)
 
-TODO: Definition
+TODO: Definitionid
 
 TODO: Intro to Architecture
 
@@ -132,7 +132,7 @@ whole lifetime of the server.
   * The HTTP status code (e.g., `400`, which is a bad request).  The target
     audience of this information is the client code.  The client can thus use
     this information to control the program flow.
-  * The JSON-encoded message.  The target audience in this case is the human
+  * The HTTP reason phrase.  The target audience in this case is the human
     operating the client.  The human can use this information to make a
     decision on how to proceed.
 * All successful API calls will return a representation of the *final* state
@@ -156,7 +156,8 @@ Content-Length: 189
     "url_pattern": "/hello",
     "entrypoint": null,
     "command": "echo Hello World | response /body",
-    "index": 0
+    "index": 0,
+    "id": "xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx"
   }
 ]
 ```
@@ -188,13 +189,17 @@ Returns JSON data about the current routes.
         "method": "GET",
         "url_pattern": "/hello",
         "entrypoint": null,
-        "command": "echo Hello World | response /body"
+        "command": "echo Hello World | response /body",
+        "index": 0,
+        "id": "xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx"
       },
       {
         "method": "POST",
         "url_pattern": "/bye",
         "entrypoint": null,
-        "command": "echo Bye World | response /body"
+        "command": "echo Bye World | response /body",
+        "index": 1,
+        "id": "xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx"
       }
     ]
     ```
@@ -204,7 +209,7 @@ Returns JSON data about the current routes.
 
 #### Append route
 
-Accepts JSON data that defines a new route to be appended to the current routes.
+Accepts JSON data that defines a new route to be appended to the current routes.  New routes are given with an id so it can be referenced later.
 
 * **URL**: `/routes`
 * **Method**: `POST`
@@ -228,14 +233,15 @@ Accepts JSON data that defines a new route to be appended to the current routes.
       "url_pattern": "/hello",
       "entrypoint": null,
       "command": "echo Hello World | response /body",
-      "index": 0
+      "index": 0,
+      "id": "xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx"
     }
     ```
 * **Error Responses**:
   * **Code**: `400 Malformed JSON`
-  * **Code**: `400 Invalid Data Type`
-  * **Code**: `400 Invalid Route Spec`
-  * **Code**: `400 Missing Mandatory Field`<br />
+  * **Code**: `412 Invalid Data Type`
+  * **Code**: `412 Invalid Route Spec`
+  * **Code**: `412 Missing Mandatory Field`<br />
     **Header**: `Content-Type: application/json`<br />
     **Content**:<br />
     ```json
@@ -253,8 +259,7 @@ Accepts JSON data that defines a new route to be appended to the current routes.
       "method": "GET",
       "url_pattern": "/hello",
       "entrypoint": null,
-      "command": "echo Hello World | response /body",
-      "index": 0
+      "command": "echo Hello World | response /body"
     }
     EOF
     ```
@@ -268,7 +273,7 @@ Accepts JSON data that defines a new route to be appended to the current routes.
 #### Insert a route
 
   Accepts JSON data that defines a new route to be inserted at the specified
-  index to the current routes.
+  index to the current routes.  New routes are given with an id so it can be referenced later.
 
 * **URL**: `/routes`
 * **Method**: `PUT`
@@ -292,14 +297,15 @@ Accepts JSON data that defines a new route to be appended to the current routes.
       "url_pattern": "/hello",
       "entrypoint": null,
       "command": "echo Hello World | response /body",
-      "index": 0
+      "index": 0,
+      "id": "xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx"
     }
     ```
 * **Error Responses**:
   * **Code**: `400 Malformed JSON`
-  * **Code**: `400 Invalid Data Type`
-  * **Code**: `400 Invalid Route Spec`
-  * **Code**: `400 Missing Mandatory Field`<br />
+  * **Code**: `412 Invalid Data Type`
+  * **Code**: `412 Invalid Route Spec`
+  * **Code**: `412 Missing Mandatory Field`<br />
     **Header**: `Content-Type: application/json`<br />
     **Content**:<br />
     ```json
@@ -310,10 +316,7 @@ Accepts JSON data that defines a new route to be appended to the current routes.
       ]
     }
     ```
-  * **Code**: `400 Invalid Index Type`
-  * **Code**: `400 Index Already in Use`
-  * **Code**: `404 Invalid Index`
-  * **Code**: `404 Invalid Route Spec`
+  * **Code**: `412 Invalid Index Type`
 * **Sample Call**:<br />
     ```sh
     $ curl -X PUT --data-binary @- $KAPOW_URL/routes <<EOF`
@@ -340,7 +343,7 @@ Accepts JSON data that defines a new route to be appended to the current routes.
 
 Removes the route identified by `:id`.
 
-* **URL**: `/routes/:id` # FIXME: Héctor points out that this seems inconsistent, since there are no previous mentions to route_id
+* **URL**: `/routes/:id`
 * **Method**: `DELETE`
 * **Success Responses**:
   * **Code**: `200 OK`<br />
