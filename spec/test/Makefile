@@ -1,2 +1,3 @@
 test:
-	pipenv run behave
+	gherkin-lint
+	pipenv run behave --no-capture
