@@ -91,7 +91,7 @@ incapable in others.
 We named it Kapow!.  It is pronounceable, short and meaningless...  like every
 good UNIX® command ;-)
 
-TODO: Definitionid
+TODO: Definition
 
 TODO: Intro to Architecture
 
@@ -209,7 +209,7 @@ Returns JSON data about the current routes.
 
 #### Append route
 
-Accepts JSON data that defines a new route to be appended to the current routes.  New routes are given with an id so it can be referenced later.
+Accepts JSON data that defines a new route to be appended to the current routes.  A new id is created for the appended route so it can be referenced later.
 
 * **URL**: `/routes`
 * **Method**: `POST`
@@ -273,7 +273,7 @@ Accepts JSON data that defines a new route to be appended to the current routes.
 #### Insert a route
 
   Accepts JSON data that defines a new route to be inserted at the specified
-  index to the current routes.  New routes are given with an id so it can be referenced later.
+  index to the current routes.  A new id is created for the inserted route so it can be referenced later.
 
 * **URL**: `/routes`
 * **Method**: `PUT`
