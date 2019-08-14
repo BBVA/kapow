@@ -239,9 +239,9 @@ Accepts JSON data that defines a new route to be appended to the current routes.
     ```
 * **Error Responses**:
   * **Code**: `400 Malformed JSON`
-  * **Code**: `412 Invalid Data Type`
-  * **Code**: `412 Invalid Route Spec`
-  * **Code**: `412 Missing Mandatory Field`<br />
+  * **Code**: `422 Invalid Data Type`
+  * **Code**: `422 Invalid Route Spec`
+  * **Code**: `422 Missing Mandatory Field`<br />
     **Header**: `Content-Type: application/json`<br />
     **Content**:<br />
     ```json
@@ -303,9 +303,9 @@ Accepts JSON data that defines a new route to be appended to the current routes.
     ```
 * **Error Responses**:
   * **Code**: `400 Malformed JSON`
-  * **Code**: `412 Invalid Data Type`
-  * **Code**: `412 Invalid Route Spec`
-  * **Code**: `412 Missing Mandatory Field`<br />
+  * **Code**: `422 Invalid Data Type`
+  * **Code**: `422 Invalid Route Spec`
+  * **Code**: `422 Missing Mandatory Field`<br />
     **Header**: `Content-Type: application/json`<br />
     **Content**:<br />
     ```json
@@ -316,7 +316,7 @@ Accepts JSON data that defines a new route to be appended to the current routes.
       ]
     }
     ```
-  * **Code**: `412 Invalid Index Type`
+  * **Code**: `422 Invalid Index Type`
 * **Sample Call**:<br />
     ```sh
     $ curl -X PUT --data-binary @- $KAPOW_URL/routes <<EOF`
