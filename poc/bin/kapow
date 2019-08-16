@@ -306,7 +306,7 @@ def delete_route(app):
 ########################################################################
 
 
-async def run_init_script(app, scripts):
+async def run_init_script(app, scripts, interactive):
     """
     Run the init script if given, then wait for the shell to finish.
 
@@ -320,7 +320,10 @@ async def run_init_script(app, scripts):
                 yield shlex.quote(filename)
                 yield "<(echo)"
         filenames = " ".join(build_filenames())
-        cmd = f"/bin/bash --init-file <(cat {filenames})"
+        if interactive:
+            cmd = f"/bin/bash --init-file <(cat {filenames})"
+        else:
+            cmd = f"/bin/bash <(cat {filenames})"
 
     shell_task = await asyncio.create_subprocess_shell(
         cmd,
@@ -330,16 +333,17 @@ async def run_init_script(app, scripts):
              })
 
     await shell_task.wait()
-    await app.cleanup()
-    os._exit(shell_task.returncode)
+    if interactive:
+        await app.cleanup()
+        os._exit(shell_task.returncode)
 
 
 async def start_background_tasks(app):
     global loop
-    app["debug_tasks"] = loop.create_task(run_init_script(app, app["scripts"]))
+    app["debug_tasks"] = loop.create_task(run_init_script(app, app["scripts"], app["interactive"]))
 
 
-async def start_kapow_server(bind, scripts, certfile=None, keyfile=None):
+async def start_kapow_server(bind, scripts, certfile=None, interactive=False, keyfile=None):
     user_app = web.Application(client_max_size=1024**3)
     user_runner = web.AppRunner(user_app)
     await user_runner.setup()
@@ -366,6 +370,7 @@ async def start_kapow_server(bind, scripts, certfile=None, keyfile=None):
         web.put('/handlers/{id}/{field:.*}', set_field),
     ])
     control_app["scripts"] = scripts
+    control_app["interactive"] = interactive
     control_app.on_startup.append(start_background_tasks)
 
     control_runner = web.AppRunner(control_app)
@@ -391,12 +396,15 @@ def kapow(ctx):
 @click.option("--certfile", default=None)
 @click.option("--keyfile", default=None)
 @click.option("--bind", default="0.0.0.0:8080")
+@click.option("-i", "--interactive", is_flag=True)
 @click.argument("scripts", nargs=-1)
-def server(certfile, keyfile, bind, scripts):
+def server(certfile, keyfile, bind, interactive, scripts):
     if bool(certfile) ^ bool(keyfile):
         print("For SSL both 'certfile' and 'keyfile' should be provided.")
         sys.exit(1)
-    loop.run_until_complete(start_kapow_server(bind, scripts, certfile, keyfile))
+    if not scripts:
+        interactive = True
+    loop.run_until_complete(start_kapow_server(bind, scripts, certfile, interactive, keyfile))
     loop.run_forever()
 
 @kapow.group()
