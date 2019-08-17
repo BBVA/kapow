@@ -3,7 +3,7 @@ Feature: Kapow! server reject responses with semantic errors.
   it receives a valid json document but not conforming
   with the specification.
 
-  Scenario: Error by lack of mandatory fields.
+  Scenario: Error because of lack of mandatory fields.
     If a request lacks of any of the mandatory fields
     the server responds with an error indicating the
     missing fields.
@@ -18,7 +18,7 @@ Feature: Kapow! server reject responses with semantic errors.
         | missing_mandatory_fields |
         | "url_pattern", "method" |
 
-  Scenario: Error by wrong route spec.
+  Scenario: Error because of wrong route specification.
     If a request contains an invalid expression in the
     field url_pattern the server responds with an error.
 
@@ -30,7 +30,7 @@ Feature: Kapow! server reject responses with semantic errors.
       And I get "Invalid Route Spec" as response phrase
       And I get an empty response body
 
-  Scenario: Error by wrong method value.
+  Scenario: Error because of wrong method value.
     If a request contains an invalid value in the
     field method the server responds with an error.
 
