@@ -12,11 +12,11 @@ Feature: Listing routes in a Kapow! server
       When I request a routes listing
       Then I get an empty list
 
-  Scenario: Listing routes on a server with routes loaded
+  Scenario: Listing routes on a server with routes loaded.
     After some route creation/insertion operations the server
     must return an ordered list of routes stored.
 
-    Given I have a Kapow! server whith this routes appended:
+    Given I have a Kapow! server whith the following routes:
       | method | url_pattern        | entrypoint | command                                          |
       | GET    | /listRootDir       | /bin/sh -c | ls -la / \| response /body                       |
       | GET    | /listDir/{dirname} | /bin/sh -c | ls -la /request/params/dirname \| response /body |

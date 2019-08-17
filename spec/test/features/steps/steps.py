@@ -38,7 +38,7 @@ def step_impl(context):
     assert context.response.json() == []
 
 
-@given('I have a Kapow! server whith this routes appended')
+@given('I have a Kapow! server whith the following routes')
 def step_impl(context):
     context.server = subprocess.Popen(
         Env.KAPOW_SERVER_CMD,
