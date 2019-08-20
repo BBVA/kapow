@@ -106,13 +106,13 @@ def step_impl(context):
     raise NotImplementedError('STEP: Then I get an empty response body')
 
 
-@when('I delete the route with id "xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx"')
-def step_impl(context):
+@when('I delete the route with id "{id}"')
+def step_impl(context, id):
     raise NotImplementedError('STEP: When I delete the route with id "xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx"')
 
 
-@given('It has a route with id "xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx"')
-def step_impl(context):
+@given('It has a route with id "{id}"')
+def step_impl(context, id):
     raise NotImplementedError('STEP: Given It has a route with id "xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx"')
 
 @when('I insert the route')
