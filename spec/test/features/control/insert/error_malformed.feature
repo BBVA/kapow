@@ -1,4 +1,4 @@
-Feature: Kapow! server reject responses with malformed JSON bodies.
+Feature: Kapow! server reject insert requests with malformed JSON bodies.
   Kapow! server will reject to insert a route when
   it receives a malformed json document in the
   request body.
@@ -21,5 +21,5 @@ Feature: Kapow! server reject responses with malformed JSON bodies.
       }
       """
     Then I get bad request as response code
-    And I get "Malformed JSON" as response phrase
-    And I get an empty response body
+      And I get "Malformed JSON" as response phrase
+      And I get an empty response body
