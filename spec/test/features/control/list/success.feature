@@ -9,8 +9,8 @@ Feature: Listing routes in a Kapow! server
     will show an empty list of routes.
 
     Given I have a just started Kapow! server
-      When I request a routes listing
-      Then I get an empty list
+    When I request a routes listing
+    Then I get an empty list
 
   Scenario: Listing routes on a server with routes loaded.
     After some route creation/insertion operations the server
@@ -20,8 +20,8 @@ Feature: Listing routes in a Kapow! server
       | method | url_pattern        | entrypoint | command                                          |
       | GET    | /listRootDir       | /bin/sh -c | ls -la / \| response /body                       |
       | GET    | /listDir/{dirname} | /bin/sh -c | ls -la /request/params/dirname \| response /body |
-      When I request a routes listing
-      Then I get a list with the following elements:
-        | method | url_pattern        | entrypoint | command                                          | index | id |
-        | GET    | /listRootDir       | /bin/sh -c | ls -la / \| response /body                       |  0    | *  |
-        | GET    | /listDir/{dirname} | /bin/sh -c | ls -la /request/params/dirname \| response /body |  1    | *  |
+    When I request a routes listing
+    Then I get a list with the following elements:
+      | method | url_pattern        | entrypoint | command                                          | index | id |
+      | GET    | /listRootDir       | /bin/sh -c | ls -la / \| response /body                       |  0    | *  |
+      | GET    | /listDir/{dirname} | /bin/sh -c | ls -la /request/params/dirname \| response /body |  1    | *  |

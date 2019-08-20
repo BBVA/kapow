@@ -8,10 +8,10 @@ Feature: Kapow! server reject insert responses with semantic errors.
     missing fields.
 
     Given I have a running Kapow! server
-      When I insert the route:
-        | entrypoint | command                    |
-        | /bin/sh -c | ls -la / \| response /body |
-      Then I get unprocessable entity as response code
+    When I insert the route:
+      | entrypoint | command                    |
+      | /bin/sh -c | ls -la / \| response /body |
+    Then I get unprocessable entity as response code
       And I get "Missing Mandatory Field" as response phrase
       And I get the following entity as response body:
         | missing_mandatory_fields |
@@ -22,10 +22,10 @@ Feature: Kapow! server reject insert responses with semantic errors.
     url_pattern field the server responds with an error.
 
     Given I have a running Kapow! server
-      When I insert the route:
-        | method | url_pattern  | entrypoint | command                    | index |
-        | GET    | /listRootDir | /bin/sh -c | ls -la / \| response /body |     0 |
-      Then I get unprocessable entity as response code
+    When I insert the route:
+      | method | url_pattern  | entrypoint | command                    | index |
+      | GET    | /listRootDir | /bin/sh -c | ls -la / \| response /body |     0 |
+    Then I get unprocessable entity as response code
       And I get "Invalid Route Spec" as response phrase
       And I get an empty response body
 
@@ -34,11 +34,9 @@ Feature: Kapow! server reject insert responses with semantic errors.
     method field the server responds with an error.
 
     Given I have a running Kapow! server
-      When I insert the route:
-        | method | url_pattern  | entrypoint | command                    | index |
-        | AVECES | /listRootDir | /bin/sh -c | ls -la / \| response /body |     0 |
-      Then I get unprocessable entity as response code
+    When I insert the route:
+      | method | url_pattern  | entrypoint | command                    | index |
+      | AVECES | /listRootDir | /bin/sh -c | ls -la / \| response /body |     0 |
+    Then I get unprocessable entity as response code
       And I get "Invalid Data Type" as response phrase
       And I get an empty response body
-
-...
