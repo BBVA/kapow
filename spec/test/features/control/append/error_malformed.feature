@@ -8,17 +8,17 @@ Feature: Kapow! server reject responses with malformed JSON bodies.
     the server will respond with a bad request error.
 
     Given I have a running Kapow! server
-      When I try to append with this JSON document:
-        """
-        {
-          "method" "GET",
-          "url_pattern": /hello,
-          "entrypoint": null
-          "command": "echo Hello
-           World | response /body",
-          "id": "xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx"
-        }
-        """
-      Then I get 400 as response code
-      And I get "Malformed JSON" as response phrase
-      And I get an empty response body
+    When I try to append with this JSON document:
+      """
+      {
+        "method" "GET",
+        "url_pattern": /hello,
+        "entrypoint": null
+        "command": "echo Hello
+         World | response /body",
+        "id": "xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx"
+      }
+      """
+    Then I get 400 as response code
+    And I get "Malformed JSON" as response phrase
+    And I get an empty response body

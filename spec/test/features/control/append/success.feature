@@ -8,11 +8,11 @@ Feature: Append new routes in Kapow! server.
     will be at index 0.
 
     Given I have a just started Kapow! server
-      When I append the route:
-        | method | url_pattern  | entrypoint | command                    |
-        | GET    | /listRootDir | /bin/sh -c | ls -la / \| response /body |
-      Then I get created as response code
-      And I get "Created" as response phrase
+    When I append the route:
+      | method | url_pattern  | entrypoint | command                    |
+      | GET    | /listRootDir | /bin/sh -c | ls -la / \| response /body |
+    Then I get 201 as response code
+      And I get "Created" as response reason phrase
       And I get the following entity as response body:
         | method | url_pattern  | entrypoint | command                    | index | id |
         | GET    | /listRootDir | /bin/sh -c | ls -la / \| response /body |     0 |  * |
@@ -25,11 +25,11 @@ Feature: Append new routes in Kapow! server.
       | method | url_pattern        | entrypoint | command                                          |
       | GET    | /listRootDir       | /bin/sh -c | ls -la / \| response /body                       |
       | GET    | /listDir/{dirname} | /bin/sh -c | ls -la /request/params/dirname \| response /body |
-      When I append the route:
-        | method | url_pattern | entrypoint | command                       |
-        | GET    | /listEtcDir | /bin/sh -c | ls -la /etc \| response /body |
-      Then I get created as response code
-      And I get "Created" as response phrase
+    When I append the route:
+      | method | url_pattern | entrypoint | command                       |
+      | GET    | /listEtcDir | /bin/sh -c | ls -la /etc \| response /body |
+    Then I get 201 as response code
+      And I get "Created" as response reason phrase
       And I get the following entity as response body:
         | method | url_pattern | entrypoint | command                       | index | id |
         | GET    | /listEtcDir | /bin/sh -c | ls -la /etc \| response /body |     2 |  * |
