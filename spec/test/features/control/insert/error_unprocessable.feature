@@ -40,5 +40,3 @@ Feature: Kapow! server reject insert responses with semantic errors.
       Then I get unprocessable entity as response code
       And I get "Invalid Data Type" as response phrase
       And I get an empty response body
-
-...

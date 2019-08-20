@@ -1,5 +1,5 @@
 Feature: Kapow! server reject responses with semantic errors.
-  Kapow! server will reject to create routes when
+  Kapow! server will reject to append routes when
   it receives a valid json document but not conforming
   with the specification.
 
@@ -41,5 +41,3 @@ Feature: Kapow! server reject responses with semantic errors.
       Then I get unprocessable entity as response code
       And I get "Invalid Data Type" as response phrase
       And I get an empty response body
-
-...
