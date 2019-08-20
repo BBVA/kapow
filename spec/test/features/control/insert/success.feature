@@ -16,8 +16,8 @@ Feature: Insert new routes in Kapow! server.
     When I insert the route:
       | method | url_pattern  | entrypoint | command                    | index |
       | GET    | /listRootDir | /bin/sh -c | ls -la / \| response /body |     0 |
-    Then I get ok as response code
-      And I get "OK" as response phrase
+    Then I get 200 as response code
+      And I get "OK" as response reason phrase
       And I get the following entity as response body:
         | method | url_pattern  | entrypoint | command                    | index | id |
         | GET    | /listRootDir | /bin/sh -c | ls -la / \| response /body |     0 |  * |
@@ -30,8 +30,8 @@ Feature: Insert new routes in Kapow! server.
     When I insert the route:
       | method | url_pattern  | entrypoint | command                    | index |
       | GET    | /listRootDir | /bin/sh -c | ls -la / \| response /body |     1 |
-    Then I get ok as response code
-      And I get "OK" as response phrase
+    Then I get 200 as response code
+      And I get "OK" as response reason phrase
       And I get the following entity as response body:
         | method | url_pattern  | entrypoint | command                    | index | id |
         | GET    | /listRootDir | /bin/sh -c | ls -la / \| response /body |     1 |  * |

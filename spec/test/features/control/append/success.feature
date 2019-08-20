@@ -11,8 +11,8 @@ Feature: Append new routes in Kapow! server.
     When I append the route:
       | method | url_pattern  | entrypoint | command                    |
       | GET    | /listRootDir | /bin/sh -c | ls -la / \| response /body |
-    Then I get created as response code
-      And I get "Created" as response phrase
+    Then I get 201 as response code
+      And I get "Created" as response reason phrase
       And I get the following entity as response body:
         | method | url_pattern  | entrypoint | command                    | index | id |
         | GET    | /listRootDir | /bin/sh -c | ls -la / \| response /body |     0 |  * |
@@ -28,8 +28,8 @@ Feature: Append new routes in Kapow! server.
     When I append the route:
       | method | url_pattern | entrypoint | command                       |
       | GET    | /listEtcDir | /bin/sh -c | ls -la /etc \| response /body |
-    Then I get created as response code
-      And I get "Created" as response phrase
+    Then I get 201 as response code
+      And I get "Created" as response reason phrase
       And I get the following entity as response body:
         | method | url_pattern | entrypoint | command                       | index | id |
         | GET    | /listEtcDir | /bin/sh -c | ls -la /etc \| response /body |     2 |  * |
