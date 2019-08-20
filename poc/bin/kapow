@@ -313,7 +313,10 @@ async def run_init_script(app, scripts, interactive):
     """
     if not scripts:
         # No script given
-        cmd = "/bin/bash"
+        if not interactive:
+            return
+        else:
+            cmd = "/bin/bash"
     else:
         def build_filenames():
             for filename in scripts:
@@ -402,8 +405,6 @@ def server(certfile, keyfile, bind, interactive, scripts):
     if bool(certfile) ^ bool(keyfile):
         print("For SSL both 'certfile' and 'keyfile' should be provided.")
         sys.exit(1)
-    if not scripts:
-        interactive = True
     loop.run_until_complete(start_kapow_server(bind, scripts, certfile, interactive, keyfile))
     loop.run_forever()
 
