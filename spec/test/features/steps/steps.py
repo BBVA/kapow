@@ -160,6 +160,12 @@ def step_impl(context, id):
 def step_impl(context, id):
     raise NotImplementedError('STEP: Given It has a route with id "xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx"')
 
+
 @when('I insert the route')
 def step_impl(context):
     raise NotImplementedError('STEP: When I insert the route')
+
+
+@when('I try to append with this JSON document')
+def step_impl(context):
+    raise NotImplementedError('STEP: When I try to append with this JSON document')
