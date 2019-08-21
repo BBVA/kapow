@@ -160,7 +160,12 @@ def step_impl(context, id):
 
 @when('I insert the route')
 def step_impl(context):
-    raise NotImplementedError('STEP: When I insert the route')
+    if not hasattr(context, 'table'):
+        raise RuntimeError("A table must be set for this step.")
+
+    row = context.table[0]
+    context.response = requests.put(f"{Env.KAPOW_CONTROLAPI_URL}/routes",
+                                    json={h: row[h] for h in row.headings})
 
 
 @when('I try to append with this malformed JSON document')
