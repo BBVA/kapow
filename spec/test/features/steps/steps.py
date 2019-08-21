@@ -117,12 +117,9 @@ def step_impl(context):
 
 @when('I append the route')
 def step_impl(context):
-    if not hasattr(context, 'table'):
-        raise RuntimeError("A table must be set for this step.")
-
-    row = context.table[0]
     context.response = requests.post(f"{Env.KAPOW_CONTROLAPI_URL}/routes",
-                                     json={h: row[h] for h in row.headings})
+                                     data=context.text,
+                                     headers={"Content-Type": "application/json"})
 
 
 @then('I get {code} as response code')
