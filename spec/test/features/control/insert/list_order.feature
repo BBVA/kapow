@@ -15,42 +15,120 @@ Feature: Routes auto-ordering after inserting in a Kapow! server.
     will be increased by one.
 
     When I insert the route:
-      | method | url_pattern  | entrypoint | command                       | index |
-      | GET    | /listVarDir  | /bin/sh -c | ls -la /var \| response /body |     0 |
+      """
+      {
+        "method": "GET",
+        "url_pattern": "/listVarDir",
+        "entrypoint": "/bin/sh -c",
+        "command": "ls -la /var | response /body",
+        "index": 0
+      }
+      """
     Then I get 200 as response code
       And I get "OK" as response phrase
       And I get the following entity as response body:
-        | method | url_pattern  | entrypoint | command                       | index | id |
-        | GET    | /listVarDir  | /bin/sh -c | ls -la /var \| response /body |     0 |  * |
+        """
+        {
+          "method": "GET",
+          "url_pattern": "/listVarDir",
+          "entrypoint": "/bin/sh -c",
+          "command": "ls -la /var | response /body",
+          "index": 0,
+          "id": "*"
+        }
+        """
     When I request a routes listing
     Then I get 200 as response code
       And I get "OK" as response phrase
       And I get a list with the following elements:
-        | method | url_pattern        | entrypoint | command                                          | Index | id |
-        | GET    | /listVarDir        | /bin/sh -c | ls -la /var \| response /body                    |     0 |  * |
-        | GET    | /listRootDir       | /bin/sh -c | ls -la / \| response /body                       |     1 |  * |
-        | GET    | /listDir/{dirname} | /bin/sh -c | ls -la /request/params/dirname \| response /body |     2 |  * |
+        """
+        [
+          {
+            "method": "GET",
+            "url_pattern": "/listVarDir",
+            "entrypoint": "/bin/sh -c",
+            "command": "ls -la /var | response /body",
+            "index": 0,
+            "id": "*"
+          },
+          {
+            "method": "GET",
+            "url_pattern": "/listRootDir",
+            "entrypoint": "/bin/sh -c",
+            "command": "ls -la / | response /body",
+            "index": 1,
+            "id": "*"
+          },
+          {
+            "method": "GET",
+            "url_pattern": "/listDir/:dirname",
+            "entrypoint": "/bin/sh -c",
+            "command": "ls -la /request/params/dirname | response /body",
+            "index": 2,
+            "id": "*"
+          }
+        ]
+        """
 
   Scenario: Inserting after the last routes.
     After inserting after the last route the previous set
     will maintain their relative order and indexes.
 
     When I insert the route:
-      | method | url_pattern  | entrypoint | command                       | index |
-      | GET    | /listVarDir  | /bin/sh -c | ls -la /var \| response /body |     2 |
+      """
+      {
+        "method": "GET",
+        "url_pattern": "/listVarDir",
+        "entrypoint": "/bin/sh -c",
+        "command": "ls -la /var | response /body",
+        "index": 2
+      }
+      """
     Then I get 200 as response code
       And I get "OK" as response phrase
       And I get the following entity as response body:
-        | method | url_pattern  | entrypoint | command                       | index | id |
-        | GET    | /listVarDir  | /bin/sh -c | ls -la /var \| response /body |     2 |  * |
+        """
+        {
+          "method": "GET",
+          "url_pattern": "/listVarDir",
+          "entrypoint": "/bin/sh -c",
+          "command": "ls -la /var | response /body",
+          "index": 2,
+          "id": "*"
+        }
+        """
     When I request a routes listing
     Then I get 200 as response code
       And I get "OK" as response phrase
       And I get a list with the following elements:
-        | method | url_pattern        | entrypoint | command                                          | Index | id |
-        | GET    | /listRootDir       | /bin/sh -c | ls -la / \| response /body                       |     0 |  * |
-        | GET    | /listDir/{dirname} | /bin/sh -c | ls -la /request/params/dirname \| response /body |     1 |  * |
-        | GET    | /listVarDir        | /bin/sh -c | ls -la /var \| response /body                    |     2 |  * |
+        """
+        [
+          {
+            "method": "GET",
+            "url_pattern": "/listRootDir",
+            "entrypoint": "/bin/sh -c",
+            "command": "ls -la / | response /body",
+            "index": 0,
+            "id": "*"
+          },
+          {
+            "method": "GET",
+            "url_pattern": "/listDir/:dirname",
+            "entrypoint": "/bin/sh -c",
+            "command": "ls -la /request/params/dirname | response /body",
+            "index": 1,
+            "id": "*"
+          },
+          {
+            "method": "GET",
+            "url_pattern": "/listVarDir",
+            "entrypoint": "/bin/sh -c",
+            "command": "ls -la /var | response /body",
+            "index": 2,
+            "id": "*"
+          }
+        ]
+        """
 
   Scenario: Inserting a midst route.
     After inserting a midst route the previous route set
@@ -58,18 +136,57 @@ Feature: Routes auto-ordering after inserting in a Kapow! server.
     of thefollowing routes will be increased by one.
 
     When I insert the route:
-      | method | url_pattern  | entrypoint | command                       | index |
-      | GET    | /listVarDir  | /bin/sh -c | ls -la /var \| response /body |     1 |
+      """
+      {
+        "method": "GET",
+        "url_pattern": "/listVarDir",
+        "entrypoint": "/bin/sh -c",
+        "command": "ls -la /var | response /body",
+        "index": 1
+      }
+      """
     Then I get 200 as response code
       And I get "OK" as response phrase
       And I get the following entity as response body:
-        | method | url_pattern  | entrypoint | command                       | index | id |
-        | GET    | /listVarDir  | /bin/sh -c | ls -la /var \| response /body |     1 |  * |
+        """
+        {
+          "method": "GET",
+          "url_pattern": "/listVarDir",
+          "entrypoint": "/bin/sh -c",
+          "command": "ls -la /var | response /body",
+          "index": 1,
+          "id": "*"
+        }
+        """
     When I request a routes listing
     Then I get 200 as response code
       And I get "OK" as response phrase
       And I get a list with the following elements:
-        | method | url_pattern        | entrypoint | command                                          | Index | id |
-        | GET    | /listRootDir       | /bin/sh -c | ls -la / \| response /body                       |     0 |  * |
-        | GET    | /listVarDir        | /bin/sh -c | ls -la /var \| response /body                    |     1 |  * |
-        | GET    | /listDir/{dirname} | /bin/sh -c | ls -la /request/params/dirname \| response /body |     2 |  * |
+        """
+        [
+          {
+            "method": "GET",
+            "url_pattern": "/listRootDir",
+            "entrypoint": "/bin/sh -c",
+            "command": "ls -la / | response /body",
+            "index": 0,
+            "id": "*"
+          },
+          {
+            "method": "GET",
+            "url_pattern": "/listVarDir",
+            "entrypoint": "/bin/sh -c",
+            "command": "ls -la /var | response /body",
+            "index": 1,
+            "id": "*"
+          },
+          {
+            "method": "GET",
+            "url_pattern": "/listDir/:dirname",
+            "entrypoint": "/bin/sh -c",
+            "command": "ls -la /request/params/dirname | response /body",
+            "index": 2,
+            "id": "*"
+          }
+        ]
+        """

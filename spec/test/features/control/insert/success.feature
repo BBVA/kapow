@@ -14,13 +14,28 @@ Feature: Insert new routes in Kapow! server.
     by specifying an index 0 in the request.
 
     When I insert the route:
-      | method | url_pattern  | entrypoint | command                    | index |
-      | GET    | /listRootDir | /bin/sh -c | ls -la / \| response /body |     0 |
+      """
+      {
+        "method": "GET",
+        "url_pattern": "/listVarDir",
+        "entrypoint": "/bin/sh -c",
+        "command": "ls -la /var | response /body",
+        "index": 0
+      }
+      """
     Then I get 200 as response code
       And I get "OK" as response reason phrase
       And I get the following entity as response body:
-        | method | url_pattern  | entrypoint | command                    | index | id |
-        | GET    | /listRootDir | /bin/sh -c | ls -la / \| response /body |     0 |  * |
+        """
+        {
+          "method": "GET",
+          "url_pattern": "/listVarDir",
+          "entrypoint": "/bin/sh -c",
+          "command": "ls -la /var | response /body",
+          "index": 0,
+          "id": "*"
+        }
+        """
 
   Scenario: Insert a route in the middle.
     A route can be inserted in the middle of the list
@@ -28,10 +43,25 @@ Feature: Insert new routes in Kapow! server.
     index in the request.
 
     When I insert the route:
-      | method | url_pattern  | entrypoint | command                    | index |
-      | GET    | /listRootDir | /bin/sh -c | ls -la / \| response /body |     1 |
+      """
+      {
+        "method": "GET",
+        "url_pattern": "/listVarDir",
+        "entrypoint": "/bin/sh -c",
+        "command": "ls -la /var | response /body",
+        "index": 1
+      }
+      """
     Then I get 200 as response code
       And I get "OK" as response reason phrase
       And I get the following entity as response body:
-        | method | url_pattern  | entrypoint | command                    | index | id |
-        | GET    | /listRootDir | /bin/sh -c | ls -la / \| response /body |     1 |  * |
+        """
+        {
+          "method": "GET",
+          "url_pattern": "/listVarDir",
+          "entrypoint": "/bin/sh -c",
+          "command": "ls -la /var | response /body",
+          "index": 1,
+          "id": "*"
+        }
+        """
