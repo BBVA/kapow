@@ -16,6 +16,7 @@
 # limitations under the License.
 #
 
+from collections import namedtuple
 from itertools import repeat
 from urllib.parse import urlparse
 from uuid import uuid4
@@ -29,6 +30,7 @@ import ssl
 import sys
 
 from aiohttp import web, StreamReader
+from aiohttp.web_urldispatcher import UrlDispatcher
 import click
 import requests
 
@@ -274,37 +276,54 @@ def get_routes(app):
         return web.json_response(list(app.router))
     return _get_routes
 
+def insert_route(app):
+    async def _insert_route(request):
+        """Insert a new Kapow! route."""
+        try:
+            content = await request.json()
+        except ValueError:
+            return web.Response(status=400, reason="Malformed JSON")
+
+        try:
+            index = int(content["index"])
+            assert index >= 0
+            route = KapowRoute(method=content["method"],
+                               path=content["url_pattern"],
+                               name="ROUTE_" + str(uuid4()).replace('-', '_'),
+                               handler=handle_route(content["entrypoint"],
+                                                    content["command"]))
+            app.change_routes((app["user_routes"][:index]
+                               + [route]
+                               + app["user_routes"][index:]))
+        except (InvalidRouteError, KeyError, AssertionError, ValueError) as exc:
+            return web.Response(status=422, reason="Invalid Route")
+        else:
+            app["user_routes"].insert(index, route)
+            print(f'Route created {content["method"]} {content["url_pattern"]}')
+            return web.json_response(route.name, status=201)
+    return _insert_route
 
 def append_route(app):
     async def _append_route(request):
-        """Create a new Kapow! route."""
-        app.router._frozen = False
-
+        """Append a new Kapow! route."""
         try:
             content = await request.json()
-        except Exception as exc:
+        except ValueError as exc:
             return web.Response(status=400, reason="Malformed JSON")
 
-        name = "ROUTE_" + str(uuid4()).replace('-', '_')
         try:
-            app.router.add_route(content["method"],
-                                 content["url_pattern"],
-                                 handle_route(content["entrypoint"],
-                                              content["command"]),
-                                 name=name)
-        except KeyError as exc:
-            missing = list()
-            for field in ("method", "url_pattern", "entrypoint", "command"):
-                if field not in content:
-                    missing.append(field)
-            return web.Response(status=422,
-                                reason="Missing Mandatory Field",
-                                body=json.dumps({"missing_mandatory_fields": missing}))
-        except ValueError as exc:
-            return web.Response(status=422, reason="Invalid Route Spec")
+            route = KapowRoute(method=content["method"],
+                               path=content["url_pattern"],
+                               name="ROUTE_" + str(uuid4()).replace('-', '_'),
+                               handler=handle_route(content["entrypoint"],
+                                                    content["command"]))
+            app.change_routes(app["user_routes"] + [route])
+        except (InvalidRouteError, KeyError) as exc:
+            return web.Response(status=422, reason="Invalid Route")
         else:
+            app["user_routes"].append(route)
             print(f'Route created {content["method"]} {content["url_pattern"]}')
-            return web.json_response(name, status=201)
+            return web.json_response(route.name, status=201)
     return _append_route
 
 
@@ -359,13 +378,38 @@ async def run_init_script(app, scripts, interactive):
         os._exit(shell_task.returncode)
 
 
+class InvalidRouteError(Exception):
+    pass
+
+
+class DynamicApplication(web.Application):
+    def change_routes(self, routes):
+        router = UrlDispatcher()
+        try:
+            for route in routes:
+                router.add_route(route.method,
+                                 route.path,
+                                 route.handler,
+                                 name=route.name)
+        except Exception as exc:
+            raise InvalidRouteError("Invalid route") from exc
+        else:
+            self._router = router
+            if self._frozen:
+                self._router.freeze()
+
+
+KapowRoute = namedtuple('KapowRoute', ('method', 'path', 'name', 'handler'))
+
+
 async def start_background_tasks(app):
     global loop
     app["debug_tasks"] = loop.create_task(run_init_script(app, app["scripts"], app["interactive"]))
 
 
 async def start_kapow_server(bind, scripts, certfile=None, interactive=False, keyfile=None):
-    user_app = web.Application(client_max_size=1024**3)
+    user_app = DynamicApplication(client_max_size=1024**3)
+    user_app["user_routes"] = list()  # [KapowRoute]
     user_runner = web.AppRunner(user_app)
     await user_runner.setup()
 
@@ -382,8 +426,8 @@ async def start_kapow_server(bind, scripts, certfile=None, interactive=False, ke
     control_app.add_routes([
         # Control API
         web.get('/routes', get_routes(user_app)),
-        web.post('/routes', append_route(user_app)),  # TODO: return route index
-        # web.put('/routes', insert_route(user_app)),  # TODO: return route index
+        web.post('/routes', append_route(user_app)),  # TODO: return route info
+        web.put('/routes', insert_route(user_app)),   # TODO: return route info
         web.delete('/routes/{id}', delete_route(user_app)),
 
         # Data API
