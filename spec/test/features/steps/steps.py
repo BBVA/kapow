@@ -24,7 +24,7 @@ class Env(EnvironConfig):
 
     KAPOW_BOOT_TIMEOUT = IntVar(default=10)
 
-    KAPOW_DEBUG_TESTS = BooleanVar(default=True)
+    KAPOW_DEBUG_TESTS = BooleanVar(default=False)
 
 
 if Env.KAPOW_DEBUG_TESTS:
