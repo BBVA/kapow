@@ -1,12 +1,15 @@
-import subprocess
+from contextlib import suppress
 from time import sleep
+import json
 import shlex
 import socket
-from contextlib import suppress
+import subprocess
 
 import requests
-from environconfig import EnvironConfig, StringVar, IntVar
+from environconfig import EnvironConfig, StringVar, IntVar, BooleanVar
+from comparedict import is_subset
 
+import logging
 
 class Env(EnvironConfig):
     #: How to run Kapow! server
@@ -20,9 +23,30 @@ class Env(EnvironConfig):
 
     KAPOW_BOOT_TIMEOUT = IntVar(default=10)
 
-@given('I have a just started Kapow! server')
-@given('I have a running Kapow! server')
-def step_impl(context):
+    KAPOW_DEBUG_TESTS = BooleanVar(default=True)
+
+
+if Env.KAPOW_DEBUG_TESTS:
+    # These two lines enable debugging at httplib level
+    # (requests->urllib3->http.client) You will see the REQUEST,
+    # including HEADERS and DATA, and RESPONSE with HEADERS but without
+    # DATA.  The only thing missing will be the response.body which is
+    # not logged.
+    try:
+        import http.client as http_client
+    except ImportError:
+        # Python 2
+        import httplib as http_client
+    http_client.HTTPConnection.debuglevel = 1
+
+    # You must initialize logging, otherwise you'll not see debug output.
+    logging.basicConfig()
+    logging.getLogger().setLevel(logging.DEBUG)
+    requests_log = logging.getLogger("requests.packages.urllib3")
+    requests_log.setLevel(logging.DEBUG)
+    requests_log.propagate = True
+
+def run_kapow_server(context):
     context.server = subprocess.Popen(
         shlex.split(Env.KAPOW_SERVER_CMD),
         stdout=subprocess.DEVNULL,
@@ -44,6 +68,11 @@ def step_impl(context):
 
     assert open_ports, "API is unreachable after KAPOW_BOOT_TIMEOUT"
 
+@given('I have a just started Kapow! server')
+@given('I have a running Kapow! server')
+def step_impl(context):
+    run_kapow_server(context)
+
 
 @when('I request a routes listing')
 def step_impl(context):
@@ -58,13 +87,7 @@ def step_impl(context):
 
 @given('I have a Kapow! server whith the following routes')
 def step_impl(context):
-    context.server = subprocess.Popen(
-        Env.KAPOW_SERVER_CMD,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-        shell=True)
-    is_running = context.server.poll() is None
-    assert is_running, "Server is not running!"
+    run_kapow_server(context)
 
     if not hasattr(context, 'table'):
         raise RuntimeError("A table must be set for this step.")
@@ -97,30 +120,32 @@ def step_impl(context):
     if not hasattr(context, 'table'):
         raise RuntimeError("A table must be set for this step.")
 
-    for row in context.table:
-        response = requests.post(f"{Env.KAPOW_CONTROLAPI_URL}/routes",
-                                 json={h: row[h] for h in row.headings})
-        response.raise_for_status()
+    row = context.table[0]
+    context.response = requests.post(f"{Env.KAPOW_CONTROLAPI_URL}/routes",
+                                     json={h: row[h] for h in row.headings})
 
 
 @then('I get {code} as response code')
 def step_impl(context, code):
-    raise NotImplementedError('STEP: Then I get unprocessable entity as response code')
+    assert context.response.status_code == int(code), f"Got {context.response.status_code} instead"
 
 
 @then('I get "{reason}" as response reason phrase')
 def step_impl(context, reason):
-    raise NotImplementedError('STEP: Then I get "Missing Mandatory Field" as response phrase')
+    assert context.response.reason == reason, f"Got {context.response.reason} instead"
 
 
 @then('I get the following entity as response body')
 def step_impl(context):
-    raise NotImplementedError('STEP: Then I get the following entity as response body')
+    for row in context.table:
+        for name, value in row.items():
+            assert name in context.response.json(), f"Field {name} not present in {context.response.json()}"
+            assert set(json.loads(value)) == set(context.response.json()[name])
 
 
 @then('I get an empty response body')
 def step_impl(context):
-    raise NotImplementedError('STEP: Then I get an empty response body')
+    assert context.response.content == b'', f"Response body is not empty. Got {context.response.content} instead."
 
 
 @when('I delete the route with id "{id}"')
@@ -132,6 +157,16 @@ def step_impl(context, id):
 def step_impl(context, id):
     raise NotImplementedError('STEP: Given It has a route with id "xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx"')
 
+
 @when('I insert the route')
 def step_impl(context):
     raise NotImplementedError('STEP: When I insert the route')
+
+
+@when('I try to append with this malformed JSON document')
+@when('I try to append with this JSON document')
+def step_impl(context):
+    context.response = requests.post(
+        f"{Env.KAPOW_CONTROLAPI_URL}/routes",
+        headers={"Content-Type": "application/json"},
+        data=context.text)

@@ -8,7 +8,7 @@ Feature: Kapow! server reject append requests with malformed JSON bodies.
     the server will respond with a bad request error.
 
     Given I have a running Kapow! server
-    When I try to append with this JSON document:
+    When I try to append with this malformed JSON document:
       """
       {
         "method" "GET",
@@ -20,5 +20,5 @@ Feature: Kapow! server reject append requests with malformed JSON bodies.
       }
       """
     Then I get 400 as response code
-      And I get "Malformed JSON" as response phrase
+      And I get "Malformed JSON" as response reason phrase
       And I get an empty response body

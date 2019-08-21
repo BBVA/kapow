@@ -16,11 +16,12 @@
 # limitations under the License.
 #
 
-from urllib.parse import urlparse
 from itertools import repeat
+from urllib.parse import urlparse
 from uuid import uuid4
 import asyncio
 import io
+import json
 import logging
 import os
 import shlex
@@ -278,15 +279,32 @@ def append_route(app):
     async def _append_route(request):
         """Create a new Kapow! route."""
         app.router._frozen = False
-        content = await request.json()
+
+        try:
+            content = await request.json()
+        except Exception as exc:
+            return web.Response(status=400, reason="Malformed JSON")
+
         name = "ROUTE_" + str(uuid4()).replace('-', '_')
-        app.router.add_route(content["method"],
-                             content["url_pattern"],
-                             handle_route(content["entrypoint"],
-                                          content["command"]),
-                             name=name)
-        print(f'Route created {content["method"]} {content["url_pattern"]}')
-        return web.json_response(name)
+        try:
+            app.router.add_route(content["method"],
+                                 content["url_pattern"],
+                                 handle_route(content["entrypoint"],
+                                              content["command"]),
+                                 name=name)
+        except KeyError as exc:
+            missing = list()
+            for field in ("method", "url_pattern", "entrypoint", "command"):
+                if field not in content:
+                    missing.append(field)
+            return web.Response(status=422,
+                                reason="Missing Mandatory Field",
+                                body=json.dumps({"missing_mandatory_fields": missing}))
+        except ValueError as exc:
+            return web.Response(status=422, reason="Invalid Route Spec")
+        else:
+            print(f'Route created {content["method"]} {content["url_pattern"]}')
+            return web.json_response(name, status=201)
     return _append_route
 
 
