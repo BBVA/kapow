@@ -25,7 +25,7 @@ Feature: Routes auto-ordering after inserting in a Kapow! server.
       }
       """
     Then I get 200 as response code
-      And I get "OK" as response phrase
+      And I get "OK" as response reason phrase
       And I get the following entity as response body:
         """
         {
@@ -39,7 +39,7 @@ Feature: Routes auto-ordering after inserting in a Kapow! server.
         """
     When I request a routes listing
     Then I get 200 as response code
-      And I get "OK" as response phrase
+      And I get "OK" as response reason phrase
       And I get a list with the following elements:
         """
         [
@@ -85,7 +85,7 @@ Feature: Routes auto-ordering after inserting in a Kapow! server.
       }
       """
     Then I get 200 as response code
-      And I get "OK" as response phrase
+      And I get "OK" as response reason phrase
       And I get the following entity as response body:
         """
         {
@@ -99,7 +99,7 @@ Feature: Routes auto-ordering after inserting in a Kapow! server.
         """
     When I request a routes listing
     Then I get 200 as response code
-      And I get "OK" as response phrase
+      And I get "OK" as response reason phrase
       And I get a list with the following elements:
         """
         [
@@ -146,7 +146,7 @@ Feature: Routes auto-ordering after inserting in a Kapow! server.
       }
       """
     Then I get 200 as response code
-      And I get "OK" as response phrase
+      And I get "OK" as response reason phrase
       And I get the following entity as response body:
         """
         {
@@ -160,7 +160,7 @@ Feature: Routes auto-ordering after inserting in a Kapow! server.
         """
     When I request a routes listing
     Then I get 200 as response code
-      And I get "OK" as response phrase
+      And I get "OK" as response reason phrase
       And I get a list with the following elements:
         """
         [
