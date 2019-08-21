@@ -9,13 +9,27 @@ Feature: Append new routes in Kapow! server.
 
     Given I have a just started Kapow! server
     When I append the route:
-      | method | url_pattern  | entrypoint | command                    |
-      | GET    | /listRootDir | /bin/sh -c | ls -la / \| response /body |
+      """
+      {
+        "method": "GET",
+        "url_pattern": "/listRootDir",
+        "entrypoint": "/bin/sh -c",
+        "command": "ls -la / | response /body"
+      }
+      """
     Then I get 201 as response code
       And I get "Created" as response reason phrase
       And I get the following entity as response body:
-        | method | url_pattern  | entrypoint | command                    | index | id |
-        | GET    | /listRootDir | /bin/sh -c | ls -la / \| response /body |     0 |  * |
+      """
+      {
+        "method": "GET",
+        "url_pattern": "/listRootDir",
+        "entrypoint": "/bin/sh -c",
+        "command": "ls -la / | response /body",
+        "index": 0,
+        "id": "*"
+      }
+      """
 
   Scenario: Append another route.
     Appending routes on a non empty list will create new routes
@@ -26,10 +40,24 @@ Feature: Append new routes in Kapow! server.
       | GET    | /listRootDir       | /bin/sh -c | ls -la / \| response /body                       |
       | GET    | /listDir/{dirname} | /bin/sh -c | ls -la /request/params/dirname \| response /body |
     When I append the route:
-      | method | url_pattern | entrypoint | command                       |
-      | GET    | /listEtcDir | /bin/sh -c | ls -la /etc \| response /body |
+      """
+      {
+        "method": "GET",
+        "url_pattern": "/listEtcDir",
+        "entrypoint": "/bin/sh -c",
+        "command": "ls -la /etc | response /body"
+      }
+      """
     Then I get 201 as response code
       And I get "Created" as response reason phrase
       And I get the following entity as response body:
-        | method | url_pattern | entrypoint | command                       | index | id |
-        | GET    | /listEtcDir | /bin/sh -c | ls -la /etc \| response /body |     2 |  * |
+      """
+      {
+        "method": "GET",
+        "url_pattern": "/listEtcDir",
+        "entrypoint": "/bin/sh -c",
+        "command": "ls -la /etc | response /body",
+        "index": 2,
+        "id": "*"
+      }
+      """
