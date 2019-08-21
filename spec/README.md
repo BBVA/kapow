@@ -246,7 +246,7 @@ A new id is created for the appended route so it can be referenced later.
     ```
 * **Error Responses**:
   * **Code**: `400 Malformed JSON`
-  * **Code**: `422 Invalid Route Spec`
+  * **Code**: `422 Invalid Route`
 * **Sample Call**:<br />
     ```sh
     $ curl -X POST --data-binary @- $KAPOW_URL/routes <<EOF
