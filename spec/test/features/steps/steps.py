@@ -8,6 +8,7 @@ import subprocess
 import requests
 from environconfig import EnvironConfig, StringVar, IntVar, BooleanVar
 from comparedict import is_subset
+import jsonexample
 
 import logging
 
@@ -134,7 +135,7 @@ def step_impl(context, reason):
 
 @then('I get the following response body')
 def step_impl(context):
-    assert is_subset(json.loads(context.text), context.response.json())
+    assert is_subset(jsonexample.loads(context.text), context.response.json())
 
 
 @then('I get an empty response body')

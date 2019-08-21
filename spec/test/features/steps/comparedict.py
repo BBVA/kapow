@@ -1,4 +1,5 @@
 from functools import singledispatch
+from jsonexample import ANY
 
 
 def assert_same_type(f):
@@ -40,3 +41,8 @@ def _(model, obj):
 @assert_same_type
 def _(model, obj):
     return model <= obj
+
+
+@is_subset.register(ANY)
+def _(model, obj):
+    return True
