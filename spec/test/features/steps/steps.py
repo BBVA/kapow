@@ -175,3 +175,23 @@ def step_impl(context):
         f"{Env.KAPOW_CONTROLAPI_URL}/routes",
         headers={"Content-Type": "application/json"},
         data=context.text)
+
+
+@when('I delete the first route inserted')
+def step_impl(context):
+    raise NotImplementedError('STEP: When I delete the first route inserted')
+
+
+@when('I delete the last route inserted')
+def step_impl(context):
+    raise NotImplementedError('STEP: When I delete the last route inserted')
+
+
+@when('I delete the second route inserted')
+def step_impl(context):
+    raise NotImplementedError('STEP: When I delete the second route inserted')
+
+
+@when('I try to insert with this JSON document')
+def step_impl(context):
+    raise NotImplementedError('STEP: When I try to insert with this JSON document')
