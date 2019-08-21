@@ -25,6 +25,23 @@ Feature: Listing routes in a Kapow! server
     Then I get 200 as response code
       And I get "OK" as response phrase
       And I get a list with the following elements:
-        | method | url_pattern        | entrypoint | command                                          | index | id |
-        | GET    | /listRootDir       | /bin/sh -c | ls -la / \| response /body                       |  0    | *  |
-        | GET    | /listDir/{dirname} | /bin/sh -c | ls -la /request/params/dirname \| response /body |  1    | *  |
+        """
+        [
+          {
+            "method": "GET",
+            "url_pattern": "/listRootDir",
+            "entrypoint": "/bin/sh -c",
+            "command": "ls -la / | response /body",
+            "index": 0,
+            "id": "*"
+          },
+          {
+            "method": "GET",
+            "url_pattern": "/listDir/:dirname",
+            "entrypoint": "/bin/sh -c",
+            "command": "ls -la /request/params/dirname | response /body",
+            "index": 1,
+            "id": "*"
+          }
+        ]
+        """

@@ -32,7 +32,7 @@ Feature: Routes auto-ordering after deleting  in a Kapow! server.
             "url_pattern": "/listVarDir",
             "entrypoint": "/bin/sh -c",
             "command": "ls -la /var | response /body",
-            "index": "0",
+            "index": 0,
             "id": "*"
           },
           {
@@ -40,7 +40,7 @@ Feature: Routes auto-ordering after deleting  in a Kapow! server.
             "url_pattern": "/listEtcDir",
             "entrypoint": "/bin/sh -c",
             "command": "ls -la /etc | response /body",
-            "index": "1",
+            "index": 1,
             "id": "*"
           },
           {
@@ -48,7 +48,7 @@ Feature: Routes auto-ordering after deleting  in a Kapow! server.
             "url_pattern": "/listDir/:dirname",
             "entrypoint": "/bin/sh -c",
             "command": "ls -la /request/params/dirname | response /body",
-            "index": "2",
+            "index": 2,
             "id": "*"
           }
         ]
@@ -73,7 +73,7 @@ Feature: Routes auto-ordering after deleting  in a Kapow! server.
           "url_pattern": "/listRootDir",
           "entrypoint": "/bin/sh -c",
           "command": "ls -la / | response /body",
-          "index": "0",
+          "index": 0,
           "id": "*"
         },
         {
@@ -81,7 +81,7 @@ Feature: Routes auto-ordering after deleting  in a Kapow! server.
           "url_pattern": "/listVarDir",
           "entrypoint": "/bin/sh -c",
           "command": "ls -la /var | response /body",
-          "index": "1",
+          "index": 1,
           "id": "*"
         },
         {
@@ -89,7 +89,7 @@ Feature: Routes auto-ordering after deleting  in a Kapow! server.
           "url_pattern": "/listEtcDir",
           "entrypoint": "/bin/sh -c",
           "command": "ls -la /etc | response /body",
-          "index": "2",
+          "index": 2,
           "id": "*"
         }
       ]
@@ -115,7 +115,7 @@ Feature: Routes auto-ordering after deleting  in a Kapow! server.
             "url_pattern": "/listRootDir",
             "entrypoint": "/bin/sh -c",
             "command": "ls -la / | response /body",
-            "index": "0",
+            "index": 0,
             "id": "*"
           },
           {
@@ -123,7 +123,7 @@ Feature: Routes auto-ordering after deleting  in a Kapow! server.
             "url_pattern": "/listEtcDir",
             "entrypoint": "/bin/sh -c",
             "command": "ls -la /etc | response /body",
-            "index": "1",
+            "index": 1,
             "id": "*"
           },
           {
@@ -131,7 +131,7 @@ Feature: Routes auto-ordering after deleting  in a Kapow! server.
             "url_pattern": "/listDir/:dirname",
             "entrypoint": "/bin/sh -c",
             "command": "ls -la /request/params/dirname | response /body",
-            "index": "2",
+            "index": 2,
             "id": "*"
           }
         ]
