@@ -33,7 +33,7 @@ Feature: Listing routes in a Kapow! server
             "entrypoint": "/bin/sh -c",
             "command": "ls -la / | response /body",
             "index": 0,
-            "id": "*"
+            "id": ANY
           },
           {
             "method": "GET",
@@ -41,7 +41,7 @@ Feature: Listing routes in a Kapow! server
             "entrypoint": "/bin/sh -c",
             "command": "ls -la /request/params/dirname | response /body",
             "index": 1,
-            "id": "*"
+            "id": ANY
           }
         ]
         """

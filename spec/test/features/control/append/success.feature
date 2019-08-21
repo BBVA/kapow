@@ -28,7 +28,7 @@ Feature: Append new routes in Kapow! server.
         "entrypoint": "/bin/sh -c",
         "command": "ls -la / | response /body",
         "index": 0,
-        "id": "*"
+        "id": ANY
       }
       """
 
@@ -59,6 +59,6 @@ Feature: Append new routes in Kapow! server.
         "entrypoint": "/bin/sh -c",
         "command": "ls -la /etc | response /body",
         "index": 2,
-        "id": "*"
+        "id": ANY
       }
       """

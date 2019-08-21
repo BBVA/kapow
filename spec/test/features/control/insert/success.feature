@@ -33,7 +33,7 @@ Feature: Insert new routes in Kapow! server.
           "entrypoint": "/bin/sh -c",
           "command": "ls -la /var | response /body",
           "index": 0,
-          "id": "*"
+          "id": ANY
         }
         """
 
@@ -62,6 +62,6 @@ Feature: Insert new routes in Kapow! server.
           "entrypoint": "/bin/sh -c",
           "command": "ls -la /var | response /body",
           "index": 1,
-          "id": "*"
+          "id": ANY
         }
         """

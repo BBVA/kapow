@@ -33,7 +33,7 @@ Feature: Routes auto-ordering after deleting  in a Kapow! server.
             "entrypoint": "/bin/sh -c",
             "command": "ls -la /var | response /body",
             "index": 0,
-            "id": "*"
+            "id": ANY
           },
           {
             "method": "GET",
@@ -41,7 +41,7 @@ Feature: Routes auto-ordering after deleting  in a Kapow! server.
             "entrypoint": "/bin/sh -c",
             "command": "ls -la /etc | response /body",
             "index": 1,
-            "id": "*"
+            "id": ANY
           },
           {
             "method": "GET",
@@ -49,7 +49,7 @@ Feature: Routes auto-ordering after deleting  in a Kapow! server.
             "entrypoint": "/bin/sh -c",
             "command": "ls -la /request/params/dirname | response /body",
             "index": 2,
-            "id": "*"
+            "id": ANY
           }
         ]
         """
@@ -74,7 +74,7 @@ Feature: Routes auto-ordering after deleting  in a Kapow! server.
           "entrypoint": "/bin/sh -c",
           "command": "ls -la / | response /body",
           "index": 0,
-          "id": "*"
+          "id": ANY
         },
         {
           "method": "GET",
@@ -82,7 +82,7 @@ Feature: Routes auto-ordering after deleting  in a Kapow! server.
           "entrypoint": "/bin/sh -c",
           "command": "ls -la /var | response /body",
           "index": 1,
-          "id": "*"
+          "id": ANY
         },
         {
           "method": "GET",
@@ -90,7 +90,7 @@ Feature: Routes auto-ordering after deleting  in a Kapow! server.
           "entrypoint": "/bin/sh -c",
           "command": "ls -la /etc | response /body",
           "index": 2,
-          "id": "*"
+          "id": ANY
         }
       ]
       """
@@ -116,7 +116,7 @@ Feature: Routes auto-ordering after deleting  in a Kapow! server.
             "entrypoint": "/bin/sh -c",
             "command": "ls -la / | response /body",
             "index": 0,
-            "id": "*"
+            "id": ANY
           },
           {
             "method": "GET",
@@ -124,7 +124,7 @@ Feature: Routes auto-ordering after deleting  in a Kapow! server.
             "entrypoint": "/bin/sh -c",
             "command": "ls -la /etc | response /body",
             "index": 1,
-            "id": "*"
+            "id": ANY
           },
           {
             "method": "GET",
@@ -132,7 +132,7 @@ Feature: Routes auto-ordering after deleting  in a Kapow! server.
             "entrypoint": "/bin/sh -c",
             "command": "ls -la /request/params/dirname | response /body",
             "index": 2,
-            "id": "*"
+            "id": ANY
           }
         ]
         """
