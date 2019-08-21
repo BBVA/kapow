@@ -400,6 +400,16 @@ class InvalidRouteError(Exception):
 
 
 class DynamicApplication(web.Application):
+    """
+    A wrapper around `aiohttp.web.Application` allowing changing routes
+    dynamically.
+
+    This is not safe as mentioned here:
+    https://github.com/aio-libs/aiohttp/issues/3238.
+
+    On the other hand this is a PoC anyway...
+
+    """
     def change_routes(self, routes):
         router = UrlDispatcher()
         try:
