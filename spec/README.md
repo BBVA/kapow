@@ -243,19 +243,7 @@ Accepts JSON data that defines a new route to be appended to the current routes.
     ```
 * **Error Responses**:
   * **Code**: `400 Malformed JSON`
-  * **Code**: `422 Invalid Data Type`
   * **Code**: `422 Invalid Route Spec`
-  * **Code**: `422 Missing Mandatory Field`<br />
-    **Header**: `Content-Type: application/json`<br />
-    **Content**:<br />
-    ```json
-    {
-      "missing_mandatory_fields": [
-        "url_pattern",
-        "command"
-      ]
-    }
-    ```
 * **Sample Call**:<br />
     ```sh
     $ curl -X POST --data-binary @- $KAPOW_URL/routes <<EOF
@@ -307,20 +295,7 @@ Accepts JSON data that defines a new route to be appended to the current routes.
     ```
 * **Error Responses**:
   * **Code**: `400 Malformed JSON`
-  * **Code**: `422 Invalid Data Type`
   * **Code**: `422 Invalid Route Spec`
-  * **Code**: `422 Missing Mandatory Field`<br />
-    **Header**: `Content-Type: application/json`<br />
-    **Content**:<br />
-    ```json
-    {
-      "missing_mandatory_fields": [
-        "url_pattern",
-        "command"
-      ]
-    }
-    ```
-  * **Code**: `422 Invalid Index Type`
 * **Sample Call**:<br />
     ```sh
     $ curl -X PUT --data-binary @- $KAPOW_URL/routes <<EOF`
@@ -526,17 +501,12 @@ Returns the value of the requested resource path, or an error if the resource pa
 * **Success Responses**:
   * **Code**: `200 OK`
 * **Error Responses**:
-  * **Code**: `400 Invalid Payload`
-  * **Code**: `400 Invalid Resource Path`<br />
-    **Notes**: Check the list of valid resource paths at the top of this section.
-  * **Code**: `404 Handler Not Found`
-  * **Code**: `404 Name Not Found`<br />
-    **Notes**: Although the resource path is correct, no such name is present in the request.  For instance, `/request/headers/Foo`, when no `Foo` header is not present in the request.
+  * **Code**: `400 Invalid Resource`
+  * **Code**: `404 Not Found`
 * **Sample Call**:<br />
   ```sh
   $ curl -X --data-binary '<h1>Hello!</h1>' PUT /handlers/$KAPOW_HANDLER_ID/response/body
   ```
-* **Notes**:
 
 
 ## Usage Example
