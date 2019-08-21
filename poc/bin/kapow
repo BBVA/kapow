@@ -279,7 +279,12 @@ def append_route(app):
     async def _append_route(request):
         """Create a new Kapow! route."""
         app.router._frozen = False
-        content = await request.json()
+
+        try:
+            content = await request.json()
+        except Exception as exc:
+            return web.Response(status=400, reason="Malformed JSON")
+
         name = "ROUTE_" + str(uuid4()).replace('-', '_')
         try:
             app.router.add_route(content["method"],

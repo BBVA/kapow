@@ -170,4 +170,7 @@ def step_impl(context):
 @when('I try to append with this malformed JSON document')
 @when('I try to append with this JSON document')
 def step_impl(context):
-    raise NotImplementedError('STEP: When I try to append with this JSON document')
+    context.response = requests.post(
+        f"{Env.KAPOW_CONTROLAPI_URL}/routes",
+        headers={"Content-Type": "application/json"},
+        data=context.text)
