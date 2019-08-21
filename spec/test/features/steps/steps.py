@@ -7,6 +7,7 @@ import subprocess
 
 import requests
 from environconfig import EnvironConfig, StringVar, IntVar, BooleanVar
+from comparedict import is_subset
 
 import logging
 
