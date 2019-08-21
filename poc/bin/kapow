@@ -270,11 +270,13 @@ def handle_route(entrypoint, command):
 #                           Route Management                           #
 ########################################################################
 
+
 def get_routes(app):
     async def _get_routes(request):
         """Return the list of registered routes."""
         return web.json_response(list(app.router))
     return _get_routes
+
 
 def insert_route(app):
     async def _insert_route(request):
@@ -289,7 +291,9 @@ def insert_route(app):
             assert index >= 0
             route = KapowRoute(method=content["method"],
                                path=content["url_pattern"],
-                               name="ROUTE_" + str(uuid4()).replace('-', '_'),
+                               id="ROUTE_" + str(uuid4()).replace('-', '_'),
+                               entrypoint=content["entrypoint"],
+                               command=content["command"],
                                handler=handle_route(content["entrypoint"],
                                                     content["command"]))
             app.change_routes((app["user_routes"][:index]
@@ -300,8 +304,14 @@ def insert_route(app):
         else:
             app["user_routes"].insert(index, route)
             print(f'Route created {content["method"]} {content["url_pattern"]}')
-            return web.json_response(route.name, status=201)
+            return web.json_response({"id": route.id,
+                                      "method": route.method,
+                                      "url_pattern": route.path,
+                                      "entrypoint": route.entrypoint,
+                                      "command": route.command,
+                                      "index": index}, status=201)
     return _insert_route
+
 
 def append_route(app):
     async def _append_route(request):
@@ -314,7 +324,9 @@ def append_route(app):
         try:
             route = KapowRoute(method=content["method"],
                                path=content["url_pattern"],
-                               name="ROUTE_" + str(uuid4()).replace('-', '_'),
+                               id="ROUTE_" + str(uuid4()).replace('-', '_'),
+                               entrypoint=content["entrypoint"],
+                               command=content["command"],
                                handler=handle_route(content["entrypoint"],
                                                     content["command"]))
             app.change_routes(app["user_routes"] + [route])
@@ -323,7 +335,12 @@ def append_route(app):
         else:
             app["user_routes"].append(route)
             print(f'Route created {content["method"]} {content["url_pattern"]}')
-            return web.json_response(route.name, status=201)
+            return web.json_response({"id": route.id,
+                                      "method": route.method,
+                                      "url_pattern": route.path,
+                                      "entrypoint": route.entrypoint,
+                                      "command": route.command,
+                                      "index": len(app["user_routes"])-1}, status=201)
     return _append_route
 
 
@@ -390,7 +407,7 @@ class DynamicApplication(web.Application):
                 router.add_route(route.method,
                                  route.path,
                                  route.handler,
-                                 name=route.name)
+                                 name=route.id)
         except Exception as exc:
             raise InvalidRouteError("Invalid route") from exc
         else:
@@ -399,7 +416,13 @@ class DynamicApplication(web.Application):
                 self._router.freeze()
 
 
-KapowRoute = namedtuple('KapowRoute', ('method', 'path', 'name', 'handler'))
+KapowRoute = namedtuple('KapowRoute',
+                        ('method',
+                         'path',
+                         'id',
+                         'entrypoint',
+                         'command',
+                         'handler'))
 
 
 async def start_background_tasks(app):

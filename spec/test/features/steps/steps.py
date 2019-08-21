@@ -134,10 +134,7 @@ def step_impl(context, reason):
 
 @then('I get the following response body')
 def step_impl(context):
-    for row in context.table:
-        for name, value in row.items():
-            assert name in context.response.json(), f"Field {name} not present in {context.response.json()}"
-            assert set(json.loads(value)) == set(context.response.json()[name])
+    assert is_subset(json.loads(context.text), context.response.json())
 
 
 @then('I get an empty response body')

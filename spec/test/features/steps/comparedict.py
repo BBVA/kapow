@@ -4,7 +4,7 @@ from functools import singledispatch
 def assert_same_type(f):
     def wrapper(a, b):
         if type(a) != type(b):
-            raise TypeError("Non-matching types")
+            raise TypeError(f"Non-matching types {a!r} != {b!r}")
         return f(a, b)
     return wrapper
 
@@ -12,7 +12,10 @@ def assert_same_type(f):
 @singledispatch
 @assert_same_type
 def is_subset(model, obj):
-    return model == obj
+    if model == obj:
+        return True
+    else:
+        raise ValueError(f"Non-matching values {model!r} != {obj!r}")
 
 
 @is_subset.register(dict)
@@ -20,16 +23,17 @@ def is_subset(model, obj):
 def _(model, obj):
     for key, value in model.items():
         if key not in obj or not is_subset(value, obj[key]):
-            return False
+            raise ValueError(f"Non-matching dicts {model!r} != {obj!r}")
     return True
 
 
 @is_subset.register(list)
 @assert_same_type
 def _(model, obj):
-    if type(model) != type(obj):
-        raise TypeError("Non-matching types")
-    return is_subset(set(model), set(obj))
+    if is_subset(set(model), set(obj)):
+        return True
+    else:
+        raise ValueError(f"Non-matching lists {model!r} != {obj!r}")
 
 
 @is_subset.register(set)

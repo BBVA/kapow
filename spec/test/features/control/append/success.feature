@@ -1,3 +1,4 @@
+@wip
 Feature: Append new routes in Kapow! server.
   Append routes allow users to configure the server. New
   routes are added to the list of existing routes.
