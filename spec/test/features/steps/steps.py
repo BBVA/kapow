@@ -46,10 +46,7 @@ if Env.KAPOW_DEBUG_TESTS:
     requests_log.setLevel(logging.DEBUG)
     requests_log.propagate = True
 
-
-@given('I have a just started Kapow! server')
-@given('I have a running Kapow! server')
-def step_impl(context):
+def run_kapow_server(context):
     context.server = subprocess.Popen(
         shlex.split(Env.KAPOW_SERVER_CMD),
         stdout=subprocess.DEVNULL,
@@ -71,6 +68,11 @@ def step_impl(context):
 
     assert open_ports, "API is unreachable after KAPOW_BOOT_TIMEOUT"
 
+@given('I have a just started Kapow! server')
+@given('I have a running Kapow! server')
+def step_impl(context):
+    run_kapow_server(context)
+
 
 @when('I request a routes listing')
 def step_impl(context):
@@ -85,13 +87,7 @@ def step_impl(context):
 
 @given('I have a Kapow! server whith the following routes')
 def step_impl(context):
-    context.server = subprocess.Popen(
-        Env.KAPOW_SERVER_CMD,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-        shell=True)
-    is_running = context.server.poll() is None
-    assert is_running, "Server is not running!"
+    run_kapow_server(context)
 
     if not hasattr(context, 'table'):
         raise RuntimeError("A table must be set for this step.")
