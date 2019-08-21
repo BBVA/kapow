@@ -180,7 +180,7 @@ respond to an external event (e.g.  an incoming HTTP request).
 
 #### List routes
 
-Returns JSON with all data about the current routes. Be aware that the command
+Returns JSON with all the data about the current routes. Be aware that the command
 field must be a json scaped string.
 
 * **URL**: `/routes`
