@@ -304,7 +304,7 @@ def append_route(app):
             return web.Response(status=422, reason="Invalid Route Spec")
         else:
             print(f'Route created {content["method"]} {content["url_pattern"]}')
-            return web.json_response(name)
+            return web.json_response(name, status=201)
     return _append_route
 
 
