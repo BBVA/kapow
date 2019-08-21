@@ -126,15 +126,18 @@ whole lifetime of the server.
 
 ## Design Principles
 
+* TCP implementations should follow a general principle of robustness: be 
+  conservative in what you do, be liberal in what you accept from others.
 * We reuse conventions of well-established software projects, such as Docker.
 * All requests and responses will leverage JSON as the data encoding method.
-* The API calls responses will have two distinct parts:
+* The API calls responses will several parts:
   * The HTTP status code (e.g., `400`, which is a bad request).  The target
     audience of this information is the client code.  The client can thus use
     this information to control the program flow.
   * The HTTP reason phrase.  The target audience in this case is the human
     operating the client.  The human can use this information to make a
     decision on how to proceed.
+  * The body it's optional
 * All successful API calls will return a representation of the *final* state
   attained by the objects which have been addressed (either requested, set or
   deleted).
