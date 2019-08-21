@@ -167,6 +167,7 @@ def step_impl(context):
     raise NotImplementedError('STEP: When I insert the route')
 
 
+@when('I try to append with this malformed JSON document')
 @when('I try to append with this JSON document')
 def step_impl(context):
     raise NotImplementedError('STEP: When I try to append with this JSON document')
