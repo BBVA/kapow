@@ -25,10 +25,34 @@ Feature: Routes auto-ordering after deleting  in a Kapow! server.
     Then I get 200 as response code
       And I get "OK" as response phrase
       And I get a list with the following elements:
-        | method | url_pattern        | entrypoint | command                                          | Index | id |
-        | GET    | /listVarDir        | /bin/sh -c | ls -la /var \| response /body                    |     0 |  * |
-        | GET    | /listEtcDir        | /bin/sh -c | ls -la /etc \| response /body                    |     1 |  * |
-        | GET    | /listDir/{dirname} | /bin/sh -c | ls -la /request/params/dirname \| response /body |     2 |  * |
+        """
+        [
+          {
+            "method": "GET",
+            "url_pattern": "/listVarDir",
+            "entrypoint": "/bin/sh -c",
+            "command": "ls -la /var | response /body",
+            "index": "0",
+            "id": "*"
+          },
+          {
+            "method": "GET",
+            "url_pattern": "/listEtcDir",
+            "entrypoint": "/bin/sh -c",
+            "command": "ls -la /etc | response /body",
+            "index": "1",
+            "id": "*"
+          },
+          {
+            "method": "GET",
+            "url_pattern": "/listDir/:dirname",
+            "entrypoint": "/bin/sh -c",
+            "command": "ls -la /request/params/dirname | response /body",
+            "index": "2",
+            "id": "*"
+          }
+        ]
+        """
 
   Scenario: Removing the last routes.
     After removing the last route the remaining ones will
@@ -42,10 +66,34 @@ Feature: Routes auto-ordering after deleting  in a Kapow! server.
     Then I get 200 as response code
       And I get "OK" as response phrase
       And I get a list with the following elements:
-        | method | url_pattern        | entrypoint | command                                          | Index | id |
-        | GET    | /listRootDir       | /bin/sh -c | ls -la / \| response /body                       |     0 |  * |
-        | GET    | /listVarDir        | /bin/sh -c | ls -la /var \| response /body                    |     1 |  * |
-        | GET    | /listEtcDir        | /bin/sh -c | ls -la /etc \| response /body                    |     2 |  * |
+      """
+      [
+        {
+          "method": "GET",
+          "url_pattern": "/listRootDir",
+          "entrypoint": "/bin/sh -c",
+          "command": "ls -la / | response /body",
+          "index": "0",
+          "id": "*"
+        },
+        {
+          "method": "GET",
+          "url_pattern": "/listVarDir",
+          "entrypoint": "/bin/sh -c",
+          "command": "ls -la /var | response /body",
+          "index": "1",
+          "id": "*"
+        },
+        {
+          "method": "GET",
+          "url_pattern": "/listEtcDir",
+          "entrypoint": "/bin/sh -c",
+          "command": "ls -la /etc | response /body",
+          "index": "2",
+          "id": "*"
+        }
+      ]
+      """
 
   Scenario: Removing a midst route.
     After removing a midst route the remaining ones will
@@ -60,7 +108,31 @@ Feature: Routes auto-ordering after deleting  in a Kapow! server.
     Then I get 200 as response code
       And I get "OK" as response phrase
       And I get a list with the following elements:
-        | method | url_pattern        | entrypoint | command                                          | Index | id |
-        | GET    | /listRootDir       | /bin/sh -c | ls -la / \| response /body                       |     0 |  * |
-        | GET    | /listEtcDir        | /bin/sh -c | ls -la /etc \| response /body                    |     1 |  * |
-        | GET    | /listDir/{dirname} | /bin/sh -c | ls -la /request/params/dirname \| response /body |     2 |  * |
+        """
+        [
+          {
+            "method": "GET",
+            "url_pattern": "/listRootDir",
+            "entrypoint": "/bin/sh -c",
+            "command": "ls -la / | response /body",
+            "index": "0",
+            "id": "*"
+          },
+          {
+            "method": "GET",
+            "url_pattern": "/listEtcDir",
+            "entrypoint": "/bin/sh -c",
+            "command": "ls -la /etc | response /body",
+            "index": "1",
+            "id": "*"
+          },
+          {
+            "method": "GET",
+            "url_pattern": "/listDir/:dirname",
+            "entrypoint": "/bin/sh -c",
+            "command": "ls -la /request/params/dirname | response /body",
+            "index": "2",
+            "id": "*"
+          }
+        ]
+        """
