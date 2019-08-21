@@ -17,7 +17,7 @@ Feature: Kapow! server reject insert responses with semantic errors.
       """
     Then I get 422 as response code
       And I get "Missing Mandatory Field" as response reason phrase
-      And I get the following entity as response body:
+      And I get the following response body:
         """
         {
           "missing_mandatory_fields": [

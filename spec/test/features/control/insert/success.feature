@@ -25,7 +25,7 @@ Feature: Insert new routes in Kapow! server.
       """
     Then I get 200 as response code
       And I get "OK" as response reason phrase
-      And I get the following entity as response body:
+      And I get the following response body:
         """
         {
           "method": "GET",
@@ -54,7 +54,7 @@ Feature: Insert new routes in Kapow! server.
       """
     Then I get 200 as response code
       And I get "OK" as response reason phrase
-      And I get the following entity as response body:
+      And I get the following response body:
         """
         {
           "method": "GET",

@@ -132,7 +132,7 @@ def step_impl(context, reason):
     assert context.response.reason == reason, f"Got {context.response.reason} instead"
 
 
-@then('I get the following entity as response body')
+@then('I get the following response body')
 def step_impl(context):
     for row in context.table:
         for name, value in row.items():
