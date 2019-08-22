@@ -1,10 +1,14 @@
+.PHONY: lint wip test fix catalog
+
+all: test
+
+lint:
+	gherkin-lint
 wip:
 	KAPOW_DEBUG_TESTS=1 pipenv run behave --stop --wip
-test:
-	gherkin-lint
+test: lint
 	pipenv run behave --no-capture
-fix:
-	gherkin-lint
+fix: lint
 	KAPOW_DEBUG_TESTS=1 pipenv run behave --stop --no-capture
 catalog:
 	pipenv run behave --steps-catalog
