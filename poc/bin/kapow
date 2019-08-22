@@ -310,7 +310,6 @@ def insert_route(app):
             return web.Response(status=422, reason="Invalid Route")
         else:
             app["user_routes"].insert(index, route)
-            print(f'Route created {content["method"]} {content["url_pattern"]}')
             return web.json_response({"id": route.id,
                                       "method": route.method,
                                       "url_pattern": route.path,
@@ -341,7 +340,6 @@ def append_route(app):
             return web.Response(status=422, reason="Invalid Route")
         else:
             app["user_routes"].append(route)
-            print(f'Route created {content["method"]} {content["url_pattern"]}')
             return web.json_response({"id": route.id,
                                       "method": route.method,
                                       "url_pattern": route.path,
@@ -362,7 +360,6 @@ def delete_route(app):
         else:
             app.change_routes(routes)
             app["user_routes"] = routes
-            print(f'Route deleted {id}')
             return web.Response(status=200, reason="OK")
     return _delete_route
 
@@ -520,14 +517,14 @@ def route():
     pass
 
 
-@route.command()
+@route.command("add")
 @click.option("-c", "--command", nargs=1)
 @click.option("-e", "--entrypoint", default="/bin/sh -c")
 @click.option("-X", "--method", default="GET")
 @click.option("--url", envvar='KAPOW_URL')
 @click.argument("url_pattern", nargs=1)
 @click.argument("command_file", required=False)
-def add(url_pattern, entrypoint, command, method, url, command_file):
+def route_add(url_pattern, entrypoint, command, method, url, command_file):
     if command:
         # Command is given inline
         source = command
@@ -548,16 +545,27 @@ def add(url_pattern, entrypoint, command, method, url, command_file):
                                    "entrypoint": entrypoint,
                                    "command": source})
     response.raise_for_status()
-    print(response.json())
+    print(json.dumps(response.json(), indent=2))
 
 
-@route.command()
+@route.command("remove")
 @click.option("--url", envvar='KAPOW_URL')
 @click.argument("route-id")
-def remove(route_id, url):
+def route_remove(route_id, url):
     response = requests.delete(f"{url}/routes/{route_id}")
     response.raise_for_status()
-    print(response.json())
+
+
+@route.command("list")
+@click.option("--url", envvar='KAPOW_URL')
+@click.argument("route-id", nargs=1, required=False, default=None)
+def route_list(route_id, url):
+    if route_id is None:
+        response = requests.get(f"{url}/routes")
+    else:
+        response = requests.get(f"{url}/routes/{route_id}")
+    response.raise_for_status()
+    print(json.dumps(response.json(), indent=2))
 
 
 if __name__ == '__main__':
