@@ -24,8 +24,8 @@ Feature: Routes auto-ordering after inserting in a Kapow! server.
         "index": 0
       }
       """
-    Then I get 200 as response code
-      And I get "OK" as response reason phrase
+    Then I get 201 as response code
+      And I get "Created" as response reason phrase
       And I get the following response body:
         """
         {
@@ -61,7 +61,7 @@ Feature: Routes auto-ordering after inserting in a Kapow! server.
           },
           {
             "method": "GET",
-            "url_pattern": "/listDir/:dirname",
+            "url_pattern": "/listDir/{dirname}",
             "entrypoint": "/bin/sh -c",
             "command": "ls -la /request/params/dirname | response /body",
             "index": 2,
@@ -84,8 +84,8 @@ Feature: Routes auto-ordering after inserting in a Kapow! server.
         "index": 2
       }
       """
-    Then I get 200 as response code
-      And I get "OK" as response reason phrase
+    Then I get 201 as response code
+      And I get "Created" as response reason phrase
       And I get the following response body:
         """
         {
@@ -113,7 +113,7 @@ Feature: Routes auto-ordering after inserting in a Kapow! server.
           },
           {
             "method": "GET",
-            "url_pattern": "/listDir/:dirname",
+            "url_pattern": "/listDir/{dirname}",
             "entrypoint": "/bin/sh -c",
             "command": "ls -la /request/params/dirname | response /body",
             "index": 1,
@@ -145,8 +145,8 @@ Feature: Routes auto-ordering after inserting in a Kapow! server.
         "index": 1
       }
       """
-    Then I get 200 as response code
-      And I get "OK" as response reason phrase
+    Then I get 201 as response code
+      And I get "Created" as response reason phrase
       And I get the following response body:
         """
         {
@@ -182,7 +182,7 @@ Feature: Routes auto-ordering after inserting in a Kapow! server.
           },
           {
             "method": "GET",
-            "url_pattern": "/listDir/:dirname",
+            "url_pattern": "/listDir/{dirname}",
             "entrypoint": "/bin/sh -c",
             "command": "ls -la /request/params/dirname | response /body",
             "index": 2,

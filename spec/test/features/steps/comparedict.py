@@ -31,16 +31,10 @@ def _(model, obj):
 @is_subset.register(list)
 @assert_same_type
 def _(model, obj):
-    if is_subset(set(model), set(obj)):
-        return True
-    else:
-        raise ValueError(f"Non-matching lists {model!r} != {obj!r}")
-
-
-@is_subset.register(set)
-@assert_same_type
-def _(model, obj):
-    return model <= obj
+    for a, b in zip(model, obj):
+        if not is_subset(a, b):
+            raise ValueError(f"Non-matching list member {a!r} in {b!r}")
+    return True
 
 
 @is_subset.register(ANY)

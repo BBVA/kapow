@@ -45,7 +45,7 @@ Feature: Routes auto-ordering after deleting  in a Kapow! server.
           },
           {
             "method": "GET",
-            "url_pattern": "/listDir/:dirname",
+            "url_pattern": "/listDir/{dirname}",
             "entrypoint": "/bin/sh -c",
             "command": "ls -la /request/params/dirname | response /body",
             "index": 2,
@@ -128,7 +128,7 @@ Feature: Routes auto-ordering after deleting  in a Kapow! server.
           },
           {
             "method": "GET",
-            "url_pattern": "/listDir/:dirname",
+            "url_pattern": "/listDir/{dirname}",
             "entrypoint": "/bin/sh -c",
             "command": "ls -la /request/params/dirname | response /body",
             "index": 2,

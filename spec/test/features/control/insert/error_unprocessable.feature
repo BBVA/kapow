@@ -16,16 +16,7 @@ Feature: Kapow! server reject insert responses with semantic errors.
       }
       """
     Then I get 422 as response code
-      And I get "Missing Mandatory Field" as response reason phrase
-      And I get the following response body:
-        """
-        {
-          "missing_mandatory_fields": [
-            "url_pattern",
-            "method"
-          ]
-        }
-        """
+      And I get "Invalid Route" as response reason phrase
 
   Scenario: Error because of wrong route specification.
     If a request contains an invalid expression in the
@@ -43,24 +34,4 @@ Feature: Kapow! server reject insert responses with semantic errors.
       }
       """
     Then I get 422 as response code
-      And I get "Invalid Route Spec" as response reason phrase
-      And I get an empty response body
-
-  Scenario: Error because of wrong method value.
-    If a request contains an invalid value in the
-    method field the server responds with an error.
-
-    Given I have a running Kapow! server
-    When I insert the route:
-      """
-      {
-        "method": "SOMETIMES",
-        "url_pattern": "/",
-        "entrypoint": "/bin/sh -c",
-        "command": "ls -la / | response /body",
-        "index": 0
-      }
-      """
-    Then I get 422 as response code
-      And I get "Invalid Data Type" as response reason phrase
-      And I get an empty response body
+      And I get "Invalid Route" as response reason phrase

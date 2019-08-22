@@ -103,18 +103,8 @@ def step_impl(context):
 def step_impl(context):
     context.response.raise_for_status()
 
-    if not hasattr(context, 'table'):
-        raise RuntimeError("A table must be set for this step.")
+    assert is_subset(jsonexample.loads(context.text), context.response.json())
 
-    for entry, row in zip(context.response.json(), context.table):
-        for header in row.headings:
-            assert header in entry, f"Response does not contain the key {header}"
-            if row[header] != '*':
-                assert entry[header] == row[header], f"Values mismatch"
-
-#
-#
-#
 
 @when('I append the route')
 def step_impl(context):
@@ -145,7 +135,7 @@ def step_impl(context):
 
 @when('I delete the route with id "{id}"')
 def step_impl(context, id):
-    raise NotImplementedError('STEP: When I delete the route with id "xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx"')
+    context.response = requests.delete(f"{Env.KAPOW_CONTROLAPI_URL}/routes/{id}")
 
 
 @given('It has a route with id "{id}"')
@@ -155,12 +145,9 @@ def step_impl(context, id):
 
 @when('I insert the route')
 def step_impl(context):
-    if not hasattr(context, 'table'):
-        raise RuntimeError("A table must be set for this step.")
-
-    row = context.table[0]
     context.response = requests.put(f"{Env.KAPOW_CONTROLAPI_URL}/routes",
-                                    json={h: row[h] for h in row.headings})
+                                    headers={"Content-Type": "application/json"},
+                                    data=context.text)
 
 
 @when('I try to append with this malformed JSON document')
@@ -172,21 +159,32 @@ def step_impl(context):
         data=context.text)
 
 
-@when('I delete the first route inserted')
-def step_impl(context):
-    raise NotImplementedError('STEP: When I delete the first route inserted')
+# @when('I delete the first route')
+# @when('I delete the first route inserted')
+# def step_impl(context):
+#     routes = requests.get(f"{Env.KAPOW_CONTROLAPI_URL}/routes")
+#     id = routes.json()[0]["id"]
+#     context.response = requests.delete(f"{Env.KAPOW_CONTROLAPI_URL}/routes/{id}")
+
+# @when('I delete the last route inserted')
+# def step_impl(context):
+#     routes = requests.get(f"{Env.KAPOW_CONTROLAPI_URL}/routes")
+#     id = routes.json()[-1]["id"]
+#     context.response = requests.delete(f"{Env.KAPOW_CONTROLAPI_URL}/routes/{id}")
 
 
-@when('I delete the last route inserted')
-def step_impl(context):
-    raise NotImplementedError('STEP: When I delete the last route inserted')
-
-
-@when('I delete the second route inserted')
-def step_impl(context):
-    raise NotImplementedError('STEP: When I delete the second route inserted')
+@when('I delete the {order} route')
+@when('I delete the {order} route inserted')
+def step_impl(context, order):
+    idx = {"first": 0, "second": 1, "last": -1}.get(order)
+    routes = requests.get(f"{Env.KAPOW_CONTROLAPI_URL}/routes")
+    id = routes.json()[idx]["id"]
+    context.response = requests.delete(f"{Env.KAPOW_CONTROLAPI_URL}/routes/{id}")
 
 
 @when('I try to insert with this JSON document')
 def step_impl(context):
-    raise NotImplementedError('STEP: When I try to insert with this JSON document')
+    context.response = requests.put(
+        f"{Env.KAPOW_CONTROLAPI_URL}/routes",
+        headers={"Content-Type": "application/json"},
+        data=context.text)

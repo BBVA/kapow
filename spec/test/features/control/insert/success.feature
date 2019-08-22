@@ -23,8 +23,8 @@ Feature: Insert new routes in Kapow! server.
         "index": 0
       }
       """
-    Then I get 200 as response code
-      And I get "OK" as response reason phrase
+    Then I get 201 as response code
+      And I get "Created" as response reason phrase
       And I get the following response body:
         """
         {
@@ -52,8 +52,8 @@ Feature: Insert new routes in Kapow! server.
         "index": 1
       }
       """
-    Then I get 200 as response code
-      And I get "OK" as response reason phrase
+    Then I get 201 as response code
+      And I get "Created" as response reason phrase
       And I get the following response body:
         """
         {

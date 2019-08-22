@@ -274,7 +274,14 @@ def handle_route(entrypoint, command):
 def get_routes(app):
     async def _get_routes(request):
         """Return the list of registered routes."""
-        return web.json_response(list(app.router))
+        data = [{"index": idx,
+                 "method": r.method,
+                 "id": r.id,
+                 "url_pattern": r.path,
+                 "entrypoint": r.entrypoint,
+                 "command": r.command}
+                for idx, r in enumerate(app["user_routes"])]
+        return web.json_response(data)
     return _get_routes
 
 
@@ -340,7 +347,8 @@ def append_route(app):
                                       "url_pattern": route.path,
                                       "entrypoint": route.entrypoint,
                                       "command": route.command,
-                                      "index": len(app["user_routes"])-1}, status=201)
+                                      "index": len(app["user_routes"])-1},
+                                     status=201)
     return _append_route
 
 
@@ -348,10 +356,14 @@ def delete_route(app):
     async def _delete_route(request):
         """Delete the given Kapow! route."""
         id = request.match_info["id"]
-        route = app.router._named_resources.pop(id)
-        app.router._resources.remove(route)
-        print(f'Route deleted {id}')
-        return web.json_response(id)
+        routes = [r for r in app["user_routes"] if r.id != id]
+        if len(routes) == len(app["user_routes"]):
+            return web.Response(status=404, reason="Not Found")
+        else:
+            app.change_routes(routes)
+            app["user_routes"] = routes
+            print(f'Route deleted {id}')
+            return web.Response(status=200, reason="OK")
     return _delete_route
 
 
