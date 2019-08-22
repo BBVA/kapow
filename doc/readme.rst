@@ -149,7 +149,7 @@ Run kapow
 .. code-block:: bash
 
     docker run \
-            -it \
+            -d \
             -p 8080:8080 \
             kapow-nmap
 
@@ -157,11 +157,7 @@ which will output something like this:
 
 .. code-block:: bash
 
-    ======== Running on http://0.0.0.0:8080 ========
-    (Press CTRL+C to quit)
-    Route created POST /list/{ip}
-    ROUTE_8ed01c48_bf23_455a_8186_a1df7ab09e48
-    bash-4.4#
+   e7da20c7d9a39624b5c56157176764671e5d2d8f1bf306b3ede898d66fe3f4bf
 
 
 Test /list endpoint
