@@ -11,4 +11,4 @@ test: lint
 fix: lint
 	KAPOW_DEBUG_TESTS=1 pipenv run behave --stop --no-capture
 catalog:
-	pipenv run behave --steps-catalog
+	pipenv run behave --format steps.usage --dry-run --no-summary -q

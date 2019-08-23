@@ -1,9 +1,9 @@
-Feature: Kapow! server reject insert requests with malformed JSON bodies.
+Feature: Kapow! server rejects insertion requests with malformed JSON bodies.
   Kapow! server will reject to insert a route when
-  it receives a malformed json document in the
+  it receives a malformed JSON document in the
   request body.
 
-  Scenario: Error because a malformed JSON document.
+  Scenario: Error because of malformed JSON document.
     If a request comes with an invalid JSON document
     the server will respond with a bad request error.
 

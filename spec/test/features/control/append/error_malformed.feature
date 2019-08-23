@@ -10,14 +10,7 @@ Feature: Kapow! server reject append requests with malformed JSON bodies.
     Given I have a running Kapow! server
     When I try to append with this malformed JSON document:
       """
-      {
-        "method" "GET",
-        "url_pattern": /hello,
-        "entrypoint": null
-        "command": "echo Hello
-         World | response /body",
-        "id": "xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx"
-      }
+      Hi! I am an invalid JSON document.
       """
     Then I get 400 as response code
       And I get "Malformed JSON" as response reason phrase

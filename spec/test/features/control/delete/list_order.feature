@@ -1,25 +1,23 @@
-Feature: Routes auto-ordering after deleting  in a Kapow! server.
-
+Feature: Consistent route order after a route deletion in Kapow! server.
   When deleting routes the server will mantain the
-  remaining routes ordered an with consecutive indexes.
+  remaining routes ordered and with consecutive indexes.
 
   Background:
-    Given I have a Kapow! server whith the following routes:
+    Given I have a Kapow! server with the following routes:
       | method | url_pattern        | entrypoint | command                                          |
       | GET    | /listRootDir       | /bin/sh -c | ls -la / \| response /body                       |
       | GET    | /listVarDir        | /bin/sh -c | ls -la /var \| response /body                    |
       | GET    | /listEtcDir        | /bin/sh -c | ls -la /etc \| response /body                    |
       | GET    | /listDir/{dirname} | /bin/sh -c | ls -la /request/params/dirname \| response /body |
 
-  Scenario: Removing the first routes.
-
+  Scenario: Removing the first route.
     After removing the first route the remaining ones
     will maintain their relative order and their indexes
     will be decreased by one.
 
-    When I delete the first route inserted
+    When I delete the first route
       And I request a routes listing
-    Then I get a list with the following elements:
+    Then I get the following response body:
         """
         [
           {
@@ -49,13 +47,13 @@ Feature: Routes auto-ordering after deleting  in a Kapow! server.
         ]
         """
 
-  Scenario: Removing the last routes.
+  Scenario: Removing the last route.
     After removing the last route the remaining ones will
     maintain their relative order and indexes.
 
-    When I delete the last route inserted
+    When I delete the last route
       And I request a routes listing
-    Then I get a list with the following elements:
+    Then I get the following response body:
       """
       [
         {
@@ -90,9 +88,9 @@ Feature: Routes auto-ordering after deleting  in a Kapow! server.
     maintain their relative order and the indexes of the
     following routes will be decreased by one.
 
-    When I delete the second route inserted
+    When I delete the second route
       And I request a routes listing
-    Then I get a list with the following elements:
+    Then I get the following response body:
         """
         [
           {

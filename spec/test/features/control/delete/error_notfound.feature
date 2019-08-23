@@ -1,6 +1,6 @@
 Feature: Fail to delete a route in Kapow! server.
-  When trying to delete a route in the server, if it
-  does no exists the server respons with an error.
+  When trying to delete a route that not exists in the server
+  the server respons with an error.
 
   Scenario: Delete a non-existing route.
     A request of removing a non-existing route

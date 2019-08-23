@@ -1,12 +1,11 @@
-Feature: Kapow! server reject responses with semantic errors.
-  Kapow! server will reject to append routes when
-  it receives a valid json document but not conforming
-  with the specification.
+Feature: Kapow! server rejects requests with semantic errors.
+  Kapow! server will refuse to append routes when
+  it receives a valid json document not conforming
+  to the specification.
 
-  Scenario: Error because of lack of mandatory fields.
-    If a request lacks of any of the mandatory fields
-    the server responds with an error indicating the
-    missing fields.
+  Scenario: Error because lacking mandatory fields.
+    If a request lacks any mandatory field the server
+    responds with an error.
 
     Given I have a running Kapow! server
     When I append the route:
@@ -19,7 +18,7 @@ Feature: Kapow! server reject responses with semantic errors.
     Then I get 422 as response code
       And I get "Invalid Route" as response reason phrase
 
-  Scenario: Error because of wrong route specification.
+  Scenario: Error because bad route format.
     If a request contains an invalid expression in the
     field url_pattern the server responds with an error.
 

@@ -1,10 +1,9 @@
-Feature: Routes auto-ordering after inserting in a Kapow! server.
-
+Feature: Consistent route ordering after inserting a route in a Kapow! server.
   When inserting routes the server will mantain the
-  whole set of routes ordered an with consecutive indexes.
+  whole set of routes ordered and with consecutive indexes.
 
   Background:
-    Given I have a Kapow! server whith the following routes:
+    Given I have a Kapow! server with the following routes:
       | method | url_pattern        | entrypoint | command                                          |
       | GET    | /listRootDir       | /bin/sh -c | ls -la / \| response /body                       |
       | GET    | /listDir/{dirname} | /bin/sh -c | ls -la /request/params/dirname \| response /body |
@@ -24,23 +23,8 @@ Feature: Routes auto-ordering after inserting in a Kapow! server.
         "index": 0
       }
       """
-    Then I get 201 as response code
-      And I get "Created" as response reason phrase
-      And I get the following response body:
-        """
-        {
-          "method": "GET",
-          "url_pattern": "/listVarDir",
-          "entrypoint": "/bin/sh -c",
-          "command": "ls -la /var | response /body",
-          "index": 0,
-          "id": ANY
-        }
-        """
-    When I request a routes listing
-    Then I get 200 as response code
-      And I get "OK" as response reason phrase
-      And I get a list with the following elements:
+      And I request a routes listing
+    Then I get the following response body:
         """
         [
           {
@@ -84,23 +68,8 @@ Feature: Routes auto-ordering after inserting in a Kapow! server.
         "index": 2
       }
       """
-    Then I get 201 as response code
-      And I get "Created" as response reason phrase
-      And I get the following response body:
-        """
-        {
-          "method": "GET",
-          "url_pattern": "/listVarDir",
-          "entrypoint": "/bin/sh -c",
-          "command": "ls -la /var | response /body",
-          "index": 2,
-          "id": ANY
-        }
-        """
-    When I request a routes listing
-    Then I get 200 as response code
-      And I get "OK" as response reason phrase
-      And I get a list with the following elements:
+      And I request a routes listing
+    Then I get the following response body:
         """
         [
           {
@@ -145,23 +114,8 @@ Feature: Routes auto-ordering after inserting in a Kapow! server.
         "index": 1
       }
       """
-    Then I get 201 as response code
-      And I get "Created" as response reason phrase
-      And I get the following response body:
-        """
-        {
-          "method": "GET",
-          "url_pattern": "/listVarDir",
-          "entrypoint": "/bin/sh -c",
-          "command": "ls -la /var | response /body",
-          "index": 1,
-          "id": ANY
-        }
-        """
-    When I request a routes listing
-    Then I get 200 as response code
-      And I get "OK" as response reason phrase
-      And I get a list with the following elements:
+      And I request a routes listing
+    Then I get the following response body:
         """
         [
           {

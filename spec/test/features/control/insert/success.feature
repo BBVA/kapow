@@ -1,16 +1,16 @@
 Feature: Insert new routes in Kapow! server.
-  Insert routes allow users to configure the server. New
-  routes could be inserted at the begining or before any
+  Inserting routes allows users to configure the server. New
+  routes could be inserted at the beginning or before any
   existing route of the routes list.
 
   Background:
-    Given I have a Kapow! server whith the following routes:
+    Given I have a Kapow! server with the following routes:
       | method | url_pattern        | entrypoint | command                                          |
       | GET    | /listRootDir       | /bin/sh -c | ls -la / \| response /body                       |
       | GET    | /listDir/{dirname} | /bin/sh -c | ls -la /request/params/dirname \| response /body |
 
   Scenario: Insert a route at the beginning.
-    A route can be inserted at the begining of the list
+    A route can be inserted at the beginning of the list
     by specifying an index 0 in the request.
 
     When I insert the route:

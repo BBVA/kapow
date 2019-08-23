@@ -80,13 +80,7 @@ def step_impl(context):
     context.response = requests.get(f"{Env.KAPOW_CONTROLAPI_URL}/routes")
 
 
-@then('I get an empty list')
-def step_impl(context):
-    context.response.raise_for_status()
-    assert context.response.json() == []
-
-
-@given('I have a Kapow! server whith the following routes')
+@given('I have a Kapow! server with the following routes')
 def step_impl(context):
     run_kapow_server(context)
 
@@ -97,13 +91,6 @@ def step_impl(context):
         response = requests.post(f"{Env.KAPOW_CONTROLAPI_URL}/routes",
                                  json={h: row[h] for h in row.headings})
         response.raise_for_status()
-
-
-@then('I get a list with the following elements')
-def step_impl(context):
-    context.response.raise_for_status()
-
-    assert is_subset(jsonexample.loads(context.text), context.response.json())
 
 
 @when('I append the route')
@@ -133,11 +120,6 @@ def step_impl(context, id):
     context.response = requests.delete(f"{Env.KAPOW_CONTROLAPI_URL}/routes/{id}")
 
 
-@given('It has a route with id "{id}"')
-def step_impl(context, id):
-    raise NotImplementedError('STEP: Given It has a route with id "xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx"')
-
-
 @when('I insert the route')
 def step_impl(context):
     context.response = requests.put(f"{Env.KAPOW_CONTROLAPI_URL}/routes",
@@ -146,7 +128,6 @@ def step_impl(context):
 
 
 @when('I try to append with this malformed JSON document')
-@when('I try to append with this JSON document')
 def step_impl(context):
     context.response = requests.post(
         f"{Env.KAPOW_CONTROLAPI_URL}/routes",
@@ -154,22 +135,7 @@ def step_impl(context):
         data=context.text)
 
 
-# @when('I delete the first route')
-# @when('I delete the first route inserted')
-# def step_impl(context):
-#     routes = requests.get(f"{Env.KAPOW_CONTROLAPI_URL}/routes")
-#     id = routes.json()[0]["id"]
-#     context.response = requests.delete(f"{Env.KAPOW_CONTROLAPI_URL}/routes/{id}")
-
-# @when('I delete the last route inserted')
-# def step_impl(context):
-#     routes = requests.get(f"{Env.KAPOW_CONTROLAPI_URL}/routes")
-#     id = routes.json()[-1]["id"]
-#     context.response = requests.delete(f"{Env.KAPOW_CONTROLAPI_URL}/routes/{id}")
-
-
 @when('I delete the {order} route')
-@when('I delete the {order} route inserted')
 def step_impl(context, order):
     idx = {"first": 0, "second": 1, "last": -1}.get(order)
     routes = requests.get(f"{Env.KAPOW_CONTROLAPI_URL}/routes")
