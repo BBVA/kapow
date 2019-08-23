@@ -285,6 +285,23 @@ def get_routes(app):
     return _get_routes
 
 
+def get_route(app):
+    async def _get_route(request):
+        """Return requested registered route."""
+        id = request.match_info["id"]
+        for idx, r in enumerate(app["user_routes"]):
+            if r.id == id:
+                return web.json_response({"index": idx,
+                                          "method": r.method,
+                                          "id": r.id,
+                                          "url_pattern": r.path,
+                                          "entrypoint": r.entrypoint,
+                                          "command": r.command})
+        else:
+            return web.Response(status=404, reason="Not Found")
+    return _get_route
+
+
 def insert_route(app):
     async def _insert_route(request):
         """Insert a new Kapow! route."""
@@ -468,8 +485,9 @@ async def start_kapow_server(bind, scripts, certfile=None, interactive=False, ke
     control_app.add_routes([
         # Control API
         web.get('/routes', get_routes(user_app)),
-        web.post('/routes', append_route(user_app)),  # TODO: return route info
-        web.put('/routes', insert_route(user_app)),   # TODO: return route info
+        web.get('/routes/{id}', get_route(user_app)),
+        web.post('/routes', append_route(user_app)),
+        web.put('/routes', insert_route(user_app)),
         web.delete('/routes/{id}', delete_route(user_app)),
 
         # Data API

@@ -12,6 +12,10 @@ import jsonexample
 
 import logging
 
+
+WORD2POS = {"first": 0, "second": 1, "last": -1}
+
+
 class Env(EnvironConfig):
     #: How to run Kapow! server
     KAPOW_SERVER_CMD = StringVar(default="kapow server")
@@ -137,7 +141,7 @@ def step_impl(context):
 
 @when('I delete the {order} route')
 def step_impl(context, order):
-    idx = {"first": 0, "second": 1, "last": -1}.get(order)
+    idx = WORD2POS.get(order)
     routes = requests.get(f"{Env.KAPOW_CONTROLAPI_URL}/routes")
     id = routes.json()[idx]["id"]
     context.response = requests.delete(f"{Env.KAPOW_CONTROLAPI_URL}/routes/{id}")
@@ -149,3 +153,15 @@ def step_impl(context):
         f"{Env.KAPOW_CONTROLAPI_URL}/routes",
         headers={"Content-Type": "application/json"},
         data=context.text)
+
+@when('I get the route with id "{id}"')
+def step_impl(context, id):
+    context.response = requests.get(f"{Env.KAPOW_CONTROLAPI_URL}/routes/{id}")
+
+
+@when('I get the {order} route')
+def step_impl(context, order):
+    idx = WORD2POS.get(order)
+    routes = requests.get(f"{Env.KAPOW_CONTROLAPI_URL}/routes")
+    id = routes.json()[idx]["id"]
+    context.response = requests.get(f"{Env.KAPOW_CONTROLAPI_URL}/routes/{id}")
