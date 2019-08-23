@@ -284,7 +284,7 @@ A new id is created for the appended route so it can be referenced later.
   }
   ```
 * **Success Responses**:
-  * **Code**: `200 OK`<br />
+  * **Code**: `201 Created`<br />
     **Header**: `Content-Type: application/json`<br />
     **Content**:<br />
     ```json
@@ -329,17 +329,7 @@ Removes the route identified by `:id`.
 * **URL**: `/routes/:id`
 * **Method**: `DELETE`
 * **Success Responses**:
-  * **Code**: `200 OK`<br />
-    **Content**:<br />
-    ```json
-    {
-      "method": "GET",
-      "url_pattern": "/hello",
-      "entrypoint": null,
-      "command": "echo Hello World | response /body",
-      "index": 0
-    }
-    ```
+  * **Code**: `204 No Content`
 * **Error Responses**:
   * **Code**: `404 Not Found`
 * **Sample Call**:<br />

@@ -12,4 +12,3 @@ Feature: Delete routes in Kapow! server.
     When I delete the first route
     Then I get 200 as response code
       And I get "OK" as response reason phrase
-      And I get an empty response body
