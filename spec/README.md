@@ -325,9 +325,9 @@ A new id is created for the appended route so it can be referenced later.
 
 #### Delete a route
 
-Removes the route identified by `:id`.
+Removes the route identified by `{id}`.
 
-* **URL**: `/routes/:id`
+* **URL**: `/routes/{id}`
 * **Method**: `DELETE`
 * **Success Responses**:
   * **Code**: `204 No Content`
@@ -342,9 +342,9 @@ Removes the route identified by `:id`.
 
 #### Retrieve route information
 
-Retrieves the information about the route identified by `:id`.
+Retrieves the information about the route identified by `{id}`.
 
-* **URL**: `/routes/:id`
+* **URL**: `/routes/{id}`
 * **Method**: `GET`
 * **Success Responses**:
   * **Code**: `200 OK`<br />
