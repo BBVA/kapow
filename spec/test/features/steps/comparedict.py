@@ -1,4 +1,5 @@
 from functools import singledispatch
+from itertools import zip_longest
 from jsonexample import ANY
 
 
@@ -31,7 +32,7 @@ def _(model, obj):
 @is_subset.register(list)
 @assert_same_type
 def _(model, obj):
-    for a, b in zip(model, obj):
+    for a, b in zip_longest(model, obj):
         if not is_subset(a, b):
             raise ValueError(f"Non-matching list member {a!r} in {b!r}")
     return True
