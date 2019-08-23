@@ -1,10 +1,10 @@
-Feature: Listing routes in a Kapow! server
+Feature: Listing routes in a Kapow! server.
   Listing routes allows users to know what URLs are
   available on a Kapow! server. The List endpoint returns
   a list of the routes the server has configured.
 
-  Scenario: List routes on a fresh started server
-    A just started or with all routes removed,
+  Scenario: List routes on a fresh started server.
+    A just started or with all routes removed Kapow! server,
     will show an empty list of routes.
 
     Given I have a just started Kapow! server
