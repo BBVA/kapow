@@ -52,9 +52,9 @@ Superpowers
 
 Kapow! gives you:
 
- * A very simple way to turn any shell **executable into an API**
- * A **remote administration** API
- * A way to define the integration in you own terms, obligations-free!
+* A very simple way to turn any shell **executable into an API**
+* A **remote administration** API
+* A way to define the integration in you own terms, obligations-free!
 
 
 Curses
@@ -63,18 +63,18 @@ Curses
 Kapow! can't help when:
 -----------------------
 
- * You need high throughput: Kapow! spawns a new executable for every HTTP call
- * You must perform complex logic to attend the request: never use Kapow! if
-   your executables don't perform al least 90% of the hard work
- * You are building a huge application
+* You need high throughput: Kapow! spawns a new executable for every HTTP call
+* You must perform complex logic to attend the request: never use Kapow! if
+  your executables don't perform al least 90% of the hard work
+* You are building a huge application
 
 
 When it is your best friend:
 --------------------------
 
- * Easy command + Hard API = Kapow! to the rescue
- * SSH for one command?  Kapow! allows you to share only that command
- * Remote instrumentation of several machines?  Make it easy with Kapow!
+* Easy command + Hard API = Kapow! to the rescue
+* SSH for one command?  Kapow! allows you to share only that command
+* Remote instrumentation of several machines?  Make it easy with Kapow!
 
 
 The more you know
