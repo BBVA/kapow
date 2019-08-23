@@ -18,12 +18,8 @@ Feature: Routes auto-ordering after deleting  in a Kapow! server.
     will be decreased by one.
 
     When I delete the first route inserted
-    Then I get 200 as response code
-      And I get "OK" as response reason phrase
-    When I request a routes listing
-    Then I get 200 as response code
-      And I get "OK" as response reason phrase
-      And I get a list with the following elements:
+      And I request a routes listing
+    Then I get a list with the following elements:
         """
         [
           {
@@ -58,12 +54,8 @@ Feature: Routes auto-ordering after deleting  in a Kapow! server.
     maintain their relative order and indexes.
 
     When I delete the last route inserted
-    Then I get 200 as response code
-      And I get "OK" as response reason phrase
-    When I request a routes listing
-    Then I get 200 as response code
-      And I get "OK" as response reason phrase
-      And I get a list with the following elements:
+      And I request a routes listing
+    Then I get a list with the following elements:
       """
       [
         {
@@ -99,12 +91,8 @@ Feature: Routes auto-ordering after deleting  in a Kapow! server.
     following routes will be decreased by one.
 
     When I delete the second route inserted
-    Then I get 200 as response code
-      And I get "OK" as response reason phrase
-    When I request a routes listing
-    Then I get 200 as response code
-      And I get "OK" as response reason phrase
-      And I get a list with the following elements:
+      And I request a routes listing
+    Then I get a list with the following elements:
         """
         [
           {

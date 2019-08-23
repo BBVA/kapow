@@ -360,7 +360,7 @@ def delete_route(app):
         else:
             app.change_routes(routes)
             app["user_routes"] = routes
-            return web.Response(status=200, reason="OK")
+            return web.Response(status=204, reason="No Content")
     return _delete_route
 
 
