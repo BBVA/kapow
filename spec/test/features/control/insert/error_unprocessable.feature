@@ -34,3 +34,21 @@ Feature: Kapow! server rejects insertion requests with semantic errors.
       """
     Then I get 422 as response code
       And I get "Invalid Route" as response reason phrase
+
+  Scenario: Error because negative index specified.
+    If a request contains a negative number in the
+    index field the server responds with an error.
+
+    Given I have a running Kapow! server
+    When I insert the route:
+      """
+      {
+        "method": "GET",
+        "url_pattern": "+123--",
+        "entrypoint": "/bin/sh -c",
+        "command": "ls -la / | response /body",
+        "index": -1
+      }
+      """
+    Then I get 422 as response code
+      And I get "Invalid Route" as response reason phrase
