@@ -408,6 +408,14 @@ following resource paths:
 ```
 /                               The root of the resource paths tree
 │
+├─ route                        Information about the matched route
+│  ├──── method
+│  ├──── urlpattern
+│  ├──── entrypoint
+│  ├──── command                
+│  ├──── index
+│  └──── id
+│
 ├─ request                      All information related to the HTTP request.  Read-Only
 │  ├──── method                 Used HTTP Method (GET, POST)
 │  ├──── host                   Host part of the URL

@@ -17,6 +17,7 @@
 #
 
 from collections import namedtuple
+from functools import partial
 from itertools import repeat
 from urllib.parse import urlparse
 from uuid import uuid4
@@ -55,13 +56,15 @@ class Connection:
     connections.
 
     """
-    def __init__(self, request):
+    def __init__(self, request, route_index, route):
         self._stream = None
         self._body = io.BytesIO()
         self._status = 200
         self._headers = dict()
         self._cookies = dict()
 
+        self.route = route
+        self.route_index = route_index
         self.request = request
 
     async def get(self, key):
@@ -117,6 +120,18 @@ class Connection:
                     return b''
             else:
                 raise ValueError(f'Unknown content type {content!r}')
+        elif res.path == 'route/method':
+            return self.route.method.encode('utf-8')
+        elif res.path == 'route/urlpattern':
+            return self.route.path.encode('utf-8')
+        elif res.path == 'route/entrypoint':
+            return self.route.entrypoint.encode('utf-8')
+        elif res.path == 'route/command':
+            return self.route.command.encode('utf-8')
+        elif res.path == 'route/index':
+            return str(self.route_index).encode('utf-8')
+        elif res.path == 'route/id':
+            return self.route.id.encode('utf-8')
         else:
             raise ValueError('Unknown path')
 
@@ -229,7 +244,7 @@ async def append_field(request):
 ########################################################################
 
 
-def handle_route(entrypoint, command):
+def handle_route(entrypoint, command, route_index, route):
     """
     Return an aiohttp route handler that will execute entrypoint and
     command in order to manage a Kapow! route.
@@ -238,7 +253,7 @@ def handle_route(entrypoint, command):
     async def _handle(request):
         # Register a new connection to Kapow!
         id = "CONN_" + str(uuid4()).replace('-', '_')
-        connection = CONNECTIONS[id] = Connection(request)
+        connection = CONNECTIONS[id] = Connection(request, route_index, route)
 
         # Run entrypoint + command passing the connection id
         executable, *params = shlex.split(entrypoint)
@@ -318,8 +333,9 @@ def insert_route(app):
                                id="ROUTE_" + str(uuid4()).replace('-', '_'),
                                entrypoint=content["entrypoint"],
                                command=content["command"],
-                               handler=handle_route(content["entrypoint"],
-                                                    content["command"]))
+                               handler=partial(handle_route,
+                                               content["entrypoint"],
+                                               content["command"]))
             app.change_routes((app["user_routes"][:index]
                                + [route]
                                + app["user_routes"][index:]))
@@ -350,8 +366,9 @@ def append_route(app):
                                id="ROUTE_" + str(uuid4()).replace('-', '_'),
                                entrypoint=content["entrypoint"],
                                command=content["command"],
-                               handler=handle_route(content["entrypoint"],
-                                                    content["command"]))
+                               handler=partial(handle_route,
+                                               content["entrypoint"],
+                                               content["command"]))
             app.change_routes(app["user_routes"] + [route])
         except (InvalidRouteError, KeyError) as exc:
             return web.Response(status=422, reason="Invalid Route")
@@ -439,10 +456,10 @@ class DynamicApplication(web.Application):
     def change_routes(self, routes):
         router = UrlDispatcher()
         try:
-            for route in routes:
+            for idx, route in enumerate(routes):
                 router.add_route(route.method,
                                  route.path,
-                                 route.handler,
+                                 route.handler(idx, route),
                                  name=route.id)
         except Exception as exc:
             raise InvalidRouteError("Invalid route") from exc
