@@ -1,5 +1,5 @@
-Feature: Kapow! server rejects insertion responses with semantic errors.
-  Kapow! server will reject to insert routes when
+Feature: Kapow! server rejects insertion requests with semantic errors.
+  Kapow! server will refuse to insert routes when
   it receives a valid JSON but not conforming document.
 
   Scenario: Error because lacking mandatory fields.
