@@ -128,11 +128,6 @@ def step_impl(context):
     assert is_subset(jsonexample.loads(context.text), context.response.json())
 
 
-@then('I get an empty response body')
-def step_impl(context):
-    assert context.response.content == b'', f"Response body is not empty. Got {context.response.content} instead."
-
-
 @when('I delete the route with id "{id}"')
 def step_impl(context, id):
     context.response = requests.delete(f"{Env.KAPOW_CONTROLAPI_URL}/routes/{id}")
