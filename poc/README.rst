@@ -33,5 +33,5 @@ at any moment.
 Running the Spec Test Suite
 ---------------------------
 
-Sitting in this directory run `make` to run the Kapow! Python PoC
+Sitting in this directory run ``make`` to run the Kapow! Python PoC
 against the Spec Test Suite.
