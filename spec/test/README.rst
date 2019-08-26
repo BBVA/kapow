@@ -51,7 +51,7 @@ You can customize some of the test behavior with the following
 environment variables:
 
 * `KAPOW_SERVER_CMD`: The full command line to start a non-interactive
-listening kapow server. By default: `kapow server`
+   listening kapow server. By default: `kapow server`
 * `KAPOW_CONTROLAPI_URL`: URL of the Control API. By default: `http://localhost:8081`
 * `KAPOW_DATAAPI_URL`: URL of the Data API. By default: `http://localhost:8080`
 
@@ -86,7 +86,7 @@ with the tag `@wip` and use `make wip` to run only your
 scenario/feature.
 
 1. Paste the step definition template you just copied at the end of the
-file `steps/steps.py`.
+   file `steps/steps.py`.
 2. Run `make wip` to test that the step is triggered. You should see a
    `NotImplementedError` exception.
 3. Implement your step.
