@@ -10,6 +10,7 @@ pylint = "*"
 aiohttp = "*"
 requests = "*"
 click = "*"
+kapow = {path = ".",editable = true}
 
 [requires]
 python_version = "3.7"
