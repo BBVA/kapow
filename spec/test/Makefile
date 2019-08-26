@@ -1,7 +1,9 @@
-.PHONY: lint wip test fix catalog
+.PHONY: lint wip test fix catalog sync
 
-all: test
+all: sync test
 
+sync:
+	pipenv sync
 lint:
 	gherkin-lint
 wip:
