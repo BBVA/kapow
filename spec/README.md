@@ -503,7 +503,7 @@ following resource paths:
 Returns the value of the requested resource path, or an error if the resource
 path doesn't exist or is invalid.
 
-* **URL**: `/handlers/{:handler_id}{:resource_path}`
+* **URL**: `/handlers/{handler_id}{resource_path}`
 * **Method**: `GET`
 * **URL Params**: FIXME: We think that here should be options to cook the value
   in some way, or get it raw.
@@ -524,7 +524,7 @@ path doesn't exist or is invalid.
 
 #### Overwrite the value of a resource
 
-* **URL**: `/handlers/{:handler_id}{:resource_path}`
+* **URL**: `/handlers/{handler_id}{resource_path}`
 * **Method**: `PUT`
 * **URL Params**: FIXME: We think that here should be options to cook the value
   in some way, or pass it raw.
