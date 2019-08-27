@@ -19,6 +19,12 @@ Check that your installation is correct by typing this in a shell:
 
 You should see a help screen. If not fix it before continuing.
 
+You also need ``gherkin-lint``. Run:
+
+.. code-block:: bash
+
+   npm install -g gherkin-lint
+
 
 How to run the test suite?
 ==========================
