@@ -11,6 +11,6 @@ Feature: Fail to retrieve an invalid resource for a handler in Kapow! server.
       | method | url_pattern        | entrypoint | command                    |
       | GET    | /listRootDir       | /bin/sh -c | ls -la / \| response /body |
     When I send a request to the route "/listRootDir"
-      And I the get the resource "request/path" for the current request handler
+      And I get the resource "request/path" for the current request handler
     Then I get 400 as response code
       And I get "Invalid Resource Path" as response reason phrase
