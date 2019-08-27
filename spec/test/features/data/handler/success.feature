@@ -1,9 +1,9 @@
+@wip
 Feature: Retrieve a resource from a handler in Kapow! server.
     Users can retrieve request handler resources
     from the server by specifying the handler id
     and the resource path.
 
-  @wip
   Scenario: Retrieve a resource for the current request.
     Get the "request/path" resource for the current
     request through the handler id.

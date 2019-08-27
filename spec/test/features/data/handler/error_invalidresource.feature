@@ -1,8 +1,8 @@
+@wip
 Feature: Fail to retrieve an invalid resource for a handler in Kapow! server.
   If trying to access an invalid resource for a handler
   then the server responds with an error.
 
-  @wip
   Scenario: Try to get invented/path from a existent handler.
     A request for retrieving an invalid resource for an
     existent handler will trigger a invalid resource error.
