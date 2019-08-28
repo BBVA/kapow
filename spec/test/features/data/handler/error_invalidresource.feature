@@ -1,7 +1,6 @@
-Feature: Fail to retrieve invalid resources from a handler in Kapow! server.
-  If trying to access an invalid resource from
-  a handler then the server responds with an
-  error.
+Feature: Fail to retrieve an invalid resource for a handler in Kapow! server.
+  If trying to access an invalid resource for a handler
+  then the server responds with an error.
 
   Scenario: Try to get an inexistent resource from a handler.
     A request to retrieve an invalid resource

@@ -1,6 +1,8 @@
 from contextlib import suppress
 from time import sleep
 import json
+import os
+import threading
 import shlex
 import socket
 import subprocess
@@ -124,6 +126,7 @@ def step_impl(context, id):
     context.response = requests.delete(f"{Env.KAPOW_CONTROLAPI_URL}/routes/{id}")
 
 
+@given('I insert the route')
 @when('I insert the route')
 def step_impl(context):
     context.response = requests.put(f"{Env.KAPOW_CONTROLAPI_URL}/routes",
@@ -165,3 +168,23 @@ def step_impl(context, order):
     routes = requests.get(f"{Env.KAPOW_CONTROLAPI_URL}/routes")
     id = routes.json()[idx]["id"]
     context.response = requests.get(f"{Env.KAPOW_CONTROLAPI_URL}/routes/{id}")
+
+
+@when('I send a background request to the route {route}')
+def step_imp(context, route):
+    def _back():
+        return requests.get(f"{Env.KAPOW_DATAAPI_URL}/{route}")
+    context.background_request = threading.Thread(target=_back)
+    context.background_request.start()
+
+
+@when('I get the resource {resource} for the current request handler')
+def step_imp(context, resource):
+    def retrieve_request_id():
+        target = os.listdir('/tmp/wip')[0]
+        with open(target, "r") as f:
+            return f.readline().strip()
+    background_request_id = retrieve_request_id()
+    resource = f"/handlers/{background_request_id}/{resource}"
+    context.response = requests.get(resource)
+
