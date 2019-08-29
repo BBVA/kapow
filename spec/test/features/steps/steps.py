@@ -2,11 +2,14 @@ from contextlib import suppress
 from time import sleep
 import json
 import os
-import time
-import threading
 import shlex
+import signal
 import socket
 import subprocess
+import sys
+import tempfile
+import threading
+import time
 
 import requests
 from environconfig import EnvironConfig, StringVar, IntVar, BooleanVar
@@ -17,6 +20,7 @@ import logging
 
 
 WORD2POS = {"first": 0, "second": 1, "last": -1}
+HERE = os.path.dirname(__file__)
 
 
 class Env(EnvironConfig):
@@ -28,6 +32,9 @@ class Env(EnvironConfig):
 
     #: Where the Data API is
     KAPOW_DATAAPI_URL = StringVar(default="http://localhost:8080")
+
+    #: Where the User Interface is
+    KAPOW_USER_URL = StringVar(default="http://localhost:8080")
 
     KAPOW_BOOT_TIMEOUT = IntVar(default=10)
 
@@ -98,6 +105,45 @@ def step_impl(context):
         response = requests.post(f"{Env.KAPOW_CONTROLAPI_URL}/routes",
                                  json={h: row[h] for h in row.headings})
         response.raise_for_status()
+
+
+@given('I have a Kapow! server with the following testing routes')
+def step_impl(context):
+    run_kapow_server(context)
+
+    if not hasattr(context, 'table'):
+        raise RuntimeError("A table must be set for this step.")
+
+    for row in context.table:
+        response = requests.post(
+            f"{Env.KAPOW_CONTROLAPI_URL}/routes",
+            json={"entrypoint": " ".join(
+                      [sys.executable,
+                       shlex.quote(os.path.join(HERE, "testinghandler.py")),
+                       shlex.quote(context.handler_fifo_path)]),  # Created in before_scenario
+                  **{h: row[h] for h in row.headings}})
+        response.raise_for_status()
+
+
+@when('I send a request to the testing route "{path}"')
+def step_impl(context, path):
+    # Run the request in background
+    def _testing_request():
+        context.testing_response = requests.get(f"{Env.KAPOW_USER_URL}{path}")
+    context.testing_request = threading.Thread(target=_testing_request)
+    context.testing_request.start()
+
+    # Block until the handler connects and give us its pid and the
+    # handler_id
+    with open(context.handler_fifo_path, 'r') as fifo:
+        (context.testing_handler_pid,
+         context.testing_handler_id) = fifo.readline().split(';')
+
+
+@when('I release the testing request')
+def step_impl(context):
+    os.kill(int(context.testing_handler_pid), signal.SIGTERM)
+    context.testing_request.join()
 
 
 @when('I append the route')
@@ -176,8 +222,8 @@ def step_imp(context, route):
     def _back():
         resource_route = f"{Env.KAPOW_DATAAPI_URL}/{route}"
         return requests.get(resource_route)
-    context.background_request = threading.Thread(target=_back)
-    context.background_request.start()
+    context.testing_request = threading.Thread(target=_back)
+    context.testing_request.start()
 
 
 @when('I get the resource "{resource}" for the current request handler')
