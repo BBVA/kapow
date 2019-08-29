@@ -1,12 +1,13 @@
-Feature: Retrieve a handler resource in Kapow! server.
-    Users can retrieve handler resources from
-    the server by specifying the handler id
+Feature: Retrieve a resource from a handler in Kapow! server.
+    Users can retrieve request handler resources
+    from the server by specifying the handler id
     and the resource path.
 
   Scenario: Retrieve a resource.
     Get the "request/path" resource for the current
     request through the handler id.
 
+<<<<<<< HEAD
     Given I have a Kapow! server with the following testing routes:
       | method | url_pattern        |
       | GET    | /listRootDir       |
