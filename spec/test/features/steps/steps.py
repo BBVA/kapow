@@ -173,7 +173,6 @@ def step_impl(context, id):
     context.response = requests.delete(f"{Env.KAPOW_CONTROLAPI_URL}/routes/{id}")
 
 
-@given('I insert the route')
 @when('I insert the route')
 def step_impl(context):
     context.response = requests.put(f"{Env.KAPOW_CONTROLAPI_URL}/routes",
@@ -215,40 +214,3 @@ def step_impl(context, order):
     routes = requests.get(f"{Env.KAPOW_CONTROLAPI_URL}/routes")
     id = routes.json()[idx]["id"]
     context.response = requests.get(f"{Env.KAPOW_CONTROLAPI_URL}/routes/{id}")
-
-
-@when('I send a background request to the route "{route}"')
-def step_imp(context, route):
-    def _back():
-        resource_route = f"{Env.KAPOW_DATAAPI_URL}/{route}"
-        return requests.get(resource_route)
-    context.testing_request = threading.Thread(target=_back)
-    context.testing_request.start()
-
-
-@when('I get the resource "{resource}" for the current request handler')
-def step_imp(context, resource):
-    def retrieve_request_id():
-        requests_dir = os.path.exists('/tmp/wip')
-        while not requests_dir:
-            time.sleep(1)
-            requests_dir = os.path.exists('/tmp/wip')
-        target_count = len(os.listdir('/tmp/wip'))
-        while target_count <= 0:
-            time.sleep(1)
-            target_count = len(os.listdir('/tmp/wip'))
-        target = os.listdir('/tmp/wip')[0]
-
-        with open(os.path.join("/tmp/wip", target), "r") as f:
-            return f.readline().strip()
-    def remove_request_id(request_id):
-        os.remove(os.path.join("/tmp/wip", request_id))
-    background_request_id = retrieve_request_id()
-    resource = f"{Env.KAPOW_CONTROLAPI_URL}/handlers/{background_request_id}/{resource}"
-    context.response = requests.get(resource)
-    remove_request_id(background_request_id)
-
-
-@then('I get the following raw body')
-def step_impl(context):
-    assert is_subset(context.text.strip(), context.response.text.strip()) 
