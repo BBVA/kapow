@@ -11,10 +11,9 @@ Feature: Setting values for handler response resources in Kapow! server.
       | method | url_pattern  |
       | GET    | /listRootDir |
     When I send a request to the testing route "/listRootDir"
-      And I set the resource "response/status" with value 666
+      And I set the resource "response/status" with value 418
       And I release the testing request
-    Then I get 666 as response code
-      And I get "OK" as response reason phrase
+    Then I get 418 as response code
 
   Scenario Outline: Set different resources for the current response.
     Set the following resources for the current
