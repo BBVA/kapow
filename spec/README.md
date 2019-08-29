@@ -512,9 +512,12 @@ path doesn't exist or is invalid.
     **Header**: `Content-Type: application/octet-stream`<br />
     **Content**: The value of the resource.  Note that it may be empty.
 * **Error Responses**:
-    **Code**: `400 Invalid Resource Path`<br />
+  * **Code**: `400 Invalid Resource Path`<br />
     **Notes**: Check the list of valid resource paths at the top of this section.
-  * **Code**: `404 Not Found`
+  * **Code**: `404 Not Found`<br />
+    **Notes**: Refers to the handler resource itself.
+  * **Code**: `204 Resource Item Not Found`<br />
+    **Notes**: Refers to the named item in the corresponding data API resource.
 * **Sample Call**:<br />
   ```sh
   $ curl /handlers/$KAPOW_HANDLER_ID/request/body
@@ -532,8 +535,12 @@ path doesn't exist or is invalid.
 * **Success Responses**:
   * **Code**: `200 OK`
 * **Error Responses**:
-  * **Code**: `400 Invalid Resource`
-  * **Code**: `404 Not Found`
+  * **Code**: `400 Invalid Resource Path`<br />
+    **Notes**: Check the list of valid resource paths at the top of this section.
+  * **Code**: `404 Not Found`<br />
+    **Notes**: Refers to the handler resource itself.
+  * **Code**: `204 Resource Item Not Found`<br />
+    **Notes**: Refers to the named item in the corresponding data API resource.
 * **Sample Call**:<br />
   ```sh
   $ curl -X --data-binary '<h1>Hello!</h1>' PUT /handlers/$KAPOW_HANDLER_ID/response/body
