@@ -313,13 +313,15 @@ def insert_route(app):
         try:
             index = int(content["index"])
             assert index >= 0
-            route = KapowRoute(method=content["method"],
+            method = content.get("method", "GET")
+            entrypoint = content.get("entrypoint", "/bin/sh -c")
+            command = content.get("command", "")
+            route = KapowRoute(method=method,
                                path=content["url_pattern"],
                                id="ROUTE_" + str(uuid4()).replace('-', '_'),
-                               entrypoint=content["entrypoint"],
-                               command=content["command"],
-                               handler=handle_route(content["entrypoint"],
-                                                    content["command"]))
+                               entrypoint=entrypoint,
+                               command=command,
+                               handler=handle_route(entrypoint, command))
             app.change_routes((app["user_routes"][:index]
                                + [route]
                                + app["user_routes"][index:]))
@@ -345,13 +347,15 @@ def append_route(app):
             return web.Response(status=400, reason="Malformed JSON")
 
         try:
-            route = KapowRoute(method=content["method"],
+            method = content.get("method", "GET")
+            entrypoint = content.get("entrypoint", "/bin/sh -c")
+            command = content.get("command", "")
+            route = KapowRoute(method=method,
                                path=content["url_pattern"],
                                id="ROUTE_" + str(uuid4()).replace('-', '_'),
-                               entrypoint=content["entrypoint"],
-                               command=content["command"],
-                               handler=handle_route(content["entrypoint"],
-                                                    content["command"]))
+                               entrypoint=entrypoint,
+                               command=command,
+                               handler=handle_route(entrypoint, command))
             app.change_routes(app["user_routes"] + [route])
         except (InvalidRouteError, KeyError) as exc:
             return web.Response(status=422, reason="Invalid Route")
