@@ -1,3 +1,4 @@
+@wip
 Feature: Fail to retrieve nonexistent resource items in Kapow! server.
   If trying to access a nonexistent resource item
   then the server responds with a no content error.
@@ -11,6 +12,6 @@ Feature: Fail to retrieve nonexistent resource items in Kapow! server.
       | method | url_pattern        |
       | GET    | /listRootDir       |
     When I send a request to the testing route "/listRootDir"
-      And I get the resource "request/params/meloinvento"
+      And I get the resource "/request/params/meloinvento"
     Then I get 204 as response code
       And I get "Resource Item Not Found" as response reason phrase
