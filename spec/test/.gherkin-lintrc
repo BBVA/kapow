@@ -24,7 +24,7 @@
   "new-line-at-eof": ["on", "yes"],
   "no-multiple-empty-lines": "on",
   "no-scenario-outlines-without-examples": "on",
-  "name-length": ["on", {"Feature": 80, "Step": 80, "Scenario": 80}],
+  "name-length": ["on", {"Feature": 80, "Step": 120, "Scenario": 80}],
   "no-restricted-tags": ["on", {"tags": ["@watch", "@wip"]}],
   "use-and": "on",
   "no-duplicate-tags": "on",
