@@ -9,6 +9,7 @@ import subprocess
 import sys
 import tempfile
 import threading
+from multiprocessing.pool import ThreadPool
 import time
 
 import requests
@@ -126,10 +127,7 @@ def step_impl(context):
 
 def testing_request(context, request_fn):
     # Run the request in background
-    def _testing_request():
-        context.testing_response = request_fn()
-    context.testing_request = threading.Thread(target=_testing_request)
-    context.testing_request.start()
+    context.testing_request = ThreadPool(processes=1).apply_async(request_fn)
 
     # Block until the handler connects and give us its pid and the
     # handler_id
@@ -152,7 +150,7 @@ def step_impl(context, path):
 @when('I release the testing request')
 def step_impl(context):
     os.kill(int(context.testing_handler_pid), signal.SIGTERM)
-    context.testing_request.join()
+    context.testing_response = context.testing_request.get()
 
 
 @when('I append the route')
@@ -165,6 +163,11 @@ def step_impl(context):
 @then('I get {code} as response code')
 def step_impl(context, code):
     assert context.response.status_code == int(code), f"Got {context.response.status_code} instead"
+
+
+@then('I get {code} as response code in the testing request')
+def step_impl(context, code):
+    assert context.testing_response.status_code == int(code), f"Got {context.response.status_code} instead"
 
 
 @then('I get "{reason}" as response reason phrase')
@@ -274,3 +277,17 @@ def step_impl(context, path):
             return None
 
     testing_request(context, _request)
+
+
+@then('I get the value "{value}" for the response "{fieldType}" named "{elementName}" in the testing request')
+def step_impl(context, value, fieldType, elementName):
+    if fieldType == "header":
+        actual = context.testing_response.headers.get(elementName)
+    elif fieldType == "cookie":
+        actual = context.testing_response.cookies.get(elementName)
+    elif fieldType == "body":
+        actual = context.testing_response.text
+    else:
+        raise ValueError("Unknown fieldtype {fieldType!r}")
+
+    assert actual == value, f"Expecting {fieldType} {elementName!r} to be {value!r}, got {actual!r} insted"
