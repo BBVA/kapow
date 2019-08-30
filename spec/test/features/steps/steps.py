@@ -231,9 +231,13 @@ def step_impl(context, order):
 
 
 @when('I get the resource "{resource}"')
-def step_impl(context, resource):
+@when('I get the resource "{resource}" for the handler with id "{handler_id}"')
+def step_impl(context, resource, handler_id=None):
+    if handler_id is None:
+        handler_id = context.testing_handler_id
+
     context.response = requests.get(
-        f"{Env.KAPOW_DATAAPI_URL}/handlers/{context.testing_handler_id}{resource}")
+        f"{Env.KAPOW_DATAAPI_URL}/handlers/{handler_id}{resource}")
 
 
 @when('I set the resource "{resource}" with value "{value}"')

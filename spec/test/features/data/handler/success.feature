@@ -12,7 +12,7 @@ Feature: Retrieve a resource from a handler in Kapow! server.
       | method | url_pattern        |
       | GET    | /listRootDir       |
     When I send a request to the testing route "/listRootDir"
-      And I get the resource "request/path"
+      And I get the resource "/request/path"
     Then I get 200 as response code
       And I get "OK" as response reason phrase
       And I get the following response raw body:
@@ -28,7 +28,7 @@ Feature: Retrieve a resource from a handler in Kapow! server.
       | method | url_pattern        |
       | GET    | /listRootDir       |
     When I send a request to the testing route "/listRootDir"
-      And I get the resource "request/headers/Host"
+      And I get the resource "/request/headers/Host"
     Then I get 200 as response code
       And I get "OK" as response reason phrase
       And I get the following response raw body:

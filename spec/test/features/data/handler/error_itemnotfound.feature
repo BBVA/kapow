@@ -1,4 +1,3 @@
-@wip
 Feature: Fail to retrieve nonexistent resource items in Kapow! server.
   If trying to access a nonexistent resource item
   then the server responds with a no content error.

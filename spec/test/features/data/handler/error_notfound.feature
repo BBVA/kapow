@@ -8,7 +8,7 @@ Feature: Fail to retrieve resources from nonexistent handler in Kapow! server.
     error.
 
     Given I have a running Kapow! server
-    When I get the resource "request/path" for the handler with id XXXXXXXXXX
+    When I get the resource "/request/path" for the handler with id "XXXXXXXXXX"
     Then I get 404 as response code
       And I get "Not Found" as response reason phrase
 
@@ -19,6 +19,6 @@ Feature: Fail to retrieve resources from nonexistent handler in Kapow! server.
     invalid.
 
     Given I have a running Kapow! server
-    When I get the resource "invalid/path" for the handler with id XXXXXXXXXX
+    When I get the resource "/invalid/path" for the handler with id "XXXXXXXXXX"
     Then I get 404 as response code
       And I get "Not Found" as response reason phrase
