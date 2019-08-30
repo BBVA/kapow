@@ -7,7 +7,6 @@ Feature: Retrieve a resource from a handler in Kapow! server.
     Get the "request/path" resource for the current
     request through the handler id.
 
-<<<<<<< HEAD
     Given I have a Kapow! server with the following testing routes:
       | method | url_pattern        |
       | GET    | /listRootDir       |
