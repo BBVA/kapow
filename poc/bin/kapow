@@ -181,7 +181,10 @@ async def get_field(request):
     except KeyError:
         response = web.HTTPNotFound()
     else:
-        content = await connection.get(field)
+        try:
+            content = await connection.get(field)
+        except ValueError:
+            return web.Response(status=400, reason="Invalid Resource Path")
 
         if isinstance(content, StreamReader):
             response = web.StreamResponse(status=200, reason="OK")
