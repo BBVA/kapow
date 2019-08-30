@@ -11,12 +11,13 @@ Feature: Retrieve request resources from a handler in Kapow! server.
     Given I have a Kapow! server with the following testing routes:
       | method | url_pattern         |
       | GET    | /listRootDir/{path} |
-    When I send a request to the testing route "/listRootDir/otro" adding:
-      | fieldType | name    | value        |
-      | parameter | "par1"  | "paramVal1"  |
-      | header    | "head1" | "headVal1"   |
-      | cookie    | "cook1" | "cookieVal1" |
-      And I get the resource <resourcePath>
+    When I send a request to the testing route "/listRootDir/matchVal1" adding:
+      | fieldType | name  | value      |
+      | parameter | par1  | paramVal1  |
+      | header    | head1 | headVal1   |
+      | cookie    | cook1 | cookieVal1 |
+      | body      |       | bodyVal1   |
+      And I get the resource "<resourcePath>"
     Then I get 200 as response code
       And I get "OK" as response reason phrase
       And I get the following response raw body:
@@ -25,12 +26,12 @@ Feature: Retrieve request resources from a handler in Kapow! server.
         """
 
     Examples:
-      | resourcePath           | value               |
-      | resource/method        | "GET"               |
-      | resource/path          | "/listRootDir/otro" |
-      | resource/host          | "localhost:8080"    |
-      | resource/matches/path  | "otro"              |
-      | resource/params/par1   | "paramVal1"         |
-      | resource/headers/head1 | "headVal1"          |
-      | resource/cookies/cook1 | "cookieVal1"        |
-      | resource/body          | empty               |
+      | resourcePath           | value                  |
+      | /request/method        | GET                    |
+      | /request/path          | /listRootDir/matchVal1 |
+      | /request/host          | localhost:8080         |
+      | /request/matches/path  | matchVal1              |
+      | /request/params/par1   | paramVal1              |
+      | /request/headers/head1 | headVal1               |
+      | /request/cookies/cook1 | cookieVal1             |
+      | /request/body          | bodyVal1               |

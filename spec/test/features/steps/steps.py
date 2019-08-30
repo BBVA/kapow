@@ -31,7 +31,7 @@ class Env(EnvironConfig):
     KAPOW_CONTROLAPI_URL = StringVar(default="http://localhost:8081")
 
     #: Where the Data API is
-    KAPOW_DATAAPI_URL = StringVar(default="http://localhost:8080")
+    KAPOW_DATAAPI_URL = StringVar(default="http://localhost:8081")
 
     #: Where the User Interface is
     KAPOW_USER_URL = StringVar(default="http://localhost:8080")
@@ -124,12 +124,10 @@ def step_impl(context):
                   **{h: row[h] for h in row.headings}})
         response.raise_for_status()
 
-
-@when('I send a request to the testing route "{path}"')
-def step_impl(context, path):
+def testing_request(context, request_fn):
     # Run the request in background
     def _testing_request():
-        context.testing_response = requests.get(f"{Env.KAPOW_USER_URL}{path}")
+        context.testing_response = request_fn()
     context.testing_request = threading.Thread(target=_testing_request)
     context.testing_request.start()
 
@@ -137,7 +135,18 @@ def step_impl(context, path):
     # handler_id
     with open(context.handler_fifo_path, 'r') as fifo:
         (context.testing_handler_pid,
-         context.testing_handler_id) = fifo.readline().split(';')
+         context.testing_handler_id) = fifo.readline().rstrip('\n').split(';')
+
+
+@when('I send a request to the testing route "{path}"')
+def step_impl(context, path):
+    def _request():
+        try:
+            return requests.get(f"{Env.KAPOW_USER_URL}{path}", stream=False)
+        except:
+            return None
+
+    testing_request(context, _request)
 
 
 @when('I release the testing request')
@@ -166,6 +175,11 @@ def step_impl(context, reason):
 @then('I get the following response body')
 def step_impl(context):
     assert is_subset(jsonexample.loads(context.text), context.response.json())
+
+
+@then('I get the following response raw body')
+def step_impl(context):
+    assert context.text == context.response.text, f"{context.text!r} != {context.response.text!r}"
 
 
 @when('I delete the route with id "{id}"')
@@ -214,3 +228,45 @@ def step_impl(context, order):
     routes = requests.get(f"{Env.KAPOW_CONTROLAPI_URL}/routes")
     id = routes.json()[idx]["id"]
     context.response = requests.get(f"{Env.KAPOW_CONTROLAPI_URL}/routes/{id}")
+
+
+@when('I get the resource "{resource}"')
+def step_impl(context, resource):
+    context.response = requests.get(
+        f"{Env.KAPOW_DATAAPI_URL}/handlers/{context.testing_handler_id}{resource}")
+
+
+@when('I set the resource "{resource}" with value "{value}"')
+def step_impl(context, resource, value):
+    context.response = requests.put(
+        f"{Env.KAPOW_DATAAPI_URL}/handlers/{context.testing_handler_id}{resource}",
+        data=value.encode("utf-8"))
+
+
+@when('I send a request to the testing route "{path}" adding')
+def step_impl(context, path):
+    if not hasattr(context, 'table'):
+        raise RuntimeError("A table must be set for this step.")
+
+    params = {
+        "headers": dict(),
+        "cookies": dict(),
+        "params": dict()}
+    setters = {
+        "header": params["headers"].setdefault,
+        "cookie": params["cookies"].setdefault,
+        "body": lambda _, v: params.setdefault("data", v.encode("utf-8")),
+        "parameter": params["params"].setdefault,}
+
+    for row in context.table:
+        setters[row["fieldType"]](row["name"], row["value"])
+
+    def _request():
+        try:
+            return requests.get(f"{Env.KAPOW_USER_URL}{path}",
+                                stream=False,
+                                **params)
+        except:
+            return None
+
+    testing_request(context, _request)
