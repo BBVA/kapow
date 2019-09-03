@@ -4,10 +4,10 @@ Feature: Consistent route order after a route deletion in Kapow! server.
 
   Background:
     Given I have a Kapow! server with the following routes:
-      | method | url_pattern        | entrypoint | command                                          |
-      | GET    | /foo       | /bin/sh -c | ls -la / \| response /body                       |
-      | GET    | /bar        | /bin/sh -c | ls -la /var \| response /body                    |
-      | GET    | /baz        | /bin/sh -c | ls -la /etc \| response /body                    |
+      | method | url_pattern    | entrypoint | command                                          |
+      | GET    | /foo           | /bin/sh -c | ls -la / \| response /body                       |
+      | GET    | /bar           | /bin/sh -c | ls -la /var \| response /body                    |
+      | GET    | /baz           | /bin/sh -c | ls -la /etc \| response /body                    |
       | GET    | /qux/{dirname} | /bin/sh -c | ls -la /request/params/dirname \| response /body |
 
   Scenario: Removing the first route.

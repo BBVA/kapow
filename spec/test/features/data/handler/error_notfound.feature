@@ -1,6 +1,6 @@
 Feature: Fail to retrieve resources from nonexistent handler in Kapow! server.
   If trying to access a nonexistent handler then the
-  server responds with a noptfound error.
+  server responds with a not found error.
 
   Scenario: Try to get a valid resource path from a nonexistent handler.
     A request to retrieve a resource from a

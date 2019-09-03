@@ -6,8 +6,8 @@ Feature: Delete routes in Kapow! server.
     Routes are removed from the sever by specifying their id.
 
     Given I have a Kapow! server with the following routes:
-      | method | url_pattern        | entrypoint | command                                          |
-      | GET    | /foo       | /bin/sh -c | ls -la / \| response /body                       |
+      | method | url_pattern    | entrypoint | command                                          |
+      | GET    | /foo           | /bin/sh -c | ls -la / \| response /body                       |
       | GET    | /qux/{dirname} | /bin/sh -c | ls -la /request/params/dirname \| response /body |
     When I delete the first route
     Then I get 204 as response code

@@ -21,8 +21,8 @@ Feature: Listing routes in a Kapow! server.
     must return an ordered list of routes stored.
 
     Given I have a Kapow! server with the following routes:
-      | method | url_pattern        | entrypoint | command                                          |
-      | GET    | /foo       | /bin/sh -c | ls -la / \| response /body                       |
+      | method | url_pattern    | entrypoint | command                                          |
+      | GET    | /foo           | /bin/sh -c | ls -la / \| response /body                       |
       | GET    | /qux/{dirname} | /bin/sh -c | ls -la /request/params/dirname \| response /body |
     When I request a routes listing
     Then I get 200 as response code

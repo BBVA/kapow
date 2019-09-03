@@ -5,8 +5,8 @@ Feature: Insert new routes in Kapow! server.
 
   Background:
     Given I have a Kapow! server with the following routes:
-      | method | url_pattern        | entrypoint | command                                          |
-      | GET    | /foo       | /bin/sh -c | ls -la / \| response /body                       |
+      | method | url_pattern    | entrypoint | command                                          |
+      | GET    | /foo           | /bin/sh -c | ls -la / \| response /body                       |
       | GET    | /qux/{dirname} | /bin/sh -c | ls -la /request/params/dirname \| response /body |
 
   Scenario: Insert a route at the beginning.

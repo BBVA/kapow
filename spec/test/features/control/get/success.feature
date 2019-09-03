@@ -6,8 +6,8 @@ Feature: Retrieve route details in Kapow! server.
     Get route details by id.
 
     Given I have a Kapow! server with the following routes:
-      | method | url_pattern        | entrypoint | command                                          |
-      | GET    | /foo       | /bin/sh -c | ls -la / \| response /body                       |
+      | method | url_pattern    | entrypoint | command                                          |
+      | GET    | /foo           | /bin/sh -c | ls -la / \| response /body                       |
       | GET    | /qux/{dirname} | /bin/sh -c | ls -la /request/params/dirname \| response /body |
     When I get the first route
     Then I get 200 as response code

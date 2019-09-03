@@ -28,7 +28,7 @@ Feature: Retrieve request resources from a handler in Kapow! server.
     Examples:
       | resourcePath           | value                  |
       | /request/method        | GET                    |
-      | /request/path          | /foo/matchVal1 |
+      | /request/path          | /foo/matchVal1         |
       | /request/host          | localhost:8080         |
       | /request/matches/path  | matchVal1              |
       | /request/params/par1   | paramVal1              |

@@ -7,8 +7,8 @@ Feature: Fail to retrieve an invalid resource for a handler in Kapow! server.
     from a handler will trigger a invalid resource error.
 
     Given I have a Kapow! server with the following testing routes:
-      | method | url_pattern        |
-      | GET    | /foo       |
+      | method | url_pattern |
+      | GET    | /foo        |
     When I send a request to the testing route "/foo"
       And I get the resource "/invented/path"
     Then I get 400 as response code

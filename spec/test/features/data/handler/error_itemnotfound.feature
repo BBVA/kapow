@@ -8,8 +8,8 @@ Feature: Fail to retrieve nonexistent resource items in Kapow! server.
     error.
 
     Given I have a Kapow! server with the following testing routes:
-      | method | url_pattern        |
-      | GET    | /foo       |
+      | method | url_pattern |
+      | GET    | /foo        |
     When I send a request to the testing route "/foo"
       And I get the resource "/request/params/meloinvento"
     Then I get 204 as response code

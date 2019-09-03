@@ -8,8 +8,8 @@ Feature: Retrieve a resource from a handler in Kapow! server.
     request through the handler id.
 
     Given I have a Kapow! server with the following testing routes:
-      | method | url_pattern        |
-      | GET    | /foo       |
+      | method | url_pattern  |
+      | GET    | /foo         |
     When I send a request to the testing route "/foo"
       And I get the resource "/request/path"
     Then I get 200 as response code
@@ -24,8 +24,8 @@ Feature: Retrieve a resource from a handler in Kapow! server.
     the current request through the handler id.
 
     Given I have a Kapow! server with the following testing routes:
-      | method | url_pattern        |
-      | GET    | /foo       |
+      | method | url_pattern  |
+      | GET    | /foo         |
     When I send a request to the testing route "/foo"
       And I get the resource "/request/headers/Host"
     Then I get 200 as response code
