@@ -3,18 +3,6 @@
 
 **Kapow!** If you can script it, you can HTTP it.
 
-+-----------------+------------------------------------------------+
-| Project site    | https://github.com/BBVA/kapow                  |
-+-----------------+------------------------------------------------+
-| Issues          | https://github.com/BBVA/kapow/issues           |
-+-----------------+------------------------------------------------+
-| Specification   | https://github.com/BBVA/kapow/tree/master/spec |
-+-----------------+------------------------------------------------+
-| Documentation   | https://github.com/BBVA/kapow/tree/master/doc  |
-+-----------------+------------------------------------------------+
-| Python versions | 3.7 or above                                   |
-+-----------------+------------------------------------------------+
-
 
 CAVEAT EMPTOR
 =============
