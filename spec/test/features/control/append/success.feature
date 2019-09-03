@@ -12,7 +12,7 @@ Feature: Append new routes in Kapow! server.
       """
       {
         "method": "GET",
-        "url_pattern": "/listRootDir",
+        "url_pattern": "/foo",
         "entrypoint": "/bin/sh -c",
         "command": "ls -la / | response /body"
       }
@@ -23,7 +23,7 @@ Feature: Append new routes in Kapow! server.
       """
       {
         "method": "GET",
-        "url_pattern": "/listRootDir",
+        "url_pattern": "/foo",
         "entrypoint": "/bin/sh -c",
         "command": "ls -la / | response /body",
         "index": 0,
@@ -37,13 +37,13 @@ Feature: Append new routes in Kapow! server.
 
     Given I have a Kapow! server with the following routes:
       | method | url_pattern        | entrypoint | command                                          |
-      | GET    | /listRootDir       | /bin/sh -c | ls -la / \| response /body                       |
-      | GET    | /listDir/{dirname} | /bin/sh -c | ls -la /request/params/dirname \| response /body |
+      | GET    | /foo       | /bin/sh -c | ls -la / \| response /body                       |
+      | GET    | /qux/{dirname} | /bin/sh -c | ls -la /request/params/dirname \| response /body |
     When I append the route:
       """
       {
         "method": "GET",
-        "url_pattern": "/listEtcDir",
+        "url_pattern": "/baz",
         "entrypoint": "/bin/sh -c",
         "command": "ls -la /etc | response /body"
       }
@@ -54,7 +54,7 @@ Feature: Append new routes in Kapow! server.
       """
       {
         "method": "GET",
-        "url_pattern": "/listEtcDir",
+        "url_pattern": "/baz",
         "entrypoint": "/bin/sh -c",
         "command": "ls -la /etc | response /body",
         "index": 2,

@@ -5,10 +5,10 @@ Feature: Consistent route order after a route deletion in Kapow! server.
   Background:
     Given I have a Kapow! server with the following routes:
       | method | url_pattern        | entrypoint | command                                          |
-      | GET    | /listRootDir       | /bin/sh -c | ls -la / \| response /body                       |
-      | GET    | /listVarDir        | /bin/sh -c | ls -la /var \| response /body                    |
-      | GET    | /listEtcDir        | /bin/sh -c | ls -la /etc \| response /body                    |
-      | GET    | /listDir/{dirname} | /bin/sh -c | ls -la /request/params/dirname \| response /body |
+      | GET    | /foo       | /bin/sh -c | ls -la / \| response /body                       |
+      | GET    | /bar        | /bin/sh -c | ls -la /var \| response /body                    |
+      | GET    | /baz        | /bin/sh -c | ls -la /etc \| response /body                    |
+      | GET    | /qux/{dirname} | /bin/sh -c | ls -la /request/params/dirname \| response /body |
 
   Scenario: Removing the first route.
     After removing the first route the remaining ones
@@ -22,7 +22,7 @@ Feature: Consistent route order after a route deletion in Kapow! server.
         [
           {
             "method": "GET",
-            "url_pattern": "/listVarDir",
+            "url_pattern": "/bar",
             "entrypoint": "/bin/sh -c",
             "command": "ls -la /var | response /body",
             "index": 0,
@@ -30,7 +30,7 @@ Feature: Consistent route order after a route deletion in Kapow! server.
           },
           {
             "method": "GET",
-            "url_pattern": "/listEtcDir",
+            "url_pattern": "/baz",
             "entrypoint": "/bin/sh -c",
             "command": "ls -la /etc | response /body",
             "index": 1,
@@ -38,7 +38,7 @@ Feature: Consistent route order after a route deletion in Kapow! server.
           },
           {
             "method": "GET",
-            "url_pattern": "/listDir/{dirname}",
+            "url_pattern": "/qux/{dirname}",
             "entrypoint": "/bin/sh -c",
             "command": "ls -la /request/params/dirname | response /body",
             "index": 2,
@@ -58,7 +58,7 @@ Feature: Consistent route order after a route deletion in Kapow! server.
       [
         {
           "method": "GET",
-          "url_pattern": "/listRootDir",
+          "url_pattern": "/foo",
           "entrypoint": "/bin/sh -c",
           "command": "ls -la / | response /body",
           "index": 0,
@@ -66,7 +66,7 @@ Feature: Consistent route order after a route deletion in Kapow! server.
         },
         {
           "method": "GET",
-          "url_pattern": "/listVarDir",
+          "url_pattern": "/bar",
           "entrypoint": "/bin/sh -c",
           "command": "ls -la /var | response /body",
           "index": 1,
@@ -74,7 +74,7 @@ Feature: Consistent route order after a route deletion in Kapow! server.
         },
         {
           "method": "GET",
-          "url_pattern": "/listEtcDir",
+          "url_pattern": "/baz",
           "entrypoint": "/bin/sh -c",
           "command": "ls -la /etc | response /body",
           "index": 2,
@@ -95,7 +95,7 @@ Feature: Consistent route order after a route deletion in Kapow! server.
         [
           {
             "method": "GET",
-            "url_pattern": "/listRootDir",
+            "url_pattern": "/foo",
             "entrypoint": "/bin/sh -c",
             "command": "ls -la / | response /body",
             "index": 0,
@@ -103,7 +103,7 @@ Feature: Consistent route order after a route deletion in Kapow! server.
           },
           {
             "method": "GET",
-            "url_pattern": "/listEtcDir",
+            "url_pattern": "/baz",
             "entrypoint": "/bin/sh -c",
             "command": "ls -la /etc | response /body",
             "index": 1,
@@ -111,7 +111,7 @@ Feature: Consistent route order after a route deletion in Kapow! server.
           },
           {
             "method": "GET",
-            "url_pattern": "/listDir/{dirname}",
+            "url_pattern": "/qux/{dirname}",
             "entrypoint": "/bin/sh -c",
             "command": "ls -la /request/params/dirname | response /body",
             "index": 2,

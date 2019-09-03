@@ -9,8 +9,8 @@ Feature: Fail to retrieve nonexistent resource items in Kapow! server.
 
     Given I have a Kapow! server with the following testing routes:
       | method | url_pattern        |
-      | GET    | /listRootDir       |
-    When I send a request to the testing route "/listRootDir"
+      | GET    | /foo       |
+    When I send a request to the testing route "/foo"
       And I get the resource "/request/params/meloinvento"
     Then I get 204 as response code
       And I get "Resource Item Not Found" as response reason phrase

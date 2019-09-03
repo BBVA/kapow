@@ -9,8 +9,8 @@ Feature: Setting values for handler response resources in Kapow! server.
 
     Given I have a Kapow! server with the following testing routes:
       | method | url_pattern  |
-      | GET    | /listRootDir |
-    When I send a request to the testing route "/listRootDir"
+      | GET    | /foo |
+    When I send a request to the testing route "/foo"
       And I set the resource "/response/status" with value "418"
       And I release the testing request
     Then I get 418 as response code in the testing request
@@ -21,8 +21,8 @@ Feature: Setting values for handler response resources in Kapow! server.
 
     Given I have a Kapow! server with the following testing routes:
       | method | url_pattern  |
-      | GET    | /listRootDir |
-    When I send a request to the testing route "/listRootDir"
+      | GET    | /foo |
+    When I send a request to the testing route "/foo"
       And I set the resource "<resourcePath>" with value "<value>"
       And I release the testing request
     Then I get 200 as response code

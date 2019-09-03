@@ -10,8 +10,8 @@ Feature: Retrieve request resources from a handler in Kapow! server.
 
     Given I have a Kapow! server with the following testing routes:
       | method | url_pattern         |
-      | GET    | /listRootDir/{path} |
-    When I send a request to the testing route "/listRootDir/matchVal1" adding:
+      | GET    | /foo/{path} |
+    When I send a request to the testing route "/foo/matchVal1" adding:
       | fieldType | name  | value      |
       | parameter | par1  | paramVal1  |
       | header    | head1 | headVal1   |
@@ -28,7 +28,7 @@ Feature: Retrieve request resources from a handler in Kapow! server.
     Examples:
       | resourcePath           | value                  |
       | /request/method        | GET                    |
-      | /request/path          | /listRootDir/matchVal1 |
+      | /request/path          | /foo/matchVal1 |
       | /request/host          | localhost:8080         |
       | /request/matches/path  | matchVal1              |
       | /request/params/par1   | paramVal1              |
