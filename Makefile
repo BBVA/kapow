@@ -13,4 +13,4 @@ acceptance: install
 	make -C spec/test
 
 deps:
-	go install github.com/spf13/cobra
+	@echo "deps here"
