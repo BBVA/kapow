@@ -16,7 +16,7 @@ all: test build
 
 build: deps
 	mkdir -p $(BUILD_DIR)
-	$(GOBUILD) -o $(BUILD_DIR)/$(BINARY_NAME) -v
+	CGO_ENABLED=0 $(GOBUILD) -o $(BUILD_DIR)/$(BINARY_NAME) -v
 
 test: build
 	$(GOTEST) -race -coverprofile=$(TMP_DIR)/c.out ./...
@@ -26,7 +26,7 @@ coverage: test
 	$(GOTOOL) cover -html=$(TMP_DIR)/c.out -o $(OUTPUT_DIR)/coverage.html
 
 install: build
-	go install ./...
+	CGO_ENABLED=0 go install ./...
 
 acceptance: install
 	make -C ./spec/test
