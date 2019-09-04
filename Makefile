@@ -1,16 +1,35 @@
-.PHONY: test install acceptance deps
+.PHONY: build test coverage install acceptance deps
 
-all: acceptance
+GOCMD=go
+GOBUILD=$(GOCMD) build
+GOGET=$(GOCMD) get
+GOTEST=$(GOCMD) test
+GOTOOL=$(GOCMD) tool
 
-test: deps
-	go test -race -coverprofile=/tmp/c.out github.com/BBVA/kapow/pkg/...
-	go tool cover -html=/tmp/c.out -o coverage.html
+BUILD_DIR=./build
+OUTPUT_DIR=./output
+TMP_DIR=/tmp
 
-install: test
-	go install github.com/BBVA/kapow/...
+BINARY_NAME=kapow
+
+all: test build
+
+build: deps
+	mkdir -p $(BUILD_DIR)
+	$(GOBUILD) -o $(BUILD_DIR)/$(BINARY_NAME) -v
+
+test: build
+	$(GOTEST) -race -coverprofile=$(TMP_DIR)/c.out ./...
+
+coverage: test
+	mkdir -p $(OUTPUT_DIR)
+	$(GOTOOL) cover -html=$(TMP_DIR)/c.out -o $(OUTPUT_DIR)/coverage.html
+
+install: build
+	go install ./...
 
 acceptance: install
-	make -C spec/test
+	make -C ./spec/test
 
 deps:
 	@echo "deps here"

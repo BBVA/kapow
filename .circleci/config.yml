@@ -1,0 +1,31 @@
+# Golang CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-go/ for more details
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/golang:1.9
+    steps:
+      - checkout
+      - run: make
+      - persist_to_workspace:
+          paths:
+            - build
+            - output
+  spec_check:
+    docker:
+      - image: bbvalabsci/kapow-spec-test-suite:latest
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - run: install /tmp/workspace/build/kapow /usr/bin
+      - run: behave
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
+      - spec_check
+        requires:
+          - build
