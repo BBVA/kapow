@@ -10,7 +10,7 @@ install: test
 	go install github.com/BBVA/kapow/...
 
 acceptance: install
-	pipenv run make -C spec/test
+	make -C spec/test
 
 deps:
 	go install github.com/spf13/cobra
