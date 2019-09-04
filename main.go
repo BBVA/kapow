@@ -7,6 +7,6 @@ import (
 )
 
 func main() {
-    ban := b.Banner()
+    ban := b.Banner("0.1.0")
     fmt.Println(ban)
 }
