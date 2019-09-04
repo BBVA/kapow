@@ -17,8 +17,8 @@ jobs:
   spec_check:
     docker:
       - image: bbvalabsci/kapow-spec-test-suite:latest
+    working_directory: /usr/src/ksts
     steps:
-      - working_directory: /usr/src/ksts
       - attach_workspace:
           at: /tmp/workspace
       - run: install /tmp/workspace/build/kapow /usr/bin
