@@ -5,12 +5,12 @@ verify_ssl = true
 
 [dev-packages]
 pylint = "*"
+kapow = {path = ".",editable = true}
 
 [packages]
 aiohttp = "*"
 requests = "*"
 click = "*"
-kapow = {path = ".",editable = true}
 
 [requires]
 python_version = "3.7"
