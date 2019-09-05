@@ -4,7 +4,6 @@ import (
 	"fmt"
 	b "github.com/BBVA/kapow/pkg/banner"
 	"net/http"
-	"os/exec"
 )
 
 func main() {
@@ -22,17 +21,12 @@ type userServerHandler struct {
 }
 
 func (m *userServerHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	out, err := exec.Command("date").Output()
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-	} else {
-		w.Write(out)
-	}
+	w.WriteHeader(http.StatusNotImplemented)
 }
 
 type controlAPIHandler struct {
 }
 
 func (m *controlAPIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Welcome to the control API!"))
+	w.WriteHeader(http.StatusNotImplemented)
 }
