@@ -11,7 +11,7 @@ Feature: Kapow! server rejects insertion requests with semantic errors.
       """
       {
         "entrypoint": "/bin/sh -c",
-        "command": "ls -la / | response /body"
+        "command": "ls -la / | kapow set /response/body"
       }
       """
     Then I get 422 as response code
@@ -28,7 +28,7 @@ Feature: Kapow! server rejects insertion requests with semantic errors.
         "method": "GET",
         "url_pattern": "+123--",
         "entrypoint": "/bin/sh -c",
-        "command": "ls -la / | response /body",
+        "command": "ls -la / | kapow set /response/body",
         "index": 0
       }
       """
@@ -46,7 +46,7 @@ Feature: Kapow! server rejects insertion requests with semantic errors.
         "method": "GET",
         "url_pattern": "+123--",
         "entrypoint": "/bin/sh -c",
-        "command": "ls -la / | response /body",
+        "command": "ls -la / | kapow set /response/body",
         "index": -1
       }
       """

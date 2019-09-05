@@ -34,7 +34,7 @@ that contains:
 .. code-block:: bash
 
     kapow route add /backups \
-        -c 'cloudx storage ls /backups | grep $(request /params/query) | response /body'
+        -c 'cloudx storage ls /backups | grep $(kapow get /request/params/query) | kapow set /response/body'
 
 and execute it in the host with the command:
 
@@ -53,7 +53,7 @@ First you must create a pow file named ``hello.pow`` with the following contents
 
 .. code-block:: bash
 
-    kapow route add /greet -c "echo 'hello world' | response /body"
+    kapow route add /greet -c "echo 'hello world' | kapow set /response/body"
 
 then, you must execute:
 
@@ -75,7 +75,7 @@ First you must create a pow file named ``echo.pow`` with the following contents:
 
 .. code-block:: bash
 
-    kapow route add -X POST /echo -c 'request /body | response /body'
+    kapow route add -X POST /echo -c 'kapow get /request/body | kapow set /response/body'
 
 then, you must execute:
 
@@ -108,7 +108,7 @@ Let's write a ``multiline.pow`` file with the following content:
 
     kapow route add /log_and_love - <<- 'EOF'
         echo "[$(date)] and stuff" >> stuff.log
-        echo love | response /body
+        echo love | kapow set /response/body
     EOF
 
 and then we serve it with ``kapow``:

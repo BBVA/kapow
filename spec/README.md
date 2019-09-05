@@ -159,7 +159,7 @@ Content-Length: 189
     "method": "GET",
     "url_pattern": "/hello",
     "entrypoint": null,
-    "command": "echo Hello World | response /body",
+    "command": "echo Hello World | kapow set /response/body",
     "index": 0,
     "id": "xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx"
   }
@@ -194,7 +194,7 @@ field must be a json scaped string.
         "method": "GET",
         "url_pattern": "/hello",
         "entrypoint": null,
-        "command": "echo Hello World | response /body",
+        "command": "echo Hello World | kapow set /response/body",
         "index": 0,
         "id": "xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx"
       },
@@ -202,7 +202,7 @@ field must be a json scaped string.
         "method": "POST",
         "url_pattern": "/bye",
         "entrypoint": null,
-        "command": "echo Bye World | response /body",
+        "command": "echo Bye World | kapow set /response/body",
         "index": 1,
         "id": "xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx"
       }
@@ -227,7 +227,7 @@ A new id is created for the appended route so it can be referenced later.
     "method": "GET",
     "url_pattern": "/hello",
     "entrypoint": null,
-    "command": "echo Hello World | response /body"
+    "command": "echo Hello World | kapow set /response/body"
   }
   ```
 * **Success Responses**:
@@ -239,7 +239,7 @@ A new id is created for the appended route so it can be referenced later.
       "method": "GET",
       "url_pattern": "/hello",
       "entrypoint": null,
-      "command": "echo Hello World | response /body",
+      "command": "echo Hello World | kapow set /response/body",
       "index": 0,
       "id": "xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx"
     }
@@ -254,7 +254,7 @@ A new id is created for the appended route so it can be referenced later.
       "method": "GET",
       "url_pattern": "/hello",
       "entrypoint": null,
-      "command": "echo Hello World | response /body"
+      "command": "echo Hello World | kapow set /response/body"
     }
     EOF
     ```
@@ -280,7 +280,7 @@ A new id is created for the appended route so it can be referenced later.
     "method": "GET",
     "url_pattern": "/hello",
     "entrypoint": null,
-    "command": "echo Hello World | response /body",
+    "command": "echo Hello World | kapow set /response/body",
   }
   ```
 * **Success Responses**:
@@ -292,7 +292,7 @@ A new id is created for the appended route so it can be referenced later.
       "method": "GET",
       "url_pattern": "/hello",
       "entrypoint": null,
-      "command": "echo Hello World | response /body",
+      "command": "echo Hello World | kapow set /response/body",
       "index": 0,
       "id": "xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx"
     }
@@ -307,7 +307,7 @@ A new id is created for the appended route so it can be referenced later.
       "method": "GET",
       "url_pattern": "/hello",
       "entrypoint": null,
-      "command": "echo Hello World | response /body",
+      "command": "echo Hello World | kapow set /response/body",
       "index": 0
     }
     EOF
@@ -354,7 +354,7 @@ Retrieves the information about the route identified by `{id}`.
       "method": "GET",
       "url_pattern": "/hello",
       "entrypoint": null,
-      "command": "echo Hello World | response /body",
+      "command": "echo Hello World | kapow set /response/body",
       "index": 0,
       "id": "xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx"
     }
@@ -673,7 +673,7 @@ Options:
 
 #### Example
 ```sh
-kapow route add -X GET '/list/{ip}' -c 'nmap -sL $(request /matches/ip) | response /body'
+kapow route add -X GET '/list/{ip}' -c 'nmap -sL $(kapow get /request/matches/ip) | kapow set /response/body'
 ```
 
 ### `request`
@@ -689,7 +689,7 @@ Exposes the requests' resources.
 #### Example
 ```sh
 # Access the body of the request
-request /body
+kapow get /request/body
 ```
 
 
@@ -706,14 +706,14 @@ Exposes the response's resources.
 #### Example
 ```sh
 # Write to the body of the response
-echo 'Hello, World!' | response /body
+echo 'Hello, World!' | kapow set /response/body
 ```
 
 
 ## An End-to-End Example
 ```sh
 $ cat nmap.kpow
-kapow route add -X GET '/list/{ip}' -c 'nmap -sL $(request /matches/ip) | response /body'
+kapow route add -X GET '/list/{ip}' -c 'nmap -sL $(kapow get /request/matches/ip) | kapow set /response/body'
 ```
 ```sh
 $ kapow ./nmap.kapow

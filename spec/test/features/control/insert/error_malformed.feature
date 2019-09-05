@@ -15,7 +15,7 @@ Feature: Kapow! server rejects insertion requests with malformed JSON bodies.
         "url_pattern": /hello,
         "entrypoint": null
         "command": "echo Hello
-         World | response /body",
+         World | kapow set /response/body",
         "index": 0,
         "id": "xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx"
       }

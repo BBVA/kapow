@@ -5,10 +5,10 @@ Feature: Consistent route order after a route deletion in Kapow! server.
   Background:
     Given I have a Kapow! server with the following routes:
       | method | url_pattern    | entrypoint | command                                          |
-      | GET    | /foo           | /bin/sh -c | ls -la / \| response /body                       |
-      | GET    | /bar           | /bin/sh -c | ls -la /var \| response /body                    |
-      | GET    | /baz           | /bin/sh -c | ls -la /etc \| response /body                    |
-      | GET    | /qux/{dirname} | /bin/sh -c | ls -la /request/params/dirname \| response /body |
+      | GET    | /foo           | /bin/sh -c | ls -la / \| kapow set /response/body                       |
+      | GET    | /bar           | /bin/sh -c | ls -la /var \| kapow set /response/body                    |
+      | GET    | /baz           | /bin/sh -c | ls -la /etc \| kapow set /response/body                    |
+      | GET    | /qux/{dirname} | /bin/sh -c | ls -la /request/params/dirname \| kapow set /response/body |
 
   Scenario: Removing the first route.
     After removing the first route the remaining ones
@@ -24,7 +24,7 @@ Feature: Consistent route order after a route deletion in Kapow! server.
             "method": "GET",
             "url_pattern": "/bar",
             "entrypoint": "/bin/sh -c",
-            "command": "ls -la /var | response /body",
+            "command": "ls -la /var | kapow set /response/body",
             "index": 0,
             "id": ANY
           },
@@ -32,7 +32,7 @@ Feature: Consistent route order after a route deletion in Kapow! server.
             "method": "GET",
             "url_pattern": "/baz",
             "entrypoint": "/bin/sh -c",
-            "command": "ls -la /etc | response /body",
+            "command": "ls -la /etc | kapow set /response/body",
             "index": 1,
             "id": ANY
           },
@@ -40,7 +40,7 @@ Feature: Consistent route order after a route deletion in Kapow! server.
             "method": "GET",
             "url_pattern": "/qux/{dirname}",
             "entrypoint": "/bin/sh -c",
-            "command": "ls -la /request/params/dirname | response /body",
+            "command": "ls -la /request/params/dirname | kapow set /response/body",
             "index": 2,
             "id": ANY
           }
@@ -60,7 +60,7 @@ Feature: Consistent route order after a route deletion in Kapow! server.
           "method": "GET",
           "url_pattern": "/foo",
           "entrypoint": "/bin/sh -c",
-          "command": "ls -la / | response /body",
+          "command": "ls -la / | kapow set /response/body",
           "index": 0,
           "id": ANY
         },
@@ -68,7 +68,7 @@ Feature: Consistent route order after a route deletion in Kapow! server.
           "method": "GET",
           "url_pattern": "/bar",
           "entrypoint": "/bin/sh -c",
-          "command": "ls -la /var | response /body",
+          "command": "ls -la /var | kapow set /response/body",
           "index": 1,
           "id": ANY
         },
@@ -76,7 +76,7 @@ Feature: Consistent route order after a route deletion in Kapow! server.
           "method": "GET",
           "url_pattern": "/baz",
           "entrypoint": "/bin/sh -c",
-          "command": "ls -la /etc | response /body",
+          "command": "ls -la /etc | kapow set /response/body",
           "index": 2,
           "id": ANY
         }
@@ -97,7 +97,7 @@ Feature: Consistent route order after a route deletion in Kapow! server.
             "method": "GET",
             "url_pattern": "/foo",
             "entrypoint": "/bin/sh -c",
-            "command": "ls -la / | response /body",
+            "command": "ls -la / | kapow set /response/body",
             "index": 0,
             "id": ANY
           },
@@ -105,7 +105,7 @@ Feature: Consistent route order after a route deletion in Kapow! server.
             "method": "GET",
             "url_pattern": "/baz",
             "entrypoint": "/bin/sh -c",
-            "command": "ls -la /etc | response /body",
+            "command": "ls -la /etc | kapow set /response/body",
             "index": 1,
             "id": ANY
           },
@@ -113,7 +113,7 @@ Feature: Consistent route order after a route deletion in Kapow! server.
             "method": "GET",
             "url_pattern": "/qux/{dirname}",
             "entrypoint": "/bin/sh -c",
-            "command": "ls -la /request/params/dirname | response /body",
+            "command": "ls -la /request/params/dirname | kapow set /response/body",
             "index": 2,
             "id": ANY
           }
