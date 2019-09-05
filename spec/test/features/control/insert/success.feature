@@ -6,8 +6,8 @@ Feature: Insert new routes in Kapow! server.
   Background:
     Given I have a Kapow! server with the following routes:
       | method | url_pattern    | entrypoint | command                                          |
-      | GET    | /foo           | /bin/sh -c | ls -la / \| response /body                       |
-      | GET    | /qux/{dirname} | /bin/sh -c | ls -la /request/params/dirname \| response /body |
+      | GET    | /foo           | /bin/sh -c | ls -la / \| kapow set /response/body                       |
+      | GET    | /qux/{dirname} | /bin/sh -c | ls -la /request/params/dirname \| kapow set /response/body |
 
   Scenario: Insert a route at the beginning.
     A route can be inserted at the beginning of the list
@@ -19,7 +19,7 @@ Feature: Insert new routes in Kapow! server.
         "method": "GET",
         "url_pattern": "/bar",
         "entrypoint": "/bin/sh -c",
-        "command": "ls -la /var | response /body",
+        "command": "ls -la /var | kapow set /response/body",
         "index": 0
       }
       """
@@ -31,7 +31,7 @@ Feature: Insert new routes in Kapow! server.
           "method": "GET",
           "url_pattern": "/bar",
           "entrypoint": "/bin/sh -c",
-          "command": "ls -la /var | response /body",
+          "command": "ls -la /var | kapow set /response/body",
           "index": 0,
           "id": ANY
         }
@@ -48,7 +48,7 @@ Feature: Insert new routes in Kapow! server.
         "method": "GET",
         "url_pattern": "/bar",
         "entrypoint": "/bin/sh -c",
-        "command": "ls -la /var | response /body",
+        "command": "ls -la /var | kapow set /response/body",
         "index": 1
       }
       """
@@ -60,7 +60,7 @@ Feature: Insert new routes in Kapow! server.
           "method": "GET",
           "url_pattern": "/bar",
           "entrypoint": "/bin/sh -c",
-          "command": "ls -la /var | response /body",
+          "command": "ls -la /var | kapow set /response/body",
           "index": 1,
           "id": ANY
         }

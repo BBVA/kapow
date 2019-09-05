@@ -595,5 +595,38 @@ def route_list(route_id, url):
     print(json.dumps(response.json(), indent=2))
 
 
+@kapow.command("set")
+@click.option("--url", envvar='KAPOW_URL')
+@click.option("--handler-id", envvar='KAPOW_HANDLER_ID')
+@click.argument("path", nargs=1)
+@click.argument("value", required=False)
+def kapow_set(url, handler_id, path, value):
+    if value is None:
+        data = sys.stdin.buffer
+    else:
+        data = value.encode('utf-8')
+
+    try:
+        response = requests.put(f"{url}/handlers/{handler_id}{path}",
+                                data=data)
+    except requests.exceptions.ConnectionError:
+        return False
+    else:
+        response.raise_for_status()
+
+
+@kapow.command("get")
+@click.option("--url", envvar='KAPOW_URL')
+@click.option("--handler-id", envvar='KAPOW_HANDLER_ID')
+@click.argument("path", nargs=1)
+def kapow_get(url, handler_id, path):
+    try:
+        response = requests.get(f"{url}/handlers/{handler_id}{path}")
+        response.raise_for_status()
+    except requests.exceptions.ConnectionError:
+        return False
+    else:
+        print(response.text)
+
 if __name__ == '__main__':
     kapow()

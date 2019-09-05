@@ -22,8 +22,8 @@ Feature: Listing routes in a Kapow! server.
 
     Given I have a Kapow! server with the following routes:
       | method | url_pattern    | entrypoint | command                                          |
-      | GET    | /foo           | /bin/sh -c | ls -la / \| response /body                       |
-      | GET    | /qux/{dirname} | /bin/sh -c | ls -la /request/params/dirname \| response /body |
+      | GET    | /foo           | /bin/sh -c | ls -la / \| kapow set /response/body                       |
+      | GET    | /qux/{dirname} | /bin/sh -c | ls -la /request/params/dirname \| kapow set /response/body |
     When I request a routes listing
     Then I get 200 as response code
       And I get "OK" as response reason phrase
@@ -34,7 +34,7 @@ Feature: Listing routes in a Kapow! server.
             "method": "GET",
             "url_pattern": "/foo",
             "entrypoint": "/bin/sh -c",
-            "command": "ls -la / | response /body",
+            "command": "ls -la / | kapow set /response/body",
             "index": 0,
             "id": ANY
           },
@@ -42,7 +42,7 @@ Feature: Listing routes in a Kapow! server.
             "method": "GET",
             "url_pattern": "/qux/{dirname}",
             "entrypoint": "/bin/sh -c",
-            "command": "ls -la /request/params/dirname | response /body",
+            "command": "ls -la /request/params/dirname | kapow set /response/body",
             "index": 1,
             "id": ANY
           }

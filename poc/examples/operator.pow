@@ -16,26 +16,26 @@
 # limitations under the License.
 #
 
-kapow route add /list/files -c 'ls -la $(request /params/path) | response /body'
+kapow route add /list/files -c 'ls -la $(kapow get /request/params/path) | kapow set /response/body'
 
-kapow route add /list/processes -c 'ps -aux | response /body'
+kapow route add /list/processes -c 'ps -aux | kapow set /response/body'
 
-kapow route add /show/cpuinfo -c 'response /body < /proc/cpuinfo'
+kapow route add /show/cpuinfo -c 'kapow set /response/body < /proc/cpuinfo'
 
-kapow route add /show/memory -c 'free -m | response /body'
+kapow route add /show/memory -c 'free -m | kapow set /response/body'
 
-kapow route add /show/disk -c 'df -h | response /body'
+kapow route add /show/disk -c 'df -h | kapow set /response/body'
 
-kapow route add /show/connections -c 'ss -pluton | response /body'
+kapow route add /show/connections -c 'ss -pluton | kapow set /response/body'
 
-kapow route add /show/mounts -c 'mount | response /body'
+kapow route add /show/mounts -c 'mount | kapow set /response/body'
 
 kapow route add /tail/dmesg - <<-'EOF'
-	response /headers/Content-Type text/plain
-	dmesg -w | response /stream
+	kapow set /response/headers/Content-Type text/plain
+	dmesg -w | kapow set /response/stream
 EOF
 
 kapow route add /tail/journal - <<-'EOF'
-	response /headers/Content-Type text/plain
-	journalctl -f | response /stream
+	kapow set /response/headers/Content-Type text/plain
+	journalctl -f | kapow set /response/stream
 EOF

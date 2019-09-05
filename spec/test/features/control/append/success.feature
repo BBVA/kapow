@@ -14,7 +14,7 @@ Feature: Append new routes in Kapow! server.
         "method": "GET",
         "url_pattern": "/foo",
         "entrypoint": "/bin/sh -c",
-        "command": "ls -la / | response /body"
+        "command": "ls -la / | kapow set /response/body"
       }
       """
     Then I get 201 as response code
@@ -25,7 +25,7 @@ Feature: Append new routes in Kapow! server.
         "method": "GET",
         "url_pattern": "/foo",
         "entrypoint": "/bin/sh -c",
-        "command": "ls -la / | response /body",
+        "command": "ls -la / | kapow set /response/body",
         "index": 0,
         "id": ANY
       }
@@ -37,15 +37,15 @@ Feature: Append new routes in Kapow! server.
 
     Given I have a Kapow! server with the following routes:
       | method | url_pattern    | entrypoint | command                                          |
-      | GET    | /foo           | /bin/sh -c | ls -la / \| response /body                       |
-      | GET    | /qux/{dirname} | /bin/sh -c | ls -la /request/params/dirname \| response /body |
+      | GET    | /foo           | /bin/sh -c | ls -la / \| kapow set /response/body                       |
+      | GET    | /qux/{dirname} | /bin/sh -c | ls -la /request/params/dirname \| kapow set /response/body |
     When I append the route:
       """
       {
         "method": "GET",
         "url_pattern": "/baz",
         "entrypoint": "/bin/sh -c",
-        "command": "ls -la /etc | response /body"
+        "command": "ls -la /etc | kapow set /response/body"
       }
       """
     Then I get 201 as response code
@@ -56,7 +56,7 @@ Feature: Append new routes in Kapow! server.
         "method": "GET",
         "url_pattern": "/baz",
         "entrypoint": "/bin/sh -c",
-        "command": "ls -la /etc | response /body",
+        "command": "ls -la /etc | kapow set /response/body",
         "index": 2,
         "id": ANY
       }

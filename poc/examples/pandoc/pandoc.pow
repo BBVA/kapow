@@ -17,10 +17,10 @@
 #
 
 kapow route add -X POST --entrypoint '/bin/zsh -c' '/convert/{from}/{to}' - <<-'EOF'
-	pandoc --from=$(request /matches/from) \
-	       --to=$(request /matches/to) \
-	       --output=>(response /body) \
-	       =(request /body)
+	pandoc --from=$(kapow get /request/matches/from) \
+	       --to=$(kapow get /request/matches/to) \
+	       --output=>(kapow set /response/body) \
+	       =(kapow get /request/body)
 EOF
-kapow route add -X GET '/formats/input' -c 'pandoc --list-input-formats | response /body'
-kapow route add -X GET '/formats/output' -c 'pandoc --list-output-formats | grep -v pdf | response /body'
+kapow route add -X GET '/formats/input' -c 'pandoc --list-input-formats | kapow set /response/body'
+kapow route add -X GET '/formats/output' -c 'pandoc --list-output-formats | grep -v pdf | kapow set /response/body'

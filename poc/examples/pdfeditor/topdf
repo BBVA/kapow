@@ -17,12 +17,12 @@
 #
 
 tmpfile=$(mktemp --suffix=.pdf)
-pandoc --from=$(request /form/from) --to=pdf --output=${tmpfile} -t latex =(request /form/content)
+pandoc --from=$(kapow get /request/form/from) --to=pdf --output=${tmpfile} -t latex =(kapow get /request/form/content)
 if [ $? -eq 0 ]; then
-	response /headers/Content-Type application/pdf
-	response /body < ${tmpfile}
-	response /status 200
+	kapow set /response/headers/Content-Type application/pdf
+	kapow set /response/body < ${tmpfile}
+	kapow set /response/status 200
 else
-	response /status 500
+	kapow set /response/status 500
 fi
 rm -f ${tmpfile}
