@@ -76,7 +76,7 @@ but sorely lacking in the vast majority of them.
 
 ### Why not CGI?
 
-* CGI is also **rigid** about how it matches between HTTP and UNIX® process
+* CGI is also **rigid** about how it matches HTTP and UNIX® process
   concepts.  Notably CGI *meta-variables* are injected into the script's
   environment; this behavior can and has been exploited by nasty attacks such as
   [Shellshock](https://en.wikipedia.org/wiki/Shellshock_(software_bug)).
