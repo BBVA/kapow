@@ -315,9 +315,9 @@ A new id is created for the appended route so it can be referenced later.
 * **Notes**:
   * Route numbering starts at zero.
   * When `index` is not provided or is `0` the route will be inserted
-    first, effectively making it index `0`.
+    in the first position, effectively making it index `0`.
   * Conversely, when `index` is greater than the number of entries on the route
-    table, it will be inserted last.
+    table, it will be inserted in the last position.
   * Finally, when `index` is less than `0` a 422 error is raised.
   * A successful request will yield a response containing all the effective
     parameters that were applied.
