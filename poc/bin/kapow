@@ -526,7 +526,7 @@ def kapow(ctx):
     pass
 
 
-@kapow.command()
+@kapow.command(help="Start a Kapow! server")
 @click.option("--certfile", default=None)
 @click.option("--keyfile", default=None)
 @click.option("--bind", default="0.0.0.0:8080")
@@ -539,7 +539,7 @@ def server(certfile, keyfile, bind, interactive, scripts):
     loop.run_until_complete(start_kapow_server(bind, scripts, certfile, interactive, keyfile))
     loop.run_forever()
 
-@kapow.group()
+@kapow.group(help="Manage current server HTTP routes")
 def route():
     pass
 
@@ -595,7 +595,7 @@ def route_list(route_id, url):
     print(json.dumps(response.json(), indent=2))
 
 
-@kapow.command("set")
+@kapow.command("set", help="Set data from the current context")
 @click.option("--url", envvar='KAPOW_URL')
 @click.option("--handler-id", envvar='KAPOW_HANDLER_ID')
 @click.argument("path", nargs=1)
@@ -615,7 +615,7 @@ def kapow_set(url, handler_id, path, value):
         response.raise_for_status()
 
 
-@kapow.command("get")
+@kapow.command("get", help="Get data from the current context")
 @click.option("--url", envvar='KAPOW_URL')
 @click.option("--handler-id", envvar='KAPOW_HANDLER_ID')
 @click.argument("path", nargs=1)
