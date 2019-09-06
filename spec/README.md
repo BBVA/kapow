@@ -40,7 +40,7 @@ allowing the user to express the desired mapping in an explicit way.
 
 ### Why not tool "X"?
 
-All the alternatives we found are **rigid** about the way they match between
+All the alternatives we found are **rigid** about the way they match
 HTTP and shell concepts.
 
 * [shell2http](https://github.com/msoap/shell2http): HTTP-server to execute
