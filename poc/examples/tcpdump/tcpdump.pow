@@ -1,0 +1,1 @@
+kapow route add /sniff/{iface} -c 'tcpdump -i "$(kapow get /request/matches/iface)" -U -s0 -w - "not port 8080" | kapow set /response/stream'
