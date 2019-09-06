@@ -58,8 +58,8 @@ Settings through two command line arguments, path and shell command.
 
 Tools with a rigid matching **can't evade** *[impedance
 mismatch](https://haacked.com/archive/2004/06/15/impedance-mismatch.aspx/)*.
-Resulting in an easy-to-use software, convenient in some scenarios but
-incapable in others.
+Resulting in software that is convenient and easy-to-use in a handful of scenarios,
+but sorely lacking in the vast majority of them.
 
 
 ### Why not my good-old programming language "X"?
