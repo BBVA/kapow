@@ -554,7 +554,7 @@ TODO: End-to-end example of the data API.
 
 ## Test Suite Notes
 
-The test suite is located on [blebleble] directory.
+The test suite is located on [yadda-yadda-yadda] directory.
 You can run it by ...
 
 
