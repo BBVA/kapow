@@ -414,7 +414,7 @@ following resource paths:
 │  ├──── path                   Complete URL path (URL-unquoted)
 │  ├──── matches                Previously matched URL path parts
 │  │     └──── <name>
-│  ├──── params                 URL parameters (post ? symbol)
+│  ├──── params                 URL parameters (after the "?" symbol)
 │  │     └──── <name>
 │  ├──── headers                HTTP request headers
 │  │     └──── <name>
