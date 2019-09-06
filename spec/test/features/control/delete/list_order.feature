@@ -83,9 +83,9 @@ Feature: Consistent route order after a route deletion in Kapow! server.
       ]
       """
 
-  Scenario: Removing a midst route.
-    After removing a midst route the remaining ones will
-    maintain their relative order and the indexes of the
+  Scenario: Removing a route from the middle.
+    After removing a route from the middle, the remaining ones
+    will maintain their relative order and the indexes of the
     following routes will be decreased by one.
 
     When I delete the second route
