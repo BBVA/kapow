@@ -377,7 +377,7 @@ response.
 
 ## Design Principles
 
-* According to established best practices we use the HTTP methods as follows:
+* According to well-established best practices we use the HTTP methods as follows:
   * `GET`: Read data without any side-effects.
   * `PUT`: Overwrite existing data.
 * The API calls responses will have two distinct parts:
