@@ -35,3 +35,17 @@ Feature: Setting values for handler response resources in Kapow! server.
       | /response/cookies/cook1 | cookVal1   | cookie    | cook1       |
       | /response/body          | bodyValue1 | body      | -           |
       | /response/stream        | bodyValue2 | body      | -           |
+
+  Scenario: Overwrite a resource for the current response.
+    Write twice a on a resource, such as a gzip middleware would require:
+    kapow get /response/body | gzip -c | kapow set /response/body
+    although for simplicity, we'll just try overwriting the status code.
+
+    Given I have a Kapow! server with the following testing routes:
+      | method | url_pattern |
+      | GET    | /foo        |
+    When I send a request to the testing route "/foo"
+      And I set the resource "/response/status" with value "418"
+      And I set the resource "/response/status" with value "200"
+      And I release the testing request
+    Then I get 200 as response code in the testing request
