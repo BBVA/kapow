@@ -105,7 +105,7 @@ frequently throughout the spec.
 #### `entrypoint`
 
 The entrypoint definition matches *Docker*'s shell form of it.
-Technically it's a string which is to be passed to the `command` (`/bin/bash -c`
+Technically, it's a string which is to be passed to the `command` (`/bin/bash -c`
 by default) as the code to be interpreted or executed when attending requests.
 
 
