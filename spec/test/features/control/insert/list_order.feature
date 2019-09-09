@@ -99,10 +99,10 @@ Feature: Consistent route ordering after inserting a route in a Kapow! server.
         ]
         """
 
-  Scenario: Inserting a midst route.
-    After inserting a midst route the previous route set
-    will maintain their relative order and the indexes
-    of thefollowing routes will be increased by one.
+  Scenario: Inserting a route in the middle.
+    After inserting a route in the middle, the previous
+    route set will maintain their relative order and the indexes
+    of the following routes will be increased by one.
 
     When I insert the route:
       """

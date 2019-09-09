@@ -40,7 +40,7 @@ allowing the user to express the desired mapping in an explicit way.
 
 ### Why not tool "X"?
 
-All the alternatives we found are **rigid** about the way they match between
+All the alternatives we found are **rigid** about the way they match
 HTTP and shell concepts.
 
 * [shell2http](https://github.com/msoap/shell2http): HTTP-server to execute
@@ -76,8 +76,8 @@ incapable in others.
 
 ### Why not CGI?
 
-* CGI is also **rigid** about how it matches between HTTP and UNIX® process
-  concepts.  Notably CGI *meta-variables* are injected into the script's
+* CGI is also **rigid** about how it matches HTTP and UNIX® process
+  concepts.  Notably, CGI *meta-variables* are injected into the script's
   environment; this behavior can and has been exploited by nasty attacks such as
   [Shellshock](https://en.wikipedia.org/wiki/Shellshock_(software_bug)).
 * Trying to leverage CGI from a shell script could be less cumbersome in some
@@ -105,7 +105,7 @@ frequently throughout the spec.
 #### `entrypoint`
 
 The entrypoint definition matches *Docker*'s shell form of it.
-Technically it's a string which is to be passed to the `command` (`/bin/bash -c`
+Technically, it's a string which is to be passed to the `command` (`/bin/bash -c`
 by default) as the code to be interpreted or executed when attending requests.
 
 
@@ -181,7 +181,7 @@ respond to an external event (e.g.  an incoming HTTP request).
 #### List routes
 
 Returns JSON with all the data about the current routes. Be aware that the command
-field must be a json scaped string.
+field must be an escaped JSON string.
 
 * **URL**: `/routes`
 * **Method**: `GET`
@@ -315,9 +315,9 @@ A new id is created for the appended route so it can be referenced later.
 * **Notes**:
   * Route numbering starts at zero.
   * When `index` is not provided or is `0` the route will be inserted
-    first, effectively making it index `0`.
+    in the first position, effectively making it index `0`.
   * Conversely, when `index` is greater than the number of entries on the route
-    table, it will be inserted last.
+    table, it will be inserted in the last position.
   * Finally, when `index` is less than `0` a 422 error is raised.
   * A successful request will yield a response containing all the effective
     parameters that were applied.
@@ -377,7 +377,7 @@ response.
 
 ## Design Principles
 
-* According to established best practices we use the HTTP methods as follows:
+* According to well-established best practices, we use the HTTP methods as follows:
   * `GET`: Read data without any side-effects.
   * `PUT`: Overwrite existing data.
 * The API calls responses will have two distinct parts:
@@ -414,7 +414,7 @@ following resource paths:
 │  ├──── path                   Complete URL path (URL-unquoted)
 │  ├──── matches                Previously matched URL path parts
 │  │     └──── <name>
-│  ├──── params                 URL parameters (post ? symbol)
+│  ├──── params                 URL parameters (after the "?" symbol)
 │  │     └──── <name>
 │  ├──── headers                HTTP request headers
 │  │     └──── <name>
@@ -554,7 +554,7 @@ TODO: End-to-end example of the data API.
 
 ## Test Suite Notes
 
-The test suite is located on [blebleble] directory.
+The test suite is located on [yadda-yadda-yadda] directory.
 You can run it by ...
 
 
