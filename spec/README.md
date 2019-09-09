@@ -7,7 +7,7 @@ Because we think that:
 
 - UNIX® is great and we love it
 - The UNIX® shell is great
-- HTTP interfaces are convenient and ubiquitous
+- HTTP interfaces are convenient and everywhere
 - CGI is not a good way to mix them
 
 
