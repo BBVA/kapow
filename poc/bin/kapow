@@ -621,12 +621,15 @@ def kapow_set(url, handler_id, path, value):
 @click.argument("path", nargs=1)
 def kapow_get(url, handler_id, path):
     try:
-        response = requests.get(f"{url}/handlers/{handler_id}{path}")
+        response = requests.get(f"{url}/handlers/{handler_id}{path}",
+                                stream=True)
         response.raise_for_status()
     except requests.exceptions.ConnectionError:
         return False
     else:
-        print(response.text)
+        for chunk in response.iter_content(chunk_size=None):
+            sys.stdout.buffer.write(chunk)
+
 
 if __name__ == '__main__':
     kapow()
