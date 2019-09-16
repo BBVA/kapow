@@ -17,7 +17,6 @@
 #
 
 from collections import namedtuple
-from itertools import repeat
 from urllib.parse import urlparse
 from uuid import uuid4
 import asyncio
