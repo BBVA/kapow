@@ -581,13 +581,13 @@ Options:
   TBD
 
 Commands:
-  start    starts a Kapow! server
+  server   starts a Kapow! server
   route    operates on routes
 ...
 ```
 
 
-### `kapow start`
+### `kapow server`
 
 This command runs the Kapow! server, which is the core of Kapow!.  If
 run without parameters, it will run an unconfigured server.  It can accept a path
@@ -613,7 +613,7 @@ process' environment.
 
 #### Example
 ```sh
-$ kapow start /path/to/service.pow
+$ kapow server /path/to/service.pow
 ```
 
 
