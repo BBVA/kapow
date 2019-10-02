@@ -2,31 +2,24 @@ package main
 
 import (
 	"fmt"
-	b "github.com/BBVA/kapow/pkg/banner"
-	"net/http"
+	"os"
+
+	"github.com/spf13/cobra"
+
+	"github.com/BBVA/kapow/command"
 )
 
 func main() {
-	ban := b.Banner("0.1.0")
-	fmt.Println(ban)
+	var kapowCmd = &cobra.Command{Use: "kapow [action]"}
 
-	go func() {
-		http.ListenAndServe(":8080", &userServerHandler{})
-	}()
-	http.ListenAndServe(":8081", &controlAPIHandler{})
+	kapowCmd.AddCommand(command.ServerCmd)
+	kapowCmd.AddCommand(command.GetCmd)
+	kapowCmd.AddCommand(command.SetCmd)
+	kapowCmd.AddCommand(command.RouteCmd)
 
-}
-
-type userServerHandler struct {
-}
-
-func (m *userServerHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusNotImplemented)
-}
-
-type controlAPIHandler struct {
-}
-
-func (m *controlAPIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusNotImplemented)
+	err := kapowCmd.Execute()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }
