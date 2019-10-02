@@ -19,7 +19,7 @@ build: deps
 	CGO_ENABLED=0 $(GOBUILD) -o $(BUILD_DIR)/$(BINARY_NAME) -v
 
 test: build
-	$(GOTEST) -race -coverprofile=$(TMP_DIR)/c.out ./...
+	$(GOTEST) -v -race -coverprofile=$(TMP_DIR)/c.out ./...
 
 coverage: test
 	mkdir -p $(OUTPUT_DIR)
