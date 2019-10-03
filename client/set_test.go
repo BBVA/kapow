@@ -27,6 +27,10 @@ func TestNoContent(t *testing.T) {
 	} else if err.Error() != expectedErr {
 		t.Errorf("Error don't match: expected \"%s\", got \"%s\"", expectedErr, err.Error())
 	}
+
+	if !gock.IsDone() {
+		t.Errorf("No endpoint called")
+	}
 }
 
 // Test that bad request errors are detected as invalid resource
@@ -45,6 +49,10 @@ func TestBadRequest(t *testing.T) {
 		t.Error("Expected error not present")
 	} else if err.Error() != expectedErr {
 		t.Errorf("Error don't match: expected \"%s\", got \"%s\"", expectedErr, err.Error())
+	}
+
+	if !gock.IsDone() {
+		t.Errorf("No endpoint called")
 	}
 }
 
@@ -65,6 +73,10 @@ func TestNotFound(t *testing.T) {
 	} else if err.Error() != expectedErr {
 		t.Errorf("Error don't match: expected \"%s\", got \"%s\"", expectedErr, err.Error())
 	}
+
+	if !gock.IsDone() {
+		t.Errorf("No endpoint called")
+	}
 }
 
 // Test that internal server errors are detected correctly
@@ -84,6 +96,10 @@ func TestInternalServerError(t *testing.T) {
 	} else if err.Error() != expectedErr {
 		t.Errorf("Error don't match: expected \"%s\", got \"%s\"", expectedErr, err.Error())
 	}
+
+	if !gock.IsDone() {
+		t.Errorf("No endpoint called")
+	}
 }
 
 // Test a http ok request
@@ -99,5 +115,9 @@ func TestOkRequest(t *testing.T) {
 
 	if err := client.SetData(host, hid, path, reader); err != nil {
 		t.Error("Unexpected error")
+	}
+
+	if !gock.IsDone() {
+		t.Errorf("No endpoint called")
 	}
 }
