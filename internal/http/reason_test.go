@@ -40,7 +40,7 @@ func TestReasonOfMultipleWords(t *testing.T) {
 	}
 }
 
-func TestOddSizeStatusCode(t *testing.T) {
+func TestBehaveWithOddSizeStatusCode(t *testing.T) {
 	r := &nethttp.Response{Status: "2 FOO BAR BAZ"}
 	if GetReason(r) != "FOO BAR BAZ" {
 		t.Errorf("Unexpected reason found")
