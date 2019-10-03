@@ -8,23 +8,23 @@ import (
 )
 
 //Get perform a request using Request with the GET method
-func Get(url string, r io.Reader, w io.Writer) error {
-	return Request("GET", url, r, w)
+func Get(url string, contentType string, r io.Reader, w io.Writer) error {
+	return Request("GET", url, contentType, r, w)
 }
 
 //Post perform a request using Request with the POST method
-func Post(url string, r io.Reader, w io.Writer) error {
-	return Request("POST", url, r, w)
+func Post(url string, contentType string, r io.Reader, w io.Writer) error {
+	return Request("POST", url, contentType, r, w)
 }
 
 //Put perform a request using Request with the PUT method
-func Put(url string, r io.Reader, w io.Writer) error {
-	return Request("PUT", url, r, w)
+func Put(url string, contentType string, r io.Reader, w io.Writer) error {
+	return Request("PUT", url, contentType, r, w)
 }
 
 //Delete perform a request using Request with the DELETE method
-func Delete(url string, r io.Reader, w io.Writer) error {
-	return Request("DELETE", url, r, w)
+func Delete(url string, contentType string, r io.Reader, w io.Writer) error {
+	return Request("DELETE", url, contentType, r, w)
 }
 
 var devnull = ioutil.Discard
@@ -33,10 +33,14 @@ var devnull = ioutil.Discard
 //content of the given reader as the body and writing all the contents
 //of the response to the given writer. The reader and writer are
 //optional.
-func Request(method string, url string, r io.Reader, w io.Writer) error {
+func Request(method string, url string, contentType string, r io.Reader, w io.Writer) error {
 	req, err := http.NewRequest(method, url, r)
 	if err != nil {
 		return err
+	}
+
+	if contentType != "" {
+		req.Header.Add("Content-Type", contentType)
 	}
 
 	client := &http.Client{}
@@ -60,6 +64,7 @@ func Request(method string, url string, r io.Reader, w io.Writer) error {
 		_, err = io.Copy(w, res.Body)
 	}
 
-	// TODO: close the connection, otherwise we'll have a port leak in the server
 	return err
+
+	// TODO: close the connection, otherwise we'll have a port leak in the server
 }
