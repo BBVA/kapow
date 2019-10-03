@@ -7,13 +7,33 @@ import (
 	"net/http"
 )
 
-var devnull io.Writer = ioutil.Discard
+//Get perform a request using Request with the GET method
+func Get(url string, r io.Reader, w io.Writer) error {
+	return Request("GET", url, r, w)
+}
 
-//Do will perform the request to the given url and method sending the
+//Post perform a request using Request with the POST method
+func Post(url string, r io.Reader, w io.Writer) error {
+	return Request("POST", url, r, w)
+}
+
+//Put perform a request using Request with the PUT method
+func Put(url string, r io.Reader, w io.Writer) error {
+	return Request("PUT", url, r, w)
+}
+
+//Delete perform a request using Request with the DELETE method
+func Delete(url string, r io.Reader, w io.Writer) error {
+	return Request("DELETE", url, r, w)
+}
+
+var devnull = ioutil.Discard
+
+//Request will perform the request to the given url and method sending the
 //content of the given reader as the body and writing all the contents
 //of the response to the given writer. The reader and writer are
 //optional.
-func Do(method string, url string, r io.Reader, w io.Writer) error {
+func Request(method string, url string, r io.Reader, w io.Writer) error {
 	req, err := http.NewRequest(method, url, r)
 	if err != nil {
 		return err
