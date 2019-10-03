@@ -9,6 +9,10 @@ import (
 
 var devnull io.Writer = ioutil.Discard
 
+//Do will perform the request to the given url and method sending the
+//content of the given reader as the body and writing all the contents
+//of the response to the given writer. The reader and writer are
+//optional.
 func Do(method string, url string, r io.Reader, w io.Writer) error {
 	req, err := http.NewRequest(method, url, r)
 	if err != nil {
