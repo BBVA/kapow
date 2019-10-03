@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/BBVA/kapow/client"
+	"github.com/BBVA/kapow/internal/client"
 
 	gock "gopkg.in/h2non/gock.v1"
 )

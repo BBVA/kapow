@@ -1,4 +1,4 @@
-package command
+package cmd
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/BBVA/kapow/client"
+	"github.com/BBVA/kapow/internal/client"
 )
 
 // GetCmd is the command line interface for get kapow data operation

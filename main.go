@@ -6,16 +6,16 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/BBVA/kapow/command"
+	"github.com/BBVA/kapow/internal/cmd"
 )
 
 func main() {
 	var kapowCmd = &cobra.Command{Use: "kapow [action]"}
 
-	kapowCmd.AddCommand(command.ServerCmd)
-	kapowCmd.AddCommand(command.GetCmd)
-	kapowCmd.AddCommand(command.SetCmd)
-	kapowCmd.AddCommand(command.RouteCmd)
+	kapowCmd.AddCommand(cmd.ServerCmd)
+	kapowCmd.AddCommand(cmd.GetCmd)
+	kapowCmd.AddCommand(cmd.SetCmd)
+	kapowCmd.AddCommand(cmd.RouteCmd)
 
 	err := kapowCmd.Execute()
 	if err != nil {
