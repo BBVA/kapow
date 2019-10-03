@@ -6,5 +6,5 @@ import (
 
 func RemoveRoute(host, id string) error {
 	url := host + "/routes/" + id
-	return http.Delete(url, nil, nil)
+	return http.Delete(url, "application/json", nil, nil)
 }

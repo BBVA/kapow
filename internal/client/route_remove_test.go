@@ -14,7 +14,7 @@ func TestRemoveRouteExistent(t *testing.T) {
 	)
 
 	defer gock.Off()
-	gock.New(host).Delete("/routes/" + routeID).Reply(http.StatusNoContent)
+	gock.New(host).Delete("/routes/" + routeID).MatchType("json").Reply(http.StatusNoContent)
 
 	err := RemoveRoute(host, routeID)
 	if err != nil {
