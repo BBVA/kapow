@@ -59,5 +59,7 @@ func Request(method string, url string, r io.Reader, w io.Writer) error {
 	} else {
 		_, err = io.Copy(w, res.Body)
 	}
+
+	// TODO: close the connection, otherwise we'll have a port leak in the server
 	return err
 }
