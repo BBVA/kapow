@@ -3,7 +3,7 @@ package client
 import (
 	"io"
 
-	"github.com/BBVA/kapow/http"
+	"github.com/BBVA/kapow/internal/http"
 )
 
 //GetData will perform the request and write the results on the provided writer
