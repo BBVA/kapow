@@ -17,10 +17,12 @@ func TestListRoutesEmpty(t *testing.T) {
 	descr := fmt.Sprintf("ListRoutes(%q, nil)", host)
 
 	defer gock.Off()
-	gock.New(host).Get("/routes").MatchType("json").Reply(http.StatusOK)
+	gock.New(host).
+		Get("/routes").
+		MatchType("json").
+		Reply(http.StatusOK)
 
 	err := ListRoutes(host, nil)
-
 	if err != nil {
 		t.Errorf("%s: unexpected error %q", descr, err)
 	}
@@ -40,7 +42,6 @@ func TestListRoutesSome(t *testing.T) {
 
 	buf := new(bytes.Buffer)
 	err := ListRoutes(host, buf)
-
 	if err != nil {
 		t.Errorf("%s: unexpected error: %q", descr, err)
 	} else if got := buf.String(); got != want {
