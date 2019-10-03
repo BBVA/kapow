@@ -19,7 +19,6 @@ func TestListRoutesEmpty(t *testing.T) {
 	defer gock.Off()
 	gock.New(host).
 		Get("/routes").
-		MatchType("json").
 		Reply(http.StatusOK)
 
 	err := ListRoutes(host, nil)
@@ -36,7 +35,6 @@ func TestListRoutesSome(t *testing.T) {
 	defer gock.Off()
 	gock.New(host).
 		Get("/routes").
-		MatchType("json").
 		Reply(http.StatusOK).
 		BodyString(want)
 
