@@ -6,7 +6,7 @@ import (
 	"github.com/BBVA/kapow/internal/http"
 )
 
-// ListRoutes list the routes registered on the kapow! instance
+// ListRoutes queries the kapow! instance for the routes that are registered
 func ListRoutes(host string, w io.Writer) error {
 	url := host + "/routes/"
 	return http.Get(url, "", nil, w)
