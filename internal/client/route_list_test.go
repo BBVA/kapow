@@ -25,6 +25,10 @@ func TestListRoutesEmpty(t *testing.T) {
 	if err != nil {
 		t.Errorf("%s: unexpected error %q", descr, err)
 	}
+
+	if !gock.IsDone() {
+		t.Errorf("No endpoint called")
+	}
 }
 
 func TestListRoutesSome(t *testing.T) {
@@ -44,5 +48,9 @@ func TestListRoutesSome(t *testing.T) {
 		t.Errorf("%s: unexpected error: %q", descr, err)
 	} else if got := buf.String(); got != want {
 		t.Errorf("%s: got %q, expected %q", descr, buf, want)
+	}
+
+	if !gock.IsDone() {
+		t.Errorf("No endpoint called")
 	}
 }

@@ -14,11 +14,15 @@ func TestRemoveRouteExistent(t *testing.T) {
 	)
 
 	defer gock.Off()
-	gock.New(host).Delete("/routes/" + routeID).MatchType("json").Reply(http.StatusNoContent)
+	gock.New(host).Delete("/routes/" + routeID).Reply(http.StatusNoContent)
 
 	err := RemoveRoute(host, routeID)
 	if err != nil {
 		t.Errorf("unexpected error: ‘%s’", err)
+	}
+
+	if !gock.IsDone() {
+		t.Errorf("No endpoint called")
 	}
 }
 
@@ -37,5 +41,9 @@ func TestRemoveRouteNonExistent(t *testing.T) {
 		t.Errorf("error not reported for nonexistent route")
 	} else if err.Error() != expected {
 		t.Errorf("error mismatch: expected ‘%s’, got ‘%s’", expected, err)
+	}
+
+	if !gock.IsDone() {
+		t.Errorf("No endpoint called")
 	}
 }
