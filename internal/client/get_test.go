@@ -1,38 +1,31 @@
 package client
 
 import (
+	"bufio"
 	"bytes"
 	"net/http"
-	"os"
 	"testing"
 
 	gock "gopkg.in/h2non/gock.v1"
 )
 
-func TestGetInvalidUrl(t *testing.T) {
-	err := GetData("", "", "", os.Stdout)
-	if err == nil {
-		t.Error("Expected error with invalid url ''")
-	}
-}
-
-func TestGetInvalidWriter(t *testing.T) {
-	err := GetData("http://localhost:8081", "0000", "/", nil)
-	if err == nil {
-		t.Error("Expected error with no writer")
-	}
-}
-
-func TestGetURLNotFoundWithUnknownID(t *testing.T) {
+func TestWriteContentToWriter(t *testing.T) {
 	defer gock.Off()
+	gock.New("http://localhost").
+		Get("/handlers/THIS-IS-THE-HANDLER-ID/request/body").
+		Reply(http.StatusOK).
+		Body(bytes.NewReader([]byte("FOO")))
 
-	gock.New("http://localhost:8081").
-		Get("/handlers/000/").Reply(http.StatusNotFound)
+	var b bytes.Buffer
+	buf := bufio.NewWriter(&b)
+	err := GetData("http://localhost", "THIS-IS-THE-HANDLER-ID", "/request/body", buf)
 
-	err := GetData("http://localhost:8081", "000", "/", os.Stdout)
+	if err != nil {
+		t.Errorf("Unexpected error: %q", err)
+	}
 
-	if err == nil {
-		t.Errorf("Expect not found error but get no error")
+	if !bytes.Equal(b.Bytes(), []byte("FOO")) {
+		t.Errorf("Received content mismatch: %q != %q", b.Bytes(), []byte("FOO"))
 	}
 
 	if gock.IsDone() == false {
@@ -40,24 +33,16 @@ func TestGetURLNotFoundWithUnknownID(t *testing.T) {
 	}
 }
 
-func TestGetRetrieveRequestMethod(t *testing.T) {
+func TestPropagateHTTPError(t *testing.T) {
 	defer gock.Off()
+	gock.New("http://localhost").
+		Get("/handlers/THIS-IS-THE-HANDLER-ID/request/body").
+		Reply(http.StatusTeapot)
 
-	gock.New("http://localhost:8081").
-		Get("/handlers/000/request/method").
-		Reply(http.StatusAccepted).
-		BodyString("POST")
+	err := GetData("http://localhost", "THIS-IS-THE-HANDLER-ID", "/request/body", nil)
 
-	rw := new(bytes.Buffer)
-
-	err := GetData("http://localhost:8081", "000", "/request/method", rw)
-	if err != nil {
-		t.Errorf("Unexpected error %v", err)
-	}
-	strRes := rw.String()
-
-	if strRes != "POST" {
-		t.Errorf("POST string expected but found: '%v'", strRes)
+	if err == nil {
+		t.Errorf("Expected error not returned")
 	}
 
 	if gock.IsDone() == false {
