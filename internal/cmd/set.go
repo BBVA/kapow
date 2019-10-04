@@ -2,6 +2,11 @@ package cmd
 
 import (
 	"fmt"
+	"io"
+	"os"
+	"strings"
+
+	"github.com/BBVA/kapow/internal/client"
 
 	"github.com/spf13/cobra"
 )
@@ -14,9 +19,22 @@ var SetCmd = &cobra.Command{
 	Args:    cobra.RangeArgs(1, 2),
 	PreRunE: handlerIDRequired,
 	Run: func(cmd *cobra.Command, args []string) {
+		var r io.Reader
 		url, _ := cmd.Flags().GetString("url")
 		handler, _ := cmd.Flags().GetString("handler")
-		fmt.Println("niano: ", url, handler)
+
+		if len(args) >= 2 {
+			// We have a command line value create a stringReader
+			r = strings.NewReader(strings.Join(args, " "))
+		} else {
+			// Use stdin
+			r = os.Stdin
+		}
+
+		if err := client.SetData(url, handler, args[0], r); err != nil {
+			os.Stderr.WriteString(fmt.Sprintf("%v\n", err))
+			os.Exit(1)
+		}
 	},
 }
 

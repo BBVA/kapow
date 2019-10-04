@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/BBVA/kapow/internal/client"
+
 	"github.com/spf13/cobra"
 )
 
@@ -28,26 +29,30 @@ func init() {
 	}
 	routeListCmd.Flags().String("url", getEnv("KAPOW_URL", "http://localhost:8082"), "Kapow! data interface URL")
 
+	// TODO: Manage args for url_pattern and command_file (2 exact args)
 	var routeAddCmd = &cobra.Command{
 		Use:   "add [flags] url_pattern [command_file]",
 		Short: "Add a route",
+		Args:  cobra.RangeArgs(1, 2),
 		Run: func(cmd *cobra.Command, args []string) {
 			url, _ := cmd.Flags().GetString("url")
-			path, _ := cmd.Flags().GetString("path")
 			method, _ := cmd.Flags().GetString("method")
 			command, _ := cmd.Flags().GetString("command")
 			entrypoint, _ := cmd.Flags().GetString("entrypoint")
+			urlPattern := args[0]
 
-			if err := client.AddRoute(url, path, method, entrypoint, command, os.Stdout); err != nil {
+			// TODO: Read command from parameter, file or stdin
+
+			if err := client.AddRoute(url, urlPattern, method, entrypoint, command, os.Stdout); err != nil {
 				fmt.Fprintf(os.Stderr, "%v\n", err)
 				os.Exit(1)
 			}
 		},
 	}
+	// TODO: Add default values for flags and remove path flag
 	routeAddCmd.Flags().String("url", getEnv("KAPOW_URL", "http://localhost:8082"), "Kapow! data interface URL")
-	routeAddCmd.Flags().StringP("path", "p", "", "Path to register")
-	routeAddCmd.Flags().StringP("method", "X", "", "HTTP method to accept")
-	routeAddCmd.Flags().StringP("entrypoint", "e", "", "Command to execute")
+	routeAddCmd.Flags().StringP("method", "X", "get", "HTTP method to accept")
+	routeAddCmd.Flags().StringP("entrypoint", "e", "/bin/sh -c", "Command to execute")
 	routeAddCmd.Flags().StringP("command", "c", "", "Command to pass to the shell")
 
 	var routeRemoveCmd = &cobra.Command{
