@@ -514,9 +514,9 @@ path doesn't exist or is invalid.
 * **Error Responses**:
   * **Code**: `400 Invalid Resource Path`<br />
     **Notes**: Check the list of valid resource paths at the top of this section.
-  * **Code**: `404 Not Found`<br />
+  * **Code**: `404 Handler ID Not Found`<br />
     **Notes**: Refers to the handler resource itself.
-  * **Code**: `204 Resource Item Not Found`<br />
+  * **Code**: `404 Resource Item Not Found`<br />
     **Notes**: Refers to the named item in the corresponding data API resource.
 * **Sample Call**:<br />
   ```sh
@@ -537,10 +537,8 @@ path doesn't exist or is invalid.
 * **Error Responses**:
   * **Code**: `400 Invalid Resource Path`<br />
     **Notes**: Check the list of valid resource paths at the top of this section.
-  * **Code**: `404 Not Found`<br />
+  * **Code**: `404 Handler ID Not Found`<br />
     **Notes**: Refers to the handler resource itself.
-  * **Code**: `204 Resource Item Not Found`<br />
-    **Notes**: Refers to the named item in the corresponding data API resource.
 * **Sample Call**:<br />
   ```sh
   $ curl -X --data-binary '<h1>Hello!</h1>' PUT /handlers/$KAPOW_HANDLER_ID/response/body
