@@ -3,17 +3,24 @@
 package data
 
 import (
+	"reflect"
 	"testing"
 	"time"
 
 	"github.com/BBVA/kapow/internal/server/model"
 )
 
-func TestNewShouldReturnAnEmptyStruct(t *testing.T) {
+func TestNewReturnAnEmptyStruct(t *testing.T) {
 	shm := New()
 
-	if len(shm.hs) > 0 {
+	if len(shm.hs) != 0 {
 		t.Error("Unexpected member in map")
+	}
+}
+
+func TestPackageHaveASingletonEmptyHandlersList(t *testing.T) {
+	if !reflect.DeepEqual(Handlers, New()) {
+		t.Error("Handlers is not an empty safeHandlerMap")
 	}
 }
 
