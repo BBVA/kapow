@@ -13,11 +13,10 @@ func TestWriteContentToWriter(t *testing.T) {
 	gock.New("http://localhost").
 		Get("/handlers/HANDLER_BAR/request/body").
 		Reply(http.StatusOK).
-		BodyString("FOO")
+		Body(bytes.NewReader([]byte("FOO")))
 
 	var b bytes.Buffer
-	err := GetData(
-		"http://localhost", "HANDLER_BAR", "/request/body", &b)
+	err := GetData("http://localhost", "HANDLER_BAR", "/request/body", &b)
 
 	if err != nil {
 		t.Errorf("Unexpected error: %q", err)

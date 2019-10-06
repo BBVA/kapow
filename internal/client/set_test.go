@@ -1,8 +1,8 @@
 package client_test
 
 import (
+	"bytes"
 	"net/http"
-	"strings"
 	"testing"
 
 	gock "gopkg.in/h2non/gock.v1"
@@ -19,7 +19,10 @@ func TestSetDataSuccessOnCorrectRequest(t *testing.T) {
 
 	if err := client.SetData(
 		"http://localhost:8080",
-		"HANDLER_FOO", "/response/status/code", strings.NewReader("200")); err != nil {
+		"HANDLER_FOO",
+		"/response/status/code",
+		bytes.NewReader([]byte("200")),
+	); err != nil {
 		t.Error("Unexpected error")
 	}
 
@@ -37,7 +40,10 @@ func TestSetDataErrIfBadHandlerID(t *testing.T) {
 
 	if err := client.SetData(
 		"http://localhost:8080",
-		"HANDLER_BAD", "/response/status/code", strings.NewReader("200")); err == nil {
+		"HANDLER_BAD",
+		"/response/status/code",
+		bytes.NewReader([]byte("200")),
+	); err == nil {
 		t.Error("Expected error not present")
 	} else if err.Error() != "Not Found" {
 		t.Errorf(`Error mismatch: expected "Not Found", got %q`, err)
