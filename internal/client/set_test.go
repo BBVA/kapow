@@ -10,22 +10,17 @@ import (
 	"github.com/BBVA/kapow/internal/client"
 )
 
-// Test that not found errors are detected as invalid handler id
-func TestNotFound(t *testing.T) {
-	expectedErr := "Not Found"
-	host := "http://localhost:8080"
-	hid := "inventedID"
-	path := "/response/status/code"
-	reader := strings.NewReader("200")
-
+// Test an HTTP OK request
+func TestSetDataSuccessOnCorrectRequest(t *testing.T) {
 	defer gock.Off()
+	gock.New("http://localhost:8080").
+		Put("/HANDLER_FOO/response/status/code").
+		Reply(http.StatusOK)
 
-	gock.New(host).Put("/" + hid + path).Reply(http.StatusNotFound)
-
-	if err := client.SetData(host, hid, path, reader); err == nil {
-		t.Error("Expected error not present")
-	} else if err.Error() != expectedErr {
-		t.Errorf("Error don't match: expected \"%s\", got \"%s\"", expectedErr, err.Error())
+	if err := client.SetData(
+		"http://localhost:8080",
+		"HANDLER_FOO", "/response/status/code", strings.NewReader("200")); err != nil {
+		t.Error("Unexpected error")
 	}
 
 	if !gock.IsDone() {
@@ -33,19 +28,19 @@ func TestNotFound(t *testing.T) {
 	}
 }
 
-// Test a http ok request
-func TestOkRequest(t *testing.T) {
-	host := "http://localhost:8080"
-	hid := "HANDLER_XXXXXXXXXXXX"
-	path := "/response/status/code"
-	reader := strings.NewReader("200")
-
+// Test that Not Found errors are detected when an invalid handler id is sent
+func TestSetDataErrIfBadHandlerID(t *testing.T) {
 	defer gock.Off()
+	gock.New("http://localhost:8080").
+		Put("/HANDLER_BAD/response/status/code").
+		Reply(http.StatusNotFound)
 
-	gock.New(host).Put("/" + hid + path).Reply(http.StatusOK)
-
-	if err := client.SetData(host, hid, path, reader); err != nil {
-		t.Error("Unexpected error")
+	if err := client.SetData(
+		"http://localhost:8080",
+		"HANDLER_BAD", "/response/status/code", strings.NewReader("200")); err == nil {
+		t.Error("Expected error not present")
+	} else if err.Error() != "Not Found" {
+		t.Errorf(`Error mismatch: expected "Not Found", got %q`, err)
 	}
 
 	if !gock.IsDone() {

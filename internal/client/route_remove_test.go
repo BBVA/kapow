@@ -7,18 +7,15 @@ import (
 	gock "gopkg.in/h2non/gock.v1"
 )
 
-func TestRemoveRouteExistent(t *testing.T) {
-	const (
-		host    = "http://localhost:8080"
-		routeID = "ROUTE_ID_OLDER_BUT_IT_CHECKS_OUT"
-	)
-
+func TestRemoveRouteOKExistent(t *testing.T) {
 	defer gock.Off()
-	gock.New(host).Delete("/routes/" + routeID).Reply(http.StatusNoContent)
+	gock.New("http://localhost:8080").
+		Delete("/routes/ROUTE_FOO").
+		Reply(http.StatusNoContent)
 
-	err := RemoveRoute(host, routeID)
+	err := RemoveRoute("http://localhost:8080", "ROUTE_FOO")
 	if err != nil {
-		t.Errorf("unexpected error: ‘%s’", err)
+		t.Errorf("unexpected error: %q", err)
 	}
 
 	if !gock.IsDone() {
@@ -26,21 +23,17 @@ func TestRemoveRouteExistent(t *testing.T) {
 	}
 }
 
-func TestRemoveRouteNonExistent(t *testing.T) {
-	const (
-		host    = "http://localhost:8080"
-		routeID = "ROUTE_THIS_ONE_WONT_WORK_BUDDY"
-	)
-	expected := http.StatusText(http.StatusNotFound)
-
+func TestRemoveRouteErrorNonExistent(t *testing.T) {
 	defer gock.Off()
-	gock.New(host).Delete("/routes/" + routeID).Reply(http.StatusNotFound)
+	gock.New("http://localhost:8080").
+		Delete("/routes/ROUTE_BAD").
+		Reply(http.StatusNotFound)
 
-	err := RemoveRoute(host, routeID)
+	err := RemoveRoute("http://localhost:8080", "ROUTE_BAD")
 	if err == nil {
-		t.Errorf("error not reported for nonexistent route")
-	} else if err.Error() != expected {
-		t.Errorf("error mismatch: expected ‘%s’, got ‘%s’", expected, err)
+		t.Errorf("Error not reported for nonexistent route")
+	} else if err.Error() != "Not Found" {
+		t.Errorf(`Error mismatch: got %q, want "Not Found"`, err)
 	}
 
 	if !gock.IsDone() {

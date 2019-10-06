@@ -1,7 +1,6 @@
 package client
 
 import (
-	"bufio"
 	"bytes"
 	"net/http"
 	"testing"
@@ -12,13 +11,13 @@ import (
 func TestWriteContentToWriter(t *testing.T) {
 	defer gock.Off()
 	gock.New("http://localhost").
-		Get("/handlers/THIS-IS-THE-HANDLER-ID/request/body").
+		Get("/handlers/HANDLER_BAR/request/body").
 		Reply(http.StatusOK).
-		Body(bytes.NewReader([]byte("FOO")))
+		BodyString("FOO")
 
 	var b bytes.Buffer
-	buf := bufio.NewWriter(&b)
-	err := GetData("http://localhost", "THIS-IS-THE-HANDLER-ID", "/request/body", buf)
+	err := GetData(
+		"http://localhost", "HANDLER_BAR", "/request/body", &b)
 
 	if err != nil {
 		t.Errorf("Unexpected error: %q", err)
@@ -28,7 +27,7 @@ func TestWriteContentToWriter(t *testing.T) {
 		t.Errorf("Received content mismatch: %q != %q", b.Bytes(), []byte("FOO"))
 	}
 
-	if gock.IsDone() == false {
+	if !gock.IsDone() {
 		t.Error("No expected endpoint called")
 	}
 }
@@ -36,16 +35,17 @@ func TestWriteContentToWriter(t *testing.T) {
 func TestPropagateHTTPError(t *testing.T) {
 	defer gock.Off()
 	gock.New("http://localhost").
-		Get("/handlers/THIS-IS-THE-HANDLER-ID/request/body").
+		Get("/handlers/HANDLER_BAR/request/body").
 		Reply(http.StatusTeapot)
 
-	err := GetData("http://localhost", "THIS-IS-THE-HANDLER-ID", "/request/body", nil)
+	err := GetData(
+		"http://localhost", "HANDLER_BAR", "/request/body", nil)
 
 	if err == nil {
 		t.Errorf("Expected error not returned")
 	}
 
-	if gock.IsDone() == false {
+	if !gock.IsDone() {
 		t.Error("No expected endpoint called")
 	}
 }

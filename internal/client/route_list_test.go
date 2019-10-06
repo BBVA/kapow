@@ -2,28 +2,21 @@ package client
 
 import (
 	"bytes"
-	"fmt"
 	"net/http"
 	"testing"
 
 	gock "gopkg.in/h2non/gock.v1"
 )
 
-const (
-	host = "http://localhost:8080"
-)
-
-func TestListRoutesEmpty(t *testing.T) {
-	descr := fmt.Sprintf("ListRoutes(%q, nil)", host)
-
+func TestListRoutesOKEmpty(t *testing.T) {
 	defer gock.Off()
-	gock.New(host).
+	gock.New("http://localhost:8080").
 		Get("/routes").
 		Reply(http.StatusOK)
 
-	err := ListRoutes(host, nil)
+	err := ListRoutes("http://localhost:8080", nil)
 	if err != nil {
-		t.Errorf("%s: unexpected error %q", descr, err)
+		t.Errorf("Unexpected error %q", err)
 	}
 
 	if !gock.IsDone() {
@@ -31,23 +24,24 @@ func TestListRoutesEmpty(t *testing.T) {
 	}
 }
 
-func TestListRoutesSome(t *testing.T) {
-	descr := fmt.Sprintf("ListRoutes(%q, buf)", host)
-
-	const want = "JSON array of some routes..."
-
+func TestListRoutesOKSome(t *testing.T) {
 	defer gock.Off()
-	gock.New(host).
+	gock.New("http://localhost:8080").
 		Get("/routes").
 		Reply(http.StatusOK).
-		BodyString(want)
+		JSON([]map[string]string{
+			{"foo": "bar"},
+			{"bar": "foo"},
+		})
 
-	buf := new(bytes.Buffer)
-	err := ListRoutes(host, buf)
+	var b bytes.Buffer
+	err := ListRoutes("http://localhost:8080", &b)
 	if err != nil {
-		t.Errorf("%s: unexpected error: %q", descr, err)
-	} else if got := buf.String(); got != want {
-		t.Errorf("%s: got %q, expected %q", descr, buf, want)
+		t.Errorf("Unexpected error: %q", err)
+	} else if !bytes.Equal(
+		b.Bytes(), []byte(`[{"foo":"bar"},{"bar":"foo"}]`+"\n")) {
+		t.Errorf("Unexpected error: got %q, want %q",
+			b.String(), `[{"foo":"bar"},{"bar":"foo"}]`+"\n")
 	}
 
 	if !gock.IsDone() {
