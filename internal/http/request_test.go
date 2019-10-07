@@ -34,7 +34,7 @@ func TestRequestGivenMethod(t *testing.T) {
 		t.Errorf("Unexpected error on request")
 	}
 
-	if gock.IsDone() == false {
+	if !gock.IsDone() {
 		t.Errorf("Expected request not performed")
 	}
 }
@@ -49,7 +49,7 @@ func TestReturnHTTPErrorAsIs(t *testing.T) {
 		t.Errorf("Returned error is not the expected error: '%v'", err)
 	}
 
-	if gock.IsDone() == false {
+	if !gock.IsDone() {
 		t.Errorf("Expected request not performed")
 	}
 }
@@ -63,7 +63,7 @@ func TestReturnHTTPReasonAsErrorWhenUnsuccessful(t *testing.T) {
 		t.Errorf("Reason should be returned as an error")
 	}
 
-	if gock.IsDone() == false {
+	if !gock.IsDone() {
 		t.Errorf("Expected request not performed")
 	}
 }
@@ -86,7 +86,7 @@ func TestCopyResponseBodyToWriter(t *testing.T) {
 		t.Errorf("Unexpected output %v", res)
 	}
 
-	if gock.IsDone() == false {
+	if !gock.IsDone() {
 		t.Error("No expected endpoint called")
 	}
 }
@@ -112,7 +112,7 @@ func TestWriteToDevNullWhenNoWriter(t *testing.T) {
 		t.Errorf("Unexpected output %v", res)
 	}
 
-	if gock.IsDone() == false {
+	if !gock.IsDone() {
 		t.Error("No expected endpoint called")
 	}
 }
@@ -129,7 +129,7 @@ func TestSendContentType(t *testing.T) {
 		t.Errorf("Unexpected error '%v'", err.Error())
 	}
 
-	if gock.IsDone() == false {
+	if !gock.IsDone() {
 		t.Error("No expected endpoint called")
 	}
 }
