@@ -12,7 +12,7 @@ TMP_DIR=/tmp
 
 BINARY_NAME=kapow
 
-all: test build
+all: test race build
 
 build: deps
 	mkdir -p $(BUILD_DIR)
