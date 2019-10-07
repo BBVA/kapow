@@ -133,3 +133,71 @@ func TestSendContentType(t *testing.T) {
 		t.Error("No expected endpoint called")
 	}
 }
+
+func TestGetRequestsWithMethodGet(t *testing.T) {
+	defer gock.Off()
+	gock.New("http://localhost").
+		Get("/").
+		Reply(http.StatusOK)
+
+	err := Get("http://localhost/", "", nil, nil)
+
+	if err != nil {
+		t.Errorf("Unexpected error %q", err)
+	}
+
+	if !gock.IsDone() {
+		t.Error("No expected endpoint called")
+	}
+}
+
+func TestPostRequestsWithMethodPost(t *testing.T) {
+	defer gock.Off()
+	gock.New("http://localhost").
+		Post("/").
+		Reply(http.StatusOK)
+
+	err := Post("http://localhost/", "", nil, nil)
+
+	if err != nil {
+		t.Errorf("Unexpected error %q", err)
+	}
+
+	if !gock.IsDone() {
+		t.Error("No expected endpoint called")
+	}
+}
+
+func TestPutRequestsWithMethodPut(t *testing.T) {
+	defer gock.Off()
+	gock.New("http://localhost").
+		Put("/").
+		Reply(http.StatusOK)
+
+	err := Put("http://localhost/", "", nil, nil)
+
+	if err != nil {
+		t.Errorf("Unexpected error %q", err)
+	}
+
+	if !gock.IsDone() {
+		t.Error("No expected endpoint called")
+	}
+}
+
+func TestDeleteRequestsWithMethodDelete(t *testing.T) {
+	defer gock.Off()
+	gock.New("http://localhost").
+		Delete("/").
+		Reply(http.StatusOK)
+
+	err := Delete("http://localhost/", "", nil, nil)
+
+	if err != nil {
+		t.Errorf("Unexpected error %q", err)
+	}
+
+	if !gock.IsDone() {
+		t.Error("No expected endpoint called")
+	}
+}
