@@ -21,5 +21,4 @@ func handlerIDRequired(cmd *cobra.Command, args []string) error {
 		return errors.New("--handler or KAPOW_HANDLER_ID is mandatory")
 	}
 	return nil
-
 }

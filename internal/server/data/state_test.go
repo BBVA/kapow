@@ -27,7 +27,7 @@ func TestPackageHaveASingletonEmptyHandlersList(t *testing.T) {
 func TestAddAddsANewHandlerToTheMap(t *testing.T) {
 	shm := New()
 
-	shm.Add(&model.Handler{Id: "FOO"})
+	shm.Add(&model.Handler{ID: "FOO"})
 
 	if _, ok := shm.hs["FOO"]; !ok {
 		t.Error("Handler not added to the map")
@@ -39,12 +39,12 @@ func TestAddAdquiresMutexBeforeAdding(t *testing.T) {
 
 	shm.m.Lock()
 	defer shm.m.Unlock()
-	go shm.Add(&model.Handler{Id: "FOO"})
+	go shm.Add(&model.Handler{ID: "FOO"})
 
 	time.Sleep(10 * time.Millisecond)
 
 	if _, ok := shm.hs["FOO"]; ok {
-		t.Error("Handler added while mutex was adquired")
+		t.Error("Handler added while mutex was acquired")
 	}
 }
 
@@ -52,7 +52,7 @@ func TestAddAddsHandlerAfterMutexIsReleased(t *testing.T) {
 	shm := New()
 
 	shm.m.Lock()
-	go shm.Add(&model.Handler{Id: "FOO"})
+	go shm.Add(&model.Handler{ID: "FOO"})
 	shm.m.Unlock()
 
 	time.Sleep(10 * time.Millisecond)
@@ -64,7 +64,7 @@ func TestAddAddsHandlerAfterMutexIsReleased(t *testing.T) {
 
 func TestRemoveRemovesAHandlerFromTheMap(t *testing.T) {
 	shm := New()
-	shm.Add(&model.Handler{Id: "FOO"})
+	shm.Add(&model.Handler{ID: "FOO"})
 
 	shm.Remove("FOO")
 
@@ -75,7 +75,7 @@ func TestRemoveRemovesAHandlerFromTheMap(t *testing.T) {
 
 func TestRemoveAdquiresMutexBeforeRemoving(t *testing.T) {
 	shm := New()
-	shm.Add(&model.Handler{Id: "FOO"})
+	shm.Add(&model.Handler{ID: "FOO"})
 
 	shm.m.Lock()
 	defer shm.m.Unlock()
@@ -85,13 +85,13 @@ func TestRemoveAdquiresMutexBeforeRemoving(t *testing.T) {
 	time.Sleep(10 * time.Millisecond)
 
 	if _, ok := shm.hs["FOO"]; !ok {
-		t.Error("Handler was remove while mutex was adquired")
+		t.Error("Handler was remove while mutex was acquired")
 	}
 }
 
 func TestRemoveRemovesHandlerAfterMutexIsReleased(t *testing.T) {
 	shm := New()
-	shm.Add(&model.Handler{Id: "FOO"})
+	shm.Add(&model.Handler{ID: "FOO"})
 
 	shm.m.Lock()
 	go shm.Remove("FOO")
@@ -110,12 +110,11 @@ func TestGetReturnFalseWhenHandlerDoesNotExist(t *testing.T) {
 	if _, exists := shm.Get("FOO"); exists {
 		t.Error("Get should return false when handler does not exist")
 	}
-
 }
 
 func TestGetReturnTrueWhenHandlerExists(t *testing.T) {
 	shm := New()
-	shm.Add(&model.Handler{Id: "FOO"})
+	shm.Add(&model.Handler{ID: "FOO"})
 
 	if _, exists := shm.Get("FOO"); !exists {
 		t.Error("Get should return true when handler do exist")
@@ -124,7 +123,7 @@ func TestGetReturnTrueWhenHandlerExists(t *testing.T) {
 
 func TestGetReturnExistingHandler(t *testing.T) {
 	shm := New()
-	expected := &model.Handler{Id: "FOO"}
+	expected := &model.Handler{ID: "FOO"}
 	shm.Add(expected)
 
 	if current, _ := shm.Get("FOO"); current != expected {
@@ -134,7 +133,7 @@ func TestGetReturnExistingHandler(t *testing.T) {
 
 func TestGetWaitsForTheWriterToFinish(t *testing.T) {
 	shm := New()
-	shm.Add(&model.Handler{Id: "FOO"})
+	shm.Add(&model.Handler{ID: "FOO"})
 
 	shm.m.Lock()
 	defer shm.m.Unlock()
@@ -146,14 +145,14 @@ func TestGetWaitsForTheWriterToFinish(t *testing.T) {
 
 	select {
 	case <-c:
-		t.Error("Handler readed while mutex was adquired")
+		t.Error("Handler readed while mutex was acquired")
 	default: // This default prevents the select from being blocking
 	}
 }
 
 func TestGetNonBlockingReadWithOtherReaders(t *testing.T) {
 	shm := New()
-	shm.Add(&model.Handler{Id: "FOO"})
+	shm.Add(&model.Handler{ID: "FOO"})
 
 	shm.m.RLock()
 	defer shm.m.RUnlock()
@@ -166,6 +165,6 @@ func TestGetNonBlockingReadWithOtherReaders(t *testing.T) {
 	select {
 	case <-c:
 	default: // This default prevents the select from being blocking
-		t.Error("Handler couldn't read while mutex was adquired for read")
+		t.Error("Handler couldn't read while mutex was acquired for read")
 	}
 }

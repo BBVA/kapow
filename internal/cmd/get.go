@@ -12,8 +12,8 @@ import (
 // GetCmd is the command line interface for get kapow data operation
 var GetCmd = &cobra.Command{
 	Use:     "get [flags] resource",
-	Short:   "Retrive a Kapow! resource",
-	Long:    "Retrive a Kapow! resource for the current request",
+	Short:   "Retrieve a Kapow! resource",
+	Long:    "Retrieve a Kapow! resource for the current request",
 	Args:    cobra.ExactArgs(1),
 	PreRunE: handlerIDRequired,
 	Run: func(cmd *cobra.Command, args []string) {

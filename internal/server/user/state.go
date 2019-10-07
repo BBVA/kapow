@@ -8,13 +8,16 @@ import (
 
 type safeRouteList struct {
 	rs []model.Route
-	m  sync.RWMutex
+	m  *sync.RWMutex
 }
 
 var Routes = New()
 
 func New() safeRouteList {
-	return safeRouteList{}
+	return safeRouteList{
+		rs: []model.Route{},
+		m:  &sync.RWMutex{},
+	}
 }
 
 func (srl *safeRouteList) Append(r model.Route) {
@@ -27,11 +30,7 @@ func (srl *safeRouteList) Snapshot() []model.Route {
 	srl.m.RLock()
 	defer srl.m.RUnlock()
 
-	if srl.rs == nil {
-		return nil
-	} else {
-		rs := make([]model.Route, len(srl.rs))
-		copy(rs, srl.rs)
-		return rs
-	}
+	rs := make([]model.Route, len(srl.rs))
+	copy(rs, srl.rs)
+	return rs
 }

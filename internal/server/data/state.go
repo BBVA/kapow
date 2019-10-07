@@ -8,7 +8,7 @@ import (
 
 type safeHandlerMap struct {
 	hs map[string]*model.Handler
-	m  sync.RWMutex
+	m  *sync.RWMutex
 }
 
 var Handlers = New()
@@ -16,13 +16,13 @@ var Handlers = New()
 func New() safeHandlerMap {
 	return safeHandlerMap{
 		hs: make(map[string]*model.Handler),
-		m:  sync.RWMutex{},
+		m:  &sync.RWMutex{},
 	}
 }
 
 func (shm *safeHandlerMap) Add(h *model.Handler) {
 	shm.m.Lock()
-	shm.hs[h.Id] = h
+	shm.hs[h.ID] = h
 	shm.m.Unlock()
 }
 

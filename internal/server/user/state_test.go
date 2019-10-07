@@ -3,10 +3,11 @@
 package user
 
 import (
-	"github.com/BBVA/kapow/internal/server/model"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/BBVA/kapow/internal/server/model"
 )
 
 func TestNewReturnAnEmptyStruct(t *testing.T) {
@@ -43,7 +44,7 @@ func TestAppendAdquiresMutexBeforeAdding(t *testing.T) {
 	time.Sleep(10 * time.Millisecond)
 
 	if len(srl.rs) != 0 {
-		t.Error("Route added while mutex was adquired")
+		t.Error("Route added while mutex was acquired")
 	}
 }
 
@@ -63,7 +64,7 @@ func TestAppendAddsRouteAfterMutexIsReleased(t *testing.T) {
 
 func TestSnapshotReturnTheCurrentListOfRoutes(t *testing.T) {
 	srl := New()
-	srl.Append(model.Route{Id: "FOO"})
+	srl.Append(model.Route{ID: "FOO"})
 
 	rs := srl.Snapshot()
 
@@ -72,19 +73,30 @@ func TestSnapshotReturnTheCurrentListOfRoutes(t *testing.T) {
 	}
 }
 
+func TestSnapshotReturnADeepCopyOfTheListWhenIsNil(t *testing.T) {
+	srl := New()
+	srl.rs = nil
+
+	rs := srl.Snapshot()
+
+	if len(rs) != 0 {
+		t.Fatal("Route list copy is not empty")
+	}
+}
+
 func TestSnapshotReturnADeepCopyOfTheListWhenEmpty(t *testing.T) {
 	srl := New()
 
 	rs := srl.Snapshot()
 
-	if rs != nil {
+	if len(rs) != 0 {
 		t.Fatal("Route list copy is not empty")
 	}
 }
 
 func TestSnapshotReturnADeepCopyOfTheListWhenNonEmpty(t *testing.T) {
 	srl := New()
-	srl.Append(model.Route{Id: "FOO"})
+	srl.Append(model.Route{ID: "FOO"})
 
 	rs := srl.Snapshot()
 
@@ -101,7 +113,7 @@ func TestSnapshotReturnADeepCopyOfTheListWhenNonEmpty(t *testing.T) {
 
 func TestSnapshotWaitsForTheWriterToFinish(t *testing.T) {
 	srl := New()
-	srl.Append(model.Route{Id: "FOO"})
+	srl.Append(model.Route{ID: "FOO"})
 
 	srl.m.Lock()
 	defer srl.m.Unlock()
@@ -113,14 +125,14 @@ func TestSnapshotWaitsForTheWriterToFinish(t *testing.T) {
 
 	select {
 	case <-c:
-		t.Error("Route list readed while mutex was adquired")
+		t.Error("Route list readed while mutex was acquired")
 	default: // This default prevents the select from being blocking
 	}
 }
 
 func TestSnapshotNonBlockingReadWithOtherReaders(t *testing.T) {
 	srl := New()
-	srl.Append(model.Route{Id: "FOO"})
+	srl.Append(model.Route{ID: "FOO"})
 
 	srl.m.RLock()
 	defer srl.m.RUnlock()
@@ -133,6 +145,6 @@ func TestSnapshotNonBlockingReadWithOtherReaders(t *testing.T) {
 	select {
 	case <-c:
 	default: // This default prevents the select from being blocking
-		t.Error("Route list couldn't be readed while mutex was adquired for read")
+		t.Error("Route list couldn't be readed while mutex was acquired for read")
 	}
 }
