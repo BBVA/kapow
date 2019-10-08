@@ -1,10 +1,16 @@
 package control
 
-import "testing"
+import (
+	"testing"
+)
 
-func TestNewControlServerFillsTheStruct(t *testing.T) {
+func TestNewControlServerFillsTheStructCorrectly(t *testing.T) {
 
-	server := NewControlServer("0.0.0.0", 8080, "/certfile.pem", "/keyfile.pem")
+	server, err := NewControlServer("0.0.0.0", 8080, "/certfile.pem", "/keyfile.pem")
+
+	if err != nil {
+
+	}
 
 	if server.bindAddr != "0.0.0.0:8080" {
 		t.Errorf("BindAddress incorrectly composed. Expected: %s, got: %s", "0.0.0.0:8080", server.bindAddr)
@@ -17,4 +23,5 @@ func TestNewControlServerFillsTheStruct(t *testing.T) {
 	if server.keyfile != "/keyfile.pem" {
 		t.Errorf("BindAddress incorrectly composed. Expected: %s, got: %s", "/keyfile.pem", server.keyfile)
 	}
+
 }
