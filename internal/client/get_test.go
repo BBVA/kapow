@@ -13,7 +13,7 @@ func TestWriteContentToWriter(t *testing.T) {
 	gock.New("http://localhost").
 		Get("/handlers/HANDLER_BAR/request/body").
 		Reply(http.StatusOK).
-		Body(bytes.NewReader([]byte("FOO")))
+		BodyString("FOO")
 
 	var b bytes.Buffer
 	err := GetData("http://localhost", "HANDLER_BAR", "/request/body", &b)
