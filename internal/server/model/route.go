@@ -22,4 +22,8 @@ type Route struct {
 	// Command is the last argument to be passed to exec.Command when
 	// executing the Entrypoint
 	Command string `json:"command"`
+
+	// Index is this route position in the server's routes list.
+	// It is an output field, its value is ignored as input.
+	Index int `json:"index"`
 }
