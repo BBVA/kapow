@@ -1,10 +1,11 @@
-.PHONY: build test coverage install acceptance deps
+.PHONY: lint build test race coverage install acceptance deps
 
 GOCMD=go
 GOBUILD=$(GOCMD) build
 GOGET=$(GOCMD) get
 GOTEST=$(GOCMD) test
 GOTOOL=$(GOCMD) tool
+GOLANGLINT=golangci-lint
 
 BUILD_DIR=./build
 OUTPUT_DIR=./output
@@ -12,7 +13,10 @@ TMP_DIR=/tmp
 
 BINARY_NAME=kapow
 
-all: test race build
+all: lint test race build
+
+lint:
+	$(GOLANGLINT) run
 
 build: deps
 	mkdir -p $(BUILD_DIR)
