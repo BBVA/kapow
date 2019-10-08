@@ -7,7 +7,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func gorillize(rs []model.Route, f func(*model.Handler) http.Handler) *mux.Router {
+func gorillize(rs []model.Route, f func(*model.Route) http.Handler) *mux.Router {
 	m := mux.NewRouter()
 
 	for _, r := range rs {

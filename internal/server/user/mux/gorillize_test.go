@@ -10,7 +10,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func handlerStatusOK(h *model.Handler) http.Handler {
+func handlerStatusOK(h *model.Route) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	})
