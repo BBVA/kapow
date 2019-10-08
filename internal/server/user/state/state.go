@@ -18,10 +18,13 @@ func New() safeRouteList {
 	}
 }
 
-func (srl *safeRouteList) Append(r model.Route) {
+func (srl *safeRouteList) Append(r model.Route) model.Route {
 	srl.m.Lock()
 	srl.rs = append(srl.rs, r)
+	l := len(srl.rs)
 	srl.m.Unlock()
+
+	return model.Route{Index: l - 1}
 }
 
 func (srl *safeRouteList) Snapshot() []model.Route {

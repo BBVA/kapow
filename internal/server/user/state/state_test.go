@@ -142,3 +142,26 @@ func TestSnapshotNonBlockingReadWithOtherReaders(t *testing.T) {
 		t.Error("Route list couldn't be readed while mutex was acquired for read")
 	}
 }
+
+func TestAppendReturnsTheInsertedRoutedWithTheActualIndexWhenEmpty(t *testing.T) {
+	srl := New()
+
+	r := srl.Append(model.Route{})
+
+	if r.Index != 0 {
+		t.Errorf("Index of the returned route is not 0, but %d", r.Index)
+	}
+}
+
+func TestAppendReturnsTheInsertedRoutedWithTheActualIndexWhenPopulated(t *testing.T) {
+	srl := New()
+
+	var r model.Route
+
+	for i := 0; i < 42; i++ {
+		r = srl.Append(model.Route{})
+	}
+	if r.Index != 42-1 {
+		t.Errorf("Index of the returned route is not the last one, i.e., 41, but %d", r.Index)
+	}
+}
