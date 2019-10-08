@@ -1,6 +1,6 @@
 // +build !race
 
-package user
+package state
 
 import (
 	"reflect"
@@ -15,12 +15,6 @@ func TestNewReturnAnEmptyStruct(t *testing.T) {
 
 	if len(srl.rs) != 0 {
 		t.Error("Unexpected member in slice")
-	}
-}
-
-func TestPackageHaveASingletonEmptyRouteList(t *testing.T) {
-	if !reflect.DeepEqual(Routes, New()) {
-		t.Error("Routes is not an empty safeRouteList")
 	}
 }
 

@@ -1,4 +1,4 @@
-package user
+package state
 
 import (
 	"sync"
@@ -10,8 +10,6 @@ type safeRouteList struct {
 	rs []model.Route
 	m  *sync.RWMutex
 }
-
-var Routes = New()
 
 func New() safeRouteList {
 	return safeRouteList{

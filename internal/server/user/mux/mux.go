@@ -1,4 +1,4 @@
-package user
+package mux
 
 import (
 	"net/http"
