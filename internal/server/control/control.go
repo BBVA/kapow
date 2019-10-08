@@ -1,12 +1,12 @@
 package control
 
 import (
+	"io"
 	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
 
-	"github.com/BBVA/kapow/internal/server/model"
 	"github.com/BBVA/kapow/internal/server/user"
 )
 
@@ -34,8 +34,7 @@ func listRoutes(http.ResponseWriter, *http.Request) {
 
 }
 
-func addRoute(http.ResponseWriter, *http.Request) {
-	var routeSpec model.Route
-
-	user.Routes.Append(routeSpec)
+func addRoute(res http.ResponseWriter, req *http.Request) {
+	res.WriteHeader(http.StatusCreated)
+	_, _ = io.Copy(res, req.Body)
 }
