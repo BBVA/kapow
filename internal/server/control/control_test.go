@@ -51,4 +51,8 @@ func TestAppendNewRouteFromRequest(t *testing.T) {
 	if respJsonRoute.Pattern != "/hello" {
 		t.Errorf("Pattern missmatch. Expected: %s, got: %s", "/hello", respJsonRoute.Pattern)
 	}
+
+	if respJsonRoute.Index > 0 {
+		t.Errorf("Index missmatch. Expected: %d, got: %d", 0, respJsonRoute.Index)
+	}
 }
