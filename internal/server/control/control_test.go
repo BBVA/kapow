@@ -4,6 +4,6 @@ import (
 	"testing"
 )
 
-func TestNewControlServerFillsTheStructCorrectly(t *testing.T) {
+func Test(t *testing.T) {
 
 }
