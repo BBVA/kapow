@@ -68,6 +68,7 @@ func TestSwappableMuxSetSetsTheGivenMux(t *testing.T) {
 
 	sm.set(mux)
 
+	//nolint
 	if !sm.root.KeepContext {
 		t.Error("mux not set")
 	}
