@@ -35,7 +35,7 @@ func TestAppendNewRouteFromRequest(t *testing.T) {
 	//  "command": "echo Hello World | kapow set /response/body"
 	//}`
 	respJsonRoute := model.Route{}
-	json.Unmarshal(resp.Body.Bytes(), &respJsonRoute)
+	_ = json.Unmarshal(resp.Body.Bytes(), &respJsonRoute)
 	if respJsonRoute.Method != "GET" {
 		t.Errorf("Method missmatch. Expected: %s, got: %s", "GET", respJsonRoute.Method)
 	}
