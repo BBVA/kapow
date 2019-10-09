@@ -31,7 +31,7 @@ var funcRemove func(id string) error
 
 func removeRoute(res http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
-	id, _ := vars["id"]
+	id := vars["id"]
 	if err := funcRemove(id); err != nil {
 		res.WriteHeader(http.StatusNotFound)
 		return
@@ -42,10 +42,10 @@ func removeRoute(res http.ResponseWriter, req *http.Request) {
 // user.Routes.List() []model.Route
 var funcList func() []model.Route = user.Routes.List
 
-func listRoutes(http.ResponseWriter, *http.Request) {
+func listRoutes(res http.ResponseWriter, req *http.Request) {
 
 	funcList()
-
+	res.WriteHeader(http.StatusNotFound)
 }
 
 // user.Routes.Append(r model.Route) model.Route
@@ -69,5 +69,5 @@ func addRoute(res http.ResponseWriter, req *http.Request) {
 
 	res.WriteHeader(http.StatusCreated)
 	res.Header().Set("Content-Type", "application/json")
-	res.Write(createdBytes)
+	_, _ = res.Write(createdBytes)
 }
