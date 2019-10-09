@@ -174,7 +174,7 @@ func TestListRoutesReturnsTwoElementsList(t *testing.T) {
 	}
 
 	respJson := []model.Route{}
-	if err := json.Unmarshal(resp.Body.Bytes(), &respJson); err == nil {
+	if err := json.Unmarshal(resp.Body.Bytes(), &respJson); err != nil {
 		t.Errorf("Invalid JSON response. %s", resp.Body.String())
 	}
 
@@ -263,5 +263,4 @@ func TestAddRouteReturns422ErrorWhenNoCommand(t *testing.T) {
 	if resp.Code != http.StatusUnprocessableEntity {
 		t.Errorf("HTTP status mistmacht. Expected: %d, got: %d", http.StatusUnprocessableEntity, resp.Code)
 	}
-
 }
