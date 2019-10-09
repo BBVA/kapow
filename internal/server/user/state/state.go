@@ -35,3 +35,11 @@ func (srl *safeRouteList) Snapshot() []model.Route {
 	copy(rs, srl.rs)
 	return rs
 }
+
+func (srl *safeRouteList) List() []model.Route {
+	rs := srl.Snapshot()
+	for i := 0; i < len(rs); i++ {
+		rs[i].Index = i
+	}
+	return rs
+}
