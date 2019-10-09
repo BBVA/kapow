@@ -1,6 +1,8 @@
 package mux
 
 import (
+	"io"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -10,9 +12,15 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func handlerStatusOK(h *model.Route) http.Handler {
+func handlerStatusOK(route model.Route) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
+	})
+}
+
+func handleRouteIDToBody(route model.Route) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_, _ = io.WriteString(w, route.ID)
 	})
 }
 
@@ -103,4 +111,58 @@ func TestGorillizeReturnsAMuxThatMatchesByMethod(t *testing.T) {
 	}
 }
 
-// TODO: TestGorillizeReturnsAMuxThatRespectsRouteOrder
+func TestGorillizeReturnsAMuxThatRespectsRouteOrderAB(t *testing.T) {
+	var rs []model.Route
+	rs = append(rs,
+		model.Route{
+			ID:      "routeA",
+			Pattern: "/foo",
+			Method:  "GET",
+		},
+		model.Route{
+			ID:      "routeB",
+			Pattern: "/foo",
+			Method:  "GET",
+		},
+	)
+	m := *gorillize(rs, handleRouteIDToBody)
+
+	req := httptest.NewRequest("GET", "/foo", nil)
+	w := httptest.NewRecorder()
+
+	m.ServeHTTP(w, req)
+
+	res := w.Result()
+
+	if body, _ := ioutil.ReadAll(res.Body); string(body) != "routeA" {
+		t.Errorf("Mux did not respect route order %q", body)
+	}
+}
+
+func TestGorillizeReturnsAMuxThatRespectsRouteOrderBA(t *testing.T) {
+	var rs []model.Route
+	rs = append(rs,
+		model.Route{
+			ID:      "routeB",
+			Pattern: "/foo",
+			Method:  "GET",
+		},
+		model.Route{
+			ID:      "routeA",
+			Pattern: "/foo",
+			Method:  "GET",
+		},
+	)
+	m := *gorillize(rs, handleRouteIDToBody)
+
+	req := httptest.NewRequest("GET", "/foo", nil)
+	w := httptest.NewRecorder()
+
+	m.ServeHTTP(w, req)
+
+	res := w.Result()
+
+	if body, _ := ioutil.ReadAll(res.Body); string(body) != "routeB" {
+		t.Errorf("Mux did not respect route order %q", body)
+	}
+}
