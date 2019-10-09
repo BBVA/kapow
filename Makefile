@@ -1,4 +1,4 @@
-.PHONY: lint build test race coverage install acceptance deps
+.PHONY: lint build test jaillover race coverage install acceptance deps
 
 GOCMD=go
 GOBUILD=$(GOCMD) build
@@ -6,6 +6,7 @@ GOGET=$(GOCMD) get
 GOTEST=$(GOCMD) test
 GOTOOL=$(GOCMD) tool
 GOLANGLINT=golangci-lint
+PROJECTREPO=github.com/BBVA/kapow
 
 BUILD_DIR=./build
 OUTPUT_DIR=./output
@@ -22,8 +23,11 @@ build: deps
 	mkdir -p $(BUILD_DIR)
 	CGO_ENABLED=0 $(GOBUILD) -o $(BUILD_DIR)/$(BINARY_NAME) -v
 
-test: build
+test: build jaillover
 	$(GOTEST) -v -coverprofile=$(TMP_DIR)/c.out ./...
+
+jaillover:
+	$(GOGET) $(PROJECTREPO)/testutils/$@
 
 race: build
 	$(GOTEST) -race -v ./...
