@@ -165,3 +165,28 @@ func TestAppendReturnsTheInsertedRoutedWithTheActualIndexWhenPopulated(t *testin
 		t.Errorf("Index of the returned route is not the last one, i.e., 41, but %d", r.Index)
 	}
 }
+
+func TestListReturnsTheSameNumberOfRoutesThanSnapshot(t *testing.T) {
+	srl := New()
+	srl.Append(model.Route{ID: "FOO"})
+
+	if len(srl.List()) != len(srl.Snapshot()) {
+		t.Error("The number of routes returned is not correct")
+	}
+}
+
+func TestListReturnsANumberedListOfRoutes(t *testing.T) {
+	srl := New()
+
+	for i := 0; i < 42; i++ {
+		srl.Append(model.Route{})
+	}
+
+	l := srl.List()
+
+	for i, r := range l {
+		if i != r.Index {
+			t.Fatalf("Route is correctly numbered. Got %v, expected %v", r.Index, i)
+		}
+	}
+}
