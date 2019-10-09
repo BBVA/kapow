@@ -77,6 +77,10 @@ func TestAddRouteReturnsCreated(t *testing.T) {
 		t.Errorf("HTTP status mistmacht. Expected: %d, got: %d", http.StatusCreated, resp.Code)
 	}
 
+	if ct := resp.Header().Get("Content-Type"); ct != "application/json" {
+		t.Errorf("Incorrect content type in response. Expected: application/json, got: %s", ct)
+	}
+
 	respJson := model.Route{}
 	if err := json.Unmarshal(resp.Body.Bytes(), &respJson); err == nil {
 		t.Errorf("Invalid JSON response. %s", resp.Body.String())
@@ -142,6 +146,10 @@ func TestListRoutesReturnsEmptyList(t *testing.T) {
 	if resp.Code != http.StatusNotFound {
 		t.Errorf("HTTP status mistmacht. Expected: %d, got: %d", http.StatusNotFound, resp.Code)
 	}
+
+	if ct := resp.Header().Get("Content-Type"); ct != "application/json" {
+		t.Errorf("Incorrect content type in response. Expected: application/json, got: %s", ct)
+	}
 }
 
 func TestListRoutesReturnsTwoElementsList(t *testing.T) {
@@ -162,6 +170,11 @@ func TestListRoutesReturnsTwoElementsList(t *testing.T) {
 	if resp.Code != http.StatusOK {
 		t.Errorf("HTTP status mistmacht. Expected: %d, got: %d", http.StatusOK, resp.Code)
 	}
+
+	if ct := resp.Header().Get("Content-Type"); ct != "application/json" {
+		t.Errorf("Incorrect content type in response. Expected: application/json, got: %s", ct)
+	}
+
 	respJson := []model.Route{}
 	if err := json.Unmarshal(resp.Body.Bytes(), &respJson); err == nil {
 		t.Errorf("Invalid JSON response. %s", resp.Body.String())
@@ -171,6 +184,7 @@ func TestListRoutesReturnsTwoElementsList(t *testing.T) {
 		model.Route{Method: "GET", Pattern: "/hello1", Entrypoint: "/bin/sh -c", Command: "echo Hello World1 | kapow set /response/body", Index: 0, ID: "ROUTE_XXXXXXXXXXXXXXXXXX"},
 		model.Route{Method: "GET", Pattern: "/hello", Entrypoint: "/bin/sh -c", Command: "echo Hello World | kapow set /response/body", Index: 1, ID: "ROUTE_YYYYYYYYYYYYYYYYYY"},
 	}
+
 	if !reflect.DeepEqual(respJson, expectedRouteList) {
 		t.Errorf("Response mismatch. Expected %#v, got: %#v", expectedRouteList, respJson)
 	}
