@@ -28,24 +28,84 @@ func TestAddRouteReturnsBadRequestWhenMalformedJSONBody(t *testing.T) {
 
 	handler.ServeHTTP(resp, req)
 	if resp.Code != http.StatusBadRequest {
-		t.Errorf("HTTP status mistmacht. Expected: %d, got: %d", http.StatusBadRequest, resp.Code)
+		t.Errorf("HTTP status mismatch. Expected: %d, got: %d", http.StatusBadRequest, resp.Code)
 	}
 
 }
 
 func TestAddRouteReturns422ErrorWhenMandatoryFieldsMissing(t *testing.T) {
-	reqPayload := `{
-  }`
-
-	req := httptest.NewRequest(http.MethodPost, "/routes", strings.NewReader(reqPayload))
-	resp := httptest.NewRecorder()
+	t.Skip("****** WIP ******")
 	handler := http.HandlerFunc(addRoute)
-
-	handler.ServeHTTP(resp, req)
-	if resp.Code != http.StatusUnprocessableEntity {
-		t.Errorf("HTTP status mistmacht. Expected: %d, got: %d", http.StatusUnprocessableEntity, resp.Code)
+	tc := []struct {
+		payload, testCase string
+		testMustFail      bool
+	}{
+		{`{}`, "EmptyBody", true},
+		{`{
+      "method": "GET"
+      }`,
+			"Missing url_pattern",
+			true,
+		},
+		{`{
+      "url_pattern": "/hello"
+      }`,
+			"Missing method",
+			true,
+		},
+		{`{
+      "method": "GET",
+      "url_pattern": "/hello"
+      }`,
+			"",
+			false,
+		},
+		{`{
+      "method": "GET",
+      "url_pattern": "/hello",
+      "entrypoint": ""
+      }`,
+			"",
+			false,
+		},
+		{`{
+      "method": "GET",
+      "url_pattern": "/hello",
+      "command": ""
+      }`,
+			"",
+			false,
+		},
+		{`{
+      "method": "GET",
+      "url_pattern": "/hello",
+      "entrypoint": "",
+      "command": ""
+      }`,
+			"",
+			false,
+		},
 	}
 
+	for _, test := range tc {
+		req := httptest.NewRequest(http.MethodPost, "/routes", strings.NewReader(test.payload))
+		resp := httptest.NewRecorder()
+
+		handler.ServeHTTP(resp, req)
+		if test.testMustFail {
+			if resp.Code != http.StatusUnprocessableEntity {
+				t.Errorf("HTTP status mismatch in case %s. Expected: %d, got: %d", test.testCase, http.StatusUnprocessableEntity, resp.Code)
+			}
+		} else if !test.testMustFail {
+			if resp.Code != http.StatusCreated {
+				t.Errorf("HTTP status mismatch in case %s. Expected: %d, got: %d", test.testCase, http.StatusUnprocessableEntity, resp.Code)
+			}
+
+			if ct := resp.Header().Get("Content-Type"); ct != "application/json" {
+				t.Errorf("Incorrect content type in response. Expected: application/json, got: %s", ct)
+			}
+		}
+	}
 }
 
 func TestAddRouteReturnsCreated(t *testing.T) {
@@ -73,7 +133,7 @@ func TestAddRouteReturnsCreated(t *testing.T) {
 
 	handler.ServeHTTP(resp, req)
 	if resp.Code != http.StatusCreated {
-		t.Errorf("HTTP status mistmacht. Expected: %d, got: %d", http.StatusCreated, resp.Code)
+		t.Errorf("HTTP status mismatch. Expected: %d, got: %d", http.StatusCreated, resp.Code)
 	}
 
 	if ct := resp.Header().Get("Content-Type"); ct != "application/json" {
@@ -108,7 +168,7 @@ func TestRemoveRouteReturnsNotFound(t *testing.T) {
 
 	handler.ServeHTTP(resp, req)
 	if resp.Code != http.StatusNotFound {
-		t.Errorf("HTTP status mistmacht. Expected: %d, got: %d", http.StatusNotFound, resp.Code)
+		t.Errorf("HTTP status mismatch. Expected: %d, got: %d", http.StatusNotFound, resp.Code)
 	}
 }
 
@@ -128,7 +188,7 @@ func TestRemoveRouteReturnsNoContent(t *testing.T) {
 
 	handler.ServeHTTP(resp, req)
 	if resp.Code != http.StatusNoContent {
-		t.Errorf("HTTP status mistmacht. Expected: %d, got: %d", http.StatusNoContent, resp.Code)
+		t.Errorf("HTTP status mismatch. Expected: %d, got: %d", http.StatusNoContent, resp.Code)
 	}
 }
 
@@ -144,7 +204,7 @@ func TestListRoutesReturnsEmptyList(t *testing.T) {
 
 	handler.ServeHTTP(resp, req)
 	if resp.Code != http.StatusOK {
-		t.Errorf("HTTP status mistmacht. Expected: %d, got: %d", http.StatusOK, resp.Code)
+		t.Errorf("HTTP status mismatch. Expected: %d, got: %d", http.StatusOK, resp.Code)
 	}
 
 	if ct := resp.Header().Get("Content-Type"); ct != "application/json" {
@@ -166,7 +226,7 @@ func TestListRoutesReturnsTwoElementsList(t *testing.T) {
 
 	handler.ServeHTTP(resp, req)
 	if resp.Code != http.StatusOK {
-		t.Errorf("HTTP status mistmacht. Expected: %d, got: %d", http.StatusOK, resp.Code)
+		t.Errorf("HTTP status mismatch. Expected: %d, got: %d", http.StatusOK, resp.Code)
 	}
 
 	if ct := resp.Header().Get("Content-Type"); ct != "application/json" {
@@ -185,82 +245,5 @@ func TestListRoutesReturnsTwoElementsList(t *testing.T) {
 
 	if !reflect.DeepEqual(respJson, expectedRouteList) {
 		t.Errorf("Response mismatch. Expected %#v, got: %#v", expectedRouteList, respJson)
-	}
-}
-
-// Test to Hector
-
-func TestAddRouteReturns422ErrorWhenNoMethod(t *testing.T) {
-	t.Skip("****** WIP ******")
-	reqPayload := `{
-    url_pattern": "/hello",
-    entrypoint": null,
-    command": "echo Hello World | kapow set /response/body"
-  }`
-
-	req := httptest.NewRequest(http.MethodPost, "/routes", strings.NewReader(reqPayload))
-	resp := httptest.NewRecorder()
-	handler := http.HandlerFunc(addRoute)
-
-	handler.ServeHTTP(resp, req)
-	if resp.Code != http.StatusUnprocessableEntity {
-		t.Errorf("HTTP status mistmacht. Expected: %d, got: %d", http.StatusUnprocessableEntity, resp.Code)
-	}
-
-}
-
-func TestAddRouteReturns422ErrorWhenNoUrlPattern(t *testing.T) {
-	t.Skip("****** WIP ******")
-	reqPayload := `{
-    method": "GET",
-    entrypoint": null,
-    command": "echo Hello World | kapow set /response/body"
-  }`
-
-	req := httptest.NewRequest(http.MethodPost, "/routes", strings.NewReader(reqPayload))
-	resp := httptest.NewRecorder()
-	handler := http.HandlerFunc(addRoute)
-
-	handler.ServeHTTP(resp, req)
-	if resp.Code != http.StatusUnprocessableEntity {
-		t.Errorf("HTTP status mistmacht. Expected: %d, got: %d", http.StatusUnprocessableEntity, resp.Code)
-	}
-
-}
-
-func TestAddRouteReturns422ErrorWhenNoEntryPoint(t *testing.T) {
-	t.Skip("****** WIP ******")
-	reqPayload := `{
-    method": "GET",
-    url_pattern": "/hello",
-    command": "echo Hello World | kapow set /response/body"
-  }`
-
-	req := httptest.NewRequest(http.MethodPost, "/routes", strings.NewReader(reqPayload))
-	resp := httptest.NewRecorder()
-	handler := http.HandlerFunc(addRoute)
-
-	handler.ServeHTTP(resp, req)
-	if resp.Code != http.StatusUnprocessableEntity {
-		t.Errorf("HTTP status mistmacht. Expected: %d, got: %d", http.StatusUnprocessableEntity, resp.Code)
-	}
-
-}
-
-func TestAddRouteReturns422ErrorWhenNoCommand(t *testing.T) {
-	t.Skip("****** WIP ******")
-	reqPayload := `{
-    method": "GET",
-    url_pattern": "/hello",
-    entrypoint": null,
-  }`
-
-	req := httptest.NewRequest(http.MethodPost, "/routes", strings.NewReader(reqPayload))
-	resp := httptest.NewRecorder()
-	handler := http.HandlerFunc(addRoute)
-
-	handler.ServeHTTP(resp, req)
-	if resp.Code != http.StatusUnprocessableEntity {
-		t.Errorf("HTTP status mistmacht. Expected: %d, got: %d", http.StatusUnprocessableEntity, resp.Code)
 	}
 }
