@@ -81,7 +81,7 @@ func TestAddRouteReturnsCreated(t *testing.T) {
 
 	respJson := model.Route{}
 	if err := json.Unmarshal(resp.Body.Bytes(), &respJson); err == nil {
-		t.Errorf("Invalid JSON response. %s", resp.Body.String()) //FIXME: String comparsion not working
+		t.Errorf("Invalid JSON response. %s", resp.Body.String()) //FIXME: String comparsion not working, comparing against itself?
 	}
 
 	expectedRouteSpec := model.Route{Method: "GET", Pattern: "/hello", Entrypoint: "/bin/sh -c", Command: "echo Hello World | kapow set /response/body", Index: 0, ID: "ROUTE_XXXXXXXXXXXXXXXXXX"}
@@ -92,7 +92,6 @@ func TestAddRouteReturnsCreated(t *testing.T) {
 
 func TestRemoveRouteReturnsNotFound(t *testing.T) {
 	t.Skip("****** WIP ******")
-
 	req := httptest.NewRequest(http.MethodDelete, "/routes/ROUTE_XXXXXXXXXXXXXXXXXX", nil)
 	resp := httptest.NewRecorder()
 	handler := http.HandlerFunc(removeRoute)
@@ -112,8 +111,6 @@ func TestRemoveRouteReturnsNotFound(t *testing.T) {
 }
 
 func TestRemoveRouteReturnsNoContent(t *testing.T) {
-	t.Skip("****** WIP ******")
-
 	req := httptest.NewRequest(http.MethodDelete, "/routes/ROUTE_XXXXXXXXXXXXXXXXXX", nil)
 	resp := httptest.NewRecorder()
 	handler := http.HandlerFunc(removeRoute)

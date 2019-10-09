@@ -2,7 +2,6 @@ package control
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -30,11 +29,14 @@ func Run(bindAddr string) {
 // user.Routes.Remove() []model.Route
 var funcRemove func(id string) error
 
-func removeRoute(http.ResponseWriter, *http.Request) {
-
-	if err := funcRemove(""); err != nil {
-		fmt.Printf("Mostoles, we've had a problem")
+func removeRoute(res http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	id, _ := vars["id"]
+	if err := funcRemove(id); err != nil {
+		res.WriteHeader(http.StatusNotFound)
+		return
 	}
+	res.WriteHeader(http.StatusNoContent)
 }
 
 // user.Routes.List() []model.Route
