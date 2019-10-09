@@ -1,6 +1,7 @@
 package state
 
 import (
+	"errors"
 	"sync"
 
 	"github.com/BBVA/kapow/internal/server/model"
@@ -42,4 +43,17 @@ func (srl *safeRouteList) List() []model.Route {
 		rs[i].Index = i
 	}
 	return rs
+}
+
+func (srl *safeRouteList) Delete(ID string) error {
+	srl.m.Lock()
+	defer srl.m.Unlock()
+
+	for i := 0; i < len(srl.rs); i++ {
+		if srl.rs[i].ID == ID {
+			srl.rs = append(srl.rs[:i], srl.rs[i+1:]...)
+			return nil
+		}
+	}
+	return errors.New("Route not found")
 }

@@ -190,3 +190,84 @@ func TestListReturnsANumberedListOfRoutes(t *testing.T) {
 		}
 	}
 }
+
+func TestDeleteReturnsAnErrorOnEmptyListOfRoutes(t *testing.T) {
+	srl := New()
+
+	err := srl.Delete("FOO")
+
+	if err == nil {
+		t.Error("Expected error not returned")
+	}
+}
+
+func TestDeleteReturnsNilWhenTheRouteIsInTheList(t *testing.T) {
+	srl := New()
+	srl.rs = append(srl.rs, model.Route{ID: "FOO"})
+
+	err := srl.Delete("FOO")
+
+	if err != nil {
+		t.Errorf("Nil was expected but an error was returned %q", err)
+	}
+}
+
+func TestDeleteActuallyRemovesTheElementFromTheList(t *testing.T) {
+	srl := New()
+	srl.rs = append(srl.rs, model.Route{ID: "FOO"})
+
+	_ = srl.Delete("FOO")
+
+	if len(srl.rs) != 0 {
+		t.Error("The route was not removed from the list")
+	}
+}
+
+func TestDeleteRemovesARouteFromTheMiddleOfTheList(t *testing.T) {
+	srl := New()
+	srl.rs = append(srl.rs, model.Route{ID: "FOO"})
+	srl.rs = append(srl.rs, model.Route{ID: "BAR"})
+	srl.rs = append(srl.rs, model.Route{ID: "QUX"})
+
+	_ = srl.Delete("BAR")
+
+	if len(srl.rs) != 2 || srl.rs[0].ID != "FOO" || srl.rs[1].ID != "QUX" {
+		t.Error("The route was not properly removed")
+	}
+}
+
+func TestDeleteWaitsForWriterToFinishWriting(t *testing.T) {
+	srl := New()
+
+	srl.m.Lock()
+	defer srl.m.Unlock()
+
+	c := make(chan error)
+	go func() { c <- srl.Delete("FOO") }()
+
+	time.Sleep(10 * time.Millisecond)
+
+	select {
+	case <-c:
+		t.Error("Didn't wait for the writer to finish")
+	default:
+	}
+}
+
+func TestDeleteWaitsForReadersToFinishReading(t *testing.T) {
+	srl := New()
+
+	srl.m.RLock()
+	defer srl.m.RUnlock()
+
+	c := make(chan error)
+	go func() { c <- srl.Delete("FOO") }()
+
+	time.Sleep(10 * time.Millisecond)
+
+	select {
+	case <-c:
+		t.Error("Didn't wait for the reader to finish")
+	default:
+	}
+}
