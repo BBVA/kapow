@@ -49,7 +49,6 @@ func TestAddRouteReturns422ErrorWhenMandatoryFieldsMissing(t *testing.T) {
 }
 
 func TestAddRouteReturnsCreated(t *testing.T) {
-	t.Skip("****** WIP ******")
 	reqPayload := `{
     "method": "GET",
     "url_pattern": "/hello",
@@ -134,7 +133,6 @@ func TestRemoveRouteReturnsNoContent(t *testing.T) {
 }
 
 func TestListRoutesReturnsEmptyList(t *testing.T) {
-	t.Skip("****** WIP ******")
 	req := httptest.NewRequest(http.MethodGet, "/routes/", nil)
 	resp := httptest.NewRecorder()
 	handler := http.HandlerFunc(listRoutes)
@@ -155,7 +153,6 @@ func TestListRoutesReturnsEmptyList(t *testing.T) {
 }
 
 func TestListRoutesReturnsTwoElementsList(t *testing.T) {
-	t.Skip("****** WIP ******")
 	req := httptest.NewRequest(http.MethodGet, "/routes", nil)
 	resp := httptest.NewRecorder()
 	handler := http.HandlerFunc(listRoutes)

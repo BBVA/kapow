@@ -44,8 +44,11 @@ var funcList func() []model.Route = user.Routes.List
 
 func listRoutes(res http.ResponseWriter, req *http.Request) {
 
-	funcList()
-	res.WriteHeader(http.StatusNotFound)
+	list := funcList()
+
+	listBytes, _ := json.Marshal(list)
+	res.Header().Set("Content-Type", "application/json")
+	res.Write(listBytes)
 }
 
 // user.Routes.Append(r model.Route) model.Route
