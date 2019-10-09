@@ -186,3 +186,81 @@ func TestListRoutesReturnsTwoElementsList(t *testing.T) {
 		t.Errorf("Response mismatch. Expected %#v, got: %#v", expectedRouteList, respJson)
 	}
 }
+
+// Test to Hector
+
+func TestAddRouteReturns422ErrorWhenNoMethod(t *testing.T) {
+	t.Skip("****** WIP ******")
+	reqPayload := `{
+    url_pattern": "/hello",
+    entrypoint": null,
+    command": "echo Hello World | kapow set /response/body"
+  }`
+
+	req := httptest.NewRequest(http.MethodPost, "/routes", strings.NewReader(reqPayload))
+	resp := httptest.NewRecorder()
+	handler := http.HandlerFunc(addRoute)
+
+	handler.ServeHTTP(resp, req)
+	if resp.Code != http.StatusUnprocessableEntity {
+		t.Errorf("HTTP status mistmacht. Expected: %d, got: %d", http.StatusUnprocessableEntity, resp.Code)
+	}
+
+}
+
+func TestAddRouteReturns422ErrorWhenNoUrlPattern(t *testing.T) {
+	t.Skip("****** WIP ******")
+	reqPayload := `{
+    method": "GET",
+    entrypoint": null,
+    command": "echo Hello World | kapow set /response/body"
+  }`
+
+	req := httptest.NewRequest(http.MethodPost, "/routes", strings.NewReader(reqPayload))
+	resp := httptest.NewRecorder()
+	handler := http.HandlerFunc(addRoute)
+
+	handler.ServeHTTP(resp, req)
+	if resp.Code != http.StatusUnprocessableEntity {
+		t.Errorf("HTTP status mistmacht. Expected: %d, got: %d", http.StatusUnprocessableEntity, resp.Code)
+	}
+
+}
+
+func TestAddRouteReturns422ErrorWhenNoEntryPoint(t *testing.T) {
+	t.Skip("****** WIP ******")
+	reqPayload := `{
+    method": "GET",
+    url_pattern": "/hello",
+    command": "echo Hello World | kapow set /response/body"
+  }`
+
+	req := httptest.NewRequest(http.MethodPost, "/routes", strings.NewReader(reqPayload))
+	resp := httptest.NewRecorder()
+	handler := http.HandlerFunc(addRoute)
+
+	handler.ServeHTTP(resp, req)
+	if resp.Code != http.StatusUnprocessableEntity {
+		t.Errorf("HTTP status mistmacht. Expected: %d, got: %d", http.StatusUnprocessableEntity, resp.Code)
+	}
+
+}
+
+func TestAddRouteReturns422ErrorWhenNoCommand(t *testing.T) {
+	t.Skip("****** WIP ******")
+	reqPayload := `{
+    method": "GET",
+    url_pattern": "/hello",
+    entrypoint": null,
+  }`
+
+	req := httptest.NewRequest(http.MethodPost, "/routes", strings.NewReader(reqPayload))
+	resp := httptest.NewRecorder()
+	handler := http.HandlerFunc(addRoute)
+
+	handler.ServeHTTP(resp, req)
+	if resp.Code != http.StatusUnprocessableEntity {
+		t.Errorf("HTTP status mistmacht. Expected: %d, got: %d", http.StatusUnprocessableEntity, resp.Code)
+	}
+
+}
