@@ -11,7 +11,6 @@ import (
 )
 
 func TestAddRouteWhenMalformedJSONBodyReturnsBadRequest(t *testing.T) {
-	t.Skip("****** WIP ******")
 	reqPayload := `{
     method": "GET",
     url_pattern": "/hello",

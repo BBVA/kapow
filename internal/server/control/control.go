@@ -1,8 +1,10 @@
 package control
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 
@@ -45,11 +47,18 @@ func listRoutes(http.ResponseWriter, *http.Request) {
 
 }
 
-// user.Routes.Append(r model.Route)
+// user.Routes.Append(r model.Route) model.Route
 var funcAdd func(model.Route) model.Route = user.Routes.Append
 
 func addRoute(res http.ResponseWriter, req *http.Request) {
+	var route model.Route
 
+	payload, _ := ioutil.ReadAll(req.Body)
+	err := json.Unmarshal(payload, &route)
+	if err != nil {
+		res.WriteHeader(http.StatusBadRequest)
+		return
+	}
 	funcAdd(model.Route{})
 	res.WriteHeader(http.StatusCreated)
 	_, _ = io.Copy(res, req.Body)
