@@ -2,15 +2,18 @@ package control
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"strings"
 	"testing"
 
 	"github.com/BBVA/kapow/internal/server/model"
 )
 
-func TestAddRouteWhenMalformedJSONBodyReturnsBadRequest(t *testing.T) {
+func TestAddRouteReturnsBadRequestWhenMalformedJSONBody(t *testing.T) {
+	t.Skip("****** WIP ******")
 	reqPayload := `{
     method": "GET",
     url_pattern": "/hello",
@@ -29,7 +32,7 @@ func TestAddRouteWhenMalformedJSONBodyReturnsBadRequest(t *testing.T) {
 
 }
 
-func TestAddRouteWhenMandatoryFieldsMissingReturns422Error(t *testing.T) {
+func TestAddRouteReturns422ErrorWhenMandatoryFieldsMissing(t *testing.T) {
 	t.Skip("****** WIP ******")
 	reqPayload := `{
   }`
@@ -85,50 +88,90 @@ func TestAddRouteReturnsCreated(t *testing.T) {
 	}
 }
 
-func TestAppendNewRouteFromRequest(t *testing.T) {
+func TestRemoveRouteReturnsNotFound(t *testing.T) {
 	t.Skip("****** WIP ******")
-	reqPayload := `{
-  "method": "GET",
-  "url_pattern": "/hello",
-  "entrypoint": null,
-  "command": "echo Hello World | kapow set /response/body"
-}`
 
-	req := httptest.NewRequest(http.MethodPost, "/routes", strings.NewReader(reqPayload))
+	req := httptest.NewRequest(http.MethodDelete, "/routes/ROUTE_XXXXXXXXXXXXXXXXXX", nil)
 	resp := httptest.NewRecorder()
+	handler := http.HandlerFunc(removeRoute)
 
-	handler := http.HandlerFunc(addRoute)
+	funcRemove = func(id string) error {
+		if id == "ROUTE_XXXXXXXXXXXXXXXXXX" {
+			return errors.New(id)
+		}
+
+		return nil
+	}
 
 	handler.ServeHTTP(resp, req)
-	if resp.Code != http.StatusCreated {
-		t.Errorf("HTTP status mistmacht. Expected: %d, got: %d", http.StatusCreated, resp.Code)
+	if resp.Code != http.StatusNotFound {
+		t.Errorf("HTTP status mistmacht. Expected: %d, got: %d", http.StatusNotFound, resp.Code)
+	}
+}
+
+func TestRemoveRouteReturnsNoContent(t *testing.T) {
+	t.Skip("****** WIP ******")
+
+	req := httptest.NewRequest(http.MethodDelete, "/routes/ROUTE_XXXXXXXXXXXXXXXXXX", nil)
+	resp := httptest.NewRecorder()
+	handler := http.HandlerFunc(removeRoute)
+
+	funcRemove = func(id string) error {
+		return nil
 	}
 
-	//	expectedPayload := `{
-	//  "method": "GET",
-	//  "url_pattern": "/hello",
-	//  "entrypoint": null,
-	//  "command": "echo Hello World | kapow set /response/body"
-	//}`
-	respJsonRoute := model.Route{}
-	_ = json.Unmarshal(resp.Body.Bytes(), &respJsonRoute)
-	if respJsonRoute.Method != "GET" {
-		t.Errorf("Method mismatch. Expected: %s, got: %s", "GET", respJsonRoute.Method)
+	handler.ServeHTTP(resp, req)
+	if resp.Code != http.StatusNoContent {
+		t.Errorf("HTTP status mistmacht. Expected: %d, got: %d", http.StatusNoContent, resp.Code)
+	}
+}
+
+func TestListRoutesReturnsEmptyList(t *testing.T) {
+	t.Skip("****** WIP ******")
+
+	req := httptest.NewRequest(http.MethodDelete, "/routes/ROUTE_XXXXXXXXXXXXXXXXXX", nil)
+	resp := httptest.NewRecorder()
+	handler := http.HandlerFunc(removeRoute)
+
+	funcList = func() []model.Route {
+
+		return []model.Route{}
 	}
 
-	if respJsonRoute.Entrypoint != "" {
-		t.Errorf("Entrypoint mismatch. Expected: %s, got: %s", "", respJsonRoute.Entrypoint)
+	handler.ServeHTTP(resp, req)
+	if resp.Code != http.StatusNotFound {
+		t.Errorf("HTTP status mistmacht. Expected: %d, got: %d", http.StatusNotFound, resp.Code)
+	}
+}
+
+func TestListRoutesReturnsTwoElementsList(t *testing.T) {
+	t.Skip("****** WIP ******")
+
+	req := httptest.NewRequest(http.MethodDelete, "/routes/ROUTE_XXXXXXXXXXXXXXXXXX", nil)
+	resp := httptest.NewRecorder()
+	handler := http.HandlerFunc(removeRoute)
+
+	funcList = func() []model.Route {
+		return []model.Route{
+			model.Route{Method: "GET", Pattern: "/hello1", Entrypoint: "/bin/sh -c", Command: "echo Hello World1 | kapow set /response/body", Index: 0, ID: "ROUTE_XXXXXXXXXXXXXXXXXX"},
+			model.Route{Method: "GET", Pattern: "/hello", Entrypoint: "/bin/sh -c", Command: "echo Hello World | kapow set /response/body", Index: 1, ID: "ROUTE_YYYYYYYYYYYYYYYYYY"},
+		}
 	}
 
-	if respJsonRoute.Command != "echo Hello World | kapow set /response/body" {
-		t.Errorf("Command mismatch. Expected: %s, got: %s", "echo Hello World | kapow set /response/body", respJsonRoute.Command)
+	handler.ServeHTTP(resp, req)
+	if resp.Code != http.StatusOK {
+		t.Errorf("HTTP status mistmacht. Expected: %d, got: %d", http.StatusOK, resp.Code)
+	}
+	respJson := []model.Route{}
+	if err := json.Unmarshal(resp.Body.Bytes(), &respJson); err == nil {
+		t.Errorf("Invalid JSON response. %s", resp.Body.String())
 	}
 
-	if respJsonRoute.Pattern != "/hello" {
-		t.Errorf("Pattern mismatch. Expected: %s, got: %s", "/hello", respJsonRoute.Pattern)
+	expectedRouteList := []model.Route{
+		model.Route{Method: "GET", Pattern: "/hello1", Entrypoint: "/bin/sh -c", Command: "echo Hello World1 | kapow set /response/body", Index: 0, ID: "ROUTE_XXXXXXXXXXXXXXXXXX"},
+		model.Route{Method: "GET", Pattern: "/hello", Entrypoint: "/bin/sh -c", Command: "echo Hello World | kapow set /response/body", Index: 1, ID: "ROUTE_YYYYYYYYYYYYYYYYYY"},
 	}
-
-	if respJsonRoute.Index > 0 {
-		t.Errorf("Index mismatch. Expected: %d, got: %d", 0, respJsonRoute.Index)
+	if !reflect.DeepEqual(respJson, expectedRouteList) {
+		t.Errorf("Response mismatch. Expected %#v, got: %#v", expectedRouteList, respJson)
 	}
 }
