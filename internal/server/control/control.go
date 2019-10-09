@@ -3,7 +3,6 @@ package control
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -59,7 +58,14 @@ func addRoute(res http.ResponseWriter, req *http.Request) {
 		res.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	funcAdd(model.Route{})
+	if route.Method == "" {
+		res.WriteHeader(http.StatusUnprocessableEntity)
+		return
+	}
+	created := funcAdd(route)
+	createdBytes, _ := json.Marshal(created)
+
 	res.WriteHeader(http.StatusCreated)
-	_, _ = io.Copy(res, req.Body)
+	res.Header().Set("Content-Type", "application/json")
+	res.Write(createdBytes)
 }

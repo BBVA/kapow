@@ -13,7 +13,6 @@ import (
 )
 
 func TestAddRouteReturnsBadRequestWhenMalformedJSONBody(t *testing.T) {
-
 	reqPayload := `{
     method": "GET",
     url_pattern": "/hello",
@@ -33,7 +32,6 @@ func TestAddRouteReturnsBadRequestWhenMalformedJSONBody(t *testing.T) {
 }
 
 func TestAddRouteReturns422ErrorWhenMandatoryFieldsMissing(t *testing.T) {
-	t.Skip("****** WIP ******")
 	reqPayload := `{
   }`
 
@@ -83,7 +81,7 @@ func TestAddRouteReturnsCreated(t *testing.T) {
 
 	respJson := model.Route{}
 	if err := json.Unmarshal(resp.Body.Bytes(), &respJson); err == nil {
-		t.Errorf("Invalid JSON response. %s", resp.Body.String())
+		t.Errorf("Invalid JSON response. %s", resp.Body.String()) //FIXME: String comparsion not working
 	}
 
 	expectedRouteSpec := model.Route{Method: "GET", Pattern: "/hello", Entrypoint: "/bin/sh -c", Command: "echo Hello World | kapow set /response/body", Index: 0, ID: "ROUTE_XXXXXXXXXXXXXXXXXX"}
