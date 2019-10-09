@@ -48,7 +48,7 @@ func listRoutes(res http.ResponseWriter, req *http.Request) {
 
 	listBytes, _ := json.Marshal(list)
 	res.Header().Set("Content-Type", "application/json")
-	res.Write(listBytes)
+	_, _ = res.Write(listBytes)
 }
 
 // user.Routes.Append(r model.Route) model.Route
