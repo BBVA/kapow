@@ -36,12 +36,12 @@ func removeRoute(http.ResponseWriter, *http.Request) {
 	}
 }
 
-// user.Routes.Snapshot() []model.Route
-var funcSnapshot func() []model.Route = user.Routes.Snapshot
+// user.Routes.List() []model.Route
+var funcList func() []model.Route = user.Routes.List
 
 func listRoutes(http.ResponseWriter, *http.Request) {
 
-	funcSnapshot()
+	funcList()
 
 }
 
