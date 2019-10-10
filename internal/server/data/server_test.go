@@ -116,7 +116,7 @@ func TestUpdateResourceOkWhenValidHandlerID(t *testing.T) {
 }
 
 func TestUpdateResourceBadRequestWhenInvalidCookiesUrl(t *testing.T) {
-	t.Skip("**** WIP ****")
+
 	request := httptest.NewRequest(http.MethodPut, "/handlers/HANDLER_YYYYYYYYYYYYYYYY/response/cookies", strings.NewReader("value"))
 	response := httptest.NewRecorder()
 	handler := mux.NewRouter()

@@ -39,7 +39,7 @@ func updateResource(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if resource := vars["resource"]; resource == "response/headers" {
+	if resource := vars["resource"]; resource == "response/headers" || resource == "response/cookies" {
 		res.WriteHeader(http.StatusBadRequest)
 	}
 
