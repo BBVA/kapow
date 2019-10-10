@@ -137,6 +137,38 @@ func TestUpdateResourceBadRequestWhenInvalidCookiesUrl(t *testing.T) {
 	}
 }
 
+func TestUpdateResourceAddHeaderWhenRecieved(t *testing.T) {
+	t.Skip("**** WIP ****")
+	request := httptest.NewRequest(http.MethodPut, "/handlers/HANDLER_YYYYYYYYYYYYYYYY/response/header/pepe", strings.NewReader("mola"))
+	response := httptest.NewRecorder()
+	handler := mux.NewRouter()
+	handler.HandleFunc("/handlers/{handler_id}/{resource:.*$}", updateResource).
+		Methods("PUT")
+
+	handlerResponse := httptest.NewRecorder()
+	myHandler := &model.Handler{
+		ID:     "HANDLER_YYYYYYYYYYYYYYYY",
+		Writer: handlerResponse,
+	}
+	getHandlerId = func(id string) (*model.Handler, bool) {
+		if id == "HANDLER_YYYYYYYYYYYYYYYY" {
+			return myHandler, true
+		}
+
+		return nil, false
+	}
+
+	handler.ServeHTTP(response, request)
+	if response.Code != http.StatusOK {
+		t.Errorf("HTTP Status mismatch. Expected: %d, got: %d", http.StatusOK, response.Code)
+	}
+
+	headerValue := handlerResponse.Header().Get("pepe")
+	if headerValue != "mola" {
+		t.Errorf("Invalid Cookie value. Expected: %s, got: %s", "mola", headerValue)
+	}
+}
+
 // FIXME: Fails because URL doesn't match
 //func TestUpdateResourceNotFoundWhenInvalidHandlerID(t *testing.T) {
 //	request := httptest.NewRequest(http.MethodPut, "/handlers/response/headers/language", strings.NewReader("ES"))
