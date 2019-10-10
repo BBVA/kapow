@@ -5,12 +5,29 @@ package mux
 import (
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"reflect"
 	"testing"
 	"time"
 
+	"github.com/BBVA/kapow/internal/server/model"
 	"github.com/gorilla/mux"
 )
+
+func TestNewReturnsAProperlyInitializedMux(t *testing.T) {
+	sm := New()
+	sm.root.HandleFunc("/foo", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusTeapot)
+	})
+	req := httptest.NewRequest("GET", "/foo", nil)
+	w := httptest.NewRecorder()
+
+	sm.root.ServeHTTP(w, req)
+
+	if w.Result().StatusCode != http.StatusTeapot {
+		t.Error("mux not properly initialized")
+	}
+}
 
 func TestSwappableMuxGetReturnsTheCurrentMux(t *testing.T) {
 	sm := swappableMux{}
@@ -190,5 +207,32 @@ func TestServeHTTPCallsInnerMuxAfterAcquiringLock(t *testing.T) {
 
 	if !called {
 		t.Error("Inner mux wasn't called after mutex released")
+	}
+}
+
+func TestUpdateUpdatesMuxWithProvideRouteList(t *testing.T) {
+	sm := New()
+	rs := []model.Route{
+		model.Route{
+			Method:     "GET",
+			Pattern:    "/",
+			Entrypoint: "/bin/sh -c",
+			Command:    "jaillover > /tmp/kapow-test-update-mux",
+		},
+	}
+	os.Remove("/tmp/kapow-test-update-mux")
+	defer os.Remove("/tmp/kapow-test-update-mux")
+
+	sm.Update(rs)
+
+	req := httptest.NewRequest("GET", "/", nil)
+	w := httptest.NewRecorder()
+
+	sm.ServeHTTP(w, req)
+
+	if _, err := os.Stat("/tmp/kapow-test-update-mux"); os.IsNotExist(err) {
+		t.Error("Routes not updated")
+	} else if err != nil {
+		t.Fatalf("Unexpected error: %v", err)
 	}
 }
