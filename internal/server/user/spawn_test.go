@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"log"
 	"os/exec"
+	"reflect"
 	"strings"
 	"testing"
 
@@ -121,5 +122,104 @@ func TestSpawnSetsKapowHandlerIDEnvVar(t *testing.T) {
 
 	if v, ok := jldata.Env["KAPOW_HANDLER_ID"]; !ok || v != "HANDLER_ID_FOO" {
 		t.Error("KAPOW_HANDLER_ID is not set properly")
+	}
+}
+
+func TestSpawnRunsOKEntrypointsWithAParam(t *testing.T) {
+	r := &model.Route{
+		Entrypoint: locateJailLover() + " -foo",
+	}
+
+	h := &model.Handler{
+		Route: r,
+	}
+
+	out := &bytes.Buffer{}
+
+	_ = spawn(h, out)
+
+	jldata := decodeJailLover(out.Bytes())
+
+	if !reflect.DeepEqual(jldata.Cmdline, []string{locateJailLover(), "-foo"}) {
+		t.Error("Args not as expected")
+	}
+}
+
+func TestSpawnRunsOKEntrypointWithArgWithSpace(t *testing.T) {
+	r := &model.Route{
+		Entrypoint: locateJailLover() + ` "foo bar"`,
+	}
+
+	h := &model.Handler{
+		Route: r,
+	}
+
+	out := &bytes.Buffer{}
+
+	_ = spawn(h, out)
+
+	jldata := decodeJailLover(out.Bytes())
+
+	if !reflect.DeepEqual(jldata.Cmdline, []string{locateJailLover(), "foo bar"}) {
+		t.Error("Args not parsed as expected")
+	}
+}
+
+func TestSpawnErrorsWhenEntrypointIsInvalidShell(t *testing.T) {
+	r := &model.Route{
+		Entrypoint: locateJailLover() + ` "`,
+	}
+
+	h := &model.Handler{
+		Route: r,
+	}
+
+	out := &bytes.Buffer{}
+
+	err := spawn(h, out)
+
+	if err == nil {
+		t.Error("Invalid args not reported")
+	}
+}
+
+func TestSpawnRunsOKEntrypointWithMultipleArgs(t *testing.T) {
+	r := &model.Route{
+		Entrypoint: locateJailLover() + " foo bar",
+	}
+
+	h := &model.Handler{
+		Route: r,
+	}
+
+	out := &bytes.Buffer{}
+
+	_ = spawn(h, out)
+
+	jldata := decodeJailLover(out.Bytes())
+
+	if !reflect.DeepEqual(jldata.Cmdline, []string{locateJailLover(), "foo", "bar"}) {
+		t.Error("Args not parsed as expected")
+	}
+}
+
+func TestSpawnRunsOKEntrypointAndCommand(t *testing.T) {
+	r := &model.Route{
+		Entrypoint: locateJailLover() + " foo bar",
+		Command:    "baz qux",
+	}
+
+	h := &model.Handler{
+		Route: r,
+	}
+
+	out := &bytes.Buffer{}
+
+	_ = spawn(h, out)
+
+	jldata := decodeJailLover(out.Bytes())
+
+	if !reflect.DeepEqual(jldata.Cmdline, []string{locateJailLover(), "foo", "bar", "baz qux"}) {
+		t.Error("Malformed cmdline")
 	}
 }
