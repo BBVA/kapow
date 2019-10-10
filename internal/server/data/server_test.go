@@ -73,7 +73,7 @@ func TestUpdateResourceNotFoundWhenInvalidHandlerID(t *testing.T) {
 }
 
 func TestUpdateResourceBadRequestWhenInvalidUrl(t *testing.T) {
-    t.Skip("***** WIP ****")
+
 	request := httptest.NewRequest(http.MethodPut, "/handlers/HANDLER_YYYYYYYYYYYYYYYY/response/headers", strings.NewReader("value"))
 	response := httptest.NewRecorder()
 	handler := mux.NewRouter()

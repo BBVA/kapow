@@ -39,6 +39,10 @@ func updateResource(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	if resource := vars["resource"]; resource == "response/headers" {
+		res.WriteHeader(http.StatusBadRequest)
+	}
+
 	res.WriteHeader(http.StatusOK)
 	//
 	//if _, ok := vars["key"]; !ok {
