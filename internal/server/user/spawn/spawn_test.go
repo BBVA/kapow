@@ -1,4 +1,4 @@
-package user
+package spawn
 
 import (
 	"bytes"
@@ -34,7 +34,7 @@ func locateJailLover() string {
 }
 
 func TestSpawnRetursErrorWhenEntrypointIsBad(t *testing.T) {
-	r := &model.Route{
+	r := model.Route{
 		Entrypoint: "/bin/this_executable_is_not_likely_to_exist",
 	}
 
@@ -42,14 +42,14 @@ func TestSpawnRetursErrorWhenEntrypointIsBad(t *testing.T) {
 		Route: r,
 	}
 
-	err := spawn(h, nil)
+	err := Spawn(h, nil)
 	if err == nil {
 		t.Error("Bad executable not reported")
 	}
 }
 
 func TestSpawnReturnsNilWhenEntrypointIsGood(t *testing.T) {
-	r := &model.Route{
+	r := model.Route{
 		Entrypoint: locateJailLover(),
 	}
 
@@ -57,14 +57,14 @@ func TestSpawnReturnsNilWhenEntrypointIsGood(t *testing.T) {
 		Route: r,
 	}
 
-	err := spawn(h, nil)
+	err := Spawn(h, nil)
 	if err != nil {
 		t.Error("Good executable reported")
 	}
 }
 
 func TestSpawnWritesToStdout(t *testing.T) {
-	r := &model.Route{
+	r := model.Route{
 		Entrypoint: locateJailLover(),
 	}
 
@@ -74,7 +74,7 @@ func TestSpawnWritesToStdout(t *testing.T) {
 
 	out := &bytes.Buffer{}
 
-	_ = spawn(h, out)
+	_ = Spawn(h, out)
 
 	jldata := decodeJailLover(out.Bytes())
 
@@ -85,7 +85,7 @@ func TestSpawnWritesToStdout(t *testing.T) {
 }
 
 func TestSpawnSetsKapowURLEnvVar(t *testing.T) {
-	r := &model.Route{
+	r := model.Route{
 		Entrypoint: locateJailLover(),
 	}
 
@@ -95,7 +95,7 @@ func TestSpawnSetsKapowURLEnvVar(t *testing.T) {
 
 	out := &bytes.Buffer{}
 
-	_ = spawn(h, out)
+	_ = Spawn(h, out)
 
 	jldata := decodeJailLover(out.Bytes())
 
@@ -105,7 +105,7 @@ func TestSpawnSetsKapowURLEnvVar(t *testing.T) {
 }
 
 func TestSpawnSetsKapowHandlerIDEnvVar(t *testing.T) {
-	r := &model.Route{
+	r := model.Route{
 		Entrypoint: locateJailLover(),
 	}
 
@@ -116,7 +116,7 @@ func TestSpawnSetsKapowHandlerIDEnvVar(t *testing.T) {
 
 	out := &bytes.Buffer{}
 
-	_ = spawn(h, out)
+	_ = Spawn(h, out)
 
 	jldata := decodeJailLover(out.Bytes())
 
@@ -126,7 +126,7 @@ func TestSpawnSetsKapowHandlerIDEnvVar(t *testing.T) {
 }
 
 func TestSpawnRunsOKEntrypointsWithAParam(t *testing.T) {
-	r := &model.Route{
+	r := model.Route{
 		Entrypoint: locateJailLover() + " -foo",
 	}
 
@@ -136,7 +136,7 @@ func TestSpawnRunsOKEntrypointsWithAParam(t *testing.T) {
 
 	out := &bytes.Buffer{}
 
-	_ = spawn(h, out)
+	_ = Spawn(h, out)
 
 	jldata := decodeJailLover(out.Bytes())
 
@@ -146,7 +146,7 @@ func TestSpawnRunsOKEntrypointsWithAParam(t *testing.T) {
 }
 
 func TestSpawnRunsOKEntrypointWithArgWithSpace(t *testing.T) {
-	r := &model.Route{
+	r := model.Route{
 		Entrypoint: locateJailLover() + ` "foo bar"`,
 	}
 
@@ -156,7 +156,7 @@ func TestSpawnRunsOKEntrypointWithArgWithSpace(t *testing.T) {
 
 	out := &bytes.Buffer{}
 
-	_ = spawn(h, out)
+	_ = Spawn(h, out)
 
 	jldata := decodeJailLover(out.Bytes())
 
@@ -166,7 +166,7 @@ func TestSpawnRunsOKEntrypointWithArgWithSpace(t *testing.T) {
 }
 
 func TestSpawnErrorsWhenEntrypointIsInvalidShell(t *testing.T) {
-	r := &model.Route{
+	r := model.Route{
 		Entrypoint: locateJailLover() + ` "`,
 	}
 
@@ -176,7 +176,7 @@ func TestSpawnErrorsWhenEntrypointIsInvalidShell(t *testing.T) {
 
 	out := &bytes.Buffer{}
 
-	err := spawn(h, out)
+	err := Spawn(h, out)
 
 	if err == nil {
 		t.Error("Invalid args not reported")
@@ -184,7 +184,7 @@ func TestSpawnErrorsWhenEntrypointIsInvalidShell(t *testing.T) {
 }
 
 func TestSpawnRunsOKEntrypointWithMultipleArgs(t *testing.T) {
-	r := &model.Route{
+	r := model.Route{
 		Entrypoint: locateJailLover() + " foo bar",
 	}
 
@@ -194,7 +194,7 @@ func TestSpawnRunsOKEntrypointWithMultipleArgs(t *testing.T) {
 
 	out := &bytes.Buffer{}
 
-	_ = spawn(h, out)
+	_ = Spawn(h, out)
 
 	jldata := decodeJailLover(out.Bytes())
 
@@ -204,7 +204,7 @@ func TestSpawnRunsOKEntrypointWithMultipleArgs(t *testing.T) {
 }
 
 func TestSpawnRunsOKEntrypointAndCommand(t *testing.T) {
-	r := &model.Route{
+	r := model.Route{
 		Entrypoint: locateJailLover() + " foo bar",
 		Command:    "baz qux",
 	}
@@ -215,11 +215,24 @@ func TestSpawnRunsOKEntrypointAndCommand(t *testing.T) {
 
 	out := &bytes.Buffer{}
 
-	_ = spawn(h, out)
+	_ = Spawn(h, out)
 
 	jldata := decodeJailLover(out.Bytes())
 
 	if !reflect.DeepEqual(jldata.Cmdline, []string{locateJailLover(), "foo", "bar", "baz qux"}) {
 		t.Error("Malformed cmdline")
+	}
+}
+
+func TestSpawnReturnsErrorIfEntrypointNotSet(t *testing.T) {
+	r := model.Route{}
+	h := &model.Handler{
+		Route: r,
+	}
+
+	err := Spawn(h, nil)
+
+	if err == nil {
+		t.Error("Spawn() did not report entrypoint not set")
 	}
 }

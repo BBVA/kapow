@@ -1,6 +1,7 @@
-package user
+package spawn
 
 import (
+	"errors"
 	"io"
 	"os"
 	"os/exec"
@@ -10,7 +11,10 @@ import (
 	"github.com/BBVA/kapow/internal/server/model"
 )
 
-func spawn(h *model.Handler, out io.Writer) error {
+func Spawn(h *model.Handler, out io.Writer) error {
+	if h.Route.Entrypoint == "" {
+		return errors.New("Entrypoint cannot be empty")
+	}
 	args, err := shlex.Split(h.Route.Entrypoint)
 	if err != nil {
 		return err

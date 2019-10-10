@@ -13,9 +13,8 @@ type Handler struct {
 	// ID is unique identifier of the request.
 	ID string
 
-	// Route is a reference to the original route that matched this
-	// request.
-	Route *Route
+	// Route is the original route that matched this request.
+	Route
 
 	// Writing is a mutex that prevents two goroutines from writing at
 	// the same time in the response.
