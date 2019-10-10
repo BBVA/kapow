@@ -38,3 +38,12 @@ func (shm *safeHandlerMap) Get(id string) (*model.Handler, bool) {
 	shm.m.RUnlock()
 	return h, ok
 }
+
+func (shm *safeHandlerMap) ListIDs() (ids []string) {
+	shm.m.RLock()
+	defer shm.m.RUnlock()
+	for id := range shm.hs {
+		ids = append(ids, id)
+	}
+	return
+}

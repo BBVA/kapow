@@ -145,7 +145,7 @@ func TestGetWaitsForTheWriterToFinish(t *testing.T) {
 
 	select {
 	case <-c:
-		t.Error("Handler readed while mutex was acquired")
+		t.Error("Handler read while mutex was acquired")
 	default: // This default prevents the select from being blocking
 	}
 }
@@ -159,6 +159,63 @@ func TestGetNonBlockingReadWithOtherReaders(t *testing.T) {
 
 	c := make(chan *model.Handler)
 	go func() { h, _ := shm.Get("FOO"); c <- h }()
+
+	time.Sleep(10 * time.Millisecond)
+
+	select {
+	case <-c:
+	default: // This default prevents the select from being blocking
+		t.Error("Handler couldn't read while mutex was acquired for read")
+	}
+}
+
+func TestListIDsReturnsTheListOfHandlerIDs(t *testing.T) {
+	shm := New()
+	shm.hs["FOO"] = nil
+	shm.hs["BAR"] = nil
+	shm.hs["BAZ"] = nil
+
+	ids := make(map[string]bool)
+	for _, id := range shm.ListIDs() {
+		ids[id] = true
+	}
+
+	_, okFoo := ids["FOO"]
+	_, okBar := ids["BAR"]
+	_, okBaz := ids["BAZ"]
+	if !okFoo || !okBar || !okBaz {
+		t.Error("Some IDs not returned")
+	}
+}
+
+func TestListIDsWaitsForTheWriterToFinish(t *testing.T) {
+	shm := New()
+	shm.Add(&model.Handler{ID: "FOO"})
+
+	shm.m.Lock()
+	defer shm.m.Unlock()
+
+	c := make(chan []string)
+	go func() { c <- shm.ListIDs() }()
+
+	time.Sleep(10 * time.Millisecond)
+
+	select {
+	case <-c:
+		t.Error("Handler read while mutex was acquired")
+	default: // This default prevents the select from being blocking
+	}
+}
+
+func TestListIDsNonBlockingReadWithOtherReaders(t *testing.T) {
+	shm := New()
+	shm.Add(&model.Handler{ID: "FOO"})
+
+	shm.m.RLock()
+	defer shm.m.RUnlock()
+
+	c := make(chan []string)
+	go func() { c <- shm.ListIDs() }()
 
 	time.Sleep(10 * time.Millisecond)
 
