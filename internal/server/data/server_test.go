@@ -11,18 +11,18 @@ import (
 )
 
 func TestUpdateResourceNotFoundWhenInvalidHandlerID(t *testing.T) {
-	request := httptest.NewRequest(http.MethodPut, "/handlers/HANDLER_YYYYYYYYYYYYYYYY/response/headers/name", strings.NewReader("value"))
+	request := httptest.NewRequest(http.MethodPut, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/response/headers/name", strings.NewReader("value"))
 	response := httptest.NewRecorder()
 	handler := mux.NewRouter()
-	handler.HandleFunc("/handlers/{handler_id}/{resource:.*$}", updateResource).
+	handler.HandleFunc("/handlers/{handlerId}/{resource:.*$}", updateResource).
 		Methods("PUT")
 
 	getHandlerId = func(id string) (*model.Handler, bool) {
 		if id == "HANDLER_YYYYYYYYYYYYYYYY" {
-			return nil, false
+			return createMockHandler(id, httptest.NewRecorder()), true
 		}
 
-		return nil, true
+		return nil, false
 	}
 
 	handler.ServeHTTP(response, request)
@@ -31,38 +31,16 @@ func TestUpdateResourceNotFoundWhenInvalidHandlerID(t *testing.T) {
 	}
 }
 
-func TestUpdateResourceBadRequestWhenInvalidUrl(t *testing.T) {
-
-	request := httptest.NewRequest(http.MethodPut, "/handlers/HANDLER_YYYYYYYYYYYYYYYY/response/headers", strings.NewReader("value"))
-	response := httptest.NewRecorder()
-	handler := mux.NewRouter()
-	handler.HandleFunc("/handlers/{handler_id}/{resource:.*$}", updateResource).
-		Methods("PUT")
-
-	getHandlerId = func(id string) (*model.Handler, bool) {
-		if id == "HANDLER_YYYYYYYYYYYYYYYY" {
-			return nil, true
-		}
-
-		return nil, false
-	}
-
-	handler.ServeHTTP(response, request)
-	if response.Code != http.StatusBadRequest {
-		t.Errorf("HTTP Status mismatch. Expected: %d, got: %d", http.StatusBadRequest, response.Code)
-	}
-}
-
 func TestUpdateResourceOkWhenValidHandlerID(t *testing.T) {
-	request := httptest.NewRequest(http.MethodPut, "/handlers/HANDLER_XXXXXXXXXXXX/response/headers/name", strings.NewReader("value"))
+	request := httptest.NewRequest(http.MethodPut, "/handlers/HANDLER_YYYYYYYYYYYY/response/headers/name", strings.NewReader("value"))
 	response := httptest.NewRecorder()
 	handler := mux.NewRouter()
-	handler.HandleFunc("/handlers/{handler_id}/{resource:.*$}", updateResource).
+	handler.HandleFunc("/handlers/{handlerId}/{resource:.*$}", updateResource).
 		Methods("PUT")
 
 	getHandlerId = func(id string) (*model.Handler, bool) {
-		if id == "HANDLER_XXXXXXXXXXXX" {
-			return nil, true
+		if id == "HANDLER_YYYYYYYYYYYY" {
+			return createMockHandler(id, httptest.NewRecorder()), true
 		}
 
 		return nil, false
@@ -74,17 +52,37 @@ func TestUpdateResourceOkWhenValidHandlerID(t *testing.T) {
 	}
 }
 
-func TestUpdateResourceBadRequestWhenInvalidCookiesUrl(t *testing.T) {
-
-	request := httptest.NewRequest(http.MethodPut, "/handlers/HANDLER_YYYYYYYYYYYYYYYY/response/cookies", strings.NewReader("value"))
+func TestUpdateResourceBadRequestWhenInvalidUrl(t *testing.T) {
+	request := httptest.NewRequest(http.MethodPut, "/handlers/HANDLER_YYYYYYYYYYYYYYYY/response/headers", strings.NewReader("value"))
 	response := httptest.NewRecorder()
 	handler := mux.NewRouter()
-	handler.HandleFunc("/handlers/{handler_id}/{resource:.*$}", updateResource).
+	handler.HandleFunc("/handlers/{handlerId}/{resource:.*$}", updateResource).
 		Methods("PUT")
 
 	getHandlerId = func(id string) (*model.Handler, bool) {
 		if id == "HANDLER_YYYYYYYYYYYYYYYY" {
-			return nil, true
+			return createMockHandler(id, httptest.NewRecorder()), true
+		}
+
+		return nil, false
+	}
+
+	handler.ServeHTTP(response, request)
+	if response.Code != http.StatusBadRequest {
+		t.Errorf("HTTP Status mismatch. Expected: %d, got: %d", http.StatusBadRequest, response.Code)
+	}
+}
+
+func TestUpdateResourceBadRequestWhenInvalidCookiesUrl(t *testing.T) {
+	request := httptest.NewRequest(http.MethodPut, "/handlers/HANDLER_YYYYYYYYYYYY/response/cookies", strings.NewReader("value"))
+	response := httptest.NewRecorder()
+	handler := mux.NewRouter()
+	handler.HandleFunc("/handlers/{handlerId}/{resource:.*$}", updateResource).
+		Methods("PUT")
+
+	getHandlerId = func(id string) (*model.Handler, bool) {
+		if id == "HANDLER_YYYYYYYYYYYY" {
+			return createMockHandler(id, httptest.NewRecorder()), true
 		}
 
 		return nil, false
@@ -97,21 +95,16 @@ func TestUpdateResourceBadRequestWhenInvalidCookiesUrl(t *testing.T) {
 }
 
 func TestUpdateResourceAddHeaderWhenRecieved(t *testing.T) {
-	t.Skip("**** WIP ****")
-	request := httptest.NewRequest(http.MethodPut, "/handlers/HANDLER_YYYYYYYYYYYYYYYY/response/header/pepe", strings.NewReader("mola"))
+	request := httptest.NewRequest(http.MethodPut, "/handlers/HANDLER_YYYYYYYYYYYY/response/headers/pepe", strings.NewReader("mola"))
 	response := httptest.NewRecorder()
 	handler := mux.NewRouter()
-	handler.HandleFunc("/handlers/{handler_id}/{resource:.*$}", updateResource).
+	handler.HandleFunc("/handlers/{handlerId}/{resource:.*$}", updateResource).
 		Methods("PUT")
 
-	handlerResponse := httptest.NewRecorder()
-	myHandler := &model.Handler{
-		ID:     "HANDLER_YYYYYYYYYYYYYYYY",
-		Writer: handlerResponse,
-	}
+	handlerInResponse := httptest.NewRecorder()
 	getHandlerId = func(id string) (*model.Handler, bool) {
-		if id == "HANDLER_YYYYYYYYYYYYYYYY" {
-			return myHandler, true
+		if id == "HANDLER_YYYYYYYYYYYY" {
+			return createMockHandler(id, handlerInResponse), true
 		}
 
 		return nil, false
@@ -122,8 +115,15 @@ func TestUpdateResourceAddHeaderWhenRecieved(t *testing.T) {
 		t.Errorf("HTTP Status mismatch. Expected: %d, got: %d", http.StatusOK, response.Code)
 	}
 
-	headerValue := handlerResponse.Header().Get("pepe")
+	headerValue := handlerInResponse.Result().Header.Get("pepe")
 	if headerValue != "mola" {
-		t.Errorf("Invalid Cookie value. Expected: %s, got: %s", "mola", headerValue)
+		t.Errorf("Invalid Header value. Expected: %s, got: %s", "mola", headerValue)
+	}
+}
+
+func createMockHandler(id string, writer http.ResponseWriter) *model.Handler {
+	return &model.Handler{
+		ID:     id,
+		Writer: writer,
 	}
 }

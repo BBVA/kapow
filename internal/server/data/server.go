@@ -1,6 +1,7 @@
 package data
 
 import (
+	"io/ioutil"
 	"net/http"
 
 	"github.com/BBVA/kapow/internal/server/model"
@@ -8,45 +9,43 @@ import (
 )
 
 // Rutas a registrar:
-// /handlers/{handler_id}/{resource_path}/request GET
-// /handlers/{handler_id}/{resource_path}/response PUT
-//func configRouter() *mux.Router {
-//	r := mux.NewRouter()
-//
-//	r.HandleFunc("/handlers/{handler_id}/response/headers/", updateResource).Methods("PUT")
-//	r.HandleFunc("/handlers/{handler_id}/response/headers/{key}", updateResource).Methods("PUT")
-//	return r
-//}
-//
-//func Run(bindAddr string) {
-//	r := configRouter()
-//
-//	log.Fatal(http.ListenAndServe(bindAddr, r))
-//}
-//
-//func readResource(res http.ResponseWriter, req *http.Request) {
-//
-//}
+// /handlers/{handlerId}/response/headers/{item} GET|PUT
+// /handlers/{handlerId}/response/cookies/{item} GET|PUT
+// /handlers/{handlerId}/request/headers/{item} GET|PUT
+// /handlers/{handlerId}/request/cookies/{item} GET|PUT
 
 var getHandlerId func(string) (*model.Handler, bool) = Handlers.Get
 
 func updateResource(res http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
-	hID := vars["handler_id"]
+	hID := vars["handlerId"]
 
-	if _, ok := getHandlerId(hID); !ok {
+	hnd, ok := getHandlerId(hID)
+	if !ok {
 		res.WriteHeader(http.StatusNotFound)
 		return
 	}
 
-	if resource := vars["resource"]; resource == "response/headers" || resource == "response/cookies" {
+	resource := vars["resource"]
+	if resource == "response/headers" || resource == "response/cookies" {
 		res.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	bodyBytes, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		res.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	req.Body.Close()
+	value := string(bodyBytes)
+
+	if hnd != nil {
+		hnd.Writing.Lock()
+		hnd.Writer.Header().Add("pepe", value)
+		hnd.Writing.Unlock()
 	}
 
 	res.WriteHeader(http.StatusOK)
-	//
-	//if _, ok := vars["key"]; !ok {
-	//	res.WriteHeader(http.StatusBadRequest)
-	//	return
-	//}
 }
