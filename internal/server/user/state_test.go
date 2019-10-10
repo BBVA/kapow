@@ -1,6 +1,6 @@
 // +build !race
 
-package state
+package user
 
 import (
 	"reflect"
@@ -269,5 +269,11 @@ func TestDeleteWaitsForReadersToFinishReading(t *testing.T) {
 	case <-c:
 		t.Error("Didn't wait for the reader to finish")
 	default:
+	}
+}
+
+func TestPackageHaveASingletonEmptyRouteList(t *testing.T) {
+	if !reflect.DeepEqual(Routes, New()) {
+		t.Error("Routes is not an empty safeRouteList")
 	}
 }

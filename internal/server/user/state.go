@@ -1,16 +1,19 @@
-package state
+package user
 
 import (
 	"errors"
 	"sync"
 
 	"github.com/BBVA/kapow/internal/server/model"
+	"github.com/BBVA/kapow/internal/server/user/mux"
 )
 
 type safeRouteList struct {
 	rs []model.Route
 	m  *sync.RWMutex
 }
+
+var Routes safeRouteList = New()
 
 func New() safeRouteList {
 	return safeRouteList{
@@ -24,6 +27,8 @@ func (srl *safeRouteList) Append(r model.Route) model.Route {
 	srl.rs = append(srl.rs, r)
 	l := len(srl.rs)
 	srl.m.Unlock()
+
+	Server.Handler.(*mux.SwappableMux).Update(srl.Snapshot())
 
 	return model.Route{Index: l - 1}
 }

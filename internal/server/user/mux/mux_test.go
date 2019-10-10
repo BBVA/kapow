@@ -30,7 +30,7 @@ func TestNewReturnsAProperlyInitializedMux(t *testing.T) {
 }
 
 func TestSwappableMuxGetReturnsTheCurrentMux(t *testing.T) {
-	sm := swappableMux{}
+	sm := SwappableMux{}
 	mux := sm.get()
 	if !reflect.DeepEqual(mux, sm.root) {
 		t.Errorf("Returned mux is not the same %#v", mux)
@@ -38,7 +38,7 @@ func TestSwappableMuxGetReturnsTheCurrentMux(t *testing.T) {
 }
 
 func TestSwappableMuxGetReturnsADifferentInstance(t *testing.T) {
-	sm := swappableMux{}
+	sm := SwappableMux{}
 	mux := sm.get()
 	if &mux == &sm.root {
 		t.Error("Returned mux is the same instance")
@@ -46,7 +46,7 @@ func TestSwappableMuxGetReturnsADifferentInstance(t *testing.T) {
 }
 
 func TestSwappableMuxGetWaitsForTheMutexToBeReleased(t *testing.T) {
-	sm := swappableMux{}
+	sm := SwappableMux{}
 
 	sm.m.Lock()
 	defer sm.m.Unlock()
@@ -64,7 +64,7 @@ func TestSwappableMuxGetWaitsForTheMutexToBeReleased(t *testing.T) {
 }
 
 func TestSwappableMuxGetIsAbleToReadWhileOthersAreReading(t *testing.T) {
-	sm := swappableMux{}
+	sm := SwappableMux{}
 
 	sm.m.RLock()
 	defer sm.m.RUnlock()
@@ -82,7 +82,7 @@ func TestSwappableMuxGetIsAbleToReadWhileOthersAreReading(t *testing.T) {
 }
 
 func TestSwappableMuxSetSetsTheGivenMux(t *testing.T) {
-	sm := swappableMux{}
+	sm := SwappableMux{}
 	m := mux.NewRouter()
 	// nolint
 	m.KeepContext = true
@@ -96,7 +96,7 @@ func TestSwappableMuxSetSetsTheGivenMux(t *testing.T) {
 }
 
 func TestSwappableMuxSetSetsTheSameInstance(t *testing.T) {
-	sm := swappableMux{}
+	sm := SwappableMux{}
 	m := mux.NewRouter()
 
 	sm.set(m)
@@ -107,7 +107,7 @@ func TestSwappableMuxSetSetsTheSameInstance(t *testing.T) {
 }
 
 func TestSwappableMuxSetWaitsForWriterToReleaseMutex(t *testing.T) {
-	sm := swappableMux{}
+	sm := SwappableMux{}
 
 	sm.m.Lock()
 	defer sm.m.Unlock()
@@ -125,7 +125,7 @@ func TestSwappableMuxSetWaitsForWriterToReleaseMutex(t *testing.T) {
 }
 
 func TestSwappableMuxSetWaitsForReadersToReleaseMutex(t *testing.T) {
-	sm := swappableMux{}
+	sm := SwappableMux{}
 
 	sm.m.RLock()
 	defer sm.m.RUnlock()
@@ -148,7 +148,7 @@ func TestServeHTTPCallsInnerMux(t *testing.T) {
 	m := mux.NewRouter()
 	m.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { called = true })
 
-	sm := swappableMux{root: m}
+	sm := SwappableMux{root: m}
 
 	req := httptest.NewRequest("GET", "/", nil)
 	w := httptest.NewRecorder()
@@ -166,7 +166,7 @@ func TestServeHTTPCanServeWhenMuxIsReadLocked(t *testing.T) {
 	m := mux.NewRouter()
 	m.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { called = true })
 
-	sm := swappableMux{root: m}
+	sm := SwappableMux{root: m}
 	sm.m.RLock()
 
 	req := httptest.NewRequest("GET", "/", nil)
@@ -187,7 +187,7 @@ func TestServeHTTPCallsInnerMuxAfterAcquiringLock(t *testing.T) {
 	m := mux.NewRouter()
 	m.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { called = true })
 
-	sm := swappableMux{root: m}
+	sm := SwappableMux{root: m}
 	sm.m.Lock()
 
 	req := httptest.NewRequest("GET", "/", nil)
