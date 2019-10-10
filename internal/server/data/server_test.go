@@ -72,6 +72,28 @@ func TestUpdateResourceNotFoundWhenInvalidHandlerID(t *testing.T) {
 	}
 }
 
+func TestUpdateResourceBadRequestWhenInvalidUrl(t *testing.T) {
+    t.Skip("***** WIP ****")
+	request := httptest.NewRequest(http.MethodPut, "/handlers/HANDLER_YYYYYYYYYYYYYYYY/response/headers", strings.NewReader("value"))
+	response := httptest.NewRecorder()
+	handler := mux.NewRouter()
+	handler.HandleFunc("/handlers/{handler_id}/{resource:.*$}", updateResource).
+		Methods("PUT")
+
+	getHandlerId = func(id string) (*model.Handler, bool) {
+		if id == "HANDLER_YYYYYYYYYYYYYYYY" {
+			return nil, true
+		}
+
+		return nil, false
+	}
+
+	handler.ServeHTTP(response, request)
+	if response.Code != http.StatusBadRequest {
+		t.Errorf("HTTP Status mismatch. Expected: %d, got: %d", http.StatusBadRequest, response.Code)
+	}
+}
+
 func TestUpdateResourceOkWhenValidHandlerID(t *testing.T) {
 	request := httptest.NewRequest(http.MethodPut, "/handlers/HANDLER_XXXXXXXXXXXX/response/headers/name", strings.NewReader("value"))
 	response := httptest.NewRecorder()
@@ -80,13 +102,11 @@ func TestUpdateResourceOkWhenValidHandlerID(t *testing.T) {
 		Methods("PUT")
 
 	getHandlerId = func(id string) (*model.Handler, bool) {
-		if id == "HANDLER_YYYYYYYYYYYYYYYY" {
-			return nil, false
-		} else if id == "HANDLER_XXXXXXXXXXXX" {
+		if id == "HANDLER_XXXXXXXXXXXX" {
 			return nil, true
 		}
 
-		return nil, true
+		return nil, false
 	}
 
 	handler.ServeHTTP(response, request)
