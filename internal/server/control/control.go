@@ -12,18 +12,22 @@ import (
 	"github.com/BBVA/kapow/internal/server/user"
 )
 
+// Run must start the control server in a specific address
 func Run(bindAddr string) {
+	r := configRouter()
 
+	log.Fatal(http.ListenAndServe(bindAddr, r))
+}
+
+func configRouter() *mux.Router {
 	r := mux.NewRouter()
-
 	r.HandleFunc("/routes/{id}", removeRoute).
 		Methods("DELETE")
 	r.HandleFunc("/routes", listRoutes).
 		Methods("GET")
 	r.HandleFunc("/routes", addRoute).
 		Methods("POST")
-
-	log.Fatal(http.ListenAndServe(bindAddr, r))
+	return r
 }
 
 // user.Routes.Remove() []model.Route
@@ -64,6 +68,10 @@ func addRoute(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 	if route.Method == "" {
+		res.WriteHeader(http.StatusUnprocessableEntity)
+		return
+	}
+	if route.Pattern == "" {
 		res.WriteHeader(http.StatusUnprocessableEntity)
 		return
 	}

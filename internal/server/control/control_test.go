@@ -15,46 +15,45 @@ import (
 )
 
 func TestConfigRouterHasRoutesWellConfigured(t *testing.T) {
-	t.Skip("****** WIP ******")
-	//testCases := []struct {
-	//	pattern, method string
-	//	handler         uintptr
-	//	mustMatch       bool
-	//	vars            []string
-	//}{
-	//	{"/routes/ROUTE_YYYYYYYYYYYYYYY", http.MethodGet, 0, false, []string{}},
-	//	{"/routes/ROUTE_YYYYYYYYYYYYYYY", http.MethodPut, 0, false, []string{}},
-	//	{"/routes/ROUTE_YYYYYYYYYYYYYYY", http.MethodPost, 0, false, []string{}},
-	//	{"/routes/ROUTE_YYYYYYYYYYYYYYY", http.MethodDelete, reflect.ValueOf(removeRoute).Pointer(), true, []string{"id"}},
-	//	{"/routes", http.MethodGet, reflect.ValueOf(listRoutes).Pointer(), true, []string{}},
-	//	{"/routes", http.MethodPut, 0, false, []string{}},
-	//	{"/routes", http.MethodPost, reflect.ValueOf(addRoute).Pointer(), true, []string{}},
-	//	{"/routes", http.MethodDelete, 0, false, []string{}},
-	//}
-	//r := configRouter()
+	testCases := []struct {
+		pattern, method string
+		handler         uintptr
+		mustMatch       bool
+		vars            []string
+	}{
+		{"/routes/ROUTE_YYYYYYYYYYYYYYY", http.MethodGet, 0, false, []string{}},
+		{"/routes/ROUTE_YYYYYYYYYYYYYYY", http.MethodPut, 0, false, []string{}},
+		{"/routes/ROUTE_YYYYYYYYYYYYYYY", http.MethodPost, 0, false, []string{}},
+		{"/routes/ROUTE_YYYYYYYYYYYYYYY", http.MethodDelete, reflect.ValueOf(removeRoute).Pointer(), true, []string{"id"}},
+		{"/routes", http.MethodGet, reflect.ValueOf(listRoutes).Pointer(), true, []string{}},
+		{"/routes", http.MethodPut, 0, false, []string{}},
+		{"/routes", http.MethodPost, reflect.ValueOf(addRoute).Pointer(), true, []string{}},
+		{"/routes", http.MethodDelete, 0, false, []string{}},
+	}
+	r := configRouter()
 
-	//for _, tc := range testCases {
-	//	rm := mux.RouteMatch{}
-	//	rq, _ := http.NewRequest(tc.method, tc.pattern, nil)
-	//	if matched := r.Match(rq, &rm); tc.mustMatch == matched {
-	//		if tc.mustMatch {
-	//			// Check for Handler match.
-	//			realHandler := reflect.ValueOf(rm.Handler).Pointer()
-	//			if realHandler != tc.handler {
-	//				t.Errorf("Handler mismatch. Expected: %X, got: %X", tc.handler, realHandler)
-	//			}
+	for _, tc := range testCases {
+		rm := mux.RouteMatch{}
+		rq, _ := http.NewRequest(tc.method, tc.pattern, nil)
+		if matched := r.Match(rq, &rm); tc.mustMatch == matched {
+			if tc.mustMatch {
+				// Check for Handler match.
+				realHandler := reflect.ValueOf(rm.Handler).Pointer()
+				if realHandler != tc.handler {
+					t.Errorf("Handler mismatch. Expected: %X, got: %X", tc.handler, realHandler)
+				}
 
-	//			// Check for variables
-	//			for _, vn := range tc.vars {
-	//				if _, exists := rm.Vars[vn]; !exists {
-	//					t.Errorf("Variable not present: %s", vn)
-	//				}
-	//			}
-	//		}
-	//	} else {
-	//		t.Errorf("Route mismatch: %+v", tc)
-	//	}
-	//}
+				// Check for variables
+				for _, vn := range tc.vars {
+					if _, exists := rm.Vars[vn]; !exists {
+						t.Errorf("Variable not present: %s", vn)
+					}
+				}
+			}
+		} else {
+			t.Errorf("Route mismatch: %+v", tc)
+		}
+	}
 }
 
 func TestAddRouteReturnsBadRequestWhenMalformedJSONBody(t *testing.T) {
@@ -77,7 +76,6 @@ func TestAddRouteReturnsBadRequestWhenMalformedJSONBody(t *testing.T) {
 }
 
 func TestAddRouteReturns422ErrorWhenMandatoryFieldsMissing(t *testing.T) {
-	t.Skip("****** WIP ******")
 	handler := http.HandlerFunc(addRoute)
 	tc := []struct {
 		payload, testCase string
