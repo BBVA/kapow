@@ -115,6 +115,28 @@ func TestUpdateResourceOkWhenValidHandlerID(t *testing.T) {
 	}
 }
 
+func TestUpdateResourceBadRequestWhenInvalidCookiesUrl(t *testing.T) {
+	t.Skip("**** WIP ****")
+	request := httptest.NewRequest(http.MethodPut, "/handlers/HANDLER_YYYYYYYYYYYYYYYY/response/cookies", strings.NewReader("value"))
+	response := httptest.NewRecorder()
+	handler := mux.NewRouter()
+	handler.HandleFunc("/handlers/{handler_id}/{resource:.*$}", updateResource).
+		Methods("PUT")
+
+	getHandlerId = func(id string) (*model.Handler, bool) {
+		if id == "HANDLER_YYYYYYYYYYYYYYYY" {
+			return nil, true
+		}
+
+		return nil, false
+	}
+
+	handler.ServeHTTP(response, request)
+	if response.Code != http.StatusBadRequest {
+		t.Errorf("HTTP Status mismatch. Expected: %d, got: %d", http.StatusBadRequest, response.Code)
+	}
+}
+
 // FIXME: Fails because URL doesn't match
 //func TestUpdateResourceNotFoundWhenInvalidHandlerID(t *testing.T) {
 //	request := httptest.NewRequest(http.MethodPut, "/handlers/response/headers/language", strings.NewReader("ES"))
