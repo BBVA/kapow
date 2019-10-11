@@ -52,13 +52,15 @@ func (srl *safeRouteList) List() []model.Route {
 
 func (srl *safeRouteList) Delete(ID string) error {
 	srl.m.Lock()
-	defer srl.m.Unlock()
-
 	for i := 0; i < len(srl.rs); i++ {
 		if srl.rs[i].ID == ID {
 			srl.rs = append(srl.rs[:i], srl.rs[i+1:]...)
+			srl.m.Unlock()
+			Server.Handler.(*mux.SwappableMux).Update(srl.Snapshot())
 			return nil
+
 		}
 	}
+	srl.m.Unlock()
 	return errors.New("Route not found")
 }

@@ -3,11 +3,15 @@
 package user
 
 import (
+	"net/http"
+	"net/http/httptest"
+	"os"
 	"reflect"
 	"testing"
 	"time"
 
 	"github.com/BBVA/kapow/internal/server/model"
+	"github.com/BBVA/kapow/internal/server/user/mux"
 )
 
 func TestNewReturnAnEmptyStruct(t *testing.T) {
@@ -275,5 +279,63 @@ func TestDeleteWaitsForReadersToFinishReading(t *testing.T) {
 func TestPackageHaveASingletonEmptyRouteList(t *testing.T) {
 	if !reflect.DeepEqual(Routes, New()) {
 		t.Error("Routes is not an empty safeRouteList")
+	}
+}
+
+func TestAppendUpdatesMuxWithProvideRoute(t *testing.T) {
+	Server = http.Server{
+		Handler: mux.New(),
+	}
+	srl := New()
+	route := model.Route{
+		Method:     "GET",
+		Pattern:    "/",
+		Entrypoint: "/bin/sh -c",
+		Command:    "jaillover > /tmp/kapow-test-append-updates-mux",
+	}
+	os.Remove("/tmp/kapow-test-append-updates-mux")
+	defer os.Remove("/tmp/kapow-test-append-updates-mux")
+
+	srl.Append(route)
+
+	req := httptest.NewRequest("GET", "/", nil)
+	w := httptest.NewRecorder()
+
+	Server.Handler.ServeHTTP(w, req)
+
+	if _, err := os.Stat("/tmp/kapow-test-append-updates-mux"); os.IsNotExist(err) {
+		t.Error("Routes not updated")
+	} else if err != nil {
+		t.Fatalf("Unexpected error: %v", err)
+	}
+}
+
+func TestDeleteUpdatesMuxWithRemainingRoutes(t *testing.T) {
+	Server = http.Server{
+		Handler: mux.New(),
+	}
+	srl := New()
+	route := srl.Append(
+		model.Route{
+			Method:     "GET",
+			Pattern:    "/",
+			Entrypoint: "/bin/sh -c",
+			Command:    "jaillover > /tmp/kapow-test-remove-updates-mux",
+		},
+	)
+	os.Remove("/tmp/kapow-test-remove-updates-mux")
+	defer os.Remove("/tmp/kapow-test-remove-updates-mux")
+
+	_ = srl.Delete(route.ID)
+
+	req := httptest.NewRequest("GET", "/", nil)
+	w := httptest.NewRecorder()
+
+	Server.Handler.ServeHTTP(w, req)
+
+	if _, err := os.Stat("/tmp/kapow-test-remove-updates-mux"); err == nil {
+		t.Error("Routes not updated")
+	} else if !os.IsNotExist(err) {
+		t.Fatalf("Unexpected error: %v", err)
 	}
 }
