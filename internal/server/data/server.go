@@ -28,6 +28,26 @@ func getRequestCookie(req *http.Request, name string) (string, error) {
 	}
 }
 
+func getRequestParam(req *http.Request, name string) (string, error) {
+
+	queryParams := req.URL.Query()
+	if val, ok := queryParams[name]; ok {
+		return val[0], nil
+	} else {
+		return "", errors.New("Query string parameter not found")
+	}
+}
+
+func getRequestForm(req *http.Request, name string) (string, error) {
+
+	// Why PostFormValue is not working
+	if val := req.PostFormValue(name); val != "" {
+		return val, nil
+	} else {
+		return "", errors.New("Form field not found")
+	}
+}
+
 func setResponseStatus(res http.ResponseWriter, value int) { res.WriteHeader(value) }
 
 func setResponseHeader(res http.ResponseWriter, name string, value string) {

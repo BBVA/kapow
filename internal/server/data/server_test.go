@@ -3,13 +3,12 @@ package data
 import (
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"testing"
 )
 
 func TestGetRequestMethodReturnsCorrectValue(t *testing.T) {
-	req := httptest.NewRequest("GET", "/this/is/a/test?with=params&that=works", nil)
-
-	req.Host = "www.example.com"
+	req := httptest.NewRequest(http.MethodGet, "http://www.example.com/this/is/a/test?with=params", nil)
 
 	value, err := getRequestMethod(req)
 	if err != nil {
@@ -22,9 +21,7 @@ func TestGetRequestMethodReturnsCorrectValue(t *testing.T) {
 }
 
 func TestGetRequestHostReturnsCorrectValue(t *testing.T) {
-	req := httptest.NewRequest("GET", "/this/is/a/test?with=params&that=works", nil)
-
-	req.Host = "www.example.com"
+	req := httptest.NewRequest(http.MethodGet, "http://www.example.com/this/is/a/test?with=params", nil)
 
 	value, err := getRequestHost(req)
 	if err != nil {
@@ -37,9 +34,7 @@ func TestGetRequestHostReturnsCorrectValue(t *testing.T) {
 }
 
 func TestGetRequestPathReturnsCorrectValue(t *testing.T) {
-	req := httptest.NewRequest("GET", "/this/is/a/test?with=params&that=works", nil)
-
-	req.Host = "www.example.com"
+	req := httptest.NewRequest(http.MethodGet, "http://www.example.com/this/is/a/test?with=params", nil)
 
 	value, err := getRequestPath(req)
 	if err != nil {
@@ -61,9 +56,8 @@ func TestSetResponseStatusSetsCorrectValue(t *testing.T) {
 }
 
 func TestGetRequestHeaderReturnsCorrectValue(t *testing.T) {
-	req := httptest.NewRequest("GET", "/this/is/a/test?with=params&that=works", nil)
+	req := httptest.NewRequest(http.MethodGet, "http://www.example.com/this/is/a/test?with=params", nil)
 
-	req.Host = "www.example.com"
 	req.Header.Add("A-Header", "With-Value")
 
 	value, err := getRequestHeader(req, "A-Header")
@@ -76,10 +70,9 @@ func TestGetRequestHeaderReturnsCorrectValue(t *testing.T) {
 	}
 }
 
-func TestGetRequestHeaderReturnsErrorWhenHeaderNotExists(t *testing.T) {
-	req := httptest.NewRequest("GET", "/this/is/a/test?with=params&that=works", nil)
+func TestGetRequestHeaderReturnsErrorWhenNotExists(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "http://www.example.com/this/is/a/test?with=params", nil)
 
-	req.Host = "www.example.com"
 	req.Header.Add("A-Header", "With-Value")
 
 	if _, err := getRequestHeader(req, "Other-Header"); err == nil {
@@ -97,9 +90,8 @@ func TestSetResponseHeaderSetsCorrectValue(t *testing.T) {
 }
 
 func TestGetRequestCookieReturnsCorrectValue(t *testing.T) {
-	req := httptest.NewRequest("GET", "/this/is/a/test?with=params&that=works", nil)
+	req := httptest.NewRequest(http.MethodGet, "http://www.example.com/this/is/a/test?with=params", nil)
 
-	req.Host = "www.example.com"
 	req.Header.Add("A-Header", "With-Value")
 	req.AddCookie(&http.Cookie{Name: "A-Cookie", Value: "With-Value"})
 
@@ -113,10 +105,9 @@ func TestGetRequestCookieReturnsCorrectValue(t *testing.T) {
 	}
 }
 
-func TestGetRequestCookieReturnsErrorWhenCookieNotExists(t *testing.T) {
-	req := httptest.NewRequest("GET", "/this/is/a/test?with=params&that=works", nil)
+func TestGetRequestCookieReturnsErrorWhenNotExists(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "http://www.example.com/this/is/a/test?with=params", nil)
 
-	req.Host = "www.example.com"
 	req.Header.Add("A-Header", "With-Value")
 	req.AddCookie(&http.Cookie{Name: "A-Cookie", Value: "With-Value"})
 
@@ -138,5 +129,69 @@ func TestSetResponseCookieSetsCorrectValue(t *testing.T) {
 	}
 	if val != "With-Value" {
 		t.Errorf("Unexpected value. Expected: %s, got: %s", "With-Value", val)
+	}
+}
+
+func TestGetRequestParamReturnsCorrectValue(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "http://www.example.com/this/is/a/test?with=params", nil)
+
+	req.Header.Add("A-Header", "With-Value")
+	req.AddCookie(&http.Cookie{Name: "A-Cookie", Value: "With-Value"})
+
+	value, err := getRequestParam(req, "with")
+	if err != nil {
+		t.Errorf("Unexpected error: %+v", err)
+	}
+
+	if value != "params" {
+		t.Errorf("Unexpected value. Expected: %s, got: %s", "params", value)
+	}
+}
+
+func TestGetRequestParamReturnsErrorWhenNotExists(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "http://www.example.com/this/is/a/test?with=params", nil)
+
+	req.Header.Add("A-Header", "With-Value")
+	req.AddCookie(&http.Cookie{Name: "A-Cookie", Value: "With-Value"})
+
+	if _, err := getRequestParam(req, "Other-Param"); err == nil {
+		t.Errorf("Expected error but no error returned")
+	}
+}
+
+func TestGetRequestFormReturnsCorrectValue(t *testing.T) {
+	req := httptest.NewRequest(http.MethodPost, "http://www.example.com/this/is/a/test?with=params", nil)
+
+	req.Header.Add("A-Header", "With-Value")
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	req.AddCookie(&http.Cookie{Name: "A-Cookie", Value: "With-Value"})
+
+	req.PostForm = url.Values{}
+	req.PostForm.Set("A-Field", "With-Value")
+	req.PostForm.Set("Another-Field", "With-AnotherValue")
+
+	value, err := getRequestForm(req, "A-Field")
+	if err != nil {
+		t.Errorf("Unexpected error: %+v", err)
+	}
+
+	if value != "With-Value" {
+		t.Errorf("Unexpected value. Expected: %s, got: %s", "With-Value", value)
+	}
+}
+
+func TestGetRequestFormReturnsErrorWhenNotExists(t *testing.T) {
+	req := httptest.NewRequest(http.MethodPost, "http://www.example.com/this/is/a/test?with=params", nil)
+
+	req.Header.Add("A-Header", "With-Value")
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	req.AddCookie(&http.Cookie{Name: "A-Cookie", Value: "With-Value"})
+
+	req.PostForm = url.Values{}
+	req.PostForm.Set("A-Field", "With-Value")
+	req.PostForm.Set("Another-Field", "With-AnotherValue")
+
+	if _, err := getRequestForm(req, "Other-Field"); err == nil {
+		t.Errorf("Expected error but no error returned")
 	}
 }
