@@ -1,9 +1,11 @@
 package data
 
 import (
+	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"strings"
 	"testing"
 )
 
@@ -193,5 +195,89 @@ func TestGetRequestFormReturnsErrorWhenNotExists(t *testing.T) {
 
 	if _, err := getRequestForm(req, "Other-Field"); err == nil {
 		t.Errorf("Expected error but no error returned")
+	}
+}
+
+func TestGetRequestFileNameReturnsCorrectValue(t *testing.T) {
+	t.Skip("****** WIP ******")
+	req := httptest.NewRequest(http.MethodPost, "http://www.example.com/this/is/a/test?with=params", nil)
+
+	req.Header.Add("A-Header", "With-Value")
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	req.AddCookie(&http.Cookie{Name: "A-Cookie", Value: "With-Value"})
+
+	req.MultipartForm = &multipart.Form{}
+	req.MultipartForm.File = make(map[string][]*multipart.FileHeader)
+	req.MultipartForm.File["A-File"] = append(make([]*multipart.FileHeader, 1), &multipart.FileHeader{Filename: "A-file.txt"})
+
+	value, err := getRequestFileName(req, "A-File")
+	if err != nil {
+		t.Errorf("Unexpected error: %+v", err)
+	}
+
+	if value != "With-Value" {
+		t.Errorf("Unexpected value. Expected: %s, got: %s", "With-Value", value)
+	}
+}
+
+func TestGetRequestFileNameReturnsErrorWhenNotExists(t *testing.T) {
+	req := httptest.NewRequest(http.MethodPost, "http://www.example.com/this/is/a/test?with=params", nil)
+
+	req.Header.Add("A-Header", "With-Value")
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	req.AddCookie(&http.Cookie{Name: "A-Cookie", Value: "With-Value"})
+
+	req.MultipartForm = &multipart.Form{}
+	req.MultipartForm.File = make(map[string][]*multipart.FileHeader)
+	req.MultipartForm.File["A-File"] = append(make([]*multipart.FileHeader, 1), &multipart.FileHeader{Filename: "A-file.txt"})
+
+	if _, err := getRequestFileName(req, "Other-Field"); err == nil {
+		t.Errorf("Expected error but no error returned")
+	}
+}
+
+func TestCopyRequestFileReturnsOK(t *testing.T) {
+	t.Skip("****** WIP ******")
+	req := httptest.NewRequest(http.MethodPost, "http://www.example.com/this/is/a/test?with=params", nil)
+
+	req.Header.Add("A-Header", "With-Value")
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	req.AddCookie(&http.Cookie{Name: "A-Cookie", Value: "With-Value"})
+
+	req.MultipartForm = &multipart.Form{}
+	req.MultipartForm.File = make(map[string][]*multipart.FileHeader)
+	req.MultipartForm.File["A-File"] = append(make([]*multipart.FileHeader, 1), &multipart.FileHeader{Filename: "A-file.txt"})
+
+	result := strings.Builder{}
+	err := copyRequestFile(req, "A-File", &result)
+	if err != nil {
+		t.Errorf("Unexpected error: %+v", err)
+	}
+
+	if value := result.String(); value != "With-Value" {
+		t.Errorf("Unexpected value. Expected: %s, got: %s", "With-Value", value)
+	}
+}
+
+func TestCopyRequestFileReturnsErrorWhenNotExists(t *testing.T) {
+	t.Skip("****** WIP ******")
+	req := httptest.NewRequest(http.MethodPost, "http://www.example.com/this/is/a/test?with=params", nil)
+
+	req.Header.Add("A-Header", "With-Value")
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	req.AddCookie(&http.Cookie{Name: "A-Cookie", Value: "With-Value"})
+
+	req.MultipartForm = &multipart.Form{}
+	req.MultipartForm.File = make(map[string][]*multipart.FileHeader)
+	req.MultipartForm.File["A-File"] = append(make([]*multipart.FileHeader, 1), &multipart.FileHeader{Filename: "A-file.txt"})
+
+	result := strings.Builder{}
+	err := copyRequestFile(req, "A-File", &result)
+	if err != nil {
+		t.Errorf("Unexpected error: %+v", err)
+	}
+
+	if value := result.String(); value != "With-Value" {
+		t.Errorf("Unexpected value. Expected: %s, got: %s", "With-Value", value)
 	}
 }

@@ -2,6 +2,7 @@ package data
 
 import (
 	"errors"
+	"io"
 	"net/http"
 )
 
@@ -46,6 +47,30 @@ func getRequestForm(req *http.Request, name string) (string, error) {
 	} else {
 		return "", errors.New("Form field not found")
 	}
+}
+
+func getRequestFileName(req *http.Request, name string) (string, error) {
+
+	_, fileHeader, err := req.FormFile(name)
+	if err != nil {
+		return "", errors.New("File not found")
+	}
+
+	return fileHeader.Filename, nil
+}
+
+func copyRequestFile(req *http.Request, name string, w io.Writer) error {
+
+	file, _, err := req.FormFile(name)
+	if err != nil {
+		return errors.New("File not found")
+	}
+
+	_, err = io.Copy(w, file)
+	if err != nil {
+		return errors.New("Internal server error")
+	}
+	return nil
 }
 
 func setResponseStatus(res http.ResponseWriter, value int) { res.WriteHeader(value) }
