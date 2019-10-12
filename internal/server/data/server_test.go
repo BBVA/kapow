@@ -7,6 +7,8 @@ import (
 	"net/url"
 	"strings"
 	"testing"
+
+	"github.com/gorilla/mux"
 )
 
 func TestGetRequestMethodReturnsCorrectValue(t *testing.T) {
@@ -279,5 +281,36 @@ func TestCopyRequestFileReturnsErrorWhenNotExists(t *testing.T) {
 
 	if value := result.String(); value != "With-Value" {
 		t.Errorf("Unexpected value. Expected: %s, got: %s", "With-Value", value)
+	}
+}
+
+func generateTargetRequestForMatch() *http.Request {
+	var targetRequest *http.Request
+
+	h := mux.NewRouter()
+	h.HandleFunc("/a/{foo}", func(res http.ResponseWriter, req *http.Request) { targetRequest = req }).Methods("GET")
+	h.ServeHTTP(httptest.NewRecorder(), httptest.NewRequest(http.MethodGet, "/a/bar", nil))
+
+	return targetRequest
+}
+
+func TestGetRequestMatchReturnsCorrectValue(t *testing.T) {
+	req := generateTargetRequestForMatch()
+
+	value, err := getRequestMatch(req, "foo")
+	if err != nil {
+		t.Errorf("Unexpected error: %+v", err)
+	}
+
+	if value != "bar" {
+		t.Errorf("Unexpected value. Expected: %s, got: %s", "bar", value)
+	}
+}
+
+func TestGetRequestMatchReturnsErrorWhenNotExists(t *testing.T) {
+	req := generateTargetRequestForMatch()
+
+	if _, err := getRequestMatch(req, "bar"); err == nil {
+		t.Errorf("Expected error but no error returned")
 	}
 }

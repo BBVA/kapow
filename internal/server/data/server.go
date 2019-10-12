@@ -4,6 +4,8 @@ import (
 	"errors"
 	"io"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 func getRequestMethod(req *http.Request) (string, error) { return req.Method, nil }
@@ -71,6 +73,16 @@ func copyRequestFile(req *http.Request, name string, w io.Writer) error {
 		return errors.New("Internal server error")
 	}
 	return nil
+}
+
+func getRequestMatch(req *http.Request, name string) (string, error) {
+	vars := mux.Vars(req)
+
+	if val, ok := vars[name]; ok {
+		return val, nil
+	} else {
+		return "", errors.New("Match not found")
+	}
 }
 
 func setResponseStatus(res http.ResponseWriter, value int) { res.WriteHeader(value) }
