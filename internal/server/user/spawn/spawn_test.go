@@ -34,146 +34,120 @@ func locateJailLover() string {
 }
 
 func TestSpawnRetursErrorWhenEntrypointIsBad(t *testing.T) {
-	r := model.Route{
-		Entrypoint: "/bin/this_executable_is_not_likely_to_exist",
-	}
-
 	h := &model.Handler{
-		Route: r,
+		Route: model.Route{
+			Entrypoint: "/bin/this_executable_is_not_likely_to_exist",
+		},
 	}
 
 	err := Spawn(h, nil)
+
 	if err == nil {
 		t.Error("Bad executable not reported")
 	}
 }
 
 func TestSpawnReturnsNilWhenEntrypointIsGood(t *testing.T) {
-	r := model.Route{
-		Entrypoint: locateJailLover(),
-	}
-
 	h := &model.Handler{
-		Route: r,
+		Route: model.Route{
+			Entrypoint: locateJailLover(),
+		},
 	}
 
 	err := Spawn(h, nil)
+
 	if err != nil {
 		t.Error("Good executable reported")
 	}
 }
 
 func TestSpawnWritesToStdout(t *testing.T) {
-	r := model.Route{
-		Entrypoint: locateJailLover(),
-	}
-
 	h := &model.Handler{
-		Route: r,
+		Route: model.Route{
+			Entrypoint: locateJailLover(),
+		},
 	}
-
 	out := &bytes.Buffer{}
 
 	_ = Spawn(h, out)
 
 	jldata := decodeJailLover(out.Bytes())
-
 	if jldata.Cmdline[0] != locateJailLover() {
 		t.Error("Ouput does not match jaillover's")
 	}
-
 }
 
 func TestSpawnSetsKapowURLEnvVar(t *testing.T) {
-	r := model.Route{
-		Entrypoint: locateJailLover(),
-	}
-
 	h := &model.Handler{
-		Route: r,
+		Route: model.Route{
+			Entrypoint: locateJailLover(),
+		},
 	}
-
 	out := &bytes.Buffer{}
 
 	_ = Spawn(h, out)
 
 	jldata := decodeJailLover(out.Bytes())
-
 	if v, ok := jldata.Env["KAPOW_URL"]; !ok || v != "http://localhost:8081" {
 		t.Error("KAPOW_URL is not set properly")
 	}
 }
 
 func TestSpawnSetsKapowHandlerIDEnvVar(t *testing.T) {
-	r := model.Route{
-		Entrypoint: locateJailLover(),
-	}
-
 	h := &model.Handler{
-		ID:    "HANDLER_ID_FOO",
-		Route: r,
+		ID: "HANDLER_ID_FOO",
+		Route: model.Route{
+			Entrypoint: locateJailLover(),
+		},
 	}
-
 	out := &bytes.Buffer{}
 
 	_ = Spawn(h, out)
 
 	jldata := decodeJailLover(out.Bytes())
-
 	if v, ok := jldata.Env["KAPOW_HANDLER_ID"]; !ok || v != "HANDLER_ID_FOO" {
 		t.Error("KAPOW_HANDLER_ID is not set properly")
 	}
 }
 
 func TestSpawnRunsOKEntrypointsWithAParam(t *testing.T) {
-	r := model.Route{
-		Entrypoint: locateJailLover() + " -foo",
-	}
-
 	h := &model.Handler{
-		Route: r,
+		Route: model.Route{
+			Entrypoint: locateJailLover() + " -foo",
+		},
 	}
-
 	out := &bytes.Buffer{}
 
 	_ = Spawn(h, out)
 
 	jldata := decodeJailLover(out.Bytes())
-
 	if !reflect.DeepEqual(jldata.Cmdline, []string{locateJailLover(), "-foo"}) {
 		t.Error("Args not as expected")
 	}
 }
 
 func TestSpawnRunsOKEntrypointWithArgWithSpace(t *testing.T) {
-	r := model.Route{
-		Entrypoint: locateJailLover() + ` "foo bar"`,
-	}
-
 	h := &model.Handler{
-		Route: r,
+		Route: model.Route{
+			Entrypoint: locateJailLover() + ` "foo bar"`,
+		},
 	}
-
 	out := &bytes.Buffer{}
 
 	_ = Spawn(h, out)
 
 	jldata := decodeJailLover(out.Bytes())
-
 	if !reflect.DeepEqual(jldata.Cmdline, []string{locateJailLover(), "foo bar"}) {
 		t.Error("Args not parsed as expected")
 	}
 }
 
 func TestSpawnErrorsWhenEntrypointIsInvalidShell(t *testing.T) {
-	r := model.Route{
-		Entrypoint: locateJailLover() + ` "`,
-	}
-
 	h := &model.Handler{
-		Route: r,
+		Route: model.Route{
+			Entrypoint: locateJailLover() + ` "`,
+		},
 	}
-
 	out := &bytes.Buffer{}
 
 	err := Spawn(h, out)
@@ -184,50 +158,41 @@ func TestSpawnErrorsWhenEntrypointIsInvalidShell(t *testing.T) {
 }
 
 func TestSpawnRunsOKEntrypointWithMultipleArgs(t *testing.T) {
-	r := model.Route{
-		Entrypoint: locateJailLover() + " foo bar",
-	}
-
 	h := &model.Handler{
-		Route: r,
+		Route: model.Route{
+			Entrypoint: locateJailLover() + " foo bar",
+		},
 	}
-
 	out := &bytes.Buffer{}
 
 	_ = Spawn(h, out)
 
 	jldata := decodeJailLover(out.Bytes())
-
 	if !reflect.DeepEqual(jldata.Cmdline, []string{locateJailLover(), "foo", "bar"}) {
 		t.Error("Args not parsed as expected")
 	}
 }
 
 func TestSpawnRunsOKEntrypointAndCommand(t *testing.T) {
-	r := model.Route{
-		Entrypoint: locateJailLover() + " foo bar",
-		Command:    "baz qux",
-	}
-
 	h := &model.Handler{
-		Route: r,
+		Route: model.Route{
+			Entrypoint: locateJailLover() + " foo bar",
+			Command:    "baz qux",
+		},
 	}
-
 	out := &bytes.Buffer{}
 
 	_ = Spawn(h, out)
 
 	jldata := decodeJailLover(out.Bytes())
-
 	if !reflect.DeepEqual(jldata.Cmdline, []string{locateJailLover(), "foo", "bar", "baz qux"}) {
 		t.Error("Malformed cmdline")
 	}
 }
 
 func TestSpawnReturnsErrorIfEntrypointNotSet(t *testing.T) {
-	r := model.Route{}
 	h := &model.Handler{
-		Route: r,
+		Route: model.Route{},
 	}
 
 	err := Spawn(h, nil)
