@@ -3,8 +3,9 @@ package mux
 import (
 	"net/http"
 
-	"github.com/BBVA/kapow/internal/server/model"
 	"github.com/gorilla/mux"
+
+	"github.com/BBVA/kapow/internal/server/model"
 )
 
 func gorillize(rs []model.Route, buildHandler func(model.Route) http.Handler) *mux.Router {

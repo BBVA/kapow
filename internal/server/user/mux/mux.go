@@ -4,8 +4,9 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/BBVA/kapow/internal/server/model"
 	"github.com/gorilla/mux"
+
+	"github.com/BBVA/kapow/internal/server/model"
 )
 
 type SwappableMux struct {
