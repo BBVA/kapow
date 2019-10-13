@@ -85,14 +85,40 @@ func getRequestMatch(req *http.Request, name string) (string, error) {
 	}
 }
 
+func copyFromRequestBody(req *http.Request, w io.Writer) error {
+
+	defer req.Body.Close()
+	if _, err := io.Copy(w, req.Body); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func setResponseStatus(res http.ResponseWriter, value int) { res.WriteHeader(value) }
 
 func setResponseHeader(res http.ResponseWriter, name string, value string) {
-
 	res.Header().Add(name, value)
 }
 
 func setResponseCookie(res http.ResponseWriter, name string, value string) {
-
 	http.SetCookie(res, &http.Cookie{Name: name, Value: value})
+}
+
+func copyToResponseBody(res http.ResponseWriter, r io.Reader) error {
+
+	if _, err := io.Copy(res, r); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func copyToResponseStream(res http.ResponseWriter, r io.Reader) error {
+
+	if _, err := io.Copy(res, r); err != nil {
+		return err
+	}
+
+	return nil
 }

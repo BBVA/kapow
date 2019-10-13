@@ -1,6 +1,7 @@
 package data
 
 import (
+	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
@@ -312,5 +313,55 @@ func TestGetRequestMatchReturnsErrorWhenNotExists(t *testing.T) {
 
 	if _, err := getRequestMatch(req, "bar"); err == nil {
 		t.Errorf("Expected error but no error returned")
+	}
+}
+
+func TestCopyFromRequestBodyReturnsOK(t *testing.T) {
+	req := httptest.NewRequest(http.MethodPost, "http://www.example.com/this/is/a/test?with=params", strings.NewReader("This is a body content for testing purposes"))
+
+	req.Header.Add("A-Header", "With-Value")
+	req.AddCookie(&http.Cookie{Name: "A-Cookie", Value: "With-Value"})
+
+	result := strings.Builder{}
+	if err := copyFromRequestBody(req, &result); err != nil {
+		t.Errorf("Unexpected error: %+v", err)
+	}
+
+	if value := result.String(); value != "This is a body content for testing purposes" {
+		t.Errorf("Unexpected value. Expected: %s, got: %s", "This is a body content for testing purposes", value)
+	}
+}
+
+func TestCopyToResponseBodyReturnsOK(t *testing.T) {
+	res := httptest.NewRecorder()
+
+	if err := copyToResponseBody(res, strings.NewReader("This is a body content for testing purposes")); err != nil {
+		t.Errorf("Unexpected error: %+v", err)
+	}
+
+	bodyBytes, err := ioutil.ReadAll(res.Result().Body)
+	if err != nil {
+		t.Errorf("Unexpected error while reading result body: %+v", err)
+	}
+
+	if value := string(bodyBytes); value != "This is a body content for testing purposes" {
+		t.Errorf("Unexpected value. Expected: %s, got: %s", "This is a body content for testing purposes", value)
+	}
+}
+
+func TestCopyToResponseStreamReturnsOK(t *testing.T) {
+	res := httptest.NewRecorder()
+
+	if err := copyToResponseStream(res, strings.NewReader("This is a body content for testing purposes")); err != nil {
+		t.Errorf("Unexpected error: %+v", err)
+	}
+
+	bodyBytes, err := ioutil.ReadAll(res.Result().Body)
+	if err != nil {
+		t.Errorf("Unexpected error while reading result body: %+v", err)
+	}
+
+	if value := string(bodyBytes); value != "This is a body content for testing purposes" {
+		t.Errorf("Unexpected value. Expected: %s, got: %s", "This is a body content for testing purposes", value)
 	}
 }
