@@ -2,6 +2,7 @@ package data
 
 import (
 	"bytes"
+	"fmt"
 	"io/ioutil"
 	"mime/multipart"
 	"net/http"
@@ -489,7 +490,7 @@ func TestWriteResponseResourcesReturnsBadRequestWhenInvalidResource(t *testing.T
 
 	handler := mux.NewRouter()
 	handler.HandleFunc("/handlers/{handler_id}/response/{resource_path:.*$}", writeResponseResources).
-		Methods(http.MethodGet)
+		Methods(http.MethodPut)
 
 	getHandler = func(id string) (*model.Handler, bool) {
 		if id == "HANDLER_XXXXXXXXXXXXXXXX" {
@@ -500,7 +501,7 @@ func TestWriteResponseResourcesReturnsBadRequestWhenInvalidResource(t *testing.T
 	}
 
 	for _, testURL := range testCases {
-		req := httptest.NewRequest(http.MethodGet, testURL, nil)
+		req := httptest.NewRequest(http.MethodPut, testURL, nil)
 		resp := httptest.NewRecorder()
 		handler.ServeHTTP(resp, req)
 		if got := resp.Result().StatusCode; got != http.StatusBadRequest {
@@ -576,6 +577,105 @@ func TestReadRequestResourcesReturns(t *testing.T) {
 					}
 				} else {
 					t.Errorf("Unexpected error reading response body: %v", err)
+				}
+			}
+		}
+	}
+}
+
+type testCase struct {
+	name, method, url string
+	statusCode        int
+	payload           string
+	validate          func(*http.Response, testCase) error
+}
+
+func TestWriteResponseResourcesReturns(t *testing.T) {
+	testCases := []testCase{
+		{"Set invalid status", http.MethodPut, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/response/status", 400, "hola", nil},
+		{"Set status", http.MethodPut, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/response/status", 200, "300",
+			func(res *http.Response, tc testCase) error {
+				if res.StatusCode != 300 {
+					return fmt.Errorf("Unexpected status code for request %q. Expected: %s, got: %d", tc.name, tc.payload, res.StatusCode)
+				}
+				return nil
+			},
+		},
+		{"Set body", http.MethodPut, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/response/body", 200, "bar for testing purposes",
+			func(res *http.Response, tc testCase) error {
+				if bodyBytes, _ := ioutil.ReadAll(res.Body); tc.payload != string(bodyBytes) {
+					return fmt.Errorf("Unexpected response body for request %q. Expected: %s, got: %s", tc.name, tc.payload, string(bodyBytes))
+				}
+				return nil
+			},
+		},
+		{"Set stream", http.MethodPut, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/response/stream", 200, "bar for testing purposes",
+			func(res *http.Response, tc testCase) error {
+				if bodyBytes, _ := ioutil.ReadAll(res.Body); tc.payload != string(bodyBytes) {
+					return fmt.Errorf("Unexpected response body for request %q. Expected: %s, got: %s", tc.name, tc.payload, string(bodyBytes))
+				}
+				return nil
+			},
+		},
+		{"Set header", http.MethodPut, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/response/headers/A-Header", 200, "With-Value",
+			func(res *http.Response, tc testCase) error {
+				if res.Header.Get("A-Header") != tc.payload {
+					return fmt.Errorf("Unexpected header value for request %q. Expected: %s, got: %s", tc.name, tc.payload, res.Header.Get("A-Header"))
+				}
+				return nil
+			},
+		},
+		{"Set invalid header", http.MethodPut, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/response/headers", 400, "", nil},
+		{"Set cookie", http.MethodPut, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/response/cookies/A-Cookie", 200, "With-Value",
+			func(res *http.Response, tc testCase) error {
+				if len(res.Cookies()) < 1 {
+					return fmt.Errorf("Unexpected result for request %q. No cookies found", tc.name)
+				} else if res.Cookies()[0].Name != "A-Cookie" || res.Cookies()[0].Value != tc.payload {
+					return fmt.Errorf("Unexpected cookie value for request %q. Expected: %s, got: %s", tc.name, tc.payload, res.Cookies()[0].Name+"="+res.Cookies()[0].Value)
+				}
+				return nil
+			},
+		},
+		{"Set invalid cookie", http.MethodPut, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/response/cookies", 400, "", nil},
+	}
+
+	handler := mux.NewRouter()
+	handler.HandleFunc("/handlers/{handler_id}/response/{resource_path:.*$}", writeResponseResources).
+		Methods(http.MethodPut)
+
+	for _, tc := range testCases {
+		targetResponse := httptest.NewRecorder()
+		getHandler = func(id string) (*model.Handler, bool) {
+			if id == "HANDLER_XXXXXXXXXXXXXXXX" {
+				var targetRequest *http.Request
+				h := mux.NewRouter()
+				h.HandleFunc("/this/is/a/{what}", func(res http.ResponseWriter, req *http.Request) { targetRequest = req }).Methods(http.MethodPut)
+				h.ServeHTTP(httptest.NewRecorder(), httptest.NewRequest(http.MethodPut, "http://www.example.com/this/is/a/test?with=params", strings.NewReader("bar for testing purposes")))
+
+				targetRequest.Header.Add("A-Header", "With-Value")
+				targetRequest.AddCookie(&http.Cookie{Name: "A-Cookie", Value: "With-Value"})
+				targetRequest.PostForm = url.Values{}
+				targetRequest.PostForm.Set("A-Field", "With-Value")
+
+				return &model.Handler{
+						ID:      id,
+						Request: targetRequest,
+						Writer:  targetResponse,
+					},
+					true
+			}
+
+			return nil, false
+		}
+		req := httptest.NewRequest(tc.method, tc.url, strings.NewReader(tc.payload))
+		resp := httptest.NewRecorder()
+		handler.ServeHTTP(resp, req)
+		if got := resp.Result().StatusCode; got != tc.statusCode {
+			t.Errorf("Unexpected status code for request %q. Expected: %d, got: %d", tc.name, tc.statusCode, got)
+		} else {
+			if tc.validate != nil {
+				if err := tc.validate(targetResponse.Result(), tc); err != nil {
+					t.Error(err.Error())
 				}
 			}
 		}

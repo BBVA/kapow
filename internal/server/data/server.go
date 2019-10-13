@@ -3,9 +3,10 @@ package data
 import (
 	"bytes"
 	"errors"
-	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/BBVA/kapow/internal/server/model"
@@ -177,7 +178,7 @@ func getRequestForm(req *http.Request, name string) (string, error) {
 }
 
 func getRequestFileName(req *http.Request, name string) (string, error) {
-	fmt.Printf("Parametro: %s\n", name)
+	//fmt.Printf("Parametro: %s\n", name)
 	//bodyBytes, _ := ioutil.ReadAll(req.Body)
 	//fmt.Printf("Plain body: %s\n", string(bodyBytes))
 	_, fileHeader, err := req.FormFile(name)
@@ -222,32 +223,89 @@ func copyFromRequestBody(req *http.Request, w io.Writer) error {
 	return nil
 }
 
+func readValueFromBody(body io.ReadCloser) (string, error) {
+
+	if bodyBytes, err := ioutil.ReadAll(body); err != nil {
+		return "", nil
+	} else {
+		_ = body.Close()
+		return string(bodyBytes), nil
+	}
+}
+
 func writeResponseResources(res http.ResponseWriter, req *http.Request) {
 	rVars := mux.Vars(req)
 	handlerId := rVars["handler_id"]
 
 	// Check if we have handler to work with
-	if _, ok := getHandler(handlerId); !ok {
+	handler, ok := getHandler(handlerId)
+	if !ok {
 		res.WriteHeader(http.StatusNotFound)
+		return
 	}
 
 	// check if the resource is valid
 	resourcePath := rVars["resource_path"]
 	resComp := strings.Split(resourcePath, "/")
-	if len(resComp) < 1 {
-		res.WriteHeader(http.StatusBadRequest)
-	}
 
 	switch resComp[0] {
 	case "status":
-		fallthrough
+		if val, err := readValueFromBody(req.Body); err != nil {
+			res.WriteHeader(http.StatusInternalServerError)
+		} else {
+			if status, err := strconv.Atoi(val); err != nil {
+				res.WriteHeader(http.StatusBadRequest)
+			} else {
+				handler.Writing.Lock()
+				setResponseStatus(handler.Writer, status)
+				handler.Writing.Unlock()
+				res.WriteHeader(http.StatusOK)
+			}
+		}
 	case "headers":
-		fallthrough
+		if len(resComp) != 2 {
+			res.WriteHeader(http.StatusBadRequest)
+		} else if val, err := readValueFromBody(req.Body); err != nil {
+			res.WriteHeader(http.StatusInternalServerError)
+		} else {
+			handler.Writing.Lock()
+			setResponseHeader(handler.Writer, resComp[1], val)
+			handler.Writing.Unlock()
+			res.WriteHeader(http.StatusOK)
+		}
 	case "cookies":
-		fallthrough
+		if len(resComp) != 2 {
+			res.WriteHeader(http.StatusBadRequest)
+		} else if val, err := readValueFromBody(req.Body); err != nil {
+			res.WriteHeader(http.StatusInternalServerError)
+		} else {
+			handler.Writing.Lock()
+			setResponseCookie(handler.Writer, resComp[1], val)
+			handler.Writing.Unlock()
+			res.WriteHeader(http.StatusOK)
+		}
 	case "body":
+		handler.Writing.Lock()
+		defer func() {
+			handler.Writing.Unlock()
+			_ = req.Body.Close()
+		}()
+		if err := copyToResponseBody(handler.Writer, req.Body); err != nil {
+			res.WriteHeader(http.StatusInternalServerError)
+		} else {
+			res.WriteHeader(http.StatusOK)
+		}
 	case "stream":
-		fallthrough
+		handler.Writing.Lock()
+		defer func() {
+			handler.Writing.Unlock()
+			_ = req.Body.Close()
+		}()
+		if err := copyToResponseStream(handler.Writer, req.Body); err != nil {
+			res.WriteHeader(http.StatusInternalServerError)
+		} else {
+			res.WriteHeader(http.StatusOK)
+		}
 	default:
 		res.WriteHeader(http.StatusBadRequest)
 	}
