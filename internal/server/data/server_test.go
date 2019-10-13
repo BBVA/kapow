@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"reflect"
 	"strings"
 	"testing"
 
@@ -363,5 +364,65 @@ func TestCopyToResponseStreamReturnsOK(t *testing.T) {
 
 	if value := string(bodyBytes); value != "This is a body content for testing purposes" {
 		t.Errorf("Unexpected value. Expected: %s, got: %s", "This is a body content for testing purposes", value)
+	}
+}
+
+func TestRouterIsWellConfigured(t *testing.T) {
+	testCases := []struct {
+		pattern, method string
+		handler         func(http.ResponseWriter, *http.Request)
+		mustMatch       bool
+		vars            []struct{ k, v string }
+	}{
+		{"/handlers/HANDLER_YYYYYYYYYYYYYYYY/request/method", http.MethodGet, readRequestResources, true, []struct{ k, v string }{{"handler_id", "HANDLER_YYYYYYYYYYYYYYYY"}, {"resource_path", "method"}}},
+		{"/handlers/HANDLER_YYYYYYYYYYYYYYYY/request/host", http.MethodGet, readRequestResources, true, []struct{ k, v string }{{"handler_id", "HANDLER_YYYYYYYYYYYYYYYY"}, {"resource_path", "host"}}},
+		{"/handlers/HANDLER_YYYYYYYYYYYYYYYY/request/path", http.MethodGet, readRequestResources, true, []struct{ k, v string }{{"handler_id", "HANDLER_YYYYYYYYYYYYYYYY"}, {"resource_path", "path"}}},
+		{"/handlers/HANDLER_YYYYYYYYYYYYYYYY/request/matches/name", http.MethodGet, readRequestResources, true, []struct{ k, v string }{{"handler_id", "HANDLER_YYYYYYYYYYYYYYYY"}, {"resource_path", "matches/name"}}},
+		{"/handlers/HANDLER_YYYYYYYYYYYYYYYY/request/params/name", http.MethodGet, readRequestResources, true, []struct{ k, v string }{{"handler_id", "HANDLER_YYYYYYYYYYYYYYYY"}, {"resource_path", "params/name"}}},
+		{"/handlers/HANDLER_YYYYYYYYYYYYYYYY/request/headers/name", http.MethodGet, readRequestResources, true, []struct{ k, v string }{{"handler_id", "HANDLER_YYYYYYYYYYYYYYYY"}, {"resource_path", "headers/name"}}},
+		{"/handlers/HANDLER_YYYYYYYYYYYYYYYY/request/cookies/name", http.MethodGet, readRequestResources, true, []struct{ k, v string }{{"handler_id", "HANDLER_YYYYYYYYYYYYYYYY"}, {"resource_path", "cookies/name"}}},
+		{"/handlers/HANDLER_YYYYYYYYYYYYYYYY/request/form/name", http.MethodGet, readRequestResources, true, []struct{ k, v string }{{"handler_id", "HANDLER_YYYYYYYYYYYYYYYY"}, {"resource_path", "form/name"}}},
+		{"/handlers/HANDLER_YYYYYYYYYYYYYYYY/request/files/name/filename", http.MethodGet, readRequestResources, true, []struct{ k, v string }{{"handler_id", "HANDLER_YYYYYYYYYYYYYYYY"}, {"resource_path", "files/name/filename"}}},
+		{"/handlers/HANDLER_YYYYYYYYYYYYYYYY/request/files/name/content", http.MethodGet, readRequestResources, true, []struct{ k, v string }{{"handler_id", "HANDLER_YYYYYYYYYYYYYYYY"}, {"resource_path", "files/name/content"}}},
+		{"/handlers/HANDLER_YYYYYYYYYYYYYYYY/request/body", http.MethodGet, readRequestResources, true, []struct{ k, v string }{{"handler_id", "HANDLER_YYYYYYYYYYYYYYYY"}, {"resource_path", "body"}}},
+		{"/handlers/HANDLER_YYYYYYYYYYYYYYYY/request/headers/name", http.MethodPost, nil, false, []struct{ k, v string }{}},
+		{"/handlers/HANDLER_YYYYYYYYYYYYYYYY/request/headers/name", http.MethodPut, nil, false, []struct{ k, v string }{}},
+		{"/handlers/HANDLER_YYYYYYYYYYYYYYYY/request/headers/name", http.MethodDelete, nil, false, []struct{ k, v string }{}},
+		{"/handlers/HANDLER_YYYYYYYYYYYYYYYY/response/headers/name", http.MethodGet, nil, false, []struct{ k, v string }{}},
+		{"/handlers/HANDLER_YYYYYYYYYYYYYYYY/response/headers/name", http.MethodPost, nil, false, []struct{ k, v string }{}},
+		{"/handlers/HANDLER_YYYYYYYYYYYYYYYY/response/status", http.MethodPut, writeResponseResources, true, []struct{ k, v string }{{"handler_id", "HANDLER_YYYYYYYYYYYYYYYY"}, {"resource_path", "status"}}},
+		{"/handlers/HANDLER_YYYYYYYYYYYYYYYY/response/headers/name", http.MethodPut, writeResponseResources, true, []struct{ k, v string }{{"handler_id", "HANDLER_YYYYYYYYYYYYYYYY"}, {"resource_path", "headers/name"}}},
+		{"/handlers/HANDLER_YYYYYYYYYYYYYYYY/response/cookies/name", http.MethodPut, writeResponseResources, true, []struct{ k, v string }{{"handler_id", "HANDLER_YYYYYYYYYYYYYYYY"}, {"resource_path", "cookies/name"}}},
+		{"/handlers/HANDLER_YYYYYYYYYYYYYYYY/response/body", http.MethodPut, writeResponseResources, true, []struct{ k, v string }{{"handler_id", "HANDLER_YYYYYYYYYYYYYYYY"}, {"resource_path", "body"}}},
+		{"/handlers/HANDLER_YYYYYYYYYYYYYYYY/response/stream", http.MethodPut, writeResponseResources, true, []struct{ k, v string }{{"handler_id", "HANDLER_YYYYYYYYYYYYYYYY"}, {"resource_path", "stream"}}},
+		{"/handlers/HANDLER_YYYYYYYYYYYYYYYY/response/headers/name", http.MethodDelete, nil, false, []struct{ k, v string }{}},
+	}
+
+	r := configRouter()
+
+	for _, tc := range testCases {
+		rm := mux.RouteMatch{}
+		rq, _ := http.NewRequest(tc.method, tc.pattern, nil)
+		if matched := r.Match(rq, &rm); tc.mustMatch != matched {
+			t.Errorf("Route mismatch: Expected: %+v\n\t\t\t\t\t\t got: %+v", tc, rm)
+		} else {
+			if tc.mustMatch {
+				// Check for Handler match.
+				realHandler := reflect.ValueOf(rm.Handler).Pointer()
+				expectedHandler := reflect.ValueOf(tc.handler).Pointer()
+				if realHandler != expectedHandler {
+					t.Errorf("Handler mismatch. Expected: %X, got: %X", expectedHandler, realHandler)
+				}
+
+				// Check for variables
+				for _, v := range tc.vars {
+					if value, exists := rm.Vars[v.k]; !exists {
+						t.Errorf("Variable not present: %s", v.k)
+					} else if v.v != value {
+						t.Errorf("Variable value mismatch. Expected: %s, got: %s", v.v, value)
+					}
+				}
+			}
+		}
 	}
 }

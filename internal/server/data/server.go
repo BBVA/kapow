@@ -8,6 +8,18 @@ import (
 	"github.com/gorilla/mux"
 )
 
+func configRouter() *mux.Router {
+	r := mux.NewRouter()
+
+	r.HandleFunc("/handlers/{handler_id}/request/{resource_path:.*$}", readRequestResources).Methods(http.MethodGet)
+	r.HandleFunc("/handlers/{handler_id}/response/{resource_path:.*$}", writeResponseResources).Methods(http.MethodPut)
+	return r
+}
+
+func readRequestResources(res http.ResponseWriter, req *http.Request) {}
+
+func writeResponseResources(res http.ResponseWriter, req *http.Request) {}
+
 func getRequestMethod(req *http.Request) (string, error) { return req.Method, nil }
 
 func getRequestHost(req *http.Request) (string, error) { return req.Host, nil }
