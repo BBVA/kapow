@@ -1,12 +1,103 @@
 package data
 
 import (
+	"bytes"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
+	"strings"
 
+	"github.com/BBVA/kapow/internal/server/model"
 	"github.com/gorilla/mux"
 )
+
+var requestOperations map[string]func([]string, *http.Request, http.ResponseWriter) = make(map[string]func([]string, *http.Request, http.ResponseWriter))
+
+func init() {
+	requestOperations["method"] = func(resourceComponents []string, targetReq *http.Request, res http.ResponseWriter) {
+		val := getRequestMethod(targetReq)
+		res.WriteHeader(http.StatusOK)
+		_, _ = res.Write([]byte(val))
+	}
+
+	requestOperations["host"] = func(resourceComponents []string, targetReq *http.Request, res http.ResponseWriter) {
+		val := getRequestHost(targetReq)
+		res.WriteHeader(http.StatusOK)
+		_, _ = res.Write([]byte(val))
+	}
+
+	requestOperations["path"] = func(resourceComponents []string, targetReq *http.Request, res http.ResponseWriter) {
+		val := getRequestPath(targetReq)
+		res.WriteHeader(http.StatusOK)
+		_, _ = res.Write([]byte(val))
+	}
+
+	requestOperations["matches"] = func(resourceComponents []string, targetReq *http.Request, res http.ResponseWriter) {
+		if len(resourceComponents) != 2 {
+			res.WriteHeader(http.StatusBadRequest)
+		} else if val, err := getRequestMatch(targetReq, resourceComponents[1]); err != nil {
+			res.WriteHeader(http.StatusNotFound)
+		} else {
+			res.WriteHeader(http.StatusOK)
+			_, _ = res.Write([]byte(val))
+		}
+	}
+
+	requestOperations["params"] = func(resourceComponents []string, targetReq *http.Request, res http.ResponseWriter) {
+		if len(resourceComponents) != 2 {
+			res.WriteHeader(http.StatusBadRequest)
+		} else if val, err := getRequestParam(targetReq, resourceComponents[1]); err != nil {
+			res.WriteHeader(http.StatusNotFound)
+		} else {
+			res.WriteHeader(http.StatusOK)
+			_, _ = res.Write([]byte(val))
+		}
+	}
+
+	requestOperations["headers"] = func(resourceComponents []string, targetReq *http.Request, res http.ResponseWriter) {
+		if len(resourceComponents) != 2 {
+			res.WriteHeader(http.StatusBadRequest)
+		} else if val, err := getRequestHeader(targetReq, resourceComponents[1]); err != nil {
+			res.WriteHeader(http.StatusNotFound)
+		} else {
+			res.WriteHeader(http.StatusOK)
+			_, _ = res.Write([]byte(val))
+		}
+	}
+
+	requestOperations["cookies"] = func(resourceComponents []string, targetReq *http.Request, res http.ResponseWriter) {
+		if len(resourceComponents) != 2 {
+			res.WriteHeader(http.StatusBadRequest)
+		} else if val, err := getRequestCookie(targetReq, resourceComponents[1]); err != nil {
+			res.WriteHeader(http.StatusNotFound)
+		} else {
+			res.WriteHeader(http.StatusOK)
+			_, _ = res.Write([]byte(val))
+		}
+	}
+
+	requestOperations["form"] = func(resourceComponents []string, targetReq *http.Request, res http.ResponseWriter) {
+		if len(resourceComponents) != 2 {
+			res.WriteHeader(http.StatusBadRequest)
+		} else if val, err := getRequestForm(targetReq, resourceComponents[1]); err != nil {
+			res.WriteHeader(http.StatusNotFound)
+		} else {
+			res.WriteHeader(http.StatusOK)
+			_, _ = res.Write([]byte(val))
+		}
+	}
+
+	requestOperations["body"] = func(resourceComponents []string, targetReq *http.Request, res http.ResponseWriter) {
+		buf := new(bytes.Buffer)
+		if err := copyFromRequestBody(targetReq, buf); err != nil {
+			res.WriteHeader(http.StatusInternalServerError)
+		} else {
+			res.WriteHeader(http.StatusOK)
+			_, _ = res.Write(buf.Bytes())
+		}
+	}
+}
 
 func configRouter() *mux.Router {
 	r := mux.NewRouter()
@@ -16,15 +107,37 @@ func configRouter() *mux.Router {
 	return r
 }
 
-func readRequestResources(res http.ResponseWriter, req *http.Request) {}
+var getHandler func(id string) (*model.Handler, bool) = Handlers.Get
 
-func writeResponseResources(res http.ResponseWriter, req *http.Request) {}
+func readRequestResources(res http.ResponseWriter, req *http.Request) {
+	rVars := mux.Vars(req)
+	handlerId := rVars["handler_id"]
 
-func getRequestMethod(req *http.Request) (string, error) { return req.Method, nil }
+	// Check if we have handler to work with
+	handler, ok := getHandler(handlerId)
+	if !ok {
+		res.WriteHeader(http.StatusNotFound)
+		return
+	}
 
-func getRequestHost(req *http.Request) (string, error) { return req.Host, nil }
+	// check if the resource is valid
+	resourcePath := rVars["resource_path"]
+	resComp := strings.Split(resourcePath, "/")
 
-func getRequestPath(req *http.Request) (string, error) { return req.URL.EscapedPath(), nil }
+	if operation, ok := requestOperations[resComp[0]]; !ok {
+		res.WriteHeader(http.StatusBadRequest)
+	} else {
+		operation(resComp, handler.Request, res)
+	}
+	//case "files":
+	//	_ = handler
+}
+
+func getRequestMethod(req *http.Request) string { return req.Method }
+
+func getRequestHost(req *http.Request) string { return req.Host }
+
+func getRequestPath(req *http.Request) string { return req.URL.EscapedPath() }
 
 func getRequestHeader(req *http.Request, name string) (string, error) {
 
@@ -64,7 +177,9 @@ func getRequestForm(req *http.Request, name string) (string, error) {
 }
 
 func getRequestFileName(req *http.Request, name string) (string, error) {
-
+	fmt.Printf("Parametro: %s\n", name)
+	//bodyBytes, _ := ioutil.ReadAll(req.Body)
+	//fmt.Printf("Plain body: %s\n", string(bodyBytes))
 	_, fileHeader, err := req.FormFile(name)
 	if err != nil {
 		return "", errors.New("File not found")
@@ -105,6 +220,37 @@ func copyFromRequestBody(req *http.Request, w io.Writer) error {
 	}
 
 	return nil
+}
+
+func writeResponseResources(res http.ResponseWriter, req *http.Request) {
+	rVars := mux.Vars(req)
+	handlerId := rVars["handler_id"]
+
+	// Check if we have handler to work with
+	if _, ok := getHandler(handlerId); !ok {
+		res.WriteHeader(http.StatusNotFound)
+	}
+
+	// check if the resource is valid
+	resourcePath := rVars["resource_path"]
+	resComp := strings.Split(resourcePath, "/")
+	if len(resComp) < 1 {
+		res.WriteHeader(http.StatusBadRequest)
+	}
+
+	switch resComp[0] {
+	case "status":
+		fallthrough
+	case "headers":
+		fallthrough
+	case "cookies":
+		fallthrough
+	case "body":
+	case "stream":
+		fallthrough
+	default:
+		res.WriteHeader(http.StatusBadRequest)
+	}
 }
 
 func setResponseStatus(res http.ResponseWriter, value int) { res.WriteHeader(value) }
