@@ -499,6 +499,7 @@ func TestWriteResponseResourcesReturnsBadRequestWhenInvalidResource(t *testing.T
 }
 
 func TestReadRequestResourcesReturns(t *testing.T) {
+	var requestBody string
 	testCases := []struct {
 		name, method, url string
 		statusCode        int
@@ -507,7 +508,7 @@ func TestReadRequestResourcesReturns(t *testing.T) {
 		{"Get method", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/method", 200, http.MethodPut},
 		{"Get host", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/host", 200, "www.example.com"},
 		{"Get path", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/path", 200, "/this/is/a/test"},
-		//{"Get body", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/body", 200, "bar for testing purposes"},
+		{"Get body", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/body", 200, requestBody},
 		{"Get param", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/params/with", 200, "params"},
 		{"Get non-existent param", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/params/other", 404, ""},
 		{"Get invalid param", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/params", 400, ""},
@@ -529,6 +530,7 @@ func TestReadRequestResourcesReturns(t *testing.T) {
 		{"Get invalid filename", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/files/afile", 400, ""},
 		{"Get file content", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/files/afile/content", 200, "This is a body content for testing purposes"},
 		{"Get non-existent file content", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/files/otherfile/content", 404, ""},
+		{"Get non-existent file attribute", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/files/otherfile/lacolita", 400, ""},
 	}
 
 	getHandler = func(id string) (*model.Handler, bool) {
@@ -541,6 +543,7 @@ func TestReadRequestResourcesReturns(t *testing.T) {
 			_, _ = part.Write([]byte("This is a body content for testing purposes"))
 			_ = multPartWriter.Close()
 
+			requestBody = multPartBody.String()
 			h := mux.NewRouter()
 			h.HandleFunc("/this/is/a/{what}", func(res http.ResponseWriter, req *http.Request) { targetRequest = req }).Methods(http.MethodPut)
 			h.ServeHTTP(httptest.NewRecorder(), httptest.NewRequest(http.MethodPut, "http://www.example.com/this/is/a/test?with=params", &multPartBody))
