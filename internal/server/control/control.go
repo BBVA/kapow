@@ -14,9 +14,7 @@ import (
 
 // Run must start the control server in a specific address
 func Run(bindAddr string) {
-	r := configRouter()
-
-	log.Fatal(http.ListenAndServe(bindAddr, r))
+	log.Fatal(http.ListenAndServe(bindAddr, configRouter()))
 }
 
 func configRouter() *mux.Router {
@@ -30,8 +28,7 @@ func configRouter() *mux.Router {
 	return r
 }
 
-// user.Routes.Remove() []model.Route
-var funcRemove func(id string) error
+var funcRemove func(id string) error = user.Routes.Delete
 
 func removeRoute(res http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
@@ -43,7 +40,6 @@ func removeRoute(res http.ResponseWriter, req *http.Request) {
 	res.WriteHeader(http.StatusNoContent)
 }
 
-// user.Routes.List() []model.Route
 var funcList func() []model.Route = user.Routes.List
 
 func listRoutes(res http.ResponseWriter, req *http.Request) {
@@ -55,7 +51,6 @@ func listRoutes(res http.ResponseWriter, req *http.Request) {
 	_, _ = res.Write(listBytes)
 }
 
-// user.Routes.Append(r model.Route) model.Route
 var funcAdd func(model.Route) model.Route = user.Routes.Append
 
 func addRoute(res http.ResponseWriter, req *http.Request) {
