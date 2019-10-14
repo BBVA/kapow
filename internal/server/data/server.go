@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -119,6 +120,9 @@ func init() {
 		}
 	}
 }
+
+// Run must start the data server in a specific address
+func Run(bindAddr string) { log.Fatal(http.ListenAndServe(bindAddr, configRouter())) }
 
 func configRouter() *mux.Router {
 	r := mux.NewRouter()
