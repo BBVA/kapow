@@ -178,9 +178,7 @@ func getRequestForm(req *http.Request, name string) (string, error) {
 }
 
 func getRequestFileName(req *http.Request, name string) (string, error) {
-	//fmt.Printf("Parametro: %s\n", name)
-	//bodyBytes, _ := ioutil.ReadAll(req.Body)
-	//fmt.Printf("Plain body: %s\n", string(bodyBytes))
+
 	_, fileHeader, err := req.FormFile(name)
 	if err != nil {
 		return "", errors.New("File not found")
