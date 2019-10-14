@@ -89,6 +89,26 @@ func init() {
 		}
 	}
 
+	requestOperations["files"] = func(resourceComponents []string, targetReq *http.Request, res http.ResponseWriter) {
+		if len(resourceComponents) != 3 {
+			res.WriteHeader(http.StatusBadRequest)
+		} else if resourceComponents[2] == "filename" {
+			if val, err := getRequestFileName(targetReq, resourceComponents[1]); err != nil {
+				res.WriteHeader(http.StatusNotFound)
+			} else {
+				res.WriteHeader(http.StatusOK)
+				_, _ = res.Write([]byte(val))
+			}
+		} else if resourceComponents[2] == "content" {
+			if err := copyRequestFile(targetReq, resourceComponents[1], res); err != nil {
+				res.WriteHeader(http.StatusNotFound)
+			}
+			res.WriteHeader(http.StatusOK)
+		} else {
+			res.WriteHeader(http.StatusBadRequest)
+		}
+	}
+
 	requestOperations["body"] = func(resourceComponents []string, targetReq *http.Request, res http.ResponseWriter) {
 		buf := new(bytes.Buffer)
 		if err := copyFromRequestBody(targetReq, buf); err != nil {
@@ -121,7 +141,7 @@ func readRequestResources(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	// check if the resource is valid
+	// Check if the resource is valid
 	resourcePath := rVars["resource_path"]
 	resComp := strings.Split(resourcePath, "/")
 
@@ -169,7 +189,7 @@ func getRequestParam(req *http.Request, name string) (string, error) {
 
 func getRequestForm(req *http.Request, name string) (string, error) {
 
-	// Why PostFormValue is not working
+	// Must work with both POST form and multipart forms
 	if val := req.PostFormValue(name); val != "" {
 		return val, nil
 	} else {

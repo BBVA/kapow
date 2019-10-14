@@ -236,8 +236,7 @@ func TestCopyRequestFileReturnsOK(t *testing.T) {
 	req.AddCookie(&http.Cookie{Name: "A-Cookie", Value: "With-Value"})
 
 	result := strings.Builder{}
-	err := copyRequestFile(req, "A-File", &result)
-	if err != nil {
+	if err := copyRequestFile(req, "A-File", &result); err != nil {
 		t.Errorf("Unexpected error: %+v", err)
 	}
 
@@ -508,35 +507,47 @@ func TestReadRequestResourcesReturns(t *testing.T) {
 		{"Get method", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/method", 200, http.MethodPut},
 		{"Get host", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/host", 200, "www.example.com"},
 		{"Get path", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/path", 200, "/this/is/a/test"},
-		{"Get body", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/body", 200, "bar for testing purposes"},
+		//{"Get body", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/body", 200, "bar for testing purposes"},
 		{"Get param", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/params/with", 200, "params"},
-		{"Get unexistent param", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/params/other", 404, ""},
+		{"Get non-existent param", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/params/other", 404, ""},
 		{"Get invalid param", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/params", 400, ""},
 		{"Get header", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/headers/A-Header", 200, "With-Value"},
-		{"Get unexistent header", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/headers/Other-Header", 404, ""},
+		{"Get non-existent header", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/headers/Other-Header", 404, ""},
 		{"Get invalid header", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/headers", 400, ""},
 		{"Get cookie", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/cookies/A-Cookie", 200, "With-Value"},
-		{"Get unexistent cookie", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/cookies/Other-Cookie", 404, ""},
+		{"Get non-existent cookie", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/cookies/Other-Cookie", 404, ""},
 		{"Get invalid cookie", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/cookies", 400, ""},
 		{"Get form field", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/form/A-Field", 200, "With-Value"},
-		{"Get unexistent form field", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/form/Other-Field", 404, ""},
+		{"Get non-existent form field", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/form/Other-Field", 404, ""},
 		{"Get invalid form field", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/form", 400, ""},
 		{"Get match", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/matches/what", 200, "test"},
-		{"Get unexistent match", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/matches/that", 404, ""},
+		{"Get non-existent match", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/matches/that", 404, ""},
 		{"Get invalid match", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/matches", 400, ""},
+		{"Get invalid file", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/files/", 400, ""},
+		{"Get filename", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/files/afile/filename", 200, "afile.txt"},
+		{"Get non-existent filename", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/files/otherfile/filename", 404, ""},
+		{"Get invalid filename", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/files/afile", 400, ""},
+		{"Get file content", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/files/afile/content", 200, "This is a body content for testing purposes"},
+		{"Get non-existent file content", http.MethodGet, "/handlers/HANDLER_XXXXXXXXXXXXXXXX/request/files/otherfile/content", 404, ""},
 	}
 
 	getHandler = func(id string) (*model.Handler, bool) {
 		if id == "HANDLER_XXXXXXXXXXXXXXXX" {
 			var targetRequest *http.Request
+			multPartBody := bytes.Buffer{}
+			multPartWriter := multipart.NewWriter(&multPartBody)
+			_ = multPartWriter.WriteField("A-Field", "With-Value")
+			part, _ := multPartWriter.CreateFormFile("afile", "afile.txt")
+			_, _ = part.Write([]byte("This is a body content for testing purposes"))
+			_ = multPartWriter.Close()
+
 			h := mux.NewRouter()
 			h.HandleFunc("/this/is/a/{what}", func(res http.ResponseWriter, req *http.Request) { targetRequest = req }).Methods(http.MethodPut)
-			h.ServeHTTP(httptest.NewRecorder(), httptest.NewRequest(http.MethodPut, "http://www.example.com/this/is/a/test?with=params", strings.NewReader("bar for testing purposes")))
+			h.ServeHTTP(httptest.NewRecorder(), httptest.NewRequest(http.MethodPut, "http://www.example.com/this/is/a/test?with=params", &multPartBody))
 
+			targetRequest.Header.Add("Content-Type", multPartWriter.FormDataContentType())
 			targetRequest.Header.Add("A-Header", "With-Value")
 			targetRequest.AddCookie(&http.Cookie{Name: "A-Cookie", Value: "With-Value"})
-			targetRequest.PostForm = url.Values{}
-			targetRequest.PostForm.Set("A-Field", "With-Value")
 
 			return &model.Handler{
 					ID:      id,
