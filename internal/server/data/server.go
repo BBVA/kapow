@@ -1,51 +1,68 @@
 package data
 
 import (
-	"io/ioutil"
+	"log"
 	"net/http"
 
 	"github.com/BBVA/kapow/internal/server/model"
 	"github.com/gorilla/mux"
 )
 
-// Rutas a registrar:
-// /handlers/{handlerId}/response/headers/{item} GET|PUT
-// /handlers/{handlerId}/response/cookies/{item} GET|PUT
-// /handlers/{handlerId}/request/headers/{item} GET|PUT
-// /handlers/{handlerId}/request/cookies/{item} GET|PUT
+var DataServer http.Server
 
-var getHandlerId func(string) (*model.Handler, bool) = Handlers.Get
+func RunServer() {
+	router := mux.NewRouter()
+	// /request
+	router.HandleFunc("/handlers/{handlerId}/request/method", checkResource(getRequestMethod)).Methods("GET")
+	router.HandleFunc("/handlers/{handlerId}/request/host", checkResource(getRequestHost)).Methods("GET")
+	router.HandleFunc("/handlers/{handlerId}/request/path", checkResource(getRequestPath)).Methods("GET")
+	router.HandleFunc("/handlers/{handlerId}/request/matches/{name}", checkResource(getRequestMatches)).Methods("GET")
+	router.HandleFunc("/handlers/{handlerId}/request/params/{name}", checkResource(getRequestParams)).Methods("GET")
+	router.HandleFunc("/handlers/{handlerId}/request/headers/{name}", checkResource(getRequestHeaders)).Methods("GET")
+	router.HandleFunc("/handlers/{handlerId}/request/cookies/{name}", checkResource(getRequestCookies)).Methods("GET")
+	router.HandleFunc("/handlers/{handlerId}/request/form/{name}", checkResource(getRequestForm)).Methods("GET")
+	router.HandleFunc("/handlers/{handlerId}/request/files/{name}", checkResource(getRequestFiles)).Methods("GET")
+	router.HandleFunc("/handlers/{handlerId}/request/body", checkResource(getRequestBody)).Methods("GET")
 
-func updateResource(res http.ResponseWriter, req *http.Request) {
-	vars := mux.Vars(req)
-	hID := vars["handlerId"]
+	// /response
+	router.HandleFunc("/handlers/{handlerId}/response/status", checkResource(lockResponseWriter(setResponseStatus))).Methods("POST")
+	router.HandleFunc("/handlers/{handlerId}/response/headers/{name}", checkResource(lockResponseWriter(setResponseHeaders))).Methods("POST")
+	router.HandleFunc("/handlers/{handlerId}/response/cookies/{name}", checkResource(lockResponseWriter(setResponseCookies))).Methods("POST")
+	router.HandleFunc("/handlers/{handlerId}/response/body", checkResource(lockResponseWriter(setResponseBody))).Methods("POST")
 
-	hnd, ok := getHandlerId(hID)
-	if !ok {
-		res.WriteHeader(http.StatusNotFound)
-		return
+	// Invalid resource paths return 400
+	router.HandleFunc("/handlers/{handlerId}/{resourcePath:.*}", invalidResourcePath)
+
+	DataServer = http.Server{
+		Addr:    "127.0.0.1:8082",
+		Handler: router}
+	if err := DataServer.ListenAndServe(); err != http.ErrServerClosed {
+		log.Fatalf("DataServer failed: %s", err)
 	}
+}
 
-	resource := vars["resource"]
-	if resource == "response/headers" || resource == "response/cookies" {
-		res.WriteHeader(http.StatusBadRequest)
-		return
+func invalidResourcePath(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusBadRequest)
+}
+
+// Check that the requested resource exists prior to call the given
+// handler
+func checkResource(fn func(http.ResponseWriter, *http.Request, *model.Handler)) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		params := mux.Vars(r)
+		h, ok := Handlers.Get(params["handlerId"])
+		if ok {
+			fn(w, r, h)
+		} else {
+			w.WriteHeader(http.StatusNotFound)
+		}
 	}
+}
 
-	bodyBytes, err := ioutil.ReadAll(req.Body)
-	if err != nil {
-		res.WriteHeader(http.StatusInternalServerError)
-		return
+func lockResponseWriter(fn func(http.ResponseWriter, *http.Request, *model.Handler)) func(http.ResponseWriter, *http.Request, *model.Handler) {
+	return func(w http.ResponseWriter, r *http.Request, h *model.Handler) {
+		h.Writing.Lock()
+		defer h.Writing.Unlock()
+		fn(w, r, h)
 	}
-
-	req.Body.Close()
-	value := string(bodyBytes)
-
-	if hnd != nil {
-		hnd.Writing.Lock()
-		hnd.Writer.Header().Add("pepe", value)
-		hnd.Writing.Unlock()
-	}
-
-	res.WriteHeader(http.StatusOK)
 }
