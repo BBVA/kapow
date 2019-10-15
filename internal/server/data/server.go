@@ -16,6 +16,8 @@ import (
 
 var requestOperations map[string]func([]string, *http.Request, http.ResponseWriter) = make(map[string]func([]string, *http.Request, http.ResponseWriter))
 
+var responseOperations map[string]func([]string, io.ReadCloser, http.ResponseWriter, *model.Handler) = make(map[string]func([]string, io.ReadCloser, http.ResponseWriter, *model.Handler))
+
 func init() {
 	requestOperations["method"] = func(resourceComponents []string, targetReq *http.Request, res http.ResponseWriter) {
 		val := getRequestMethod(targetReq)
@@ -119,6 +121,73 @@ func init() {
 			_, _ = res.Write(buf.Bytes())
 		}
 	}
+
+	responseOperations["status"] = func(resourceComponents []string, reqBody io.ReadCloser, reqRes http.ResponseWriter, target *model.Handler) {
+		if val, err := readValueFromBody(reqBody); err != nil {
+			reqRes.WriteHeader(http.StatusInternalServerError)
+		} else {
+			if status, err := strconv.Atoi(val); err != nil {
+				reqRes.WriteHeader(http.StatusBadRequest)
+			} else {
+				target.Writing.Lock()
+				setResponseStatus(target.Writer, status)
+				target.Writing.Unlock()
+				reqRes.WriteHeader(http.StatusOK)
+			}
+		}
+	}
+
+	responseOperations["headers"] = func(resourceComponents []string, reqBody io.ReadCloser, reqRes http.ResponseWriter, target *model.Handler) {
+		if len(resourceComponents) != 2 {
+			reqRes.WriteHeader(http.StatusBadRequest)
+		} else if val, err := readValueFromBody(reqBody); err != nil {
+			reqRes.WriteHeader(http.StatusInternalServerError)
+		} else {
+			target.Writing.Lock()
+			setResponseHeader(target.Writer, resourceComponents[1], val)
+			target.Writing.Unlock()
+			reqRes.WriteHeader(http.StatusOK)
+		}
+	}
+
+	responseOperations["cookies"] = func(resourceComponents []string, reqBody io.ReadCloser, reqRes http.ResponseWriter, target *model.Handler) {
+		if len(resourceComponents) != 2 {
+			reqRes.WriteHeader(http.StatusBadRequest)
+		} else if val, err := readValueFromBody(reqBody); err != nil {
+			reqRes.WriteHeader(http.StatusInternalServerError)
+		} else {
+			target.Writing.Lock()
+			setResponseCookie(target.Writer, resourceComponents[1], val)
+			target.Writing.Unlock()
+			reqRes.WriteHeader(http.StatusOK)
+		}
+	}
+
+	responseOperations["body"] = func(resourceComponents []string, reqBody io.ReadCloser, reqRes http.ResponseWriter, target *model.Handler) {
+		target.Writing.Lock()
+		defer func() {
+			target.Writing.Unlock()
+			_ = reqBody.Close()
+		}()
+		if err := copyToResponseBody(target.Writer, reqBody); err != nil {
+			reqRes.WriteHeader(http.StatusInternalServerError)
+		} else {
+			reqRes.WriteHeader(http.StatusOK)
+		}
+	}
+
+	responseOperations["stream"] = func(resourceComponents []string, reqBody io.ReadCloser, reqRes http.ResponseWriter, target *model.Handler) {
+		target.Writing.Lock()
+		defer func() {
+			target.Writing.Unlock()
+			_ = reqBody.Close()
+		}()
+		if err := copyToResponseStream(target.Writer, reqBody); err != nil {
+			reqRes.WriteHeader(http.StatusInternalServerError)
+		} else {
+			reqRes.WriteHeader(http.StatusOK)
+		}
+	}
 }
 
 // Run must start the data server in a specific address
@@ -154,8 +223,6 @@ func readRequestResources(res http.ResponseWriter, req *http.Request) {
 	} else {
 		operation(resComp, handler.Request, res)
 	}
-	//case "files":
-	//	_ = handler
 }
 
 func getRequestMethod(req *http.Request) string { return req.Method }
@@ -270,66 +337,10 @@ func writeResponseResources(res http.ResponseWriter, req *http.Request) {
 	resourcePath := rVars["resource_path"]
 	resComp := strings.Split(resourcePath, "/")
 
-	switch resComp[0] {
-	case "status":
-		if val, err := readValueFromBody(req.Body); err != nil {
-			res.WriteHeader(http.StatusInternalServerError)
-		} else {
-			if status, err := strconv.Atoi(val); err != nil {
-				res.WriteHeader(http.StatusBadRequest)
-			} else {
-				handler.Writing.Lock()
-				setResponseStatus(handler.Writer, status)
-				handler.Writing.Unlock()
-				res.WriteHeader(http.StatusOK)
-			}
-		}
-	case "headers":
-		if len(resComp) != 2 {
-			res.WriteHeader(http.StatusBadRequest)
-		} else if val, err := readValueFromBody(req.Body); err != nil {
-			res.WriteHeader(http.StatusInternalServerError)
-		} else {
-			handler.Writing.Lock()
-			setResponseHeader(handler.Writer, resComp[1], val)
-			handler.Writing.Unlock()
-			res.WriteHeader(http.StatusOK)
-		}
-	case "cookies":
-		if len(resComp) != 2 {
-			res.WriteHeader(http.StatusBadRequest)
-		} else if val, err := readValueFromBody(req.Body); err != nil {
-			res.WriteHeader(http.StatusInternalServerError)
-		} else {
-			handler.Writing.Lock()
-			setResponseCookie(handler.Writer, resComp[1], val)
-			handler.Writing.Unlock()
-			res.WriteHeader(http.StatusOK)
-		}
-	case "body":
-		handler.Writing.Lock()
-		defer func() {
-			handler.Writing.Unlock()
-			_ = req.Body.Close()
-		}()
-		if err := copyToResponseBody(handler.Writer, req.Body); err != nil {
-			res.WriteHeader(http.StatusInternalServerError)
-		} else {
-			res.WriteHeader(http.StatusOK)
-		}
-	case "stream":
-		handler.Writing.Lock()
-		defer func() {
-			handler.Writing.Unlock()
-			_ = req.Body.Close()
-		}()
-		if err := copyToResponseStream(handler.Writer, req.Body); err != nil {
-			res.WriteHeader(http.StatusInternalServerError)
-		} else {
-			res.WriteHeader(http.StatusOK)
-		}
-	default:
+	if operation, ok := responseOperations[resComp[0]]; !ok {
 		res.WriteHeader(http.StatusBadRequest)
+	} else {
+		operation(resComp, req.Body, res, handler)
 	}
 }
 
