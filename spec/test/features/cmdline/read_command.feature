@@ -1,12 +1,12 @@
 Feature: Kapow!'s read subcommand
-  As a kapow route developer
+  As a Kapow! route developer
   In order to implement a route's command script
   I need to be able to access current request resources for that route
 
   Scenario Outline: Be warned when I fail to set mandatory flags
     In order to be able to invoke the Kapow! server some information should be
     provided such as server URL, handler id and resource path.
-    When I run kapow "<subcommand>" sub-command with environment "<envVars>" and commandline args "<cmdlineVars>"
+    When I run Kapow! "<subcommand>" sub-command with environment "<envVars>" and commandline args "<cmdlineVars>"
     Then I get an error code <errCode> with message "<errMsg>"
 
     Examples:
