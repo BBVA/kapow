@@ -560,11 +560,96 @@ func TestGetRequestHeadersReturnsTheFirstCorrectMatchValue(t *testing.T) {
 		Writer:  httptest.NewRecorder(),
 	}
 	h.Request.Header.Set("bar", "BAZ")
-	h.Request.Header.Add("bar", "BUX")
+	h.Request.Header.Add("bar", "QUX")
 	r := createMuxRequest("/handlers/HANDLERID/request/headers/{name}", "/handlers/HANDLERID/request/headers/bar", "GET")
 	w := httptest.NewRecorder()
 
 	getRequestHeaders(w, r, &h)
+
+	res := w.Result()
+	if body, _ := ioutil.ReadAll(res.Body); string(body) != "BAZ" {
+		t.Errorf("Body mismatch. Expected: BAZ. Got: %v", string(body))
+	}
+}
+
+func TestGetRequestCookies200sOnHappyPath(t *testing.T) {
+	h := model.Handler{
+		Request: httptest.NewRequest("GET", "/", nil),
+		Writer:  httptest.NewRecorder(),
+	}
+	h.Request.AddCookie(&http.Cookie{Name: "bar", Value: "BAZ"})
+	r := createMuxRequest("/handlers/HANDLERID/request/cookies/{name}", "/handlers/HANDLERID/request/cookies/bar", "GET")
+	w := httptest.NewRecorder()
+
+	getRequestCookies(w, r, &h)
+
+	res := w.Result()
+	if res.StatusCode != http.StatusOK {
+		t.Errorf("Status code mismatch. Expected: 200, Got: %d", res.StatusCode)
+	}
+}
+
+func TestGetRequestCookiesSetsOctectStreamContentType(t *testing.T) {
+	h := model.Handler{
+		Request: httptest.NewRequest("GET", "/", nil),
+		Writer:  httptest.NewRecorder(),
+	}
+	h.Request.AddCookie(&http.Cookie{Name: "bar", Value: "BAZ"})
+	r := createMuxRequest("/handlers/HANDLERID/request/cookies/{name}", "/handlers/HANDLERID/request/cookies/bar", "GET")
+	w := httptest.NewRecorder()
+
+	getRequestCookies(w, r, &h)
+
+	res := w.Result()
+	if res.Header.Get("Content-Type") != "application/octet-stream" {
+		t.Error("Content Type mismatch")
+	}
+}
+
+func TestGetRequestCookiesReturnsMatchedCookieValue(t *testing.T) {
+	h := model.Handler{
+		Request: httptest.NewRequest("GET", "/", nil),
+		Writer:  httptest.NewRecorder(),
+	}
+	h.Request.AddCookie(&http.Cookie{Name: "bar", Value: "BAZ"})
+	r := createMuxRequest("/handlers/HANDLERID/request/cookies/{name}", "/handlers/HANDLERID/request/cookies/bar", "GET")
+	w := httptest.NewRecorder()
+
+	getRequestCookies(w, r, &h)
+
+	res := w.Result()
+	if body, _ := ioutil.ReadAll(res.Body); string(body) != "BAZ" {
+		t.Errorf("Body mismatch. Expected: BAZ. Got: %v", string(body))
+	}
+}
+
+func TestGetRequestCookies404sIfCookieDoesntExist(t *testing.T) {
+	h := model.Handler{
+		Request: httptest.NewRequest("GET", "/", nil),
+		Writer:  httptest.NewRecorder(),
+	}
+	r := createMuxRequest("/handlers/HANDLERID/request/cookies/{name}", "/handlers/HANDLERID/request/cookies/bar", "GET")
+	w := httptest.NewRecorder()
+
+	getRequestCookies(w, r, &h)
+
+	res := w.Result()
+	if res.StatusCode != http.StatusNotFound {
+		t.Errorf("Status code mismatch. Expected: 404, Got: %d", res.StatusCode)
+	}
+}
+
+func TestGetRequestCookiesReturnsTheFirstCorrectMatchValue(t *testing.T) {
+	h := model.Handler{
+		Request: httptest.NewRequest("GET", "/", nil),
+		Writer:  httptest.NewRecorder(),
+	}
+	h.Request.AddCookie(&http.Cookie{Name: "bar", Value: "BAZ"})
+	h.Request.AddCookie(&http.Cookie{Name: "bar", Value: "QUX"})
+	r := createMuxRequest("/handlers/HANDLERID/request/headers/{name}", "/handlers/HANDLERID/request/headers/bar", "GET")
+	w := httptest.NewRecorder()
+
+	getRequestCookies(w, r, &h)
 
 	res := w.Result()
 	if body, _ := ioutil.ReadAll(res.Body); string(body) != "BAZ" {

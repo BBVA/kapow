@@ -69,3 +69,15 @@ func getRequestHeaders(w http.ResponseWriter, r *http.Request, h *model.Handler)
 		w.WriteHeader(http.StatusNotFound)
 	}
 }
+
+// TODO: Add to the note section of the specification the fact that
+// Cookie keys are CaseSensitive
+func getRequestCookies(w http.ResponseWriter, r *http.Request, h *model.Handler) {
+	w.Header().Add("Content-Type", "application/octet-stream")
+	name := mux.Vars(r)["name"]
+	if cookie, err := h.Request.Cookie(name); err == nil {
+		_, _ = w.Write([]byte(cookie.Value))
+	} else {
+		w.WriteHeader(http.StatusNotFound)
+	}
+}
