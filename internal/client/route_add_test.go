@@ -10,7 +10,7 @@ import (
 func TestSuccessOnCorrectRoute(t *testing.T) {
 	defer gock.Off()
 	gock.New("http://localhost").
-		Put("/routes").
+		Post("/routes").
 		MatchType("json").
 		JSON(map[string]string{
 			"method":      "GET",

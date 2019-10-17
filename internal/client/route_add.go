@@ -16,5 +16,5 @@ func AddRoute(host, path, method, entrypoint, command string, w io.Writer) error
 		"url_pattern": path,
 		"entrypoint":  entrypoint,
 		"command":     command})
-	return http.Put(url, "application/json", bytes.NewReader(body), w)
+	return http.Post(url, "application/json", bytes.NewReader(body), w)
 }
