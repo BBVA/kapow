@@ -20,7 +20,7 @@ var SetCmd = &cobra.Command{
 	PreRunE: handlerIDRequired,
 	Run: func(cmd *cobra.Command, args []string) {
 		var r io.Reader
-		url, _ := cmd.Flags().GetString("url")
+		dataURL, _ := cmd.Flags().GetString("data-url")
 		handler, _ := cmd.Flags().GetString("handler")
 
 		if len(args) >= 2 {
@@ -31,7 +31,7 @@ var SetCmd = &cobra.Command{
 			r = os.Stdin
 		}
 
-		if err := client.SetData(url, handler, args[0], r); err != nil {
+		if err := client.SetData(dataURL, handler, args[0], r); err != nil {
 			os.Stderr.WriteString(fmt.Sprintf("%v\n", err))
 			os.Exit(1)
 		}
@@ -39,6 +39,6 @@ var SetCmd = &cobra.Command{
 }
 
 func init() {
-	SetCmd.Flags().String("url", getEnv("KAPOW_URL", "http://localhost:8082"), "Kapow! data interface URL")
+	SetCmd.Flags().String("data-url", getEnv("KAPOW_DATA_URL", "http://localhost:8082"), "Kapow! data interface URL")
 	SetCmd.Flags().String("handler", getEnv("KAPOW_HANDLER_ID", ""), "Kapow! handler id")
 }

@@ -17,10 +17,10 @@ var GetCmd = &cobra.Command{
 	Args:    cobra.ExactArgs(1),
 	PreRunE: handlerIDRequired,
 	Run: func(cmd *cobra.Command, args []string) {
-		url, _ := cmd.Flags().GetString("url")
+		dataURL, _ := cmd.Flags().GetString("data-url")
 		handler, _ := cmd.Flags().GetString("handler")
 
-		err := client.GetData(url, handler, args[0], os.Stdout)
+		err := client.GetData(dataURL, handler, args[0], os.Stdout)
 		if err != nil {
 			os.Stderr.WriteString(fmt.Sprintf("%v\n", err))
 			os.Exit(1)
@@ -29,6 +29,6 @@ var GetCmd = &cobra.Command{
 }
 
 func init() {
-	GetCmd.Flags().String("url", getEnv("KAPOW_URL", "http://localhost:8082"), "Kapow! data interface URL")
+	GetCmd.Flags().String("data-url", getEnv("KAPOW_DATA_URL", "http://localhost:8082"), "Kapow! data interface URL")
 	GetCmd.Flags().String("handler", getEnv("KAPOW_HANDLER_ID", ""), "Kapow! handler id")
 }
