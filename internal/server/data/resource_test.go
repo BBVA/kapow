@@ -438,11 +438,11 @@ func TestGetRequestParamsReturnsTheFirstCorrectMatchValue(t *testing.T) {
 }
 
 func TestGetRequestHeaders200sOnHappyPath(t *testing.T) {
-	t.Skip("******** WIP ********")
 	h := model.Handler{
 		Request: httptest.NewRequest("GET", "/", nil),
 		Writer:  httptest.NewRecorder(),
 	}
+	h.Request.Header.Set("bar", "BAZ")
 	r := createMuxRequest("/handlers/HANDLERID/request/headers/{name}", "/handlers/HANDLERID/request/headers/bar", "GET")
 	w := httptest.NewRecorder()
 
@@ -450,12 +450,11 @@ func TestGetRequestHeaders200sOnHappyPath(t *testing.T) {
 
 	res := w.Result()
 	if res.StatusCode != http.StatusOK {
-		t.Error("Status code mismatch")
+		t.Errorf("Status code mismatch. Expected: 200, Got: %d", res.StatusCode)
 	}
 }
 
 func TestGetRequestHeadersSetsOctectStreamContentType(t *testing.T) {
-	t.Skip("******** WIP ********")
 	h := model.Handler{
 		Request: httptest.NewRequest("GET", "/", nil),
 		Writer:  httptest.NewRecorder(),
@@ -472,7 +471,57 @@ func TestGetRequestHeadersSetsOctectStreamContentType(t *testing.T) {
 }
 
 func TestGetRequestHeadersReturnsTheCorrectMatchValue(t *testing.T) {
-	t.Skip("******** WIP ********")
+	h := model.Handler{
+		Request: httptest.NewRequest("GET", "/", nil),
+		Writer:  httptest.NewRecorder(),
+	}
+	h.Request.Header.Set("Bar", "BAZ")
+	r := createMuxRequest("/handlers/HANDLERID/request/headers/{name}", "/handlers/HANDLERID/request/headers/bar", "GET")
+	w := httptest.NewRecorder()
+
+	getRequestHeaders(w, r, &h)
+
+	res := w.Result()
+	if body, _ := ioutil.ReadAll(res.Body); string(body) != "BAZ" {
+		t.Errorf("Body mismatch. Expected: BAZ. Got: %v", string(body))
+	}
+}
+
+func TestGetRequestHeaders200sWhenHeaderIsEmptyString(t *testing.T) {
+	h := model.Handler{
+		Request: httptest.NewRequest("GET", "/", nil),
+		Writer:  httptest.NewRecorder(),
+	}
+	h.Request.Header.Set("bar", "")
+	r := createMuxRequest("/handlers/HANDLERID/request/headers/{name}", "/handlers/HANDLERID/request/headers/bar", "GET")
+	w := httptest.NewRecorder()
+
+	getRequestHeaders(w, r, &h)
+
+	res := w.Result()
+	if res.StatusCode != http.StatusOK {
+		t.Errorf("Status code mismatch. Expected: 200, Got: %d", res.StatusCode)
+	}
+}
+
+func TestGetRequestHeadersReturnsEmptyBodyWhenHeaderIsEmptyString(t *testing.T) {
+	h := model.Handler{
+		Request: httptest.NewRequest("GET", "/", nil),
+		Writer:  httptest.NewRecorder(),
+	}
+	h.Request.Header.Set("bar", "")
+	r := createMuxRequest("/handlers/HANDLERID/request/headers/{name}", "/handlers/HANDLERID/request/headers/bar", "GET")
+	w := httptest.NewRecorder()
+
+	getRequestHeaders(w, r, &h)
+
+	res := w.Result()
+	if body, _ := ioutil.ReadAll(res.Body); string(body) != "" {
+		t.Errorf(`Body mismatch. Expected "". Got: %q`, string(body))
+	}
+}
+
+func TestGetRequestHeadersReturnsTheCorrectInsensitiveMatchValue(t *testing.T) {
 	h := model.Handler{
 		Request: httptest.NewRequest("GET", "/", nil),
 		Writer:  httptest.NewRecorder(),
@@ -484,13 +533,12 @@ func TestGetRequestHeadersReturnsTheCorrectMatchValue(t *testing.T) {
 	getRequestHeaders(w, r, &h)
 
 	res := w.Result()
-	if res.Header.Get("bar") != "BAZ" {
-		t.Errorf("Body mismatch: Expected: BAZ. Got: %s", res.Header.Get("bar"))
+	if body, _ := ioutil.ReadAll(res.Body); string(body) != "BAZ" {
+		t.Errorf("Body mismatch. Expected: BAZ. Got: %v", string(body))
 	}
 }
 
-func TestGetRequestHeaders404sWhenParamDoesntExist(t *testing.T) {
-	t.Skip("******** WIP ********")
+func TestGetRequestHeaders404sWhenHeaderDoesntExist(t *testing.T) {
 	h := model.Handler{
 		Request: httptest.NewRequest("GET", "/", nil),
 		Writer:  httptest.NewRecorder(),
@@ -507,7 +555,6 @@ func TestGetRequestHeaders404sWhenParamDoesntExist(t *testing.T) {
 }
 
 func TestGetRequestHeadersReturnsTheFirstCorrectMatchValue(t *testing.T) {
-	t.Skip("******** WIP ********")
 	h := model.Handler{
 		Request: httptest.NewRequest("GET", "/", nil),
 		Writer:  httptest.NewRecorder(),
@@ -520,7 +567,7 @@ func TestGetRequestHeadersReturnsTheFirstCorrectMatchValue(t *testing.T) {
 	getRequestHeaders(w, r, &h)
 
 	res := w.Result()
-	if res.Header.Get("bar") != "BAZ" {
-		t.Errorf("Body mismatch: Expected: BAZ. Got: %s", res.Header.Get("bar"))
+	if body, _ := ioutil.ReadAll(res.Body); string(body) != "BAZ" {
+		t.Errorf("Body mismatch. Expected: BAZ. Got: %v", string(body))
 	}
 }

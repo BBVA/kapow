@@ -3,6 +3,7 @@ package data
 import (
 	"io"
 	"net/http"
+	"net/textproto"
 
 	"github.com/BBVA/kapow/internal/server/model"
 	"github.com/gorilla/mux"
@@ -52,13 +53,22 @@ func getRequestMatches(w http.ResponseWriter, r *http.Request, h *model.Handler)
 func getRequestParams(w http.ResponseWriter, r *http.Request, h *model.Handler) {
 	w.Header().Add("Content-Type", "application/octet-stream")
 	name := mux.Vars(r)["name"]
-	if value, ok := h.Request.URL.Query()[name]; ok {
-		w.Write([]byte(value[0]))
+	if values, ok := h.Request.URL.Query()[name]; ok {
+		w.Write([]byte(values[0]))
 	} else {
 		w.WriteHeader(http.StatusNotFound)
 	}
 }
 
 func getRequestHeaders(w http.ResponseWriter, r *http.Request, h *model.Handler) {
-	// DELETE ON START
+	w.Header().Add("Content-Type", "application/octet-stream")
+	name := mux.Vars(r)["name"]
+
+	// fmt.Printf("%+v", h.Request.Header)
+
+	if values, ok := h.Request.Header[textproto.CanonicalMIMEHeaderKey(name)]; ok {
+		w.Write([]byte(values[0]))
+	} else {
+		w.WriteHeader(http.StatusNotFound)
+	}
 }
