@@ -81,3 +81,23 @@ func getRequestCookies(w http.ResponseWriter, r *http.Request, h *model.Handler)
 		w.WriteHeader(http.StatusNotFound)
 	}
 }
+
+// NOTE: The current implementation doesn't allow us to decode
+// form encoded data sent in a request with an arbitrary method. This is
+// needed for Kapow! semantic so it MUST be changed in the future
+// FIXME: Implement a ParseForm function that doesn't care about Method
+// nor Content-Type
+func getRequestForm(w http.ResponseWriter, r *http.Request, h *model.Handler) {
+	w.Header().Add("Content-Type", "application/octet-stream")
+	name := mux.Vars(r)["name"]
+	// FIXME: This SHOULD? return an error when Body is empty and IS NOT
+	// We tried to exercise this execution path but didn't know how.
+	err := h.Request.ParseForm()
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+	} else if values, ok := h.Request.Form[name]; ok {
+		_, _ = w.Write([]byte(values[0]))
+	} else {
+		w.WriteHeader(http.StatusNotFound)
+	}
+}

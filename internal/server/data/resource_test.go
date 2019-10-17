@@ -2,10 +2,12 @@ package data
 
 import (
 	"errors"
+	// "fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"strings"
 	"testing"
 
@@ -654,5 +656,145 @@ func TestGetRequestCookiesReturnsTheFirstCorrectMatchValue(t *testing.T) {
 	res := w.Result()
 	if body, _ := ioutil.ReadAll(res.Body); string(body) != "BAZ" {
 		t.Errorf("Body mismatch. Expected: BAZ. Got: %v", string(body))
+	}
+}
+
+// NOTE: The current implementation doesn't allow us to decode
+// form encoded data sent in a request with an arbitrary method. This is
+// needed for Kapow! semantic so it MUST be changed in the future
+
+// FIXME: Test form decoding with GET method
+// FIXME: Test form decoding without Content-Type:
+// application/x-www-form-urlencoded header
+
+func TestGetRequestForm200sOnHappyPath(t *testing.T) {
+	form := url.Values{}
+	form.Add("bar", "BAZ")
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "/", strings.NewReader(form.Encode())),
+		Writer:  httptest.NewRecorder(),
+	}
+	h.Request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	r := createMuxRequest("/handlers/HANDLERID/request/form/{name}", "/handlers/HANDLERID/request/form/bar", "GET")
+	w := httptest.NewRecorder()
+
+	getRequestForm(w, r, &h)
+
+	res := w.Result()
+	if res.StatusCode != http.StatusOK {
+		t.Errorf("Status code mismatch. Expected: 200, Got: %d", res.StatusCode)
+	}
+}
+
+func TestGetRequestFormSetsOctectStreamContentType(t *testing.T) {
+	form := url.Values{}
+	form.Add("bar", "BAZ")
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "/", strings.NewReader(form.Encode())),
+		Writer:  httptest.NewRecorder(),
+	}
+	h.Request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	r := createMuxRequest("/handlers/HANDLERID/request/form/{name}", "/handlers/HANDLERID/request/form/bar", "GET")
+	w := httptest.NewRecorder()
+
+	getRequestForm(w, r, &h)
+
+	res := w.Result()
+	if res.Header.Get("Content-Type") != "application/octet-stream" {
+		t.Error("Content Type mismatch")
+	}
+}
+
+func TestGetRequestFormReturnsTheCorrectMatchValue(t *testing.T) {
+	form := url.Values{}
+	form.Add("bar", "BAZ")
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "/", strings.NewReader(form.Encode())),
+		Writer:  httptest.NewRecorder(),
+	}
+	h.Request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	r := createMuxRequest("/handlers/HANDLERID/request/form/{name}", "/handlers/HANDLERID/request/form/bar", "GET")
+	w := httptest.NewRecorder()
+
+	getRequestForm(w, r, &h)
+
+	res := w.Result()
+	if body, _ := ioutil.ReadAll(res.Body); string(body) != "BAZ" {
+		t.Errorf("Body mismatch. Expected: BAZ. Got: %v", string(body))
+	}
+}
+
+func TestGetRequestForm404sWhenFieldDoesntExist(t *testing.T) {
+	form := url.Values{}
+	form.Add("foo", "BAZ")
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "/", strings.NewReader(form.Encode())),
+		Writer:  httptest.NewRecorder(),
+	}
+	h.Request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	r := createMuxRequest("/handlers/HANDLERID/request/form/{name}", "/handlers/HANDLERID/request/form/bar", "GET")
+	w := httptest.NewRecorder()
+
+	getRequestForm(w, r, &h)
+
+	res := w.Result()
+	if res.StatusCode != http.StatusNotFound {
+		t.Errorf("Status code mismatch. Expected: 404, Got: %d", res.StatusCode)
+	}
+}
+
+func TestGetRequestForm200sWhenFieldIsEmptyString(t *testing.T) {
+	form := url.Values{}
+	form.Add("bar", "")
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "/", strings.NewReader(form.Encode())),
+		Writer:  httptest.NewRecorder(),
+	}
+	h.Request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	r := createMuxRequest("/handlers/HANDLERID/request/form/{name}", "/handlers/HANDLERID/request/form/bar", "GET")
+	w := httptest.NewRecorder()
+
+	getRequestForm(w, r, &h)
+
+	res := w.Result()
+	if res.StatusCode != http.StatusOK {
+		t.Errorf("Status code mismatch. Expected: 200, Got: %d", res.StatusCode)
+	}
+}
+
+func TestGetRequestFormReturnsEmptyBodyWhenFieldIsEmptyString(t *testing.T) {
+	form := url.Values{}
+	form.Add("bar", "")
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "/", strings.NewReader(form.Encode())),
+		Writer:  httptest.NewRecorder(),
+	}
+	h.Request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	r := createMuxRequest("/handlers/HANDLERID/request/form/{name}", "/handlers/HANDLERID/request/form/bar", "GET")
+	w := httptest.NewRecorder()
+
+	getRequestForm(w, r, &h)
+
+	res := w.Result()
+	if body, _ := ioutil.ReadAll(res.Body); string(body) != "" {
+		t.Errorf(`Body mismatch. Expected: "". Got: %q`, string(body))
+	}
+}
+
+// TODO: Discuss how to manage this use case, Not Found, Bad Request, ...
+func TestGetRequestForm404sWhenFormDoesntExist(t *testing.T) {
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "/", nil),
+		Writer:  httptest.NewRecorder(),
+	}
+	h.Request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	r := createMuxRequest("/handlers/HANDLERID/request/form/{name}", "/handlers/HANDLERID/request/form/bar", "GET")
+	w := httptest.NewRecorder()
+
+	getRequestForm(w, r, &h)
+
+	res := w.Result()
+	if res.StatusCode != http.StatusNotFound {
+		t.Errorf("Status code mismatch. Expected: 404, Got: %d", res.StatusCode)
 	}
 }
