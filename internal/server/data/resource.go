@@ -58,3 +58,7 @@ func getRequestParams(w http.ResponseWriter, r *http.Request, h *model.Handler) 
 		w.WriteHeader(http.StatusNotFound)
 	}
 }
+
+func getRequestHeaders(w http.ResponseWriter, r *http.Request, h *model.Handler) {
+	// DELETE ON START
+}

@@ -436,3 +436,91 @@ func TestGetRequestParamsReturnsTheFirstCorrectMatchValue(t *testing.T) {
 		t.Errorf("Body mismatch. Expected: BAZ. Got: %v", string(body))
 	}
 }
+
+func TestGetRequestHeaders200sOnHappyPath(t *testing.T) {
+	t.Skip("******** WIP ********")
+	h := model.Handler{
+		Request: httptest.NewRequest("GET", "/", nil),
+		Writer:  httptest.NewRecorder(),
+	}
+	r := createMuxRequest("/handlers/HANDLERID/request/headers/{name}", "/handlers/HANDLERID/request/headers/bar", "GET")
+	w := httptest.NewRecorder()
+
+	getRequestHeaders(w, r, &h)
+
+	res := w.Result()
+	if res.StatusCode != http.StatusOK {
+		t.Error("Status code mismatch")
+	}
+}
+
+func TestGetRequestHeadersSetsOctectStreamContentType(t *testing.T) {
+	t.Skip("******** WIP ********")
+	h := model.Handler{
+		Request: httptest.NewRequest("GET", "/", nil),
+		Writer:  httptest.NewRecorder(),
+	}
+	r := createMuxRequest("/handlers/HANDLERID/request/headers/{name}", "/handlers/HANDLERID/request/headers/bar", "GET")
+	w := httptest.NewRecorder()
+
+	getRequestHeaders(w, r, &h)
+
+	res := w.Result()
+	if res.Header.Get("Content-Type") != "application/octet-stream" {
+		t.Error("Content Type mismatch")
+	}
+}
+
+func TestGetRequestHeadersReturnsTheCorrectMatchValue(t *testing.T) {
+	t.Skip("******** WIP ********")
+	h := model.Handler{
+		Request: httptest.NewRequest("GET", "/", nil),
+		Writer:  httptest.NewRecorder(),
+	}
+	h.Request.Header.Set("bar", "BAZ")
+	r := createMuxRequest("/handlers/HANDLERID/request/headers/{name}", "/handlers/HANDLERID/request/headers/bar", "GET")
+	w := httptest.NewRecorder()
+
+	getRequestHeaders(w, r, &h)
+
+	res := w.Result()
+	if res.Header.Get("bar") != "BAZ" {
+		t.Errorf("Body mismatch: Expected: BAZ. Got: %s", res.Header.Get("bar"))
+	}
+}
+
+func TestGetRequestHeaders404sWhenParamDoesntExist(t *testing.T) {
+	t.Skip("******** WIP ********")
+	h := model.Handler{
+		Request: httptest.NewRequest("GET", "/", nil),
+		Writer:  httptest.NewRecorder(),
+	}
+	r := createMuxRequest("/handlers/HANDLERID/request/headers/{name}", "/handlers/HANDLERID/request/headers/bar", "GET")
+	w := httptest.NewRecorder()
+
+	getRequestHeaders(w, r, &h)
+
+	res := w.Result()
+	if res.StatusCode != http.StatusNotFound {
+		t.Error("Status code mismatch")
+	}
+}
+
+func TestGetRequestHeadersReturnsTheFirstCorrectMatchValue(t *testing.T) {
+	t.Skip("******** WIP ********")
+	h := model.Handler{
+		Request: httptest.NewRequest("GET", "/", nil),
+		Writer:  httptest.NewRecorder(),
+	}
+	h.Request.Header.Set("bar", "BAZ")
+	h.Request.Header.Add("bar", "BUX")
+	r := createMuxRequest("/handlers/HANDLERID/request/headers/{name}", "/handlers/HANDLERID/request/headers/bar", "GET")
+	w := httptest.NewRecorder()
+
+	getRequestHeaders(w, r, &h)
+
+	res := w.Result()
+	if res.Header.Get("bar") != "BAZ" {
+		t.Errorf("Body mismatch: Expected: BAZ. Got: %s", res.Header.Get("bar"))
+	}
+}
