@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"fmt"
+	"log"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -22,8 +22,7 @@ var GetCmd = &cobra.Command{
 
 		err := client.GetData(dataURL, handler, args[0], os.Stdout)
 		if err != nil {
-			os.Stderr.WriteString(fmt.Sprintf("%v\n", err))
-			os.Exit(1)
+			log.Fatal(err)
 		}
 	},
 }

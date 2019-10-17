@@ -58,7 +58,7 @@ var ServerCmd = &cobra.Command{
 		// run bash -c "[pow files contents]"
 		err = kapowCMD.Run()
 		if err != nil {
-			fmt.Println(err)
+			log.Fatal(err)
 		}
 
 		select {}

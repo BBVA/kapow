@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"fmt"
+	"log"
 	"os"
 
 	"github.com/BBVA/kapow/internal/client"
@@ -22,8 +22,7 @@ func init() {
 			controlURL, _ := cmd.Flags().GetString("control-url")
 
 			if err := client.ListRoutes(controlURL, os.Stdout); err != nil {
-				fmt.Fprintf(os.Stderr, "%v\n", err)
-				os.Exit(1)
+				log.Fatal(err)
 			}
 		},
 	}
@@ -43,8 +42,7 @@ func init() {
 
 			// TODO: Read command from parameter, file or stdin
 			if err := client.AddRoute(controlURL, urlPattern, method, entrypoint, command, os.Stdout); err != nil {
-				fmt.Fprintf(os.Stderr, "%v\n", err)
-				os.Exit(1)
+				log.Fatal(err)
 			}
 		},
 	}
@@ -62,8 +60,7 @@ func init() {
 			controlURL, _ := cmd.Flags().GetString("control-url")
 
 			if err := client.RemoveRoute(controlURL, args[0]); err != nil {
-				fmt.Fprintf(os.Stderr, "%v\n", err)
-				os.Exit(1)
+				log.Fatal(err)
 			}
 		},
 	}
