@@ -25,18 +25,18 @@ func getRequestBody(w http.ResponseWriter, r *http.Request, h *model.Handler) {
 
 func getRequestMethod(w http.ResponseWriter, r *http.Request, h *model.Handler) {
 	w.Header().Add("Content-Type", "application/octet-stream")
-	w.Write([]byte(h.Request.Method))
+	_, _ = w.Write([]byte(h.Request.Method))
 }
 
 func getRequestHost(w http.ResponseWriter, r *http.Request, h *model.Handler) {
 	w.Header().Add("Content-Type", "application/octet-stream")
-	w.Write([]byte(h.Request.Host))
+	_, _ = w.Write([]byte(h.Request.Host))
 }
 
 func getRequestPath(w http.ResponseWriter, r *http.Request, h *model.Handler) {
 	w.Header().Add("Content-Type", "application/octet-stream")
 	// TODO: Discuss a how to obtain URL.EscapedPath() instead
-	w.Write([]byte(h.Request.URL.Path))
+	_, _ = w.Write([]byte(h.Request.URL.Path))
 }
 
 func getRequestMatches(w http.ResponseWriter, r *http.Request, h *model.Handler) {
@@ -44,7 +44,7 @@ func getRequestMatches(w http.ResponseWriter, r *http.Request, h *model.Handler)
 	name := mux.Vars(r)["name"]
 	vars := mux.Vars(h.Request)
 	if value, ok := vars[name]; ok {
-		w.Write([]byte(value))
+		_, _ = w.Write([]byte(value))
 	} else {
 		w.WriteHeader(http.StatusNotFound)
 	}
@@ -54,7 +54,7 @@ func getRequestParams(w http.ResponseWriter, r *http.Request, h *model.Handler) 
 	w.Header().Add("Content-Type", "application/octet-stream")
 	name := mux.Vars(r)["name"]
 	if values, ok := h.Request.URL.Query()[name]; ok {
-		w.Write([]byte(values[0]))
+		_, _ = w.Write([]byte(values[0]))
 	} else {
 		w.WriteHeader(http.StatusNotFound)
 	}
@@ -63,11 +63,8 @@ func getRequestParams(w http.ResponseWriter, r *http.Request, h *model.Handler) 
 func getRequestHeaders(w http.ResponseWriter, r *http.Request, h *model.Handler) {
 	w.Header().Add("Content-Type", "application/octet-stream")
 	name := mux.Vars(r)["name"]
-
-	// fmt.Printf("%+v", h.Request.Header)
-
 	if values, ok := h.Request.Header[textproto.CanonicalMIMEHeaderKey(name)]; ok {
-		w.Write([]byte(values[0]))
+		_, _ = w.Write([]byte(values[0]))
 	} else {
 		w.WriteHeader(http.StatusNotFound)
 	}
