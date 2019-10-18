@@ -102,5 +102,13 @@ func getRequestForm(w http.ResponseWriter, r *http.Request, h *model.Handler) {
 	}
 }
 
-func getRequestFiles(w http.ResponseWriter, r *http.Request, h *model.Handler) {
+func getRequestFileName(w http.ResponseWriter, r *http.Request, h *model.Handler) {
+	w.Header().Add("Content-Type", "application/octet-stream")
+	name := mux.Vars(r)["name"]
+	_, header, err := h.Request.FormFile(name)
+	if err == nil {
+		_, _ = w.Write([]byte(header.Filename))
+	} else {
+		w.WriteHeader(http.StatusNotFound)
+	}
 }
