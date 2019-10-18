@@ -999,3 +999,86 @@ func TestGetRequestFileContent500sWhenHandlerRequestErrors(t *testing.T) {
 		t.Error("status not 500", res.StatusCode)
 	}
 }
+
+func TestSetResponseStatus200sOnHappyPath(t *testing.T) {
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "/", nil),
+		Writer:  httptest.NewRecorder(),
+	}
+	r := httptest.NewRequest("PUT", "/", strings.NewReader("200"))
+	w := httptest.NewRecorder()
+
+	getResponseStatus(w, r, &h)
+
+	res := w.Result()
+	if res.StatusCode != http.StatusOK {
+		t.Errorf("Status code mismatch. Expected: 200, Got: %d", res.StatusCode)
+	}
+}
+
+func TestSetResponseStatusSetsGivenStatus(t *testing.T) {
+	hw := httptest.NewRecorder()
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "/", nil),
+		Writer:  hw,
+	}
+	r := httptest.NewRequest("PUT", "/", strings.NewReader("418"))
+	w := httptest.NewRecorder()
+
+	getResponseStatus(w, r, &h)
+
+	res := hw.Result()
+	if res.StatusCode != http.StatusTeapot {
+		t.Errorf("Status code mismatch. Expected: 418, Got: %d", res.StatusCode)
+	}
+}
+
+func TestSetResponseStatus400sWhenNonparseableStatusCode(t *testing.T) {
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "/", nil),
+		Writer:  httptest.NewRecorder(),
+	}
+	r := httptest.NewRequest("PUT", "/", strings.NewReader("foo"))
+	w := httptest.NewRecorder()
+
+	getResponseStatus(w, r, &h)
+
+	res := w.Result()
+	if res.StatusCode != http.StatusBadRequest {
+		t.Errorf("Status code mismatch. Expected: 400, Got: %d", res.StatusCode)
+	}
+}
+
+func TestSetResponseStatus500sWhenErrorReadingRequest(t *testing.T) {
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "/", nil),
+		Writer:  httptest.NewRecorder(),
+	}
+	r := httptest.NewRequest("PUT", "/", BadReader("Failed by design"))
+	w := httptest.NewRecorder()
+
+	getResponseStatus(w, r, &h)
+
+	res := w.Result()
+	if res.StatusCode != http.StatusInternalServerError {
+		t.Errorf("Status code mismatch. Expected: 500, Got: %d", res.StatusCode)
+	}
+}
+
+// FIXME: This is not the spec behavior but Go checks too many things to
+// be sure. Discuss how to fix this.
+func TestSetResponseStatus400sWhenStatusCodeNotSupportedByGo(t *testing.T) {
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "/", nil),
+		Writer:  httptest.NewRecorder(),
+	}
+	r := httptest.NewRequest("PUT", "/", strings.NewReader("99"))
+	w := httptest.NewRecorder()
+
+	getResponseStatus(w, r, &h)
+
+	res := w.Result()
+	if res.StatusCode != http.StatusBadRequest {
+		t.Errorf("Status code mismatch. Expected: 400, Got: %d", res.StatusCode)
+	}
+}

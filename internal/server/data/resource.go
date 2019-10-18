@@ -2,8 +2,10 @@ package data
 
 import (
 	"io"
+	"io/ioutil"
 	"net/http"
 	"net/textproto"
+	"strconv"
 
 	"github.com/BBVA/kapow/internal/server/model"
 	"github.com/gorilla/mux"
@@ -121,5 +123,24 @@ func getRequestFileContent(w http.ResponseWriter, r *http.Request, h *model.Hand
 		_, _ = io.Copy(w, file)
 	} else {
 		w.WriteHeader(http.StatusNotFound)
+	}
+}
+
+// FIXME: Allow any  HTTP status code. Now we are limited by WriteHeader
+// capabilities
+func getResponseStatus(w http.ResponseWriter, r *http.Request, h *model.Handler) {
+	sb, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	si, err := strconv.Atoi(string(sb))
+	if http.StatusText(si) == "" {
+		w.WriteHeader(http.StatusBadRequest)
+	} else if err == nil {
+		h.Writer.WriteHeader(int(si))
+	} else {
+		w.WriteHeader(http.StatusBadRequest)
 	}
 }
