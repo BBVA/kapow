@@ -1008,7 +1008,7 @@ func TestSetResponseStatus200sOnHappyPath(t *testing.T) {
 	r := httptest.NewRequest("PUT", "/", strings.NewReader("200"))
 	w := httptest.NewRecorder()
 
-	getResponseStatus(w, r, &h)
+	setResponseStatus(w, r, &h)
 
 	res := w.Result()
 	if res.StatusCode != http.StatusOK {
@@ -1025,7 +1025,7 @@ func TestSetResponseStatusSetsGivenStatus(t *testing.T) {
 	r := httptest.NewRequest("PUT", "/", strings.NewReader("418"))
 	w := httptest.NewRecorder()
 
-	getResponseStatus(w, r, &h)
+	setResponseStatus(w, r, &h)
 
 	res := hw.Result()
 	if res.StatusCode != http.StatusTeapot {
@@ -1041,7 +1041,7 @@ func TestSetResponseStatus400sWhenNonparseableStatusCode(t *testing.T) {
 	r := httptest.NewRequest("PUT", "/", strings.NewReader("foo"))
 	w := httptest.NewRecorder()
 
-	getResponseStatus(w, r, &h)
+	setResponseStatus(w, r, &h)
 
 	res := w.Result()
 	if res.StatusCode != http.StatusBadRequest {
@@ -1057,7 +1057,7 @@ func TestSetResponseStatus500sWhenErrorReadingRequest(t *testing.T) {
 	r := httptest.NewRequest("PUT", "/", BadReader("Failed by design"))
 	w := httptest.NewRecorder()
 
-	getResponseStatus(w, r, &h)
+	setResponseStatus(w, r, &h)
 
 	res := w.Result()
 	if res.StatusCode != http.StatusInternalServerError {
@@ -1075,7 +1075,7 @@ func TestSetResponseStatus400sWhenStatusCodeNotSupportedByGo(t *testing.T) {
 	r := httptest.NewRequest("PUT", "/", strings.NewReader("99"))
 	w := httptest.NewRecorder()
 
-	getResponseStatus(w, r, &h)
+	setResponseStatus(w, r, &h)
 
 	res := w.Result()
 	if res.StatusCode != http.StatusBadRequest {

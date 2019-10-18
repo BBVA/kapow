@@ -128,7 +128,7 @@ func getRequestFileContent(w http.ResponseWriter, r *http.Request, h *model.Hand
 
 // FIXME: Allow any  HTTP status code. Now we are limited by WriteHeader
 // capabilities
-func getResponseStatus(w http.ResponseWriter, r *http.Request, h *model.Handler) {
+func setResponseStatus(w http.ResponseWriter, r *http.Request, h *model.Handler) {
 	sb, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
