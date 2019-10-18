@@ -798,3 +798,35 @@ func TestGetRequestForm404sWhenFormDoesntExist(t *testing.T) {
 		t.Errorf("Status code mismatch. Expected: 404, Got: %d", res.StatusCode)
 	}
 }
+
+func TestGetRequestFiles200sOnHappyPath(t *testing.T) {
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "/", nil),
+		Writer:  httptest.NewRecorder(),
+	}
+	r := createMuxRequest("/handlers/HANDLERID/request/files/{name}", "/handlers/HANDLERID/request/files/bar", "GET")
+	w := httptest.NewRecorder()
+
+	getRequestFiles(w, r, &h)
+
+	res := w.Result()
+	if res.StatusCode != http.StatusOK {
+		t.Errorf("Status code mismatch. Expected: 200, Got: %d", res.StatusCode)
+	}
+}
+
+func TestGetRequestFilesSetsOctectStreamContentType(t *testing.T) {
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "/", nil),
+		Writer:  httptest.NewRecorder(),
+	}
+	r := createMuxRequest("/handlers/HANDLERID/request/files/{name}", "/handlers/HANDLERID/request/files/bar", "GET")
+	w := httptest.NewRecorder()
+
+	getRequestFiles(w, r, &h)
+
+	res := w.Result()
+	if res.Header.Get("Content-Type") != "application/octet-stream" {
+		t.Error("Content Type mismatch")
+	}
+}

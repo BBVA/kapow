@@ -101,3 +101,6 @@ func getRequestForm(w http.ResponseWriter, r *http.Request, h *model.Handler) {
 		w.WriteHeader(http.StatusNotFound)
 	}
 }
+
+func getRequestFiles(w http.ResponseWriter, r *http.Request, h *model.Handler) {
+}
