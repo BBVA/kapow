@@ -144,3 +144,14 @@ func setResponseStatus(w http.ResponseWriter, r *http.Request, h *model.Handler)
 		w.WriteHeader(http.StatusBadRequest)
 	}
 }
+
+func setResponseHeaders(w http.ResponseWriter, r *http.Request, h *model.Handler) {
+	name := mux.Vars(r)["name"]
+	vb, _ := ioutil.ReadAll(r.Body)
+	hds := h.Writer.Header()
+	if _, ok := hds[name]; ok {
+		hds[name] = append(hds[name], string(vb))
+	} else {
+		hds[name] = []string{string(vb)}
+	}
+}

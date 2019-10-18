@@ -3,13 +3,13 @@ package data
 import (
 	"bytes"
 	"errors"
-	// "fmt"
 	"io"
 	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"reflect"
 	"strings"
 	"testing"
 
@@ -287,19 +287,19 @@ func TestGetRequestPathDoesntReturnQueryStringParams(t *testing.T) {
 	}
 }
 
-func createMuxRequest(pattern, url, method string) (req *http.Request) {
+func createMuxRequest(pattern, url, method string, content io.Reader) (req *http.Request) {
 	m := mux.NewRouter()
 	m.HandleFunc(pattern, func(w http.ResponseWriter, r *http.Request) { req = r })
-	m.ServeHTTP(httptest.NewRecorder(), httptest.NewRequest(method, url, nil))
+	m.ServeHTTP(httptest.NewRecorder(), httptest.NewRequest(method, url, content))
 	return
 }
 
 func TestGetRequestMatches200sOnHappyPath(t *testing.T) {
 	h := model.Handler{
-		Request: createMuxRequest("/foo/{bar}", "/foo/BAZ", "GET"),
+		Request: createMuxRequest("/foo/{bar}", "/foo/BAZ", "GET", nil),
 		Writer:  httptest.NewRecorder(),
 	}
-	r := createMuxRequest("/handlers/HANDLERID/request/matches/{name}", "/handlers/HANDLERID/request/matches/bar", "GET")
+	r := createMuxRequest("/handlers/HANDLERID/request/matches/{name}", "/handlers/HANDLERID/request/matches/bar", "GET", nil)
 	w := httptest.NewRecorder()
 
 	getRequestMatches(w, r, &h)
@@ -312,10 +312,10 @@ func TestGetRequestMatches200sOnHappyPath(t *testing.T) {
 
 func TestGetRequestMatchesSetsOctectStreamContentType(t *testing.T) {
 	h := model.Handler{
-		Request: createMuxRequest("/foo/{bar}", "/foo/BAZ", "GET"),
+		Request: createMuxRequest("/foo/{bar}", "/foo/BAZ", "GET", nil),
 		Writer:  httptest.NewRecorder(),
 	}
-	r := createMuxRequest("/handlers/HANDLERID/request/matches/{name}", "/handlers/HANDLERID/request/matches/bar", "GET")
+	r := createMuxRequest("/handlers/HANDLERID/request/matches/{name}", "/handlers/HANDLERID/request/matches/bar", "GET", nil)
 	w := httptest.NewRecorder()
 
 	getRequestMatches(w, r, &h)
@@ -328,10 +328,10 @@ func TestGetRequestMatchesSetsOctectStreamContentType(t *testing.T) {
 
 func TestGetRequestMatchesReturnsTheCorrectMatchValue(t *testing.T) {
 	h := model.Handler{
-		Request: createMuxRequest("/foo/{bar}", "/foo/BAZ", "GET"),
+		Request: createMuxRequest("/foo/{bar}", "/foo/BAZ", "GET", nil),
 		Writer:  httptest.NewRecorder(),
 	}
-	r := createMuxRequest("/handlers/HANDLERID/request/matches/{name}", "/handlers/HANDLERID/request/matches/bar", "GET")
+	r := createMuxRequest("/handlers/HANDLERID/request/matches/{name}", "/handlers/HANDLERID/request/matches/bar", "GET", nil)
 	w := httptest.NewRecorder()
 
 	getRequestMatches(w, r, &h)
@@ -345,11 +345,11 @@ func TestGetRequestMatchesReturnsTheCorrectMatchValue(t *testing.T) {
 
 func TestGetRequestMatchesReturnsNotFoundWhenMatchDoesntExists(t *testing.T) {
 	h := model.Handler{
-		Request: createMuxRequest("/", "/", "GET"),
+		Request: createMuxRequest("/", "/", "GET", nil),
 		Writer:  httptest.NewRecorder(),
 	}
 
-	r := createMuxRequest("/handlers/HANDLERID/request/matches/{name}", "/handlers/HANDLERID/request/matches/foo", "GET")
+	r := createMuxRequest("/handlers/HANDLERID/request/matches/{name}", "/handlers/HANDLERID/request/matches/foo", "GET", nil)
 	w := httptest.NewRecorder()
 
 	getRequestMatches(w, r, &h)
@@ -365,7 +365,7 @@ func TestGetRequestParams200sOnHappyPath(t *testing.T) {
 		Request: httptest.NewRequest("GET", "/foo?bar=BAZ", nil),
 		Writer:  httptest.NewRecorder(),
 	}
-	r := createMuxRequest("/handlers/HANDLERID/request/params/{name}", "/handlers/HANDLERID/request/params/bar", "GET")
+	r := createMuxRequest("/handlers/HANDLERID/request/params/{name}", "/handlers/HANDLERID/request/params/bar", "GET", nil)
 	w := httptest.NewRecorder()
 
 	getRequestParams(w, r, &h)
@@ -381,7 +381,7 @@ func TestGetRequestParamsSetsOctectStreamContentType(t *testing.T) {
 		Request: httptest.NewRequest("GET", "/foo?bar=BAZ", nil),
 		Writer:  httptest.NewRecorder(),
 	}
-	r := createMuxRequest("/handlers/HANDLERID/request/params/{name}", "/handlers/HANDLERID/request/params/bar", "GET")
+	r := createMuxRequest("/handlers/HANDLERID/request/params/{name}", "/handlers/HANDLERID/request/params/bar", "GET", nil)
 	w := httptest.NewRecorder()
 
 	getRequestParams(w, r, &h)
@@ -397,7 +397,7 @@ func TestGetRequestParamsReturnsTheCorrectMatchValue(t *testing.T) {
 		Request: httptest.NewRequest("GET", "/foo?bar=BAZ", nil),
 		Writer:  httptest.NewRecorder(),
 	}
-	r := createMuxRequest("/handlers/HANDLERID/request/params/{name}", "/handlers/HANDLERID/request/params/bar", "GET")
+	r := createMuxRequest("/handlers/HANDLERID/request/params/{name}", "/handlers/HANDLERID/request/params/bar", "GET", nil)
 	w := httptest.NewRecorder()
 
 	getRequestParams(w, r, &h)
@@ -413,7 +413,7 @@ func TestGetRequestParams404sWhenParamDoesntExist(t *testing.T) {
 		Request: httptest.NewRequest("GET", "/foo", nil),
 		Writer:  httptest.NewRecorder(),
 	}
-	r := createMuxRequest("/handlers/HANDLERID/request/params/{name}", "/handlers/HANDLERID/request/params/bar", "GET")
+	r := createMuxRequest("/handlers/HANDLERID/request/params/{name}", "/handlers/HANDLERID/request/params/bar", "GET", nil)
 	w := httptest.NewRecorder()
 
 	getRequestParams(w, r, &h)
@@ -430,7 +430,7 @@ func TestGetRequestParamsReturnsTheFirstCorrectMatchValue(t *testing.T) {
 		Request: httptest.NewRequest("GET", "/foo?bar=BAZ&bar=QUX", nil),
 		Writer:  httptest.NewRecorder(),
 	}
-	r := createMuxRequest("/handlers/HANDLERID/request/params/{name}", "/handlers/HANDLERID/request/params/bar", "GET")
+	r := createMuxRequest("/handlers/HANDLERID/request/params/{name}", "/handlers/HANDLERID/request/params/bar", "GET", nil)
 	w := httptest.NewRecorder()
 
 	getRequestParams(w, r, &h)
@@ -447,7 +447,7 @@ func TestGetRequestHeaders200sOnHappyPath(t *testing.T) {
 		Writer:  httptest.NewRecorder(),
 	}
 	h.Request.Header.Set("bar", "BAZ")
-	r := createMuxRequest("/handlers/HANDLERID/request/headers/{name}", "/handlers/HANDLERID/request/headers/bar", "GET")
+	r := createMuxRequest("/handlers/HANDLERID/request/headers/{name}", "/handlers/HANDLERID/request/headers/bar", "GET", nil)
 	w := httptest.NewRecorder()
 
 	getRequestHeaders(w, r, &h)
@@ -463,7 +463,7 @@ func TestGetRequestHeadersSetsOctectStreamContentType(t *testing.T) {
 		Request: httptest.NewRequest("GET", "/", nil),
 		Writer:  httptest.NewRecorder(),
 	}
-	r := createMuxRequest("/handlers/HANDLERID/request/headers/{name}", "/handlers/HANDLERID/request/headers/bar", "GET")
+	r := createMuxRequest("/handlers/HANDLERID/request/headers/{name}", "/handlers/HANDLERID/request/headers/bar", "GET", nil)
 	w := httptest.NewRecorder()
 
 	getRequestHeaders(w, r, &h)
@@ -480,7 +480,7 @@ func TestGetRequestHeadersReturnsTheCorrectMatchValue(t *testing.T) {
 		Writer:  httptest.NewRecorder(),
 	}
 	h.Request.Header.Set("Bar", "BAZ")
-	r := createMuxRequest("/handlers/HANDLERID/request/headers/{name}", "/handlers/HANDLERID/request/headers/bar", "GET")
+	r := createMuxRequest("/handlers/HANDLERID/request/headers/{name}", "/handlers/HANDLERID/request/headers/bar", "GET", nil)
 	w := httptest.NewRecorder()
 
 	getRequestHeaders(w, r, &h)
@@ -497,7 +497,7 @@ func TestGetRequestHeaders200sWhenHeaderIsEmptyString(t *testing.T) {
 		Writer:  httptest.NewRecorder(),
 	}
 	h.Request.Header.Set("bar", "")
-	r := createMuxRequest("/handlers/HANDLERID/request/headers/{name}", "/handlers/HANDLERID/request/headers/bar", "GET")
+	r := createMuxRequest("/handlers/HANDLERID/request/headers/{name}", "/handlers/HANDLERID/request/headers/bar", "GET", nil)
 	w := httptest.NewRecorder()
 
 	getRequestHeaders(w, r, &h)
@@ -514,7 +514,7 @@ func TestGetRequestHeadersReturnsEmptyBodyWhenHeaderIsEmptyString(t *testing.T) 
 		Writer:  httptest.NewRecorder(),
 	}
 	h.Request.Header.Set("bar", "")
-	r := createMuxRequest("/handlers/HANDLERID/request/headers/{name}", "/handlers/HANDLERID/request/headers/bar", "GET")
+	r := createMuxRequest("/handlers/HANDLERID/request/headers/{name}", "/handlers/HANDLERID/request/headers/bar", "GET", nil)
 	w := httptest.NewRecorder()
 
 	getRequestHeaders(w, r, &h)
@@ -531,7 +531,7 @@ func TestGetRequestHeadersReturnsTheCorrectInsensitiveMatchValue(t *testing.T) {
 		Writer:  httptest.NewRecorder(),
 	}
 	h.Request.Header.Set("bar", "BAZ")
-	r := createMuxRequest("/handlers/HANDLERID/request/headers/{name}", "/handlers/HANDLERID/request/headers/bar", "GET")
+	r := createMuxRequest("/handlers/HANDLERID/request/headers/{name}", "/handlers/HANDLERID/request/headers/bar", "GET", nil)
 	w := httptest.NewRecorder()
 
 	getRequestHeaders(w, r, &h)
@@ -547,7 +547,7 @@ func TestGetRequestHeaders404sWhenHeaderDoesntExist(t *testing.T) {
 		Request: httptest.NewRequest("GET", "/", nil),
 		Writer:  httptest.NewRecorder(),
 	}
-	r := createMuxRequest("/handlers/HANDLERID/request/headers/{name}", "/handlers/HANDLERID/request/headers/bar", "GET")
+	r := createMuxRequest("/handlers/HANDLERID/request/headers/{name}", "/handlers/HANDLERID/request/headers/bar", "GET", nil)
 	w := httptest.NewRecorder()
 
 	getRequestHeaders(w, r, &h)
@@ -565,7 +565,7 @@ func TestGetRequestHeadersReturnsTheFirstCorrectMatchValue(t *testing.T) {
 	}
 	h.Request.Header.Set("bar", "BAZ")
 	h.Request.Header.Add("bar", "QUX")
-	r := createMuxRequest("/handlers/HANDLERID/request/headers/{name}", "/handlers/HANDLERID/request/headers/bar", "GET")
+	r := createMuxRequest("/handlers/HANDLERID/request/headers/{name}", "/handlers/HANDLERID/request/headers/bar", "GET", nil)
 	w := httptest.NewRecorder()
 
 	getRequestHeaders(w, r, &h)
@@ -582,7 +582,7 @@ func TestGetRequestCookies200sOnHappyPath(t *testing.T) {
 		Writer:  httptest.NewRecorder(),
 	}
 	h.Request.AddCookie(&http.Cookie{Name: "bar", Value: "BAZ"})
-	r := createMuxRequest("/handlers/HANDLERID/request/cookies/{name}", "/handlers/HANDLERID/request/cookies/bar", "GET")
+	r := createMuxRequest("/handlers/HANDLERID/request/cookies/{name}", "/handlers/HANDLERID/request/cookies/bar", "GET", nil)
 	w := httptest.NewRecorder()
 
 	getRequestCookies(w, r, &h)
@@ -599,7 +599,7 @@ func TestGetRequestCookiesSetsOctectStreamContentType(t *testing.T) {
 		Writer:  httptest.NewRecorder(),
 	}
 	h.Request.AddCookie(&http.Cookie{Name: "bar", Value: "BAZ"})
-	r := createMuxRequest("/handlers/HANDLERID/request/cookies/{name}", "/handlers/HANDLERID/request/cookies/bar", "GET")
+	r := createMuxRequest("/handlers/HANDLERID/request/cookies/{name}", "/handlers/HANDLERID/request/cookies/bar", "GET", nil)
 	w := httptest.NewRecorder()
 
 	getRequestCookies(w, r, &h)
@@ -616,7 +616,7 @@ func TestGetRequestCookiesReturnsMatchedCookieValue(t *testing.T) {
 		Writer:  httptest.NewRecorder(),
 	}
 	h.Request.AddCookie(&http.Cookie{Name: "bar", Value: "BAZ"})
-	r := createMuxRequest("/handlers/HANDLERID/request/cookies/{name}", "/handlers/HANDLERID/request/cookies/bar", "GET")
+	r := createMuxRequest("/handlers/HANDLERID/request/cookies/{name}", "/handlers/HANDLERID/request/cookies/bar", "GET", nil)
 	w := httptest.NewRecorder()
 
 	getRequestCookies(w, r, &h)
@@ -632,7 +632,7 @@ func TestGetRequestCookies404sIfCookieDoesntExist(t *testing.T) {
 		Request: httptest.NewRequest("GET", "/", nil),
 		Writer:  httptest.NewRecorder(),
 	}
-	r := createMuxRequest("/handlers/HANDLERID/request/cookies/{name}", "/handlers/HANDLERID/request/cookies/bar", "GET")
+	r := createMuxRequest("/handlers/HANDLERID/request/cookies/{name}", "/handlers/HANDLERID/request/cookies/bar", "GET", nil)
 	w := httptest.NewRecorder()
 
 	getRequestCookies(w, r, &h)
@@ -650,7 +650,7 @@ func TestGetRequestCookiesReturnsTheFirstCorrectMatchValue(t *testing.T) {
 	}
 	h.Request.AddCookie(&http.Cookie{Name: "bar", Value: "BAZ"})
 	h.Request.AddCookie(&http.Cookie{Name: "bar", Value: "QUX"})
-	r := createMuxRequest("/handlers/HANDLERID/request/headers/{name}", "/handlers/HANDLERID/request/headers/bar", "GET")
+	r := createMuxRequest("/handlers/HANDLERID/request/headers/{name}", "/handlers/HANDLERID/request/headers/bar", "GET", nil)
 	w := httptest.NewRecorder()
 
 	getRequestCookies(w, r, &h)
@@ -677,7 +677,7 @@ func TestGetRequestForm200sOnHappyPath(t *testing.T) {
 		Writer:  httptest.NewRecorder(),
 	}
 	h.Request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	r := createMuxRequest("/handlers/HANDLERID/request/form/{name}", "/handlers/HANDLERID/request/form/bar", "GET")
+	r := createMuxRequest("/handlers/HANDLERID/request/form/{name}", "/handlers/HANDLERID/request/form/bar", "GET", nil)
 	w := httptest.NewRecorder()
 
 	getRequestForm(w, r, &h)
@@ -696,7 +696,7 @@ func TestGetRequestFormSetsOctectStreamContentType(t *testing.T) {
 		Writer:  httptest.NewRecorder(),
 	}
 	h.Request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	r := createMuxRequest("/handlers/HANDLERID/request/form/{name}", "/handlers/HANDLERID/request/form/bar", "GET")
+	r := createMuxRequest("/handlers/HANDLERID/request/form/{name}", "/handlers/HANDLERID/request/form/bar", "GET", nil)
 	w := httptest.NewRecorder()
 
 	getRequestForm(w, r, &h)
@@ -715,7 +715,7 @@ func TestGetRequestFormReturnsTheCorrectMatchValue(t *testing.T) {
 		Writer:  httptest.NewRecorder(),
 	}
 	h.Request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	r := createMuxRequest("/handlers/HANDLERID/request/form/{name}", "/handlers/HANDLERID/request/form/bar", "GET")
+	r := createMuxRequest("/handlers/HANDLERID/request/form/{name}", "/handlers/HANDLERID/request/form/bar", "GET", nil)
 	w := httptest.NewRecorder()
 
 	getRequestForm(w, r, &h)
@@ -734,7 +734,7 @@ func TestGetRequestForm404sWhenFieldDoesntExist(t *testing.T) {
 		Writer:  httptest.NewRecorder(),
 	}
 	h.Request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	r := createMuxRequest("/handlers/HANDLERID/request/form/{name}", "/handlers/HANDLERID/request/form/bar", "GET")
+	r := createMuxRequest("/handlers/HANDLERID/request/form/{name}", "/handlers/HANDLERID/request/form/bar", "GET", nil)
 	w := httptest.NewRecorder()
 
 	getRequestForm(w, r, &h)
@@ -753,7 +753,7 @@ func TestGetRequestForm200sWhenFieldIsEmptyString(t *testing.T) {
 		Writer:  httptest.NewRecorder(),
 	}
 	h.Request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	r := createMuxRequest("/handlers/HANDLERID/request/form/{name}", "/handlers/HANDLERID/request/form/bar", "GET")
+	r := createMuxRequest("/handlers/HANDLERID/request/form/{name}", "/handlers/HANDLERID/request/form/bar", "GET", nil)
 	w := httptest.NewRecorder()
 
 	getRequestForm(w, r, &h)
@@ -772,7 +772,7 @@ func TestGetRequestFormReturnsEmptyBodyWhenFieldIsEmptyString(t *testing.T) {
 		Writer:  httptest.NewRecorder(),
 	}
 	h.Request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	r := createMuxRequest("/handlers/HANDLERID/request/form/{name}", "/handlers/HANDLERID/request/form/bar", "GET")
+	r := createMuxRequest("/handlers/HANDLERID/request/form/{name}", "/handlers/HANDLERID/request/form/bar", "GET", nil)
 	w := httptest.NewRecorder()
 
 	getRequestForm(w, r, &h)
@@ -790,7 +790,7 @@ func TestGetRequestForm404sWhenFormDoesntExist(t *testing.T) {
 		Writer:  httptest.NewRecorder(),
 	}
 	h.Request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	r := createMuxRequest("/handlers/HANDLERID/request/form/{name}", "/handlers/HANDLERID/request/form/bar", "GET")
+	r := createMuxRequest("/handlers/HANDLERID/request/form/{name}", "/handlers/HANDLERID/request/form/bar", "GET", nil)
 	w := httptest.NewRecorder()
 
 	getRequestForm(w, r, &h)
@@ -817,7 +817,7 @@ func TestGetRequestFileName200sOnHappyPath(t *testing.T) {
 		Request: createMultipartFileRequest("bar", "foo", ""),
 		Writer:  httptest.NewRecorder(),
 	}
-	r := createMuxRequest("/handlers/HANDLERID/request/files/{name}/filename", "/handlers/HANDLERID/request/files/bar/filename", "GET")
+	r := createMuxRequest("/handlers/HANDLERID/request/files/{name}/filename", "/handlers/HANDLERID/request/files/bar/filename", "GET", nil)
 	w := httptest.NewRecorder()
 
 	getRequestFileName(w, r, &h)
@@ -833,7 +833,7 @@ func TestGetRequestFileNameSetsOctectStreamContentType(t *testing.T) {
 		Request: createMultipartFileRequest("bar", "foo", ""),
 		Writer:  httptest.NewRecorder(),
 	}
-	r := createMuxRequest("/handlers/HANDLERID/request/files/{name}/filename", "/handlers/HANDLERID/request/files/bar/filename", "GET")
+	r := createMuxRequest("/handlers/HANDLERID/request/files/{name}/filename", "/handlers/HANDLERID/request/files/bar/filename", "GET", nil)
 	w := httptest.NewRecorder()
 
 	getRequestFileName(w, r, &h)
@@ -849,7 +849,7 @@ func TestGetRequestFileNameReturnsTheCorrectFilename(t *testing.T) {
 		Request: createMultipartFileRequest("bar", "BAZ", ""),
 		Writer:  httptest.NewRecorder(),
 	}
-	r := createMuxRequest("/handlers/HANDLERID/request/files/{name}/filename", "/handlers/HANDLERID/request/files/bar/filename", "GET")
+	r := createMuxRequest("/handlers/HANDLERID/request/files/{name}/filename", "/handlers/HANDLERID/request/files/bar/filename", "GET", nil)
 	w := httptest.NewRecorder()
 
 	getRequestFileName(w, r, &h)
@@ -865,7 +865,7 @@ func TestGetRequestFileName404sWhenFileDoesntExist(t *testing.T) {
 		Request: createMultipartFileRequest("foo", "qux", ""),
 		Writer:  httptest.NewRecorder(),
 	}
-	r := createMuxRequest("/handlers/HANDLERID/request/files/{name}/filename", "/handlers/HANDLERID/request/files/bar/filename", "GET")
+	r := createMuxRequest("/handlers/HANDLERID/request/files/{name}/filename", "/handlers/HANDLERID/request/files/bar/filename", "GET", nil)
 	w := httptest.NewRecorder()
 
 	getRequestFileName(w, r, &h)
@@ -882,7 +882,7 @@ func TestGetRequestFileName404sWhenFormDoesntExist(t *testing.T) {
 		Request: httptest.NewRequest("POST", "/", nil),
 		Writer:  httptest.NewRecorder(),
 	}
-	r := createMuxRequest("/handlers/HANDLERID/request/files/{name}/filename", "/handlers/HANDLERID/request/files/bar/filename", "GET")
+	r := createMuxRequest("/handlers/HANDLERID/request/files/{name}/filename", "/handlers/HANDLERID/request/files/bar/filename", "GET", nil)
 	w := httptest.NewRecorder()
 
 	getRequestFileName(w, r, &h)
@@ -898,7 +898,7 @@ func TestGetRequestFileContent200sOnHappyPath(t *testing.T) {
 		Request: createMultipartFileRequest("bar", "foo", ""),
 		Writer:  httptest.NewRecorder(),
 	}
-	r := createMuxRequest("/handlers/HANDLERID/request/files/{name}/content", "/handlers/HANDLERID/request/files/bar/content", "GET")
+	r := createMuxRequest("/handlers/HANDLERID/request/files/{name}/content", "/handlers/HANDLERID/request/files/bar/content", "GET", nil)
 	w := httptest.NewRecorder()
 
 	getRequestFileContent(w, r, &h)
@@ -914,7 +914,7 @@ func TestGetRequestFileContentSetsOctectStreamContentType(t *testing.T) {
 		Request: createMultipartFileRequest("bar", "foo", ""),
 		Writer:  httptest.NewRecorder(),
 	}
-	r := createMuxRequest("/handlers/HANDLERID/request/files/{name}/content", "/handlers/HANDLERID/request/files/bar/content", "GET")
+	r := createMuxRequest("/handlers/HANDLERID/request/files/{name}/content", "/handlers/HANDLERID/request/files/bar/content", "GET", nil)
 	w := httptest.NewRecorder()
 
 	getRequestFileContent(w, r, &h)
@@ -930,7 +930,7 @@ func TestGetRequestFileContentReturnsTheCorrectFileContent(t *testing.T) {
 		Request: createMultipartFileRequest("bar", "foo", "BAZ"),
 		Writer:  httptest.NewRecorder(),
 	}
-	r := createMuxRequest("/handlers/HANDLERID/request/files/{name}/content", "/handlers/HANDLERID/request/files/bar/content", "GET")
+	r := createMuxRequest("/handlers/HANDLERID/request/files/{name}/content", "/handlers/HANDLERID/request/files/bar/content", "GET", nil)
 	w := httptest.NewRecorder()
 
 	getRequestFileContent(w, r, &h)
@@ -946,7 +946,7 @@ func TestGetRequestFileContent404sWhenFileDoesntExist(t *testing.T) {
 		Request: createMultipartFileRequest("foo", "qux", ""),
 		Writer:  httptest.NewRecorder(),
 	}
-	r := createMuxRequest("/handlers/HANDLERID/request/files/{name}/content", "/handlers/HANDLERID/request/files/bar/content", "GET")
+	r := createMuxRequest("/handlers/HANDLERID/request/files/{name}/content", "/handlers/HANDLERID/request/files/bar/content", "GET", nil)
 	w := httptest.NewRecorder()
 
 	getRequestFileContent(w, r, &h)
@@ -963,7 +963,7 @@ func TestGetRequestFileContent404sWhenFormDoesntExist(t *testing.T) {
 		Request: httptest.NewRequest("POST", "/", nil),
 		Writer:  httptest.NewRecorder(),
 	}
-	r := createMuxRequest("/handlers/HANDLERID/request/files/{name}/content", "/handlers/HANDLERID/request/files/bar/content", "GET")
+	r := createMuxRequest("/handlers/HANDLERID/request/files/{name}/content", "/handlers/HANDLERID/request/files/bar/content", "GET", nil)
 	w := httptest.NewRecorder()
 
 	getRequestFileContent(w, r, &h)
@@ -989,7 +989,7 @@ func TestGetRequestFileContent500sWhenHandlerRequestErrors(t *testing.T) {
 		Writer:  httptest.NewRecorder(),
 	}
 	h.Request.Header.Add("Content-Type", multPartWriter.FormDataContentType())
-	r := createMuxRequest("/handlers/HANDLERID/request/files/{name}/content", "/handlers/HANDLERID/request/files/bar/content", "GET")
+	r := createMuxRequest("/handlers/HANDLERID/request/files/{name}/content", "/handlers/HANDLERID/request/files/bar/content", "GET", nil)
 	w := httptest.NewRecorder()
 
 	getRequestFileContent(w, r, &h)
@@ -1080,5 +1080,57 @@ func TestSetResponseStatus400sWhenStatusCodeNotSupportedByGo(t *testing.T) {
 	res := w.Result()
 	if res.StatusCode != http.StatusBadRequest {
 		t.Errorf("Status code mismatch. Expected: 400, Got: %d", res.StatusCode)
+	}
+}
+
+func TestSetResponseHeaders200sOnHappyPath(t *testing.T) {
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "/", nil),
+		Writer:  httptest.NewRecorder(),
+	}
+	r := createMuxRequest("/handlers/HANDLERID/response/headers/{name}", "/handlers/HANDLERID/response/headers/bar", "PUT", strings.NewReader("BAZ"))
+	w := httptest.NewRecorder()
+
+	setResponseHeaders(w, r, &h)
+
+	res := w.Result()
+	if res.StatusCode != http.StatusOK {
+		t.Errorf("Status code mismatch. Expected: 200, Got: %d", res.StatusCode)
+	}
+}
+
+func TestSetResponseHeadersSetsGivenHeader(t *testing.T) {
+	hw := httptest.NewRecorder()
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "/", nil),
+		Writer:  hw,
+	}
+	r := createMuxRequest("/handlers/HANDLERID/response/headers/{name}", "/handlers/HANDLERID/response/headers/bar", "PUT", strings.NewReader("BAZ"))
+	w := httptest.NewRecorder()
+
+	setResponseHeaders(w, r, &h)
+
+	res := hw.Result()
+	if values, ok := res.Header["bar"]; !ok || values[0] != "BAZ" {
+		t.Errorf(`Header mismatch. Expected "BAZ". Contents %v`, res.Header)
+	}
+}
+
+// TODO: Decide if setResponseHeader should ADD or OVERWRITE headers
+func TestSetResponseHeadersAddsGivenHeaderWhenAlreadySet(t *testing.T) {
+	hw := httptest.NewRecorder()
+	hw.Header()["bar"] = []string{"BAZ"}
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "/", nil),
+		Writer:  hw,
+	}
+	r := createMuxRequest("/handlers/HANDLERID/response/headers/{name}", "/handlers/HANDLERID/response/headers/bar", "PUT", strings.NewReader("QUX"))
+	w := httptest.NewRecorder()
+
+	setResponseHeaders(w, r, &h)
+
+	res := hw.Result()
+	if values, ok := res.Header["bar"]; !ok || !reflect.DeepEqual(values, []string{"BAZ", "QUX"}) {
+		t.Errorf(`Header mismatch. Expected ["BAZ", "QUX"]. Contents %v`, res.Header)
 	}
 }
