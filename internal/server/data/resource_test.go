@@ -1111,6 +1111,7 @@ func TestSetResponseHeadersSetsGivenHeader(t *testing.T) {
 	setResponseHeaders(w, r, &h)
 
 	res := hw.Result()
+	// nolint
 	if values, ok := res.Header["bar"]; !ok || values[0] != "BAZ" {
 		t.Errorf(`Header mismatch. Expected "BAZ". Contents %v`, res.Header)
 	}
@@ -1130,6 +1131,7 @@ func TestSetResponseHeadersAddsGivenHeaderWhenAlreadySet(t *testing.T) {
 	setResponseHeaders(w, r, &h)
 
 	res := hw.Result()
+	// nolint
 	if values, ok := res.Header["bar"]; !ok || !reflect.DeepEqual(values, []string{"BAZ", "QUX"}) {
 		t.Errorf(`Header mismatch. Expected ["BAZ", "QUX"]. Contents %v`, res.Header)
 	}
