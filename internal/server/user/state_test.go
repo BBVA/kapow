@@ -147,7 +147,17 @@ func TestSnapshotNonBlockingReadWithOtherReaders(t *testing.T) {
 	}
 }
 
-func TestAppendReturnsTheInsertedRoutedWithTheActualIndexWhenEmpty(t *testing.T) {
+func TestAppendReturnsTheInsertedRouted(t *testing.T) {
+	srl := New()
+
+	r := srl.Append(model.Route{ID: "FOO"})
+
+	if r.ID != "FOO" {
+		t.Errorf(`ID of the returned route is not "FOO", but %q`, r.ID)
+	}
+}
+
+func TestAppendReturnsTheNumberedRoutesWhenEmpty(t *testing.T) {
 	srl := New()
 
 	r := srl.Append(model.Route{})
