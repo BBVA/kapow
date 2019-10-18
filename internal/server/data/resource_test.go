@@ -892,3 +892,110 @@ func TestGetRequestFileName404sWhenFormDoesntExist(t *testing.T) {
 		t.Errorf("Status code mismatch. Expected: 404, Got: %d", res.StatusCode)
 	}
 }
+
+func TestGetRequestFileContent200sOnHappyPath(t *testing.T) {
+	h := model.Handler{
+		Request: createMultipartFileRequest("bar", "foo", ""),
+		Writer:  httptest.NewRecorder(),
+	}
+	r := createMuxRequest("/handlers/HANDLERID/request/files/{name}/content", "/handlers/HANDLERID/request/files/bar/content", "GET")
+	w := httptest.NewRecorder()
+
+	getRequestFileContent(w, r, &h)
+
+	res := w.Result()
+	if res.StatusCode != http.StatusOK {
+		t.Errorf("Status code mismatch. Expected: 200, Got: %d", res.StatusCode)
+	}
+}
+
+func TestGetRequestFileContentSetsOctectStreamContentType(t *testing.T) {
+	h := model.Handler{
+		Request: createMultipartFileRequest("bar", "foo", ""),
+		Writer:  httptest.NewRecorder(),
+	}
+	r := createMuxRequest("/handlers/HANDLERID/request/files/{name}/content", "/handlers/HANDLERID/request/files/bar/content", "GET")
+	w := httptest.NewRecorder()
+
+	getRequestFileContent(w, r, &h)
+
+	res := w.Result()
+	if res.Header.Get("Content-Type") != "application/octet-stream" {
+		t.Error("Content Type mismatch")
+	}
+}
+
+func TestGetRequestFileContentReturnsTheCorrectFileContent(t *testing.T) {
+	h := model.Handler{
+		Request: createMultipartFileRequest("bar", "foo", "BAZ"),
+		Writer:  httptest.NewRecorder(),
+	}
+	r := createMuxRequest("/handlers/HANDLERID/request/files/{name}/content", "/handlers/HANDLERID/request/files/bar/content", "GET")
+	w := httptest.NewRecorder()
+
+	getRequestFileContent(w, r, &h)
+
+	res := w.Result()
+	if body, _ := ioutil.ReadAll(res.Body); string(body) != "BAZ" {
+		t.Errorf(`Body mismatch. Expected: "BAZ". Got: %q`, string(body))
+	}
+}
+
+func TestGetRequestFileContent404sWhenFileDoesntExist(t *testing.T) {
+	h := model.Handler{
+		Request: createMultipartFileRequest("foo", "qux", ""),
+		Writer:  httptest.NewRecorder(),
+	}
+	r := createMuxRequest("/handlers/HANDLERID/request/files/{name}/content", "/handlers/HANDLERID/request/files/bar/content", "GET")
+	w := httptest.NewRecorder()
+
+	getRequestFileContent(w, r, &h)
+
+	res := w.Result()
+	if res.StatusCode != http.StatusNotFound {
+		t.Errorf("Status code mismatch. Expected: 404, Got: %d", res.StatusCode)
+	}
+}
+
+// TODO: Discuss which error is appropiate when the form doesn't exists
+func TestGetRequestFileContent404sWhenFormDoesntExist(t *testing.T) {
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "/", nil),
+		Writer:  httptest.NewRecorder(),
+	}
+	r := createMuxRequest("/handlers/HANDLERID/request/files/{name}/content", "/handlers/HANDLERID/request/files/bar/content", "GET")
+	w := httptest.NewRecorder()
+
+	getRequestFileContent(w, r, &h)
+
+	res := w.Result()
+	if res.StatusCode != http.StatusNotFound {
+		t.Errorf("Status code mismatch. Expected: 404, Got: %d", res.StatusCode)
+	}
+}
+
+// TODO: Discuss what happens when request is interrupted
+func TestGetRequestFileContent500sWhenHandlerRequestErrors(t *testing.T) {
+	t.Skip("Undefined behavior")
+	multPartBody := bytes.Buffer{}
+	multPartWriter := multipart.NewWriter(&multPartBody)
+	part, _ := multPartWriter.CreateFormFile("bar", "BAZ")
+	_, _ = part.Write([]byte("qux"))
+	_ = multPartWriter.Close()
+	buf := bytes.NewBuffer(multPartBody.Bytes()[:len(multPartBody.Bytes())-1])
+
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "/", ErrorOnSecondReadReader(buf)),
+		Writer:  httptest.NewRecorder(),
+	}
+	h.Request.Header.Add("Content-Type", multPartWriter.FormDataContentType())
+	r := createMuxRequest("/handlers/HANDLERID/request/files/{name}/content", "/handlers/HANDLERID/request/files/bar/content", "GET")
+	w := httptest.NewRecorder()
+
+	getRequestFileContent(w, r, &h)
+
+	res := w.Result()
+	if res.StatusCode != http.StatusInternalServerError {
+		t.Error("status not 500", res.StatusCode)
+	}
+}

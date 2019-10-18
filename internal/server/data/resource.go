@@ -112,3 +112,14 @@ func getRequestFileName(w http.ResponseWriter, r *http.Request, h *model.Handler
 		w.WriteHeader(http.StatusNotFound)
 	}
 }
+
+func getRequestFileContent(w http.ResponseWriter, r *http.Request, h *model.Handler) {
+	w.Header().Add("Content-Type", "application/octet-stream")
+	name := mux.Vars(r)["name"]
+	file, _, err := h.Request.FormFile(name)
+	if err == nil {
+		_, _ = io.Copy(w, file)
+	} else {
+		w.WriteHeader(http.StatusNotFound)
+	}
+}
