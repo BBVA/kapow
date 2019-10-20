@@ -8,9 +8,10 @@ import (
 	"os"
 	"os/exec"
 
+	"github.com/spf13/cobra"
+
 	"github.com/BBVA/kapow/internal/server/control"
 	"github.com/BBVA/kapow/internal/server/user"
-	"github.com/spf13/cobra"
 )
 
 // ServerCmd is the command line interface for kapow server
