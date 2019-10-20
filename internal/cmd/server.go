@@ -22,45 +22,39 @@ var ServerCmd = &cobra.Command{
 	and admin interface`,
 	PreRunE: validateServerCommandArguments,
 	Run: func(cmd *cobra.Command, args []string) {
-		//cert, _ := cmd.Flags().GetString("certfile")
-		//key, _ := cmd.Flags().GetString("keyfile")
-		userURL, _ := cmd.Flags().GetString("url")
-		controlURL, _ := cmd.Flags().GetString("control-url")
-		dataURL, _ := cmd.Flags().GetString("data-url")
+		// cert, _ := cmd.Flags().GetString("certfile")
+		// key, _ := cmd.Flags().GetString("keyfile")
 
-		// FIXME: If is a hostport change the name
-		fmt.Println("urls:")
-		fmt.Println("\t" + userURL)
-		fmt.Println("\t" + controlURL)
-		fmt.Println("\t" + dataURL)
+		userBind, _ := cmd.Flags().GetString("bind")
+		controlBind, _ := cmd.Flags().GetString("control-bind")
+		dataBind, _ := cmd.Flags().GetString("data-bind")
 
-		// TODO: run data server
-		go func() { log.Fatal(http.ListenAndServe(dataURL, nil)) }()
+		go user.Run(userBind)
 
-		// TODO: run control server
-		go control.Run(controlURL)
+		// TODO: run the actual data server when it gets implemented
+		// data.Run(dataBind)
+		go func() { log.Fatal(http.ListenAndServe(dataBind, nil)) }() // dummy data server for now
 
-		// TODO: run user server
-		go user.Run(userURL)
+		go control.Run(controlBind)
 
 		// start sub shell + ENV(KAPOW_CONTROL_URL)
-		// TODO: process several files... tomorrow
-		_, err := os.Stat(args[0])
+		powfile := args[0]
+		_, err := os.Stat(powfile)
 		if os.IsNotExist(err) {
-			log.Fatalf("%s does not exist", args[0])
+			log.Fatalf("%s does not exist", powfile)
 		}
-		kapowCMD := exec.Command("bash", args[0])
+		log.Printf("Running powfile: %q\n", powfile)
+		kapowCMD := exec.Command("bash", powfile)
 		kapowCMD.Stdout = os.Stdout
 		kapowCMD.Stderr = os.Stderr
-		kapowCMD.Env = append(os.Environ(), "KAPOW_URL=http://"+userURL)
-		kapowCMD.Env = append(kapowCMD.Env, "KAPOW_CONTROL_URL=http://"+controlURL)
-		kapowCMD.Env = append(kapowCMD.Env, "KAPOW_DATA_URL=http://"+dataURL)
+		kapowCMD.Env = append(os.Environ(), "KAPOW_CONTROL_URL=http://"+controlBind)
 
-		// run bash -c "[pow files contents]"
 		err = kapowCMD.Run()
 		if err != nil {
 			log.Fatal(err)
 		}
+		fmt.Println()
+		log.Printf("Done running powfile: %q\n", powfile)
 
 		select {}
 	},
@@ -69,11 +63,10 @@ var ServerCmd = &cobra.Command{
 func init() {
 	ServerCmd.Flags().String("certfile", "", "Cert file to serve thru https")
 	ServerCmd.Flags().String("keyfile", "", "Key file to serve thru https")
-	ServerCmd.Flags().String("bind", "", "IP address and port to listen to")
-	ServerCmd.Flags().BoolP("interactive", "i", false, "Boot an empty kapow server with a shell")
-	ServerCmd.Flags().String("url", getEnv("KAPOW_URL", "http://localhost:8080"), "Kapow! user interface URL")
-	ServerCmd.Flags().String("control-url", getEnv("KAPOW_CONTROL_URL", "http://localhost:8081"), "Kapow! control interface URL")
-	ServerCmd.Flags().String("data-url", getEnv("KAPOW_DATA_URL", "http://localhost:8082"), "Kapow! data interface URL")
+
+	ServerCmd.Flags().String("bind", "localhost:8080", "IP address and port to bind the user interface to")
+	ServerCmd.Flags().String("control-bind", "localhost:8081", "IP address and port to bind the control interface to")
+	ServerCmd.Flags().String("data-bind", "localhost:8082", "IP address and port to bind the data interface to")
 }
 
 func validateServerCommandArguments(cmd *cobra.Command, args []string) error {
