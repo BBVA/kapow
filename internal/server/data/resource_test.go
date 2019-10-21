@@ -1137,6 +1137,22 @@ func TestSetResponseHeadersAddsGivenHeaderWhenAlreadySet(t *testing.T) {
 	}
 }
 
+func TestSetResponseHeaders500sWhenErrorReadingRequest(t *testing.T) {
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "/", nil),
+		Writer:  httptest.NewRecorder(),
+	}
+	r := httptest.NewRequest("PUT", "/", BadReader("Failed by design"))
+	w := httptest.NewRecorder()
+
+	setResponseHeaders(w, r, &h)
+
+	res := w.Result()
+	if res.StatusCode != http.StatusInternalServerError {
+		t.Errorf("Status code mismatch. Expected: 500, Got: %d", res.StatusCode)
+	}
+}
+
 // TODO: Validate Header Key encoding
 func TestSetResponseHeaders400sOnInvalidHeaderKey(t *testing.T) {
 	t.Skip("Somebody has to validate header key, but net/http doesn't give us any facility (yet).")
@@ -1174,3 +1190,75 @@ func TestSetResponseHeaders400sOnInvalidHeaderValue(t *testing.T) {
 		t.Errorf("Status code mismatch. Expected: 400, Got: %d", res.StatusCode)
 	}
 }
+
+func TestSetResponseCookies200sOnHappyPath(t *testing.T) {
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "/", nil),
+		Writer:  httptest.NewRecorder(),
+	}
+	r := httptest.NewRequest("PUT", "/", nil)
+	w := httptest.NewRecorder()
+
+	setResponseCookies(w, r, &h)
+
+	res := w.Result()
+	if res.StatusCode != http.StatusOK {
+		t.Errorf("Status code mismatch. Expected: 200, Got: %d", res.StatusCode)
+	}
+}
+
+func TestSetResponseCookiesSetsGivenCookie(t *testing.T) {
+	hw := httptest.NewRecorder()
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "/", nil),
+		Writer:  hw,
+	}
+	r := createMuxRequest("/handlers/HANDLERID/response/cookies/{name}", "/handlers/HANDLERID/response/cookies/bar", "PUT", strings.NewReader("BAZ"))
+	w := httptest.NewRecorder()
+
+	setResponseCookies(w, r, &h)
+
+	res := hw.Result()
+	// nolint
+	if c := res.Cookies(); len(c) != 1 || c[0].Name != "bar" || c[0].Value != "BAZ" {
+		t.Errorf(`Header mismatch. Expected "bar=BAZ". Contents %+v`, c)
+	}
+}
+
+func TestSetResponseCookies500sWhenErrorReadingRequest(t *testing.T) {
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "/", nil),
+		Writer:  httptest.NewRecorder(),
+	}
+	r := httptest.NewRequest("PUT", "/", BadReader("Failed by design"))
+	w := httptest.NewRecorder()
+
+	setResponseCookies(w, r, &h)
+
+	res := w.Result()
+	if res.StatusCode != http.StatusInternalServerError {
+		t.Errorf("Status code mismatch. Expected: 500, Got: %d", res.StatusCode)
+	}
+}
+
+func TestSetResponseCookiesAddsValueToExistingCookie(t *testing.T) {
+	hw := httptest.NewRecorder()
+	c := &http.Cookie{Name: "bar", Value: "BAZ"}
+	http.SetCookie(hw, c)
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "/", nil),
+		Writer:  hw,
+	}
+	r := createMuxRequest("/handlers/HANDLERID/response/cookies/{name}", "/handlers/HANDLERID/response/cookies/bar", "PUT", strings.NewReader("QUX"))
+	w := httptest.NewRecorder()
+
+	setResponseCookies(w, r, &h)
+
+	res := hw.Result()
+	// nolint
+	if c := res.Cookies(); len(c) != 2 || c[1].Name != "bar" || c[1].Value != "QUX" {
+		t.Errorf(`Header mismatch. Expected "bar=QUX". Contents %+v`, c)
+	}
+}
+
+// TODO: Validate Cookie Name&Value encoding

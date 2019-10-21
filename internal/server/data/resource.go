@@ -147,11 +147,28 @@ func setResponseStatus(w http.ResponseWriter, r *http.Request, h *model.Handler)
 
 func setResponseHeaders(w http.ResponseWriter, r *http.Request, h *model.Handler) {
 	name := mux.Vars(r)["name"]
-	vb, _ := ioutil.ReadAll(r.Body)
+	vb, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
 	hds := h.Writer.Header()
 	if _, ok := hds[name]; ok {
 		hds[name] = append(hds[name], string(vb))
 	} else {
 		hds[name] = []string{string(vb)}
 	}
+}
+
+func setResponseCookies(w http.ResponseWriter, r *http.Request, h *model.Handler) {
+	name := mux.Vars(r)["name"]
+	vb, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	c := &http.Cookie{Name: name, Value: string(vb)}
+	http.SetCookie(h.Writer, c)
 }
