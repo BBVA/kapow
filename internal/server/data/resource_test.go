@@ -1136,3 +1136,41 @@ func TestSetResponseHeadersAddsGivenHeaderWhenAlreadySet(t *testing.T) {
 		t.Errorf(`Header mismatch. Expected ["BAZ", "QUX"]. Contents %v`, res.Header)
 	}
 }
+
+// TODO: Validate Header Key encoding
+func TestSetResponseHeaders400sOnInvalidHeaderKey(t *testing.T) {
+	t.Skip("Somebody has to validate header key, but net/http doesn't give us any facility (yet).")
+	hw := httptest.NewRecorder()
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "/", nil),
+		Writer:  hw,
+	}
+	r := createMuxRequest("/handlers/HANDLERID/response/headers/{name}", "/handlers/HANDLERID/response/headers/%0a", "PUT", strings.NewReader("BAZ"))
+	w := httptest.NewRecorder()
+
+	setResponseHeaders(w, r, &h)
+
+	res := w.Result()
+	if res.StatusCode != http.StatusBadRequest {
+		t.Errorf("Status code mismatch. Expected: 400, Got: %d", res.StatusCode)
+	}
+}
+
+// TODO: Validate Header Value encoding
+func TestSetResponseHeaders400sOnInvalidHeaderValue(t *testing.T) {
+	t.Skip("Somebody has to validate header value, but net/http doesn't give us any facility (yet).")
+	hw := httptest.NewRecorder()
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "/", nil),
+		Writer:  hw,
+	}
+	r := createMuxRequest("/handlers/HANDLERID/response/headers/{name}", "/handlers/HANDLERID/response/headers/foo", "PUT", strings.NewReader("\n"))
+	w := httptest.NewRecorder()
+
+	setResponseHeaders(w, r, &h)
+
+	res := w.Result()
+	if res.StatusCode != http.StatusBadRequest {
+		t.Errorf("Status code mismatch. Expected: 400, Got: %d", res.StatusCode)
+	}
+}
