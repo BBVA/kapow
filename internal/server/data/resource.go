@@ -172,3 +172,12 @@ func setResponseCookies(w http.ResponseWriter, r *http.Request, h *model.Handler
 	c := &http.Cookie{Name: name, Value: string(vb)}
 	http.SetCookie(h.Writer, c)
 }
+
+func setResponseBody(w http.ResponseWriter, r *http.Request, h *model.Handler) {
+	if n, err := io.Copy(h.Writer, r.Body); err != nil {
+		if n > 0 {
+			panic("Truncated body")
+		}
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+}

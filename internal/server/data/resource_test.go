@@ -1262,3 +1262,70 @@ func TestSetResponseCookiesAddsValueToExistingCookie(t *testing.T) {
 }
 
 // TODO: Validate Cookie Name&Value encoding
+
+func TestSetResponseBody200sOnHappyPath(t *testing.T) {
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "/", nil),
+		Writer:  httptest.NewRecorder(),
+	}
+	r := httptest.NewRequest("PUT", "/", nil)
+	w := httptest.NewRecorder()
+
+	setResponseBody(w, r, &h)
+
+	res := w.Result()
+	if res.StatusCode != http.StatusOK {
+		t.Errorf("Status code mismatch. Expected: 200, Got: %d", res.StatusCode)
+	}
+}
+
+func TestSetResponseBodySetsTheResponseBody(t *testing.T) {
+	hw := httptest.NewRecorder()
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "/", nil),
+		Writer:  hw,
+	}
+	r := createMuxRequest("/handlers/HANDLERID/response/body", "/handlers/HANDLERID/response/body", "PUT", strings.NewReader("BAZ"))
+	w := httptest.NewRecorder()
+
+	setResponseBody(w, r, &h)
+
+	res := hw.Result()
+	if body, _ := ioutil.ReadAll(res.Body); string(body) != "BAZ" {
+		t.Errorf(`Body mismatch. Expected: "BAZ". Got: %q`, string(body))
+	}
+}
+
+func TestSetResponseBody500sWhenReaderFailsInFirstRead(t *testing.T) {
+	hw := httptest.NewRecorder()
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "/", nil),
+		Writer:  hw,
+	}
+	r := createMuxRequest("/handlers/HANDLERID/response/body", "/handlers/HANDLERID/response/body", "PUT", BadReader("Fail by design"))
+	w := httptest.NewRecorder()
+
+	setResponseBody(w, r, &h)
+
+	res := w.Result()
+	if res.StatusCode != http.StatusInternalServerError {
+		t.Errorf("Status code mismatch. Expected: 500, Got: %d", res.StatusCode)
+	}
+}
+
+func TestSetResponseBodyPanicsIfReaderFailsAfterFirstWrite(t *testing.T) {
+	hw := httptest.NewRecorder()
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "/", nil),
+		Writer:  hw,
+	}
+	r := createMuxRequest("/handlers/HANDLERID/response/body", "/handlers/HANDLERID/response/body", "PUT", ErrorOnSecondReadReader(strings.NewReader("FOO")))
+	w := httptest.NewRecorder()
+
+	defer func() {
+		if rec := recover(); rec == nil {
+			t.Error("Didn't panic")
+		}
+	}()
+	setResponseBody(w, r, &h)
+}
