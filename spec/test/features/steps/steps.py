@@ -80,7 +80,7 @@ def run_kapow_server(context):
                 and requests.head(Env.KAPOW_DATAAPI_URL, timeout=1).status_code)
             if open_ports:
                 break
-        sleep(1)
+        sleep(.01)
 
     assert open_ports, "API is unreachable after KAPOW_BOOT_TIMEOUT"
 
@@ -167,7 +167,7 @@ def step_impl(context, code):
 
 @then('I get {code} as response code in the testing request')
 def step_impl(context, code):
-    assert context.testing_response.status_code == int(code), f"Got {context.response.status_code} instead"
+    assert context.testing_response.status_code == int(code), f"Got {context.testing_response.status_code} instead"
 
 
 @then('I get "{reason}" as response reason phrase')
