@@ -30,23 +30,25 @@ var ServerCmd = &cobra.Command{
 		go server.StartServer(controlBind, dataBind, userBind)
 
 		// start sub shell + ENV(KAPOW_CONTROL_URL)
-		powfile := args[0]
-		_, err := os.Stat(powfile)
-		if os.IsNotExist(err) {
-			log.Fatalf("%s does not exist", powfile)
-		}
-		log.Printf("Running powfile: %q\n", powfile)
-		kapowCMD := exec.Command("bash", powfile)
-		kapowCMD.Stdout = os.Stdout
-		kapowCMD.Stderr = os.Stderr
-		kapowCMD.Env = append(os.Environ(), "KAPOW_CONTROL_URL=http://"+controlBind)
+		if len(args) > 0 {
+			powfile := args[0]
+			_, err := os.Stat(powfile)
+			if os.IsNotExist(err) {
+				log.Fatalf("%s does not exist", powfile)
+			}
+			log.Printf("Running powfile: %q\n", powfile)
+			kapowCMD := exec.Command("bash", powfile)
+			kapowCMD.Stdout = os.Stdout
+			kapowCMD.Stderr = os.Stderr
+			kapowCMD.Env = append(os.Environ(), "KAPOW_CONTROL_URL=http://"+controlBind)
 
-		err = kapowCMD.Run()
-		if err != nil {
-			log.Fatal(err)
+			err = kapowCMD.Run()
+			if err != nil {
+				log.Fatal(err)
+			}
+			fmt.Println()
+			log.Printf("Done running powfile: %q\n", powfile)
 		}
-		fmt.Println()
-		log.Printf("Done running powfile: %q\n", powfile)
 
 		select {}
 	},
