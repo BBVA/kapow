@@ -41,8 +41,8 @@ func Run(bindAddr string) {
 
 		// response
 		{"/handlers/{handlerID}/response/status", "PUT", lockResponseWriter(setResponseStatus)},
-		{"/handlers/{handlerID}/response/headers/name", "PUT", lockResponseWriter(setResponseHeaders)},
-		{"/handlers/{handlerID}/response/cookies/name", "PUT", lockResponseWriter(setResponseCookies)},
+		{"/handlers/{handlerID}/response/headers/{name}", "PUT", lockResponseWriter(setResponseHeaders)},
+		{"/handlers/{handlerID}/response/cookies/{name}", "PUT", lockResponseWriter(setResponseCookies)},
 		{"/handlers/{handlerID}/response/body", "PUT", lockResponseWriter(setResponseBody)},
 		{"/handlers/{handlerID}/response/stream", "PUT", lockResponseWriter(setResponseBody)},
 	}
