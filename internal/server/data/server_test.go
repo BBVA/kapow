@@ -5,8 +5,6 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	// "github.com/gorilla/mux"
-
 	"github.com/BBVA/kapow/internal/server/model"
 )
 
