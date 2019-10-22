@@ -12,7 +12,7 @@ import (
 
 func TestConfigRouterReturnsRouterWithDecoratedRoutes(t *testing.T) {
 	var handlerID string
-	list := []routeSpec{
+	rs := []routeSpec{
 		{
 			"/handlers/{handlerID}/dummy",
 			"GET",
@@ -21,7 +21,7 @@ func TestConfigRouterReturnsRouterWithDecoratedRoutes(t *testing.T) {
 	}
 	Handlers = New()
 	Handlers.Add(&model.Handler{ID: "FOO"})
-	m := configRouter(list)
+	m := configRouter(rs)
 
 	m.ServeHTTP(httptest.NewRecorder(), httptest.NewRequest("GET", "/handlers/FOO/dummy", nil))
 
