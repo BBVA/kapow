@@ -4,14 +4,12 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"net/http"
 	"os"
 	"os/exec"
 
 	"github.com/spf13/cobra"
 
-	"github.com/BBVA/kapow/internal/server/control"
-	"github.com/BBVA/kapow/internal/server/user"
+	"github.com/BBVA/kapow/internal/server"
 )
 
 // ServerCmd is the command line interface for kapow server
@@ -29,13 +27,7 @@ var ServerCmd = &cobra.Command{
 		controlBind, _ := cmd.Flags().GetString("control-bind")
 		dataBind, _ := cmd.Flags().GetString("data-bind")
 
-		go user.Run(userBind)
-
-		// TODO: run the actual data server when it gets implemented
-		// data.Run(dataBind)
-		go func() { log.Fatal(http.ListenAndServe(dataBind, nil)) }() // dummy data server for now
-
-		go control.Run(controlBind)
+		go server.StartServer(controlBind, dataBind, userBind)
 
 		// start sub shell + ENV(KAPOW_CONTROL_URL)
 		powfile := args[0]
