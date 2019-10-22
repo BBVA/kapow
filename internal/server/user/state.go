@@ -51,7 +51,7 @@ func (srl *safeRouteList) List() []model.Route {
 }
 
 func (srl *safeRouteList) Delete(ID string) error {
-	// TODO: Refactor with `refer` if applicable
+	// TODO: Refactor with `defer` if applicable
 	srl.m.Lock()
 	for i := 0; i < len(srl.rs); i++ {
 		if srl.rs[i].ID == ID {
