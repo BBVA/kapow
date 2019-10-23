@@ -16,7 +16,7 @@
 package cmd
 
 import (
-	"bytes"
+	"io/ioutil"
 	"log"
 	"os"
 
@@ -58,24 +58,17 @@ func init() {
 
 			if len(args) > 1 && command == "" {
 				commandFile := args[1]
-				buf := new(bytes.Buffer)
+				var buf []byte
+				var err error
 				if commandFile == "-" {
-					_, err := buf.ReadFrom(os.Stdin)
-					if err != nil {
-						log.Fatal(err)
-					}
+					buf, err = ioutil.ReadAll(os.Stdin)
 				} else {
-					file, err := os.Open(commandFile)
-					if err != nil {
-						log.Fatal(err)
-					}
-					defer file.Close()
-					_, err = buf.ReadFrom(file)
-					if err != nil {
-						log.Fatal(err)
-					}
+					buf, err = ioutil.ReadFile(commandFile)
 				}
-				command = buf.String()
+				if err != nil {
+					log.Fatal(err)
+				}
+				command = string(buf)
 			}
 
 			if err := client.AddRoute(controlURL, urlPattern, method, entrypoint, command, os.Stdout); err != nil {
