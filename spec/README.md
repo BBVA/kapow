@@ -496,7 +496,8 @@ following resource paths:
 
 **Note**: Parameters under `request` are read-only and, conversely, parameters under
 `response` are write-only.
-
+**Note**: It should be noted that, according to the spec, the name of a cookie is case
+sensitive.
 
 #### Get handler resource
 
