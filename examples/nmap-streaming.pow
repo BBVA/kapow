@@ -1,0 +1,22 @@
+#
+# Streams nmap execution. When processes finishes print the value ##########"
+# as separator and then print the Nmap XML report
+#
+# Call example:
+#
+# > curl -v http://localhost:9001/nmap-stream -d "ip=127.0.0.1"
+#
+
+kapow route add -X POST /nmap-stream - <<-'EOF'
+    {
+        RESULT_FILE="/tmp/${RANDOM}${RANDOM}${RANDOM}"
+        nmap -Pn -n -p 9000 -oX $RESULT_FILE $(kapow get /request/form/ip)
+
+        echo "##########"
+
+        cat $RESULT_FILE
+        rm -f $RESULT_FILE
+
+    } | kapow set /response/stream
+
+EOF
