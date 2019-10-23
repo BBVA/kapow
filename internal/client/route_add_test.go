@@ -36,11 +36,6 @@ func TestSuccessOnCorrectRoute(t *testing.T) {
 		Reply(http.StatusCreated).
 		JSON(map[string]string{})
 
-	// TODO: As per the spec¹, the call should return a JSON body with the info
-	// of the newly created route.  Should we consider this in the mocked server
-	// and in the test?
-	// ¹: https://github.com/BBVA/kapow/tree/master/spec#insert-a-route
-
 	err := AddRoute(
 		"http://localhost",
 		"/hello", "GET", "", "echo Hello World | kapow set /response/body", nil)
