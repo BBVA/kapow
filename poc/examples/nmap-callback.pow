@@ -1,0 +1,21 @@
+#
+# Nmap execution with callback. When processes finishes call the CALLBACK site and
+# send a POST with the XML results
+#
+# Call example:
+#
+# > curl -v "http://localhost:9001/nmap-callback?callback=127.0.0.1:9999" -d "ip=127.0.0.1&ports=8000,9000"
+#
+
+kapow route add -X POST /nmap-callback - <<-'EOF'
+    {
+        RESULT_FILE="/tmp/${RANDOM}${RANDOM}${RANDOM}"
+        nmap -Pn -n -p $(kapow get /request/form/ports) -oX $RESULT_FILE $(kapow get /request/form/ip)
+
+        curl --connect-timeout 5 -X POST -F "data=@$RESULT_FILE" $(kapow get /request/params/callback) 2> /dev/null > /dev/null
+
+        rm -f $RESULT_FILE
+
+    } | kapow set /response/stream
+
+EOF
