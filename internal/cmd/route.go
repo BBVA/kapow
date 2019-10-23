@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"bytes"
 	"log"
 	"os"
 
@@ -39,6 +40,28 @@ func init() {
 			command, _ := cmd.Flags().GetString("command")
 			entrypoint, _ := cmd.Flags().GetString("entrypoint")
 			urlPattern := args[0]
+
+			if len(args) > 1 && command == "" {
+				commandFile := args[1]
+				buf := new(bytes.Buffer)
+				if commandFile == "-" {
+					_, err := buf.ReadFrom(os.Stdin)
+					if err != nil {
+						log.Fatal(err)
+					}
+				} else {
+					file, err := os.Open(commandFile)
+					if err != nil {
+						log.Fatal(err)
+					}
+					defer file.Close()
+					_, err = buf.ReadFrom(file)
+					if err != nil {
+						log.Fatal(err)
+					}
+				}
+				command = buf.String()
+			}
 
 			// TODO: Read command from parameter, file or stdin
 			if err := client.AddRoute(controlURL, urlPattern, method, entrypoint, command, os.Stdout); err != nil {
