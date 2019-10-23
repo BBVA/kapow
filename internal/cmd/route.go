@@ -78,7 +78,6 @@ func init() {
 				command = buf.String()
 			}
 
-			// TODO: Read command from parameter, file or stdin
 			if err := client.AddRoute(controlURL, urlPattern, method, entrypoint, command, os.Stdout); err != nil {
 				log.Fatal(err)
 			}
