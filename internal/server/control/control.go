@@ -21,6 +21,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 
 	"github.com/BBVA/kapow/internal/server/model"
@@ -67,6 +68,7 @@ func listRoutes(res http.ResponseWriter, req *http.Request) {
 }
 
 var funcAdd func(model.Route) model.Route = user.Routes.Append
+var idGenerator = uuid.NewUUID
 
 func addRoute(res http.ResponseWriter, req *http.Request) {
 	var route model.Route
@@ -85,6 +87,14 @@ func addRoute(res http.ResponseWriter, req *http.Request) {
 		res.WriteHeader(http.StatusUnprocessableEntity)
 		return
 	}
+
+	id, err := idGenerator()
+	if err != nil {
+		res.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	route.ID = id.String()
+
 	created := funcAdd(route)
 	createdBytes, _ := json.Marshal(created)
 

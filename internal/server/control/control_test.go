@@ -24,6 +24,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 
 	"github.com/BBVA/kapow/internal/server/model"
@@ -164,6 +165,56 @@ func TestAddRouteReturns422ErrorWhenMandatoryFieldsMissing(t *testing.T) {
 	}
 }
 
+func TestAddRouteGeneratesRouteID(t *testing.T) {
+	reqPayload := `{
+    "method": "GET",
+    "url_pattern": "/hello",
+    "entrypoint": "/bin/sh -c",
+    "command": "echo Hello World | kapow set /response/body"
+  }`
+	req := httptest.NewRequest(http.MethodPost, "/routes", strings.NewReader(reqPayload))
+	resp := httptest.NewRecorder()
+	handler := http.HandlerFunc(addRoute)
+	var genID string
+	funcAdd = func(input model.Route) model.Route {
+		genID = input.ID
+		input.Index = 0
+		return input
+	}
+
+	handler.ServeHTTP(resp, req)
+
+	if _, err := uuid.Parse(genID); err != nil {
+		t.Error("ID not generated properly")
+	}
+}
+
+func TestAddRoute500sWhenIDGeneratorFails(t *testing.T) {
+	reqPayload := `{
+    "method": "GET",
+    "url_pattern": "/hello",
+    "entrypoint": "/bin/sh -c",
+    "command": "echo Hello World | kapow set /response/body"
+  }`
+	req := httptest.NewRequest(http.MethodPost, "/routes", strings.NewReader(reqPayload))
+	resp := httptest.NewRecorder()
+	handler := http.HandlerFunc(addRoute)
+
+	idGenOrig := idGenerator
+	defer func() { idGenerator = idGenOrig }()
+	idGenerator = func() (uuid.UUID, error) {
+		var uuid uuid.UUID
+		return uuid, errors.New(
+			"End of Time reached; Try again before, or in the next Big Bang cycle")
+	}
+
+	handler.ServeHTTP(resp, req)
+
+	if resp.Result().StatusCode != http.StatusInternalServerError {
+		t.Errorf("HTTP status mismatch. Expected: %d, got: %d", http.StatusInternalServerError, resp.Result().StatusCode)
+	}
+}
+
 func TestAddRouteReturnsCreated(t *testing.T) {
 	reqPayload := `{
     "method": "GET",
@@ -175,12 +226,12 @@ func TestAddRouteReturnsCreated(t *testing.T) {
 	req := httptest.NewRequest(http.MethodPost, "/routes", strings.NewReader(reqPayload))
 	resp := httptest.NewRecorder()
 	handler := http.HandlerFunc(addRoute)
-
+	var genID string
 	funcAdd = func(input model.Route) model.Route {
-		expected := model.Route{Method: "GET", Pattern: "/hello", Entrypoint: "/bin/sh -c", Command: "echo Hello World | kapow set /response/body"}
+		expected := model.Route{ID: input.ID, Method: "GET", Pattern: "/hello", Entrypoint: "/bin/sh -c", Command: "echo Hello World | kapow set /response/body"}
 		if input == expected {
+			genID = input.ID
 			input.Index = 0
-			input.ID = "ROUTE_XXXXXXXXXXXXXXXXXX"
 			return input
 		}
 
@@ -188,6 +239,7 @@ func TestAddRouteReturnsCreated(t *testing.T) {
 	}
 
 	handler.ServeHTTP(resp, req)
+
 	if resp.Code != http.StatusCreated {
 		t.Errorf("HTTP status mismatch. Expected: %d, got: %d", http.StatusCreated, resp.Code)
 	}
@@ -201,7 +253,7 @@ func TestAddRouteReturnsCreated(t *testing.T) {
 		t.Errorf("Invalid JSON response. %s", resp.Body.String())
 	}
 
-	expectedRouteSpec := model.Route{Method: "GET", Pattern: "/hello", Entrypoint: "/bin/sh -c", Command: "echo Hello World | kapow set /response/body", Index: 0, ID: "ROUTE_XXXXXXXXXXXXXXXXXX"}
+	expectedRouteSpec := model.Route{Method: "GET", Pattern: "/hello", Entrypoint: "/bin/sh -c", Command: "echo Hello World | kapow set /response/body", Index: 0, ID: genID}
 	if respJson != expectedRouteSpec {
 		t.Errorf("Response mismatch. Expected %#v, got: %#v", expectedRouteSpec, respJson)
 	}
