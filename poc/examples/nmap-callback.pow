@@ -17,8 +17,10 @@
 #
 
 #
-# Nmap execution with callback. When processes finishes call the CALLBACK site
-# and send a POST with the XML results
+# Nmap execution with callback.
+#
+# When the Nmap processes finishes it will call the CALLBACK site
+# and POST the XML results
 #
 
 # Call example:
@@ -27,19 +29,19 @@
 #
 
 kapow route add -X POST /nmap-callback - <<-'EOF'
+	PORTS=$(kapow get /request/form/ports)
+	: ${PORTS:=9000}
+
+	IP=$(kapow get /request/form/ip)
+	: ${IP:=127.0.0.1}
+
+	CALLBACK=$(kapow get /request/params/callback)
+	: ${CALLBACK:=127.0.0.1:9999}
+
+	tmpfile="$(mktemp --suffix=.xml)"
+	trap "{ rm -f \"$tmpfile\"; }" EXIT
+
 	{
-		PORTS=$(kapow get /request/form/ports)
-		: ${PORTS:=9000}
-
-		IP=$(kapow get /request/form/ip)
-		: ${IP:=127.0.0.1}
-
-		CALLBACK=$(kapow get /request/params/callback)
-		: ${CALLBACK:=127.0.0.1:9999}
-
-		tmpfile="$(mktemp --suffix=.nmap)"
-		trap "{ rm -f \"$tmpfile\"; }" EXIT
-
 		nmap				\
 			-Pn			\
 			-n			\
@@ -55,5 +57,5 @@ kapow route add -X POST /nmap-callback - <<-'EOF'
 			-F "data=@$tmpfile"	\
 			"$CALLBACK"
 
-	} | kapow set /response/stream
+	} | kapow set /response/body
 EOF

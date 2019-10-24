@@ -17,8 +17,10 @@
 #
 
 #
-# Streams nmap execution. When processes finishes print the value ##########"
-# as separator and then print the Nmap XML report
+# Streams nmap execution.
+#
+# The output from Nmap is wrapped in XML comment delimiters
+# and then follows the Nmap XML report proper
 #
 
 # Call example:
@@ -27,16 +29,19 @@
 #
 
 kapow route add -X POST /nmap-stream - <<-'EOF'
+	PORTS=$(kapow get /request/form/ports)
+	: ${PORTS:=9000}
+
+	IP=$(kapow get /request/form/ip)
+	: ${IP:=127.0.0.1}
+
+	tmpfile="$(mktemp --suffix=.xml)"
+	trap "{ rm -f \"$tmpfile\"; }" EXIT
+
+	kapow set /response/headers/Content-Type text/xml
+
 	{
-		PORTS=$(kapow get /request/form/ports)
-		: ${PORTS:=9000}
-
-		IP=$(kapow get /request/form/ip)
-		: ${IP:=127.0.0.1}
-
-		tmpfile="$(mktemp --suffix=.nmap)"
-		trap "{ rm -f \"$tmpfile\"; }" EXIT
-
+		echo '<?xml version="1.0" encoding="UTF-8"?>'
 		echo '<!--'
 		nmap				\
 			-Pn			\
@@ -45,8 +50,7 @@ kapow route add -X POST /nmap-stream - <<-'EOF'
 			-oX "$tmpfile"		\
 			"$IP"
 		echo '-->'
+		tail --lines=+2 "$tmpfile"
 
-		cat "$tmpfile"
-
-	} | kapow set /response/stream
+	} | kapow set /response/body
 EOF
