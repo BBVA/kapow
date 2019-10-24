@@ -72,6 +72,22 @@ func TestConfigRouterHasRoutesWellConfigured(t *testing.T) {
 	}
 }
 
+func TestPathValidatorNoErrorWhenCorrectPath(t *testing.T) {
+	err := pathValidator("/routes/{routeID}")
+
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestPathValidatorErrorWhenInvalidPath(t *testing.T) {
+	err := pathValidator("/routes/{routeID{")
+
+	if err == nil {
+		t.FailNow()
+	}
+}
+
 func TestAddRouteReturnsBadRequestWhenMalformedJSONBody(t *testing.T) {
 	reqPayload := `{
     method": "GET",
@@ -181,6 +197,9 @@ func TestAddRouteGeneratesRouteID(t *testing.T) {
 		input.Index = 0
 		return input
 	}
+	origPathValidator := pathValidator
+	defer func() { pathValidator = origPathValidator }()
+	pathValidator = func(path string) error { return nil }
 
 	handler.ServeHTTP(resp, req)
 
@@ -199,6 +218,10 @@ func TestAddRoute500sWhenIDGeneratorFails(t *testing.T) {
 	req := httptest.NewRequest(http.MethodPost, "/routes", strings.NewReader(reqPayload))
 	resp := httptest.NewRecorder()
 	handler := http.HandlerFunc(addRoute)
+
+	origPathValidator := pathValidator
+	defer func() { pathValidator = origPathValidator }()
+	pathValidator = func(path string) error { return nil }
 
 	idGenOrig := idGenerator
 	defer func() { idGenerator = idGenOrig }()
@@ -237,6 +260,9 @@ func TestAddRouteReturnsCreated(t *testing.T) {
 
 		return model.Route{}
 	}
+	origPathValidator := pathValidator
+	defer func() { pathValidator = origPathValidator }()
+	pathValidator = func(path string) error { return nil }
 
 	handler.ServeHTTP(resp, req)
 
@@ -256,6 +282,27 @@ func TestAddRouteReturnsCreated(t *testing.T) {
 	expectedRouteSpec := model.Route{Method: "GET", Pattern: "/hello", Entrypoint: "/bin/sh -c", Command: "echo Hello World | kapow set /response/body", Index: 0, ID: genID}
 	if respJson != expectedRouteSpec {
 		t.Errorf("Response mismatch. Expected %#v, got: %#v", expectedRouteSpec, respJson)
+	}
+}
+
+func TestAddRoute422sWhenInvalidRoute(t *testing.T) {
+	reqPayload := `{
+	"method": "GET",
+	"url_pattern": "/he{{o",
+	"entrypoint": "/bin/sh -c",
+	"command": "echo Hello World | kapow set /response/body"
+}`
+	req := httptest.NewRequest(http.MethodPost, "/routes", strings.NewReader(reqPayload))
+	resp := httptest.NewRecorder()
+	handler := http.HandlerFunc(addRoute)
+	origPathValidator := pathValidator
+	defer func() { pathValidator = origPathValidator }()
+	pathValidator = func(path string) error { return errors.New("Invalid route") }
+
+	handler.ServeHTTP(resp, req)
+
+	if resp.Code != http.StatusUnprocessableEntity {
+		t.Error("Invalid route registered")
 	}
 }
 

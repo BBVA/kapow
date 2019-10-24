@@ -70,6 +70,10 @@ func listRoutes(res http.ResponseWriter, req *http.Request) {
 var funcAdd func(model.Route) model.Route = user.Routes.Append
 var idGenerator = uuid.NewUUID
 
+var pathValidator func(string) error = func(path string) error {
+	return mux.NewRouter().NewRoute().BuildOnly().Path(path).GetError()
+}
+
 func addRoute(res http.ResponseWriter, req *http.Request) {
 	var route model.Route
 
@@ -84,6 +88,12 @@ func addRoute(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 	if route.Pattern == "" {
+		res.WriteHeader(http.StatusUnprocessableEntity)
+		return
+	}
+
+	err = pathValidator(route.Pattern)
+	if err != nil {
 		res.WriteHeader(http.StatusUnprocessableEntity)
 		return
 	}
