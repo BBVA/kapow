@@ -18,6 +18,7 @@ package control
 import (
 	"encoding/json"
 	"errors"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -28,6 +29,7 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/BBVA/kapow/internal/server/model"
+	"github.com/BBVA/kapow/internal/server/user"
 )
 
 func TestConfigRouterHasRoutesWellConfigured(t *testing.T) {
@@ -37,10 +39,10 @@ func TestConfigRouterHasRoutesWellConfigured(t *testing.T) {
 		mustMatch       bool
 		vars            []string
 	}{
-		{"/routes/ROUTE_YYYYYYYYYYYYYYY", http.MethodGet, 0, false, []string{}},
-		{"/routes/ROUTE_YYYYYYYYYYYYYYY", http.MethodPut, 0, false, []string{}},
-		{"/routes/ROUTE_YYYYYYYYYYYYYYY", http.MethodPost, 0, false, []string{}},
-		{"/routes/ROUTE_YYYYYYYYYYYYYYY", http.MethodDelete, reflect.ValueOf(removeRoute).Pointer(), true, []string{"id"}},
+		{"/routes/FOO", http.MethodGet, reflect.ValueOf(getRoute).Pointer(), true, []string{"id"}},
+		{"/routes/FOO", http.MethodPut, 0, false, []string{}},
+		{"/routes/FOO", http.MethodPost, 0, false, []string{}},
+		{"/routes/FOO", http.MethodDelete, reflect.ValueOf(removeRoute).Pointer(), true, []string{"id"}},
 		{"/routes", http.MethodGet, reflect.ValueOf(listRoutes).Pointer(), true, []string{}},
 		{"/routes", http.MethodPut, 0, false, []string{}},
 		{"/routes", http.MethodPost, reflect.ValueOf(addRoute).Pointer(), true, []string{}},
@@ -400,5 +402,45 @@ func TestListRoutesReturnsTwoElementsList(t *testing.T) {
 
 	if !reflect.DeepEqual(respJson, expectedRouteList) {
 		t.Errorf("Response mismatch. Expected %#v, got: %#v", expectedRouteList, respJson)
+	}
+}
+
+func TestGetRouteReturns404sWhenRouteDoesntExist(t *testing.T) {
+	handler := mux.NewRouter()
+	handler.HandleFunc("/routes/{id}", getRoute).
+		Methods("GET")
+	r := httptest.NewRequest(http.MethodGet, "/routes/FOO", nil)
+	w := httptest.NewRecorder()
+
+	handler.ServeHTTP(w, r)
+
+	resp := w.Result()
+	if resp.StatusCode != http.StatusNotFound {
+		t.Errorf("HTTP status mismatch. Expected: %d, got: %d", http.StatusNotFound, resp.StatusCode)
+	}
+}
+
+func TestGetRouteReturnsTheRequestedRoute(t *testing.T) {
+	handler := mux.NewRouter()
+	handler.HandleFunc("/routes/{id}", getRoute).
+		Methods("GET")
+	r := httptest.NewRequest(http.MethodGet, "/routes/FOO", nil)
+	w := httptest.NewRecorder()
+	user.Routes.Append(model.Route{ID: "FOO"})
+	handler.ServeHTTP(w, r)
+
+	resp := w.Result()
+	respJson := model.Route{}
+	if resp.StatusCode != http.StatusOK {
+		t.Errorf("HTTP status mismatch. Expected: %d, got: %d", http.StatusOK, resp.StatusCode)
+	}
+
+	bBytes, _ := ioutil.ReadAll(resp.Body)
+	if err := json.Unmarshal(bBytes, &respJson); err != nil {
+		t.Errorf("Invalid JSON response. %s", string(bBytes))
+	}
+
+	if respJson.ID != "FOO" {
+		t.Errorf(`Route mismatch. Expected: "FOO". Got: %s`, respJson.ID)
 	}
 }

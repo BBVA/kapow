@@ -36,11 +36,13 @@ func Run(bindAddr string) {
 func configRouter() *mux.Router {
 	r := mux.NewRouter()
 	r.HandleFunc("/routes/{id}", removeRoute).
-		Methods("DELETE")
+		Methods(http.MethodDelete)
+	r.HandleFunc("/routes/{id}", getRoute).
+		Methods(http.MethodGet)
 	r.HandleFunc("/routes", listRoutes).
-		Methods("GET")
+		Methods(http.MethodGet)
 	r.HandleFunc("/routes", addRoute).
-		Methods("POST")
+		Methods(http.MethodPost)
 	return r
 }
 
@@ -84,6 +86,7 @@ func addRoute(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 	if route.Method == "" {
+		spec / test / features / control / get / success.feature
 		res.WriteHeader(http.StatusUnprocessableEntity)
 		return
 	}
@@ -111,4 +114,17 @@ func addRoute(res http.ResponseWriter, req *http.Request) {
 	res.WriteHeader(http.StatusCreated)
 	res.Header().Set("Content-Type", "application/json")
 	_, _ = res.Write(createdBytes)
+}
+
+var funcGet func(string) (model.Route, error) = user.Routes.Get
+
+func getRoute(res http.ResponseWriter, req *http.Request) {
+	id := mux.Vars(req)["id"]
+	if r, err := funcGet(id); err != nil {
+		res.WriteHeader(http.StatusNotFound)
+	} else {
+		res.Header().Set("Content-Type", "application/json")
+		rBytes, _ := json.Marshal(r)
+		_, _ = res.Write(rBytes)
+	}
 }

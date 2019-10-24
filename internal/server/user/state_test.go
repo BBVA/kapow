@@ -364,3 +364,69 @@ func TestDeleteUpdatesMuxWithRemainingRoutes(t *testing.T) {
 		t.Fatalf("Unexpected error: %v", err)
 	}
 }
+
+func TestGetReturnsAnErrorWhenEmptyList(t *testing.T) {
+	srl := New()
+
+	if _, err := srl.Get("FOO"); err == nil {
+		t.Error("Expected error not returned")
+	}
+}
+
+func TestGetReturnsAnErrorWhenRouteNotExists(t *testing.T) {
+	srl := New()
+	srl.Append(model.Route{ID: "FOO"})
+
+	if _, err := srl.Get("BAR"); err == nil {
+		t.Error("Expected error not returned")
+	}
+}
+
+func TestGetReturnsTheRequestedRoute(t *testing.T) {
+	srl := New()
+	srl.Append(model.Route{ID: "FOO"})
+
+	if r, err := srl.Get("FOO"); err != nil {
+		t.Errorf("Unexpected error %+v", err)
+	} else if r.ID != "FOO" {
+		t.Errorf(`Route mismatch. Expected: "FOO". Got %q`, r.ID)
+	}
+}
+
+func TestGetWaitsForTheWriterToFinish(t *testing.T) {
+	srl := New()
+	srl.Append(model.Route{ID: "FOO"})
+
+	srl.m.Lock()
+	defer srl.m.Unlock()
+
+	c := make(chan model.Route)
+	go func() { r, _ := srl.Get("FOO"); c <- r }()
+
+	time.Sleep(10 * time.Millisecond)
+
+	select {
+	case <-c:
+		t.Error("Route list readed while mutex was acquired")
+	default: // This default prevents the select from being blocking
+	}
+}
+
+func TestGetNonBlockingReadWithOtherReaders(t *testing.T) {
+	srl := New()
+	srl.Append(model.Route{ID: "FOO"})
+
+	srl.m.RLock()
+	defer srl.m.RUnlock()
+
+	c := make(chan model.Route)
+	go func() { r, _ := srl.Get("FOO"); c <- r }()
+
+	time.Sleep(10 * time.Millisecond)
+
+	select {
+	case <-c:
+	default: // This default prevents the select from being blocking
+		t.Error("Route list couldn't be readed while mutex was acquired for read")
+	}
+}

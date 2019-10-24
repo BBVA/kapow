@@ -21,7 +21,7 @@ Feature: Retrieve route details in Kapow! server.
     Get route details by id.
 
     Given I have a Kapow! server with the following routes:
-      | method | url_pattern    | entrypoint | command                                          |
+      | method | url_pattern    | entrypoint | command                                                    |
       | GET    | /foo           | /bin/sh -c | ls -la / \| kapow set /response/body                       |
       | GET    | /qux/{dirname} | /bin/sh -c | ls -la /request/params/dirname \| kapow set /response/body |
     When I get the first route

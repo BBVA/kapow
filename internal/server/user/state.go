@@ -80,3 +80,16 @@ func (srl *safeRouteList) Delete(ID string) error {
 	srl.m.Unlock()
 	return errors.New("Route not found")
 }
+
+func (srl *safeRouteList) Get(ID string) (r model.Route, err error) {
+	srl.m.RLock()
+	defer srl.m.RUnlock()
+	for _, r = range srl.rs {
+		if r.ID == ID {
+			return
+		}
+	}
+
+	err = errors.New("Route not found")
+	return
+}
