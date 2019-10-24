@@ -1,21 +1,59 @@
+#!/bin/bash
+
 #
-# Nmap execution with callback. When processes finishes call the CALLBACK site and
-# send a POST with the XML results
+# Copyright 2019 Banco Bilbao Vizcaya Argentaria, S.A.
 #
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+#
+# Nmap execution with callback. When processes finishes call the CALLBACK site
+# and send a POST with the XML results
+#
+
 # Call example:
 #
-# > curl -v "http://localhost:9001/nmap-callback?callback=127.0.0.1:9999" -d "ip=127.0.0.1&ports=8000,9000"
+# $ curl -v 'http://localhost:8080/nmap-callback?callback=127.0.0.1:9999' -d 'ip=127.0.0.1&ports=8000,9000'
 #
 
 kapow route add -X POST /nmap-callback - <<-'EOF'
-    {
-        RESULT_FILE="/tmp/${RANDOM}${RANDOM}${RANDOM}"
-        nmap -Pn -n -p $(kapow get /request/form/ports) -oX $RESULT_FILE $(kapow get /request/form/ip)
+	{
+		PORTS=$(kapow get /request/form/ports)
+		: ${PORTS:=9000}
 
-        curl --connect-timeout 5 -X POST -F "data=@$RESULT_FILE" $(kapow get /request/params/callback) 2> /dev/null > /dev/null
+		IP=$(kapow get /request/form/ip)
+		: ${IP:=127.0.0.1}
 
-        rm -f $RESULT_FILE
+		CALLBACK=$(kapow get /request/params/callback)
+		: ${CALLBACK:=127.0.0.1:9999}
 
-    } | kapow set /response/stream
+		tmpfile="$(mktemp --suffix=.nmap)"
+		trap "{ rm -f \"$tmpfile\"; }" EXIT
 
+		nmap				\
+			-Pn			\
+			-n			\
+			-p "$PORTS"		\
+			-oX "$tmpfile"		\
+			"$IP"
+
+		curl				\
+			--silent		\
+			--stderr /dev/null	\
+			--connect-timeout 5	\
+			-X POST			\
+			-F "data=@$tmpfile"	\
+			"$CALLBACK"
+
+	} | kapow set /response/stream
 EOF
