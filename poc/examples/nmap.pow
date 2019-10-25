@@ -1,0 +1,55 @@
+#!/bin/bash
+
+#
+# Copyright 2019 Banco Bilbao Vizcaya Argentaria, S.A.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+#
+# Nmap produces an XML report, suitable for rendering in a web browser
+#
+
+# Call examples:
+#
+# $ browser http://localhost:8080
+#
+# $ curl -v http://localhost:8080/nmap.xml -d 'target_spec=127.0.0.1&port_ranges=9000'
+#
+
+kapow route add -X GET / - <<-'EOF'
+	cat nmap.html | kapow set /response/body
+EOF
+
+kapow route add -X GET /nmap.xsl - <<-'EOF'
+	curl --silent https://svn.nmap.org/nmap/docs/nmap.xsl	\
+	| kapow set /response/body
+EOF
+
+kapow route add -X POST /nmap.xml - <<-'EOF'
+
+	TARGET_SPEC=$(kapow get /request/form/target_spec)
+	: ${TARGET_SPEC:=127.0.0.1}
+
+	PORT_RANGES=$(kapow get /request/form/port_ranges)
+	: ${PORT_RANGES:=8080}
+
+	nmap					\
+		-Pn				\
+		-n				\
+		-p "$PORT_RANGES"		\
+		-oX -				\
+		--stylesheet /nmap.xsl		\
+		"$TARGET_SPEC"			\
+	| kapow set /response/body
+EOF
