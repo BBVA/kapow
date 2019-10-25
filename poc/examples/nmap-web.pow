@@ -28,7 +28,7 @@
 #
 
 kapow route add -X GET / - <<-'EOF'
-	cat nmap.html | kapow set /response/body
+	cat nmap-web.html | kapow set /response/body
 EOF
 
 kapow route add -X GET /nmap.xsl - <<-'EOF'
