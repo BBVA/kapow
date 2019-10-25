@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+@skip
 Feature: Insert new routes in Kapow! server.
   Inserting routes allows users to configure the server. New
   routes could be inserted at the beginning or before any

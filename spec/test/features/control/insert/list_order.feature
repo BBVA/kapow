@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+@skip
 Feature: Consistent route ordering after inserting a route in a Kapow! server.
   When inserting routes the server will mantain the
   whole set of routes ordered and with consecutive indexes.

@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+@skip
 Feature: Kapow! server rejects insertion requests with malformed JSON bodies.
   Kapow! server will reject to insert a route when
   it receives a malformed JSON document in the
