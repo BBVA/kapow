@@ -26,7 +26,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//SetCmd is the command line interface for set kapow data operation
+// SetCmd is the command line interface for set kapow data operation
 var SetCmd = &cobra.Command{
 	Use:     "set [flags] resource [value]",
 	Short:   "Set a Kapow! resource value",
@@ -37,16 +37,15 @@ var SetCmd = &cobra.Command{
 		var r io.Reader
 		dataURL, _ := cmd.Flags().GetString("data-url")
 		handler, _ := cmd.Flags().GetString("handler")
+		path, args := args[0], args[1:]
 
-		if len(args) >= 2 {
-			// We have a command line value create a stringReader
-			r = strings.NewReader(strings.Join(args, " "))
+		if len(args) == 1 {
+			r = strings.NewReader(args[0])
 		} else {
-			// Use stdin
 			r = os.Stdin
 		}
 
-		if err := client.SetData(dataURL, handler, args[0], r); err != nil {
+		if err := client.SetData(dataURL, handler, path, r); err != nil {
 			log.Fatal(err)
 		}
 	},
