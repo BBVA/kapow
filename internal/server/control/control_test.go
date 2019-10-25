@@ -420,6 +420,26 @@ func TestGetRouteReturns404sWhenRouteDoesntExist(t *testing.T) {
 	}
 }
 
+func TestGetRouteSetsCorrctContentType(t *testing.T) {
+	handler := mux.NewRouter()
+	handler.HandleFunc("/routes/{id}", getRoute).
+		Methods("GET")
+	r := httptest.NewRequest(http.MethodGet, "/routes/FOO", nil)
+	w := httptest.NewRecorder()
+	user.Routes.Append(model.Route{ID: "FOO"})
+
+	handler.ServeHTTP(w, r)
+
+	resp := w.Result()
+	if resp.StatusCode != http.StatusOK {
+		t.Errorf("HTTP status mismatch. Expected: %d, got: %d", http.StatusOK, resp.StatusCode)
+	}
+
+	if hVal := resp.Header.Get("Content-Type"); hVal != "application/json" {
+		t.Errorf(`Route mismatch. Expected: "application/json". Got: %s`, hVal)
+	}
+}
+
 func TestGetRouteReturnsTheRequestedRoute(t *testing.T) {
 	handler := mux.NewRouter()
 	handler.HandleFunc("/routes/{id}", getRoute).
@@ -427,6 +447,7 @@ func TestGetRouteReturnsTheRequestedRoute(t *testing.T) {
 	r := httptest.NewRequest(http.MethodGet, "/routes/FOO", nil)
 	w := httptest.NewRecorder()
 	user.Routes.Append(model.Route{ID: "FOO"})
+
 	handler.ServeHTTP(w, r)
 
 	resp := w.Result()

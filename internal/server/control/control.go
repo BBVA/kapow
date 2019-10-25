@@ -86,7 +86,6 @@ func addRoute(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 	if route.Method == "" {
-		spec / test / features / control / get / success.feature
 		res.WriteHeader(http.StatusUnprocessableEntity)
 		return
 	}
