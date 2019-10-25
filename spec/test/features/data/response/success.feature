@@ -41,7 +41,7 @@ Feature: Setting values for handler response resources in Kapow! server.
       And I set the resource "<resourcePath>" with value "<value>"
       And I release the testing request
     Then I get 200 as response code
-      And I get "OK" as response reason phrase
+#      And I get "OK" as response reason phrase
       And I get the value "<value>" for the response "<fieldType>" named "<elementName>" in the testing request
 
     Examples:

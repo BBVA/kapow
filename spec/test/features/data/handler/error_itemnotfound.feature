@@ -28,4 +28,4 @@ Feature: Fail to retrieve nonexistent resource items in Kapow! server.
     When I send a request to the testing route "/foo"
       And I get the resource "/request/params/meloinvento"
     Then I get 404 as response code
-      And I get "Resource Item Not Found" as response reason phrase
+#      And I get "Resource Item Not Found" as response reason phrase
