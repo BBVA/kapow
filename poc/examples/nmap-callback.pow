@@ -1,0 +1,61 @@
+#!/bin/bash
+
+#
+# Copyright 2019 Banco Bilbao Vizcaya Argentaria, S.A.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+#
+# Nmap execution with callback.
+#
+# When the Nmap processes finishes it will call the CALLBACK site
+# and POST the XML results
+#
+
+# Call example:
+#
+# $ curl -v 'http://localhost:8080/nmap-callback?callback=127.0.0.1:9999' -d 'ip=127.0.0.1&ports=8000,9000'
+#
+
+kapow route add -X POST /nmap-callback - <<-'EOF'
+	PORTS=$(kapow get /request/form/ports)
+	: ${PORTS:=9000}
+
+	IP=$(kapow get /request/form/ip)
+	: ${IP:=127.0.0.1}
+
+	CALLBACK=$(kapow get /request/params/callback)
+	: ${CALLBACK:=127.0.0.1:9999}
+
+	tmpfile="$(mktemp --suffix=.xml)"
+	trap "{ rm -f \"$tmpfile\"; }" EXIT
+
+	{
+		nmap				\
+			-Pn			\
+			-n			\
+			-p "$PORTS"		\
+			-oX "$tmpfile"		\
+			"$IP"
+
+		curl				\
+			--silent		\
+			--stderr /dev/null	\
+			--connect-timeout 5	\
+			-X POST			\
+			-F "data=@$tmpfile"	\
+			"$CALLBACK"
+
+	} | kapow set /response/body
+EOF
