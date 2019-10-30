@@ -61,6 +61,7 @@ environment variables:
    listening kapow server. By default: ``kapow server``
 * ``KAPOW_CONTROLAPI_URL``: URL of the Control API. By default: ``http://localhost:8081``
 * ``KAPOW_DATAAPI_URL``: URL of the Data API. By default: ``http://localhost:8080``
+* ``KAPOW_USER_URL``: URL of the User Server. By default: ``http://localhost:8080``
 
 
 Fixing tests one by one
