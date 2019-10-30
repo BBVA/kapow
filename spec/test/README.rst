@@ -56,6 +56,7 @@ Environment customization
 You can customize some of the test behavior with the following
 environment variables:
 
+* ``KAPOW_BOOT_TIMEOUT``: Timeout in ms for the server to be ready
 * ``KAPOW_SERVER_CMD``: The full command line to start a non-interactive
    listening kapow server. By default: ``kapow server``
 * ``KAPOW_CONTROLAPI_URL``: URL of the Control API. By default: ``http://localhost:8081``
