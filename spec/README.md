@@ -121,7 +121,7 @@ below.
 
 # HTTP Control API
 
-It allows you to configure the Kapow! service. This API is available during the
+It allows you to configure the Kapow! service.  This API is available during the
 whole lifetime of the server.
 
 
