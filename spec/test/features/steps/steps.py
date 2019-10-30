@@ -47,7 +47,7 @@ class Env(EnvironConfig):
     KAPOW_CONTROLAPI_URL = StringVar(default="http://localhost:8081")
 
     #: Where the Data API is
-    KAPOW_DATAAPI_URL = StringVar(default="http://localhost:8081")
+    KAPOW_DATAAPI_URL = StringVar(default="http://localhost:8082")
 
     #: Where the User Interface is
     KAPOW_USER_URL = StringVar(default="http://localhost:8080")
