@@ -495,6 +495,7 @@ following resource paths:
 **Note**: It should be noted that, according to the spec, the name of a cookie is case
 sensitive.
 
+
 #### Get handler resource
 
 Returns the value of the requested resource path, or an error if the resource
