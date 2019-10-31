@@ -1,6 +1,6 @@
-kapow route add /log_and_stuff - <<- 'EOF'
-  callback_url=$(kapow get /request/params/callback)
-  echo this is a quite long sentence and other stuff | tee log.txt | kapow set /response/body
-  echo sending to $callback_url | kapow set /response/body
-  curl -X POST --data-binary @log.txt $callback_url | kapow set /response/body
+kapow route add /log_and_stuff - <<-'EOF'
+	callback_url=$(kapow get /request/params/callback)
+	echo this is a quite long sentence and other stuff | tee log.txt | kapow set /response/body
+	echo sending to $callback_url | kapow set /response/body
+	curl -X POST --data-binary @log.txt $callback_url | kapow set /response/body
 EOF
