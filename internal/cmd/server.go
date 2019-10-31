@@ -73,7 +73,7 @@ func init() {
 	ServerCmd.Flags().String("certfile", "", "Cert file to serve thru https")
 	ServerCmd.Flags().String("keyfile", "", "Key file to serve thru https")
 
-	ServerCmd.Flags().String("bind", "localhost:8080", "IP address and port to bind the user interface to")
+	ServerCmd.Flags().String("bind", "0.0.0.0:8080", "IP address and port to bind the user interface to")
 	ServerCmd.Flags().String("control-bind", "localhost:8081", "IP address and port to bind the control interface to")
 	ServerCmd.Flags().String("data-bind", "localhost:8082", "IP address and port to bind the data interface to")
 }
