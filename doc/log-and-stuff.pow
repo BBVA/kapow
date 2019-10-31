@@ -1,0 +1,4 @@
+kapow route add /log_and_stuff - <<- 'EOF'
+  echo this is a quite long sentence and other stuff | tee log.txt | kapow set /response/body
+  cat log.txt | kapow set /response/body
+EOF

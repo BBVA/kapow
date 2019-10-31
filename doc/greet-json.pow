@@ -1,0 +1,1 @@
+kapow route add -X POST /greet -c 'who=$(kapow get /request/body | jq -r .name); kapow set /response/status 201; jq --arg value "${who:-World}" -n \{name:\$value\} | kapow set /response/body'
