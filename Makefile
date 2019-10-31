@@ -1,4 +1,4 @@
-.PHONY: lint build test jaillover race coverage install acceptance deps
+.PHONY: lint build test jaillover race coverage install acceptance deps docker
 
 GOCMD=go
 GOBUILD=$(GOCMD) build
@@ -11,6 +11,8 @@ PROJECTREPO=github.com/BBVA/kapow
 BUILD_DIR=./build
 OUTPUT_DIR=./output
 TMP_DIR=/tmp
+DOCS_DIR=./doc
+DOCKER_DIR=./docker
 
 BINARY_NAME=kapow
 
@@ -44,3 +46,9 @@ acceptance: install
 
 deps:
 	@echo "deps here"
+
+docker: build
+	cp $(BUILD_DIR)/$(BINARY_NAME) $(DOCKER_DIR)/
+	cp $(DOCS_DIR)/*.pow $(DOCKER_DIR)/
+	cd $(DOCKER_DIR) && docker build -t kapow .
+	cd ..
