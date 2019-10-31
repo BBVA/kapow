@@ -48,12 +48,14 @@ With Kapow! you just need to create a ``.pow`` file named ``backups.pow`` that
 contains:
 
 .. code-block:: sh
+
     kapow route add /backups \
         -c 'cloudx storage ls /backups | grep $(kapow get /request/params/query) | kapow set /response/body'
 
 and execute it in the remote host with the command:
 
 .. code-block:: sh
+
     kapow server backups.pow
 
 and that's it.  Done.  You have a web server that people can use to request
