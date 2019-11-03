@@ -15,8 +15,8 @@ the provided code is a Proof of Concept and the final version will not even
 share programming language.  Ye be warned.
 
 
-What is?
-==============
+What is it?
+===========
 
 Kapow! is an adapter between the world of Pure UNIX® Shell and a HTTP service.
 
