@@ -142,6 +142,8 @@ whole lifetime of the server.
 * All successful API calls will return a representation of the *final* state
   attained by the objects which have been addressed (either requested, set or
   deleted).
+* When several error conditions can happen at the same time, the order of the
+  checks is implementation-defined.
 
 For instance, given this request:
 ```http
@@ -390,6 +392,8 @@ response.
 * Regarding HTTP request and response bodies:
   * The response body will be empty in case of error.
   * It will transport binary data in other case.
+* When several error conditions can happen at the same time, the order of the
+  checks is implementation-defined.
 
 
 ## API Elements
