@@ -52,7 +52,7 @@ class Env(EnvironConfig):
     #: Where the User Interface is
     KAPOW_USER_URL = StringVar(default="http://localhost:8080")
 
-    KAPOW_BOOT_TIMEOUT = IntVar(default=10)
+    KAPOW_BOOT_TIMEOUT = IntVar(default=1000)
 
     KAPOW_DEBUG_TESTS = BooleanVar(default=False)
 
