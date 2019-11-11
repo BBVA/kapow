@@ -131,10 +131,13 @@ whole lifetime of the server.
   conservative in what you do, be liberal in what you accept from others.
 * We reuse conventions of well-established software projects, such as Docker.
 * All requests and responses will leverage JSON as the data encoding method.
-* The API calls responses have two parts:
+* The API calls responses have several parts:
   * The HTTP status code (e.g., `400`, which is a bad request).  The target
     audience of this information is the client code.  The client can thus use
     this information to control the program flow.
+  * The HTTP reason phrase.  The target audience in this case is the human
+    operating the client.  The human can use this information to make a
+    decision on how to proceed.
   * The body is optional
 * All successful API calls will return a representation of the *final* state
   attained by the objects which have been addressed (either requested, set or
@@ -242,8 +245,8 @@ A new id is created for the appended route so it can be referenced later.
     }
     ```
 * **Error Responses**:
-  * **Code**: `400 Bad Request`
-  * **Code**: `422 Unprocessable Entity`
+  * **Code**: `400 Malformed JSON`
+  * **Code**: `422 Invalid Route`
 * **Sample Call**:<br />
     ```sh
     $ curl -X POST --data-binary @- $KAPOW_URL/routes <<EOF
@@ -295,8 +298,8 @@ A new id is created for the appended route so it can be referenced later.
     }
     ```
 * **Error Responses**:
-  * **Code**: `400 Bad Request`
-  * **Code**: `422 Unprocessable Entity`
+  * **Code**: `400 Malformed JSON`
+  * **Code**: `422 Invalid Route`
 * **Sample Call**:<br />
     ```sh
     $ curl -X PUT --data-binary @- $KAPOW_URL/routes <<EOF`
@@ -381,8 +384,9 @@ response.
   * The HTTP status code (e.g., `400`, which is a bad request).  The target
     audience of this information is the client code.  The client can thus use
     this information to control the program flow.
-  * The HTTP body.  On read requests, containing the data retrieved as
-    'application/octet-stream' mime type.
+  * The HTTP reason phrase.  The target audience in this case is the human
+    operating the client.  The human can use this information to make a
+    decision on how to proceed.
 * Regarding HTTP request and response bodies:
   * The response body will be empty in case of error.
   * It will transport binary data in other case.
@@ -510,12 +514,11 @@ path doesn't exist or is invalid.
     **Header**: `Content-Type: application/octet-stream`<br />
     **Content**: The value of the resource.  Note that it may be empty.
 * **Error Responses**:
-  * **Code**: `400 Bad Request`<br />
-    **Notes**: An invalid resource path has been requested. Check the list of
-      valid resource paths at the top of this section.
-  * **Code**: `404 Not Found`<br />
+  * **Code**: `400 Invalid Resource Path`<br />
+    **Notes**: Check the list of valid resource paths at the top of this section.
+  * **Code**: `404 Handler ID Not Found`<br />
     **Notes**: Refers to the handler resource itself.
-  * **Code**: `404 Not Found`<br />
+  * **Code**: `404 Resource Item Not Found`<br />
     **Notes**: Refers to the named item in the corresponding data API resource.
 * **Sample Call**:<br />
   ```sh
@@ -534,10 +537,9 @@ path doesn't exist or is invalid.
 * **Success Responses**:
   * **Code**: `200 OK`
 * **Error Responses**:
-  * **Code**: `400 Bad Request`<br />
-    **Notes**: An invalid resource path has been requested. Check the list of
-      valid resource paths at the top of this section.
-  * **Code**: `404 Not Found`<br />
+  * **Code**: `400 Invalid Resource Path`<br />
+    **Notes**: Check the list of valid resource paths at the top of this section.
+  * **Code**: `404 Handler ID Not Found`<br />
     **Notes**: Refers to the handler resource itself.
 * **Sample Call**:<br />
   ```sh
