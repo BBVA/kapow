@@ -26,7 +26,7 @@ Feature: Retrieve route details in Kapow! server.
       | GET    | /qux/{dirname} | /bin/sh -c | ls -la /request/params/dirname \| kapow set /response/body |
     When I get the first route
     Then I get 200 as response code
-#      And I get "OK" as response reason phrase
+      And I get "OK" as response reason phrase
       And I get the following response body:
         """
         {

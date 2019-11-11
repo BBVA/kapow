@@ -37,4 +37,4 @@ Feature: Kapow! server rejects insertion requests with malformed JSON bodies.
       }
       """
     Then I get 400 as response code
-#      And I get "Malformed JSON" as response reason phrase
+      And I get "Malformed JSON" as response reason phrase

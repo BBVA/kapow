@@ -34,7 +34,7 @@ Feature: Retrieve request resources from a handler in Kapow! server.
       | body      |       | bodyVal1   |
       And I get the resource "<resourcePath>"
     Then I get 200 as response code
-#      And I get "OK" as response reason phrase
+      And I get "OK" as response reason phrase
       And I get the following response raw body:
         """
         <value>

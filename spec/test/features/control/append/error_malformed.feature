@@ -28,4 +28,4 @@ Feature: Kapow! server reject append requests with malformed JSON bodies.
       Hi! I am an invalid JSON document.
       """
     Then I get 400 as response code
-#      And I get "Malformed JSON" as response reason phrase
+      And I get "Malformed JSON" as response reason phrase

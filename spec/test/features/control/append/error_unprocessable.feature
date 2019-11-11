@@ -31,7 +31,7 @@ Feature: Kapow! server rejects requests with semantic errors.
       }
       """
     Then I get 422 as response code
-#      And I get "Invalid Route" as response reason phrase
+      And I get "Invalid Route" as response reason phrase
 
   Scenario: Error because bad route format.
     If a request contains an invalid expression in the
@@ -48,4 +48,4 @@ Feature: Kapow! server rejects requests with semantic errors.
       }
       """
     Then I get 422 as response code
-#      And I get "Invalid Route" as response reason phrase
+      And I get "Invalid Route" as response reason phrase

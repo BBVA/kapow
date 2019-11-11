@@ -25,14 +25,14 @@ Feature: Fail to retrieve resources from nonexistent handler in Kapow! server.
     Given I have a running Kapow! server
     When I get the resource "/request/path" for the handler with id "XXXXXXXXXX"
     Then I get 404 as response code
-#      And I get "Handler ID Not Found" as response reason phrase
+      And I get "Handler ID Not Found" as response reason phrase
 
   Scenario: Try to get an invalid resource from a nonexistent handler.
     A request to retrieve an invalid resource from a nonexistent
-    handler will trigger an invalid resource path error
+    handler will trigger a handler ID not found error
     even if the resource is invalid.
 
     Given I have a running Kapow! server
     When I get the resource "/invalid/path" for the handler with id "XXXXXXXXXX"
-    Then I get 400 as response code
-#      And I get "Invalid Resource Path" as response reason phrase
+    Then I get 404 as response code
+      And I get "Handler ID Not Found" as response reason phrase
