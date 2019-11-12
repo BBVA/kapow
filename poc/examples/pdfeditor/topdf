@@ -17,7 +17,7 @@
 #
 
 tmpfile=$(mktemp --suffix=.pdf)
-pandoc --from=$(kapow get /request/form/from) --to=pdf --output=${tmpfile} -t latex =(kapow get /request/form/content)
+pandoc --from="$(kapow get /request/form/from)" --to=pdf --output=${tmpfile} -t latex =(kapow get /request/form/content)
 if [ $? -eq 0 ]; then
 	kapow set /response/headers/Content-Type application/pdf
 	kapow set /response/body < ${tmpfile}
