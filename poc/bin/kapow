@@ -278,7 +278,7 @@ def handle_route(entrypoint, command):
 
 
 def error_body(reason):
-    return {"reason": reason}
+    return {"reason": reason, "foo": "bar"}
 
 def get_routes(app):
     async def _get_routes(request):
