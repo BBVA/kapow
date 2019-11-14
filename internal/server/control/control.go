@@ -19,7 +19,6 @@ package control
 import (
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -29,11 +28,8 @@ import (
 	"github.com/BBVA/kapow/internal/server/user"
 )
 
-// Run must start the control server in a specific address
-func Run(bindAddr string) {
-	log.Fatal(http.ListenAndServe(bindAddr, configRouter()))
-}
-
+// configRouter Populates the server mux with all the supported routes. The
+// server exposes list, get, delete and add route endpoints.
 func configRouter() *mux.Router {
 	r := mux.NewRouter()
 	r.HandleFunc("/routes/{id}", removeRoute).
@@ -47,8 +43,11 @@ func configRouter() *mux.Router {
 	return r
 }
 
+// funcRemove Method used to ask the route model module to delete a route
 var funcRemove func(id string) error = user.Routes.Delete
 
+// removeRoute Handler that removes the requested route. If doesn't exists
+// returns 404 and an error entity
 func removeRoute(res http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 	id := vars["id"]
@@ -56,11 +55,15 @@ func removeRoute(res http.ResponseWriter, req *http.Request) {
 		res.WriteHeader(http.StatusNotFound)
 		return
 	}
+
 	res.WriteHeader(http.StatusNoContent)
 }
 
+// funcList Method used to ask the route model module for the list of routes
 var funcList func() []model.Route = user.Routes.List
 
+// listRoutes Handler that retrieves a list of the existing routes. An empty
+// list is returned when no routes exist
 func listRoutes(res http.ResponseWriter, req *http.Request) {
 
 	list := funcList()
@@ -70,13 +73,20 @@ func listRoutes(res http.ResponseWriter, req *http.Request) {
 	_, _ = res.Write(listBytes)
 }
 
+// funcAdd Method used to ask the route model module to append a new route
 var funcAdd func(model.Route) model.Route = user.Routes.Append
+
+// idGenerator UUID generator for new routes
 var idGenerator = uuid.NewUUID
 
+// pathValidator Validates that a path complies with the gorilla mux
+// requirements
 var pathValidator func(string) error = func(path string) error {
 	return mux.NewRouter().NewRoute().BuildOnly().Path(path).GetError()
 }
 
+// addRoute Handler that adds a new route. Makes all parameter validation and
+// creates the a new is for the route
 func addRoute(res http.ResponseWriter, req *http.Request) {
 	var route model.Route
 
@@ -86,10 +96,12 @@ func addRoute(res http.ResponseWriter, req *http.Request) {
 		res.WriteHeader(http.StatusBadRequest)
 		return
 	}
+
 	if route.Method == "" {
 		res.WriteHeader(http.StatusUnprocessableEntity)
 		return
 	}
+
 	if route.Pattern == "" {
 		res.WriteHeader(http.StatusUnprocessableEntity)
 		return
@@ -106,6 +118,7 @@ func addRoute(res http.ResponseWriter, req *http.Request) {
 		res.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
 	route.ID = id.String()
 
 	created := funcAdd(route)
@@ -116,8 +129,11 @@ func addRoute(res http.ResponseWriter, req *http.Request) {
 	_, _ = res.Write(createdBytes)
 }
 
+// funcGet Method used to ask the route model module for the details of a route
 var funcGet func(string) (model.Route, error) = user.Routes.Get
 
+// getRoute Handler that retrieves the details of a route. If the route doesn't
+// exists returns 404 and an error entity
 func getRoute(res http.ResponseWriter, req *http.Request) {
 	id := mux.Vars(req)["id"]
 	if r, err := funcGet(id); err != nil {
