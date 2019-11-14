@@ -185,9 +185,9 @@ def step_impl(context, code):
     assert context.testing_response.status_code == int(code), f"Got {context.testing_response.status_code} instead"
 
 
-@then('the response header {header_name} contains {value}')
+@then('the response header "{header_name}" contains "{value}"')
 def step_impl(context, header_name, value):
-    assert context.response.headers.get(header_name) == value, f"Got {context.response.headers.get(header_name)} instead"
+    assert context.response.headers.get(header_name).split(';')[0] == value, f"Got {context.response.headers.get(header_name)} instead"
 
 
 @then('the testing response header {header_name} contains {value}')
