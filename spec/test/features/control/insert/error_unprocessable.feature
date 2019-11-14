@@ -67,4 +67,10 @@ Feature: Kapow! server rejects insertion requests with semantic errors.
       }
       """
     Then I get 422 as response code
-      And I get "Invalid Route" as response reason phrase
+      And the response header "Content-Type" contains "application/json"
+      And I get the following response body:
+      """
+      {
+        "reason": "Invalid Route"
+      }
+      """

@@ -178,14 +178,14 @@ async def get_field(request):
     try:
         connection = CONNECTIONS[id]
     except KeyError:
-        response = web.Response(status=404, reason="Handler ID Not Found")
+        response = web.json_response(data=error_body("Handler ID Not Found"), status=404, reason="Not Found")
     else:
         try:
             content = await connection.get(field)
         except ValueError:
-            return web.Response(status=400, reason="Invalid Resource Path")
+            return web.json_response(data=error_body("Invalid Resource Path"), status=400, reason="Bad Request")
         except KeyError:
-            return web.Response(status=404, reason="Resource Item Not Found")
+            return web.json_response(data=error_body("Resource Item Not Found"), status=404, reason="Not Found")
 
         if isinstance(content, StreamReader):
             response = web.StreamResponse(status=200, reason="OK")
@@ -210,8 +210,10 @@ async def set_field(request):
 
     try:
         connection = CONNECTIONS[id]
+    except ValueError:
+        return web.json_response(data=error_body("Invalid Resource Path"), status=400, reason="Bad Request")
     except KeyError:
-        response = web.Response(status=404, reason="Handler ID Not Found")
+        response = web.json_response(data=error_body("Handler ID Not Found"), status=404, reason="Not Found")
     else:
         try:
             await connection.set(field, request.content)
@@ -275,6 +277,9 @@ def handle_route(entrypoint, command):
 ########################################################################
 
 
+def error_body(reason):
+    return {"reason": reason}
+
 def get_routes(app):
     async def _get_routes(request):
         """Return the list of registered routes."""
@@ -302,7 +307,7 @@ def get_route(app):
                                           "entrypoint": r.entrypoint,
                                           "command": r.command})
         else:
-            return web.Response(status=404, reason="Not Found")
+            return web.json_response(data=error_body("Route Not Found"), status=404, reason="Not Found")
     return _get_route
 
 
@@ -312,7 +317,7 @@ def insert_route(app):
         try:
             content = await request.json()
         except ValueError:
-            return web.Response(status=400, reason="Malformed JSON")
+            return web.json_response(data=error_body("Malformed JSON"), status=400, reason="Bad Request")
 
         try:
             index = int(content["index"])
@@ -330,7 +335,7 @@ def insert_route(app):
                                + [route]
                                + app["user_routes"][index:]))
         except (InvalidRouteError, KeyError, AssertionError, ValueError) as exc:
-            return web.Response(status=422, reason="Invalid Route")
+            return web.json_response(data=error_body("Invalid Route"), status=422, reason="Unprocessable Entity")
         else:
             app["user_routes"].insert(index, route)
             return web.json_response({"id": route.id,
@@ -348,7 +353,7 @@ def append_route(app):
         try:
             content = await request.json()
         except ValueError as exc:
-            return web.Response(status=400, reason="Malformed JSON")
+            return web.json_response(data=error_body("Malformed JSON"), status=400, reason="Bad Request")
 
         try:
             method = content.get("method", "GET")
@@ -362,7 +367,7 @@ def append_route(app):
                                handler=handle_route(entrypoint, command))
             app.change_routes(app["user_routes"] + [route])
         except (InvalidRouteError, KeyError) as exc:
-            return web.Response(status=422, reason="Invalid Route")
+            return web.json_response(data=error_body("Invalid Route"), status=422, reason="Unprocessable Entity")
         else:
             app["user_routes"].append(route)
             return web.json_response({"id": route.id,
@@ -381,7 +386,7 @@ def delete_route(app):
         id = request.match_info["id"]
         routes = [r for r in app["user_routes"] if r.id != id]
         if len(routes) == len(app["user_routes"]):
-            return web.Response(status=404, reason="Not Found")
+            return web.json_response(data=error_body("Route Not Found"), status=404, reason="Not Found")
         else:
             app.change_routes(routes)
             app["user_routes"] = routes
