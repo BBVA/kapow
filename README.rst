@@ -11,7 +11,7 @@ With *Kapow!* you can publish simple **shell scripts** as **HTTP services** easi
 We want users on the Internet to be able to ``ping`` an *Internal Host*
 which is inside a private network.
 
-.. image:: _static/network.png
+.. image:: https://github.com/BBVA/kapow/raw/feature-new-doc/docs/source/_static/network.png
 
 **Limitations**
 
@@ -25,7 +25,7 @@ which is inside a private network.
 With a *Kapow!* one-liner you can allow your users to run a command inside
 *External Host* through an HTTP call.
 
-.. image:: _static/sequence.png
+.. image:: https://github.com/BBVA/kapow/raw/feature-new-doc/docs/source/_static/sequence.png
 
 This is the only line you'll need:
 
