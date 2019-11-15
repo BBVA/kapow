@@ -2,14 +2,17 @@
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: TODO
 
-Quickstart Guide
-================
+   install
+   quickstart
 
-.. todo::
+.. toctree::
+   :maxdepth: 2
+   :caption: Tutorial
 
-   Here an end to end tutorial (15-20 minutes)
+   tutorial
+
 
 
 Indices and tables

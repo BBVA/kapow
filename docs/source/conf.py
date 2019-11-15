@@ -48,7 +48,12 @@ exclude_patterns = []
 html_theme = "sphinx_rtd_theme"
 html_logo = "_static/logo.png"
 html_theme_options = {
-    'logo_only': True
+    'logo_only': True,
+    'collapse_navigation': False,
+    'navigation_depth': 4,
+    'includehidden': True,
+    'titles_only': False
+
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
