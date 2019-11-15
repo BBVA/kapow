@@ -46,7 +46,7 @@ func configRouter() *mux.Router {
 // funcRemove Method used to ask the route model module to delete a route
 var funcRemove func(id string) error = user.Routes.Delete
 
-// removeRoute Handler that removes the requested route. If doesn't exists
+// removeRoute Handler that removes the requested route.  If it doesn't exist,
 // returns 404 and an error entity
 func removeRoute(res http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
