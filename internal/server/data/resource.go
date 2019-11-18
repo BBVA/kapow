@@ -24,6 +24,7 @@ import (
 	"strconv"
 
 	"github.com/BBVA/kapow/internal/server/model"
+	"github.com/BBVA/kapow/internal/server/srverrors"
 	"github.com/gorilla/mux"
 )
 
@@ -32,7 +33,7 @@ func getRequestBody(w http.ResponseWriter, r *http.Request, h *model.Handler) {
 	n, err := io.Copy(w, h.Request.Body)
 	if err != nil {
 		if n == 0 {
-			w.WriteHeader(http.StatusInternalServerError)
+			srverrors.WriteErrorResponse(http.StatusInternalServerError, "Internal Server Error", w)
 		} else {
 			// Only way to abort current connection as of go 1.13
 			// https://github.com/golang/go/issues/16542

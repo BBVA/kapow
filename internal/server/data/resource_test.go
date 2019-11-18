@@ -121,9 +121,8 @@ func TestGetRequestBody500sWhenHandlerRequestErrors(t *testing.T) {
 
 	getRequestBody(w, r, &h)
 
-	res := w.Result()
-	if res.StatusCode != http.StatusInternalServerError {
-		t.Error("status not 500")
+	for _, e := range checkErrorResponse(w.Result(), http.StatusInternalServerError, "Internal Server Error") {
+		t.Error(e.Error())
 	}
 }
 
