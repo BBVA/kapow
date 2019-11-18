@@ -25,6 +25,7 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/BBVA/kapow/internal/server/model"
+	"github.com/BBVA/kapow/internal/server/srverrors"
 	"github.com/BBVA/kapow/internal/server/user"
 )
 
@@ -52,7 +53,7 @@ func removeRoute(res http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 	id := vars["id"]
 	if err := funcRemove(id); err != nil {
-		res.WriteHeader(http.StatusNotFound)
+		srverrors.WriteErrorResponse(http.StatusNotFound, "Route Not Found", res)
 		return
 	}
 
@@ -93,29 +94,29 @@ func addRoute(res http.ResponseWriter, req *http.Request) {
 	payload, _ := ioutil.ReadAll(req.Body)
 	err := json.Unmarshal(payload, &route)
 	if err != nil {
-		res.WriteHeader(http.StatusBadRequest)
+		srverrors.WriteErrorResponse(http.StatusBadRequest, "Malformed JSON", res)
 		return
 	}
 
 	if route.Method == "" {
-		res.WriteHeader(http.StatusUnprocessableEntity)
+		srverrors.WriteErrorResponse(http.StatusUnprocessableEntity, "Invalid Route", res)
 		return
 	}
 
 	if route.Pattern == "" {
-		res.WriteHeader(http.StatusUnprocessableEntity)
+		srverrors.WriteErrorResponse(http.StatusUnprocessableEntity, "Invalid Route", res)
 		return
 	}
 
 	err = pathValidator(route.Pattern)
 	if err != nil {
-		res.WriteHeader(http.StatusUnprocessableEntity)
+		srverrors.WriteErrorResponse(http.StatusUnprocessableEntity, "Invalid Route", res)
 		return
 	}
 
 	id, err := idGenerator()
 	if err != nil {
-		res.WriteHeader(http.StatusInternalServerError)
+		srverrors.WriteErrorResponse(http.StatusInternalServerError, "Internal Server Error", res)
 		return
 	}
 
@@ -124,8 +125,8 @@ func addRoute(res http.ResponseWriter, req *http.Request) {
 	created := funcAdd(route)
 	createdBytes, _ := json.Marshal(created)
 
-	res.WriteHeader(http.StatusCreated)
 	res.Header().Set("Content-Type", "application/json")
+	res.WriteHeader(http.StatusCreated)
 	_, _ = res.Write(createdBytes)
 }
 
@@ -137,7 +138,7 @@ var funcGet func(string) (model.Route, error) = user.Routes.Get
 func getRoute(res http.ResponseWriter, req *http.Request) {
 	id := mux.Vars(req)["id"]
 	if r, err := funcGet(id); err != nil {
-		res.WriteHeader(http.StatusNotFound)
+		srverrors.WriteErrorResponse(http.StatusNotFound, "Route Not Found", res)
 	} else {
 		res.Header().Set("Content-Type", "application/json")
 		rBytes, _ := json.Marshal(r)
