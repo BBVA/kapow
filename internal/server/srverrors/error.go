@@ -6,7 +6,7 @@ import (
 )
 
 type ServerErrMessage struct {
-	Reason string
+	Reason string `json:"reason"`
 }
 
 func WriteErrorResponse(statusCode int, reasonMsg string, res http.ResponseWriter) {
