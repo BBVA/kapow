@@ -128,7 +128,7 @@ func TestCheckHandlerReturnsAFunctionsThat404sWhenHandlerDoesNotExist(t *testing
 	fn(w, r)
 
 	for _, e := range checkErrorResponse(w.Result(), http.StatusNotFound, "Handler ID Not Found") {
-		t.Error(e.Error())
+		t.Error(e)
 	}
 }
 

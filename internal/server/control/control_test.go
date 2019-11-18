@@ -130,7 +130,7 @@ func TestAddRouteReturnsBadRequestWhenMalformedJSONBody(t *testing.T) {
 	addRoute(resp, req)
 
 	for _, e := range checkErrorResponse(resp.Result(), http.StatusBadRequest, "Malformed JSON") {
-		t.Error(e.Error())
+		t.Error(e)
 	}
 }
 
@@ -194,7 +194,7 @@ func TestAddRouteReturns422ErrorWhenMandatoryFieldsMissing(t *testing.T) {
 		r := resp.Result()
 		if test.testMustFail {
 			for _, e := range checkErrorResponse(r, http.StatusUnprocessableEntity, "Invalid Route") {
-				t.Error(e.Error())
+				t.Error(e)
 			}
 		} else if !test.testMustFail {
 			if r.StatusCode != http.StatusCreated {
@@ -258,7 +258,7 @@ func TestAddRoute500sWhenIDGeneratorFails(t *testing.T) {
 	addRoute(resp, req)
 
 	for _, e := range checkErrorResponse(resp.Result(), http.StatusInternalServerError, "Internal Server Error") {
-		t.Error(e.Error())
+		t.Error(e)
 	}
 }
 
@@ -324,7 +324,7 @@ func TestAddRoute422sWhenInvalidRoute(t *testing.T) {
 	addRoute(resp, req)
 
 	for _, e := range checkErrorResponse(resp.Result(), http.StatusUnprocessableEntity, "Invalid Route") {
-		t.Error(e.Error())
+		t.Error(e)
 	}
 }
 
@@ -345,7 +345,7 @@ func TestRemoveRouteReturnsNotFound(t *testing.T) {
 	handler.ServeHTTP(resp, req)
 
 	for _, e := range checkErrorResponse(resp.Result(), http.StatusNotFound, "Route Not Found") {
-		t.Error(e.Error())
+		t.Error(e)
 	}
 }
 
@@ -436,7 +436,7 @@ func TestGetRouteReturns404sWhenRouteDoesntExist(t *testing.T) {
 	handler.ServeHTTP(w, r)
 
 	for _, e := range checkErrorResponse(w.Result(), http.StatusNotFound, "Route Not Found") {
-		t.Error(e.Error())
+		t.Error(e)
 	}
 }
 

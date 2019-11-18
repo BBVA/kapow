@@ -554,6 +554,10 @@ path doesn't exist or is invalid.
 * **Error Responses**:
   * **Code**: `400`; Reason: `Invalid Resource Path`<br />
     **Notes**: Check the list of valid resource paths at the top of this section.
+  * **Code**: `422`; Reason: `Non Integer Value`<br />
+    **Notes**: When setting the status code with a non integer value.
+  * **Code**: `400`; Reason: `Invalid Status Code`<br />
+    **Notes**: When setting a non-supported status code.
   * **Code**: `404`; Reason: `Handler ID Not Found`<br />
     **Notes**: Refers to the handler resource itself.
 * **Sample Call**:<br />

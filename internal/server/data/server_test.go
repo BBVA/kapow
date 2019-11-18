@@ -78,6 +78,6 @@ func TestConfigRouterReturnsRouterThat400sOnUnconfiguredResources(t *testing.T) 
 	m.ServeHTTP(w, httptest.NewRequest("GET", "/handlers/FOO/dummy", nil))
 
 	for _, e := range checkErrorResponse(w.Result(), http.StatusBadRequest, "Invalid Resource Path") {
-		t.Error(e.Error())
+		t.Error(e)
 	}
 }
