@@ -885,7 +885,7 @@ func TestGetRequestFileName404sWhenFileDoesntExist(t *testing.T) {
 	}
 }
 
-// TODO: Discuss which error is appropiate when the form doesn't exists
+// TODO: Discuss which error is appropriate when the form doesn't exists
 func TestGetRequestFileName404sWhenFormDoesntExist(t *testing.T) {
 	h := model.Handler{
 		Request: httptest.NewRequest("POST", "/", nil),
@@ -964,7 +964,7 @@ func TestGetRequestFileContent404sWhenFileDoesntExist(t *testing.T) {
 	}
 }
 
-// TODO: Discuss which error is appropiate when the form doesn't exists
+// TODO: Discuss which error is appropriate when the form doesn't exists
 func TestGetRequestFileContent404sWhenFormDoesntExist(t *testing.T) {
 	h := model.Handler{
 		Request: httptest.NewRequest("POST", "/", nil),

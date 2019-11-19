@@ -150,7 +150,7 @@ For instance, given this request:
 HTTP/1.1 GET /routes
 ```
 
-an appropiate reponse may look like this:
+an appropriate reponse may look like this:
 ```http
 200 OK
 Content-Type: application/json
@@ -507,7 +507,7 @@ following resource paths:
   - Acceptable Value: Any string of bytes.
   - Default Value: N/A
   - Comment: For media types other than `application/octet-stream` you should
-    specify the appropiate `Content-Type` header.
+    specify the appropriate `Content-Type` header.
 
 **Note**: Parameters under `request` are read-only and, conversely, parameters under
 `response` are write-only.

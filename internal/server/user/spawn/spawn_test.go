@@ -89,7 +89,7 @@ func TestSpawnWritesToStdout(t *testing.T) {
 
 	jldata := decodeJailLover(out.Bytes())
 	if jldata.Cmdline[0] != locateJailLover() {
-		t.Error("Ouput does not match jaillover's")
+		t.Error("Output does not match jaillover's")
 	}
 }
 
