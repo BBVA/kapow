@@ -6,4 +6,7 @@ sync:
 	pipenv sync --dev
 
 test: sync
-	pipenv run make -C ../spec/test
+	KAPOW_DATAAPI_URL=http://localhost:8081 pipenv run make -C ../spec/test
+
+fix:
+	KAPOW_DATAAPI_URL=http://localhost:8081 pipenv run make -C ../spec/test fix

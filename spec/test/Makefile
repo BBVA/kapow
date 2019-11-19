@@ -11,6 +11,6 @@ wip:
 test: lint
 	pipenv run behave --no-capture --tags=~@skip
 fix: lint
-	KAPOW_DEBUG_TESTS=1 pipenv run behave --stop --no-capture
+	KAPOW_DEBUG_TESTS=1 pipenv run behave --stop --no-capture --tags=~@skip
 catalog:
 	pipenv run behave --format steps.usage --dry-run --no-summary -q

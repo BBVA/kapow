@@ -31,7 +31,7 @@ Feature: Kapow! server rejects insertion requests with semantic errors.
       }
       """
     Then I get 422 as response code
-#      And I get "Invalid Route" as response reason phrase
+      And I get "Invalid Route" as response reason phrase
 
   Scenario: Error because wrong route specification.
     If a request contains an invalid expression in the
@@ -49,7 +49,7 @@ Feature: Kapow! server rejects insertion requests with semantic errors.
       }
       """
     Then I get 422 as response code
-#      And I get "Invalid Route" as response reason phrase
+      And I get "Invalid Route" as response reason phrase
 
   Scenario: Error because negative index specified.
     If a request contains a negative number in the
@@ -67,4 +67,10 @@ Feature: Kapow! server rejects insertion requests with semantic errors.
       }
       """
     Then I get 422 as response code
-#      And I get "Invalid Route" as response reason phrase
+      And the response header "Content-Type" contains "application/json"
+      And I get the following response body:
+      """
+      {
+        "reason": "Invalid Route"
+      }
+      """

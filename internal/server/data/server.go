@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package data
 
 import (
 	"log"
 	"net/http"
 
+	"github.com/BBVA/kapow/internal/server/srverrors"
 	"github.com/gorilla/mux"
 )
 
@@ -35,7 +37,9 @@ func configRouter(rs []routeSpec) (r *mux.Router) {
 	}
 	r.HandleFunc(
 		"/handlers/{handlerID}/{resource:.*}",
-		func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusBadRequest) })
+		func(w http.ResponseWriter, r *http.Request) {
+			srverrors.WriteErrorResponse(http.StatusBadRequest, "Invalid Resource Path", w)
+		})
 	return r
 }
 

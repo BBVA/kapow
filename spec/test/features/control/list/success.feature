@@ -25,7 +25,7 @@ Feature: Listing routes in a Kapow! server.
     Given I have a just started Kapow! server
     When I request a routes listing
     Then I get 200 as response code
-#      And I get "OK" as response reason phrase
+      And I get "OK" as response reason phrase
       And I get the following response body:
         """
         []
@@ -41,7 +41,7 @@ Feature: Listing routes in a Kapow! server.
       | GET    | /qux/{dirname} | /bin/sh -c | ls -la /request/params/dirname \| kapow set /response/body |
     When I request a routes listing
     Then I get 200 as response code
-#      And I get "OK" as response reason phrase
+      And I get "OK" as response reason phrase
       And I get the following response body:
         """
         [

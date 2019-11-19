@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package data
 
 import (
 	"net/http"
 
 	"github.com/BBVA/kapow/internal/server/model"
+	"github.com/BBVA/kapow/internal/server/srverrors"
 	"github.com/gorilla/mux"
 )
 
@@ -38,7 +40,7 @@ func checkHandler(fn resourceHandler) func(http.ResponseWriter, *http.Request) {
 		if h, ok := Handlers.Get(handlerID); ok {
 			fn(w, r, h)
 		} else {
-			w.WriteHeader(http.StatusNotFound)
+			srverrors.WriteErrorResponse(http.StatusNotFound, "Handler ID Not Found", w)
 		}
 	}
 }

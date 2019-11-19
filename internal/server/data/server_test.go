@@ -13,15 +13,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package data
 
 import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/BBVA/kapow/internal/server/model"
+	"github.com/BBVA/kapow/internal/server/srverrors"
 )
+
+func checkErrorResponse(r *http.Response, expectedErrcode int, expectedReason string) []error {
+	errList := make([]error, 0)
+
+	if r.StatusCode != expectedErrcode {
+		errList = append(errList, fmt.Errorf("HTTP status mismatch. Expected: %d, got: %d", expectedErrcode, r.StatusCode))
+	}
+
+	if v := r.Header.Get("Content-Type"); v != "application/json; charset=utf-8" {
+		errList = append(errList, fmt.Errorf("Content-Type header mismatch. Expected: %q, got: %q", "application/json; charset=utf-8", v))
+	}
+
+	errMsg := srverrors.ServerErrMessage{}
+	if bodyBytes, err := ioutil.ReadAll(r.Body); err != nil {
+		errList = append(errList, fmt.Errorf("Unexpected error reading response body: %v", err))
+	} else if err := json.Unmarshal(bodyBytes, &errMsg); err != nil {
+		errList = append(errList, fmt.Errorf("Response body contains invalid JSON entity: %v", err))
+	} else if errMsg.Reason != expectedReason {
+		errList = append(errList, fmt.Errorf("Unexpected reason in response. Expected: %q, got: %q", expectedReason, errMsg.Reason))
+	}
+
+	return errList
+}
 
 func TestConfigRouterReturnsRouterWithDecoratedRoutes(t *testing.T) {
 	var handlerID string
@@ -49,8 +77,7 @@ func TestConfigRouterReturnsRouterThat400sOnUnconfiguredResources(t *testing.T) 
 
 	m.ServeHTTP(w, httptest.NewRequest("GET", "/handlers/FOO/dummy", nil))
 
-	res := w.Result()
-	if res.StatusCode != http.StatusBadRequest {
-		t.Errorf("Status code mismatch. Expected 400. Got %d", res.StatusCode)
+	for _, e := range checkErrorResponse(w.Result(), http.StatusBadRequest, "Invalid Resource Path") {
+		t.Error(e)
 	}
 }

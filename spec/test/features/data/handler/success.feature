@@ -28,7 +28,7 @@ Feature: Retrieve a resource from a handler in Kapow! server.
     When I send a request to the testing route "/foo"
       And I get the resource "/request/path"
     Then I get 200 as response code
-#      And I get "OK" as response reason phrase
+      And I get "OK" as response reason phrase
       And I get the following response raw body:
         """
         /foo
@@ -44,7 +44,7 @@ Feature: Retrieve a resource from a handler in Kapow! server.
     When I send a request to the testing route "/foo?name=bar"
       And I get the resource "/request/params/name"
     Then I get 200 as response code
-#      And I get "OK" as response reason phrase
+      And I get "OK" as response reason phrase
       And I get the following response raw body:
         """
         bar

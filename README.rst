@@ -1,6 +1,10 @@
 Welcome to *Kapow!*
 ===================
 
+.. image:: https://goreportcard.com/badge/github.com/bbva/kapow
+    :target: https://goreportcard.com/report/github.com/bbva/kapow
+    
+
 With *Kapow!* you can publish simple **shell scripts** as **HTTP services** easily.
 
 *Kapow!* with an example
@@ -37,6 +41,4 @@ This is the only line you'll need:
 .. todo::
 
    Mention license and contributing
-
-
 

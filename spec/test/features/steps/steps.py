@@ -52,7 +52,7 @@ class Env(EnvironConfig):
     #: Where the User Interface is
     KAPOW_USER_URL = StringVar(default="http://localhost:8080")
 
-    KAPOW_BOOT_TIMEOUT = IntVar(default=10)
+    KAPOW_BOOT_TIMEOUT = IntVar(default=1000)
 
     KAPOW_DEBUG_TESTS = BooleanVar(default=False)
 
@@ -183,6 +183,16 @@ def step_impl(context, code):
 @then('I get {code} as response code in the testing request')
 def step_impl(context, code):
     assert context.testing_response.status_code == int(code), f"Got {context.testing_response.status_code} instead"
+
+
+@then('the response header "{header_name}" contains "{value}"')
+def step_impl(context, header_name, value):
+    assert context.response.headers.get(header_name, "").split(';')[0] == value, f"Got {context.response.headers.get(header_name)} instead"
+
+
+@then('the testing response header {header_name} contains {value}')
+def step_impl(context, header_name, value):
+    assert context.testing_response.headers.get(header_name) == value, f"Got {context.testing_response.headers.get(header_name)} instead"
 
 
 @then('I get "{reason}" as response reason phrase')

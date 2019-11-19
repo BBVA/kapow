@@ -37,4 +37,10 @@ Feature: Kapow! server rejects insertion requests with malformed JSON bodies.
       }
       """
     Then I get 400 as response code
-#      And I get "Malformed JSON" as response reason phrase
+      And the response header "Content-Type" contains "application/json"
+      And I get the following response body:
+      """
+      {
+        "reason": "Malformed JSON"
+      }
+      """

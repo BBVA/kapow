@@ -24,4 +24,10 @@ Feature: Fail to retrieve route details in Kapow! server.
     Given I have a just started Kapow! server
     When I get the route with id "xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx"
     Then I get 404 as response code
-#      And I get "Not Found" as response reason phrase
+      And the response header "Content-Type" contains "application/json"
+      And I get the following response body:
+      """
+      {
+        "reason": "Route Not Found"
+      }
+      """

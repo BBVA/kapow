@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package control
 
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -29,8 +31,32 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/BBVA/kapow/internal/server/model"
+	"github.com/BBVA/kapow/internal/server/srverrors"
 	"github.com/BBVA/kapow/internal/server/user"
 )
+
+func checkErrorResponse(r *http.Response, expectedErrcode int, expectedReason string) []error {
+	errList := make([]error, 0)
+
+	if r.StatusCode != expectedErrcode {
+		errList = append(errList, fmt.Errorf("HTTP status mismatch. Expected: %d, got: %d", expectedErrcode, r.StatusCode))
+	}
+
+	if v := r.Header.Get("Content-Type"); v != "application/json; charset=utf-8" {
+		errList = append(errList, fmt.Errorf("Content-Type header mismatch. Expected: %q, got: %q", "application/json; charset=utf-8", v))
+	}
+
+	errMsg := srverrors.ServerErrMessage{}
+	if bodyBytes, err := ioutil.ReadAll(r.Body); err != nil {
+		errList = append(errList, fmt.Errorf("Unexpected error reading response body: %v", err))
+	} else if err := json.Unmarshal(bodyBytes, &errMsg); err != nil {
+		errList = append(errList, fmt.Errorf("Response body contains invalid JSON entity: %v", err))
+	} else if errMsg.Reason != expectedReason {
+		errList = append(errList, fmt.Errorf("Unexpected reason in response. Expected: %q, got: %q", expectedReason, errMsg.Reason))
+	}
+
+	return errList
+}
 
 func TestConfigRouterHasRoutesWellConfigured(t *testing.T) {
 	testCases := []struct {
@@ -100,17 +126,15 @@ func TestAddRouteReturnsBadRequestWhenMalformedJSONBody(t *testing.T) {
 
 	req := httptest.NewRequest(http.MethodPost, "/routes", strings.NewReader(reqPayload))
 	resp := httptest.NewRecorder()
-	handler := http.HandlerFunc(addRoute)
 
-	handler.ServeHTTP(resp, req)
-	if resp.Code != http.StatusBadRequest {
-		t.Errorf("HTTP status mismatch. Expected: %d, got: %d", http.StatusBadRequest, resp.Code)
+	addRoute(resp, req)
+
+	for _, e := range checkErrorResponse(resp.Result(), http.StatusBadRequest, "Malformed JSON") {
+		t.Error(e)
 	}
-
 }
 
 func TestAddRouteReturns422ErrorWhenMandatoryFieldsMissing(t *testing.T) {
-	handler := http.HandlerFunc(addRoute)
 	tc := []struct {
 		payload, testCase string
 		testMustFail      bool
@@ -166,18 +190,19 @@ func TestAddRouteReturns422ErrorWhenMandatoryFieldsMissing(t *testing.T) {
 		req := httptest.NewRequest(http.MethodPost, "/routes", strings.NewReader(test.payload))
 		resp := httptest.NewRecorder()
 
-		handler.ServeHTTP(resp, req)
+		addRoute(resp, req)
+		r := resp.Result()
 		if test.testMustFail {
-			if resp.Code != http.StatusUnprocessableEntity {
-				t.Errorf("HTTP status mismatch in case %s. Expected: %d, got: %d", test.testCase, http.StatusUnprocessableEntity, resp.Code)
+			for _, e := range checkErrorResponse(r, http.StatusUnprocessableEntity, "Invalid Route") {
+				t.Error(e)
 			}
 		} else if !test.testMustFail {
-			if resp.Code != http.StatusCreated {
-				t.Errorf("HTTP status mismatch in case %s. Expected: %d, got: %d", test.testCase, http.StatusUnprocessableEntity, resp.Code)
+			if r.StatusCode != http.StatusCreated {
+				t.Errorf("HTTP status mismatch in case %s. Expected: %d, got: %d", test.testCase, http.StatusUnprocessableEntity, r.StatusCode)
 			}
 
-			if ct := resp.Header().Get("Content-Type"); ct != "application/json" {
-				t.Errorf("Incorrect content type in response. Expected: application/json, got: %s", ct)
+			if ct := r.Header.Get("Content-Type"); ct != "application/json" {
+				t.Errorf("Incorrect content type in response. Expected: application/json, got: %q", ct)
 			}
 		}
 	}
@@ -192,7 +217,6 @@ func TestAddRouteGeneratesRouteID(t *testing.T) {
   }`
 	req := httptest.NewRequest(http.MethodPost, "/routes", strings.NewReader(reqPayload))
 	resp := httptest.NewRecorder()
-	handler := http.HandlerFunc(addRoute)
 	var genID string
 	funcAdd = func(input model.Route) model.Route {
 		genID = input.ID
@@ -203,7 +227,7 @@ func TestAddRouteGeneratesRouteID(t *testing.T) {
 	defer func() { pathValidator = origPathValidator }()
 	pathValidator = func(path string) error { return nil }
 
-	handler.ServeHTTP(resp, req)
+	addRoute(resp, req)
 
 	if _, err := uuid.Parse(genID); err != nil {
 		t.Error("ID not generated properly")
@@ -219,7 +243,6 @@ func TestAddRoute500sWhenIDGeneratorFails(t *testing.T) {
   }`
 	req := httptest.NewRequest(http.MethodPost, "/routes", strings.NewReader(reqPayload))
 	resp := httptest.NewRecorder()
-	handler := http.HandlerFunc(addRoute)
 
 	origPathValidator := pathValidator
 	defer func() { pathValidator = origPathValidator }()
@@ -229,14 +252,13 @@ func TestAddRoute500sWhenIDGeneratorFails(t *testing.T) {
 	defer func() { idGenerator = idGenOrig }()
 	idGenerator = func() (uuid.UUID, error) {
 		var uuid uuid.UUID
-		return uuid, errors.New(
-			"End of Time reached; Try again before, or in the next Big Bang cycle")
+		return uuid, errors.New("End of Time reached; Try again before, or in the next Big Bang cycle")
 	}
 
-	handler.ServeHTTP(resp, req)
+	addRoute(resp, req)
 
-	if resp.Result().StatusCode != http.StatusInternalServerError {
-		t.Errorf("HTTP status mismatch. Expected: %d, got: %d", http.StatusInternalServerError, resp.Result().StatusCode)
+	for _, e := range checkErrorResponse(resp.Result(), http.StatusInternalServerError, "Internal Server Error") {
+		t.Error(e)
 	}
 }
 
@@ -250,7 +272,6 @@ func TestAddRouteReturnsCreated(t *testing.T) {
 
 	req := httptest.NewRequest(http.MethodPost, "/routes", strings.NewReader(reqPayload))
 	resp := httptest.NewRecorder()
-	handler := http.HandlerFunc(addRoute)
 	var genID string
 	funcAdd = func(input model.Route) model.Route {
 		expected := model.Route{ID: input.ID, Method: "GET", Pattern: "/hello", Entrypoint: "/bin/sh -c", Command: "echo Hello World | kapow set /response/body"}
@@ -266,7 +287,7 @@ func TestAddRouteReturnsCreated(t *testing.T) {
 	defer func() { pathValidator = origPathValidator }()
 	pathValidator = func(path string) error { return nil }
 
-	handler.ServeHTTP(resp, req)
+	addRoute(resp, req)
 
 	if resp.Code != http.StatusCreated {
 		t.Errorf("HTTP status mismatch. Expected: %d, got: %d", http.StatusCreated, resp.Code)
@@ -296,15 +317,14 @@ func TestAddRoute422sWhenInvalidRoute(t *testing.T) {
 }`
 	req := httptest.NewRequest(http.MethodPost, "/routes", strings.NewReader(reqPayload))
 	resp := httptest.NewRecorder()
-	handler := http.HandlerFunc(addRoute)
 	origPathValidator := pathValidator
 	defer func() { pathValidator = origPathValidator }()
 	pathValidator = func(path string) error { return errors.New("Invalid route") }
 
-	handler.ServeHTTP(resp, req)
+	addRoute(resp, req)
 
-	if resp.Code != http.StatusUnprocessableEntity {
-		t.Error("Invalid route registered")
+	for _, e := range checkErrorResponse(resp.Result(), http.StatusUnprocessableEntity, "Invalid Route") {
+		t.Error(e)
 	}
 }
 
@@ -314,7 +334,6 @@ func TestRemoveRouteReturnsNotFound(t *testing.T) {
 	handler := mux.NewRouter()
 	handler.HandleFunc("/routes/{id}", removeRoute).
 		Methods("DELETE")
-
 	funcRemove = func(id string) error {
 		if id == "ROUTE_XXXXXXXXXXXXXXXXXX" {
 			return errors.New(id)
@@ -324,8 +343,9 @@ func TestRemoveRouteReturnsNotFound(t *testing.T) {
 	}
 
 	handler.ServeHTTP(resp, req)
-	if resp.Code != http.StatusNotFound {
-		t.Errorf("HTTP status mismatch. Expected: %d, got: %d", http.StatusNotFound, resp.Code)
+
+	for _, e := range checkErrorResponse(resp.Result(), http.StatusNotFound, "Route Not Found") {
+		t.Error(e)
 	}
 }
 
@@ -344,6 +364,7 @@ func TestRemoveRouteReturnsNoContent(t *testing.T) {
 	}
 
 	handler.ServeHTTP(resp, req)
+
 	if resp.Code != http.StatusNoContent {
 		t.Errorf("HTTP status mismatch. Expected: %d, got: %d", http.StatusNoContent, resp.Code)
 	}
@@ -414,13 +435,12 @@ func TestGetRouteReturns404sWhenRouteDoesntExist(t *testing.T) {
 
 	handler.ServeHTTP(w, r)
 
-	resp := w.Result()
-	if resp.StatusCode != http.StatusNotFound {
-		t.Errorf("HTTP status mismatch. Expected: %d, got: %d", http.StatusNotFound, resp.StatusCode)
+	for _, e := range checkErrorResponse(w.Result(), http.StatusNotFound, "Route Not Found") {
+		t.Error(e)
 	}
 }
 
-func TestGetRouteSetsCorrctContentType(t *testing.T) {
+func TestGetRouteSetsCorrectContentType(t *testing.T) {
 	handler := mux.NewRouter()
 	handler.HandleFunc("/routes/{id}", getRoute).
 		Methods("GET")

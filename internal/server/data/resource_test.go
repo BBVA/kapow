@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package data
 
 import (
@@ -120,9 +121,8 @@ func TestGetRequestBody500sWhenHandlerRequestErrors(t *testing.T) {
 
 	getRequestBody(w, r, &h)
 
-	res := w.Result()
-	if res.StatusCode != http.StatusInternalServerError {
-		t.Error("status not 500")
+	for _, e := range checkErrorResponse(w.Result(), http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError)) {
+		t.Error(e)
 	}
 }
 
@@ -369,9 +369,8 @@ func TestGetRequestMatchesReturnsNotFoundWhenMatchDoesntExists(t *testing.T) {
 
 	getRequestMatches(w, r, &h)
 
-	res := w.Result()
-	if res.StatusCode != http.StatusNotFound {
-		t.Errorf("Status code mismatch. Expected: 404. Got: %d", res.StatusCode)
+	for _, e := range checkErrorResponse(w.Result(), http.StatusNotFound, "Resource Item Not Found") {
+		t.Error(e)
 	}
 }
 
@@ -433,9 +432,8 @@ func TestGetRequestParams404sWhenParamDoesntExist(t *testing.T) {
 
 	getRequestParams(w, r, &h)
 
-	res := w.Result()
-	if res.StatusCode != http.StatusNotFound {
-		t.Errorf("Status code mismatch. Expected: 404. Got: %d", res.StatusCode)
+	for _, e := range checkErrorResponse(w.Result(), http.StatusNotFound, "Resource Item Not Found") {
+		t.Error(e)
 	}
 }
 
@@ -478,14 +476,15 @@ func TestGetRequestHeadersSetsOctectStreamContentType(t *testing.T) {
 		Request: httptest.NewRequest("GET", "/", nil),
 		Writer:  httptest.NewRecorder(),
 	}
+	h.Request.Header.Set("bar", "BAZ")
 	r := createMuxRequest("/handlers/HANDLERID/request/headers/{name}", "/handlers/HANDLERID/request/headers/bar", "GET", nil)
 	w := httptest.NewRecorder()
 
 	getRequestHeaders(w, r, &h)
 
 	res := w.Result()
-	if res.Header.Get("Content-Type") != "application/octet-stream" {
-		t.Error("Content Type mismatch")
+	if v := res.Header.Get("Content-Type"); v != "application/octet-stream" {
+		t.Errorf("Content Type mismatch. Expected: application/octet-stream. Got: %q", v)
 	}
 }
 
@@ -567,9 +566,8 @@ func TestGetRequestHeaders404sWhenHeaderDoesntExist(t *testing.T) {
 
 	getRequestHeaders(w, r, &h)
 
-	res := w.Result()
-	if res.StatusCode != http.StatusNotFound {
-		t.Error("Status code mismatch")
+	for _, e := range checkErrorResponse(w.Result(), http.StatusNotFound, "Resource Item Not Found") {
+		t.Error(e)
 	}
 }
 
@@ -652,9 +650,8 @@ func TestGetRequestCookies404sIfCookieDoesntExist(t *testing.T) {
 
 	getRequestCookies(w, r, &h)
 
-	res := w.Result()
-	if res.StatusCode != http.StatusNotFound {
-		t.Errorf("Status code mismatch. Expected: 404, Got: %d", res.StatusCode)
+	for _, e := range checkErrorResponse(w.Result(), http.StatusNotFound, "Resource Item Not Found") {
+		t.Error(e)
 	}
 }
 
@@ -754,9 +751,8 @@ func TestGetRequestForm404sWhenFieldDoesntExist(t *testing.T) {
 
 	getRequestForm(w, r, &h)
 
-	res := w.Result()
-	if res.StatusCode != http.StatusNotFound {
-		t.Errorf("Status code mismatch. Expected: 404, Got: %d", res.StatusCode)
+	for _, e := range checkErrorResponse(w.Result(), http.StatusNotFound, "Resource Item Not Found") {
+		t.Error(e)
 	}
 }
 
@@ -810,9 +806,8 @@ func TestGetRequestForm404sWhenFormDoesntExist(t *testing.T) {
 
 	getRequestForm(w, r, &h)
 
-	res := w.Result()
-	if res.StatusCode != http.StatusNotFound {
-		t.Errorf("Status code mismatch. Expected: 404, Got: %d", res.StatusCode)
+	for _, e := range checkErrorResponse(w.Result(), http.StatusNotFound, "Resource Item Not Found") {
+		t.Error(e)
 	}
 }
 
@@ -885,9 +880,8 @@ func TestGetRequestFileName404sWhenFileDoesntExist(t *testing.T) {
 
 	getRequestFileName(w, r, &h)
 
-	res := w.Result()
-	if res.StatusCode != http.StatusNotFound {
-		t.Errorf("Status code mismatch. Expected: 404, Got: %d", res.StatusCode)
+	for _, e := range checkErrorResponse(w.Result(), http.StatusNotFound, "Resource Item Not Found") {
+		t.Error(e)
 	}
 }
 
@@ -902,9 +896,8 @@ func TestGetRequestFileName404sWhenFormDoesntExist(t *testing.T) {
 
 	getRequestFileName(w, r, &h)
 
-	res := w.Result()
-	if res.StatusCode != http.StatusNotFound {
-		t.Errorf("Status code mismatch. Expected: 404, Got: %d", res.StatusCode)
+	for _, e := range checkErrorResponse(w.Result(), http.StatusNotFound, "Resource Item Not Found") {
+		t.Error(e)
 	}
 }
 
@@ -966,9 +959,8 @@ func TestGetRequestFileContent404sWhenFileDoesntExist(t *testing.T) {
 
 	getRequestFileContent(w, r, &h)
 
-	res := w.Result()
-	if res.StatusCode != http.StatusNotFound {
-		t.Errorf("Status code mismatch. Expected: 404, Got: %d", res.StatusCode)
+	for _, e := range checkErrorResponse(w.Result(), http.StatusNotFound, "Resource Item Not Found") {
+		t.Error(e)
 	}
 }
 
@@ -983,9 +975,8 @@ func TestGetRequestFileContent404sWhenFormDoesntExist(t *testing.T) {
 
 	getRequestFileContent(w, r, &h)
 
-	res := w.Result()
-	if res.StatusCode != http.StatusNotFound {
-		t.Errorf("Status code mismatch. Expected: 404, Got: %d", res.StatusCode)
+	for _, e := range checkErrorResponse(w.Result(), http.StatusNotFound, "Resource Item Not Found") {
+		t.Error(e)
 	}
 }
 
@@ -1009,9 +1000,8 @@ func TestGetRequestFileContent500sWhenHandlerRequestErrors(t *testing.T) {
 
 	getRequestFileContent(w, r, &h)
 
-	res := w.Result()
-	if res.StatusCode != http.StatusInternalServerError {
-		t.Error("status not 500", res.StatusCode)
+	for _, e := range checkErrorResponse(w.Result(), http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError)) {
+		t.Error(e)
 	}
 }
 
@@ -1058,9 +1048,8 @@ func TestSetResponseStatus400sWhenNonparseableStatusCode(t *testing.T) {
 
 	setResponseStatus(w, r, &h)
 
-	res := w.Result()
-	if res.StatusCode != http.StatusBadRequest {
-		t.Errorf("Status code mismatch. Expected: 400, Got: %d", res.StatusCode)
+	for _, e := range checkErrorResponse(w.Result(), http.StatusUnprocessableEntity, "Non Integer Value") {
+		t.Error(e)
 	}
 }
 
@@ -1074,9 +1063,8 @@ func TestSetResponseStatus500sWhenErrorReadingRequest(t *testing.T) {
 
 	setResponseStatus(w, r, &h)
 
-	res := w.Result()
-	if res.StatusCode != http.StatusInternalServerError {
-		t.Errorf("Status code mismatch. Expected: 500, Got: %d", res.StatusCode)
+	for _, e := range checkErrorResponse(w.Result(), http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError)) {
+		t.Error(e)
 	}
 }
 
@@ -1092,9 +1080,8 @@ func TestSetResponseStatus400sWhenStatusCodeNotSupportedByGo(t *testing.T) {
 
 	setResponseStatus(w, r, &h)
 
-	res := w.Result()
-	if res.StatusCode != http.StatusBadRequest {
-		t.Errorf("Status code mismatch. Expected: 400, Got: %d", res.StatusCode)
+	for _, e := range checkErrorResponse(w.Result(), http.StatusBadRequest, "Invalid Status Code") {
+		t.Error(e)
 	}
 }
 
@@ -1162,9 +1149,8 @@ func TestSetResponseHeaders500sWhenErrorReadingRequest(t *testing.T) {
 
 	setResponseHeaders(w, r, &h)
 
-	res := w.Result()
-	if res.StatusCode != http.StatusInternalServerError {
-		t.Errorf("Status code mismatch. Expected: 500, Got: %d", res.StatusCode)
+	for _, e := range checkErrorResponse(w.Result(), http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError)) {
+		t.Error(e)
 	}
 }
 
@@ -1181,9 +1167,8 @@ func TestSetResponseHeaders400sOnInvalidHeaderKey(t *testing.T) {
 
 	setResponseHeaders(w, r, &h)
 
-	res := w.Result()
-	if res.StatusCode != http.StatusBadRequest {
-		t.Errorf("Status code mismatch. Expected: 400, Got: %d", res.StatusCode)
+	for _, e := range checkErrorResponse(w.Result(), http.StatusBadRequest, "Invalid Header Name") {
+		t.Error(e)
 	}
 }
 
@@ -1200,9 +1185,8 @@ func TestSetResponseHeaders400sOnInvalidHeaderValue(t *testing.T) {
 
 	setResponseHeaders(w, r, &h)
 
-	res := w.Result()
-	if res.StatusCode != http.StatusBadRequest {
-		t.Errorf("Status code mismatch. Expected: 400, Got: %d", res.StatusCode)
+	for _, e := range checkErrorResponse(w.Result(), http.StatusBadRequest, "Invalid Header Value") {
+		t.Error(e)
 	}
 }
 
@@ -1250,9 +1234,8 @@ func TestSetResponseCookies500sWhenErrorReadingRequest(t *testing.T) {
 
 	setResponseCookies(w, r, &h)
 
-	res := w.Result()
-	if res.StatusCode != http.StatusInternalServerError {
-		t.Errorf("Status code mismatch. Expected: 500, Got: %d", res.StatusCode)
+	for _, e := range checkErrorResponse(w.Result(), http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError)) {
+		t.Error(e)
 	}
 }
 
@@ -1322,9 +1305,8 @@ func TestSetResponseBody500sWhenReaderFailsInFirstRead(t *testing.T) {
 
 	setResponseBody(w, r, &h)
 
-	res := w.Result()
-	if res.StatusCode != http.StatusInternalServerError {
-		t.Errorf("Status code mismatch. Expected: 500, Got: %d", res.StatusCode)
+	for _, e := range checkErrorResponse(w.Result(), http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError)) {
+		t.Error(e)
 	}
 }
 

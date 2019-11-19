@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package data
 
 import (
@@ -126,9 +127,8 @@ func TestCheckHandlerReturnsAFunctionsThat404sWhenHandlerDoesNotExist(t *testing
 
 	fn(w, r)
 
-	res := w.Result()
-	if res.StatusCode != http.StatusNotFound {
-		t.Errorf("Status code mismatch. Expected 404. Got %d", res.StatusCode)
+	for _, e := range checkErrorResponse(w.Result(), http.StatusNotFound, "Handler ID Not Found") {
+		t.Error(e)
 	}
 }
 

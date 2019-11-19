@@ -33,7 +33,7 @@ Feature: Append new routes in Kapow! server.
       }
       """
     Then I get 201 as response code
-#      And I get "Created" as response reason phrase
+      And I get "Created" as response reason phrase
       And I get the following response body:
       """
       {
@@ -64,7 +64,7 @@ Feature: Append new routes in Kapow! server.
       }
       """
     Then I get 201 as response code
-#      And I get "Created" as response reason phrase
+      And I get "Created" as response reason phrase
       And I get the following response body:
       """
       {
