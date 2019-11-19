@@ -4,6 +4,9 @@
 .. image:: https://circleci.com/gh/BBVA/kapow/tree/master.svg?style=svg
     :target: https://circleci.com/gh/BBVA/kapow/tree/master
 
+.. image:: https://goreportcard.com/badge/github.com/bbva/kapow
+    :target: https://goreportcard.com/report/github.com/bbva/kapow
+    
 **Kapow!** If you can script it, you can HTTP it.
 
 
