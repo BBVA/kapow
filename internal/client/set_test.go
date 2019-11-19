@@ -52,7 +52,8 @@ func TestSetDataErrIfBadHandlerID(t *testing.T) {
 	defer gock.Off()
 	gock.New("http://localhost:8080").
 		Put("/HANDLER_BAD/response/status/code").
-		Reply(http.StatusNotFound)
+		Reply(http.StatusNotFound).
+		BodyString(`{"reason": "Handler ID Not Found"}`)
 
 	if err := client.SetData(
 		"http://localhost:8080",
@@ -61,8 +62,8 @@ func TestSetDataErrIfBadHandlerID(t *testing.T) {
 		strings.NewReader("200"),
 	); err == nil {
 		t.Error("Expected error not present")
-	} else if err.Error() != "Not Found" {
-		t.Errorf(`Error mismatch: expected "Not Found", got %q`, err)
+	} else if err.Error() != "Handler ID Not Found" {
+		t.Errorf(`Error mismatch: expected "Handler ID Not Found", got %q`, err)
 	}
 
 	if !gock.IsDone() {

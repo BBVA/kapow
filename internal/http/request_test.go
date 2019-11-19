@@ -72,7 +72,9 @@ func TestReturnHTTPErrorAsIs(t *testing.T) {
 
 func TestReturnHTTPReasonAsErrorWhenUnsuccessful(t *testing.T) {
 	defer gock.Off()
-	gock.New("http://localhost").Reply(http.StatusTeapot)
+	gock.New("http://localhost").
+		Reply(http.StatusTeapot).
+		BodyString(`{"reason": "I'm a teapot"}`)
 
 	err := Request("GET", "http://localhost", "", nil, nil)
 	if err == nil || err.Error() != http.StatusText(http.StatusTeapot) {

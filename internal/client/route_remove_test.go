@@ -43,12 +43,13 @@ func TestRemoveRouteErrorNonExistent(t *testing.T) {
 	defer gock.Off()
 	gock.New("http://localhost:8080").
 		Delete("/routes/ROUTE_BAD").
-		Reply(http.StatusNotFound)
+		Reply(http.StatusNotFound).
+		BodyString(`{"reason": "Route Not Found"}`)
 
 	err := RemoveRoute("http://localhost:8080", "ROUTE_BAD")
 	if err == nil {
 		t.Errorf("Error not reported for nonexistent route")
-	} else if err.Error() != "Not Found" {
+	} else if err.Error() != "Route Not Found" {
 		t.Errorf(`Error mismatch: got %q, want "Not Found"`, err)
 	}
 
