@@ -3,3 +3,6 @@ __pycache__
 output
 build
 .vscode
+
+docs/build
+docs/Pipfile.lock
