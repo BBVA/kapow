@@ -229,7 +229,7 @@ func TestServeHTTPCallsInnerMuxAfterAcquiringLock(t *testing.T) {
 func TestUpdateUpdatesMuxWithProvideRouteList(t *testing.T) {
 	sm := New()
 	rs := []model.Route{
-		model.Route{
+		{
 			Method:     "GET",
 			Pattern:    "/",
 			Entrypoint: "/bin/sh -c",
