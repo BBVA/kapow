@@ -17,7 +17,9 @@
 package http
 
 import (
+	"io/ioutil"
 	nethttp "net/http"
+	"strings"
 	"testing"
 )
 
@@ -60,5 +62,85 @@ func TestBehaveWithOddSizeStatusCode(t *testing.T) {
 	r := &nethttp.Response{Status: "2 FOO BAR BAZ"}
 	if GetReason(r) != "FOO BAR BAZ" {
 		t.Errorf("Unexpected reason found")
+	}
+}
+
+func TestGetReasonFromBodyExtractsReasonFromJSON(t *testing.T) {
+	r := &nethttp.Response{
+		Status: "200 OK",
+		Body: ioutil.NopCloser(
+			strings.NewReader(
+				`{"reason": "Because reasons", "foo": "bar"}`,
+			),
+		),
+	}
+
+	reason, _ := GetReasonFromBody(r)
+
+	if reason != "Because reasons" {
+		t.Errorf(`reason mismatch, want "Because reasons", got %q`, reason)
+	}
+}
+
+func TestGetReasonFromBodyErrorsOnJSONWithNoReason(t *testing.T) {
+	r := &nethttp.Response{
+		Status: "200 OK",
+		Body: ioutil.NopCloser(
+			strings.NewReader(
+				`{"madness": "Because madness", "foo": "bar"}`,
+			),
+		),
+	}
+
+	_, err := GetReasonFromBody(r)
+
+	if err == nil {
+		t.Error("error not reported")
+	}
+}
+
+func TestGetReasonFromBodyErrorsOnJSONWithEmptyReason(t *testing.T) {
+	r := &nethttp.Response{
+		Body: ioutil.NopCloser(
+			strings.NewReader(
+				`{"reason": "", "foo": "bar"}`,
+			),
+		),
+	}
+
+	_, err := GetReasonFromBody(r)
+
+	if err == nil {
+		t.Error("error not reported")
+	}
+}
+
+func TestGetReasonFromBodyErrorsOnNoJSON(t *testing.T) {
+	r := &nethttp.Response{
+		Body: ioutil.NopCloser(
+			strings.NewReader(""),
+		),
+	}
+
+	_, err := GetReasonFromBody(r)
+
+	if err == nil {
+		t.Error("error not reported")
+	}
+}
+
+func TestGetReasonFromBodyErrorsOnInvalidJSON(t *testing.T) {
+	r := &nethttp.Response{
+		Body: ioutil.NopCloser(
+			strings.NewReader(
+				`{"reason": "Because reasons", "cliffhanger...`,
+			),
+		),
+	}
+
+	_, err := GetReasonFromBody(r)
+
+	if err == nil {
+		t.Error("error not reported")
 	}
 }

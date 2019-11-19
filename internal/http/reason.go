@@ -17,8 +17,13 @@
 package http
 
 import (
+	"encoding/json"
+	"errors"
+	"io/ioutil"
 	"net/http"
 	"strings"
+
+	"github.com/BBVA/kapow/internal/server/srverrors"
 )
 
 // GetReason returns the reason phrase part of an HTTP response
@@ -27,4 +32,23 @@ func GetReason(r *http.Response) string {
 		return r.Status[i+1:]
 	}
 	return ""
+}
+
+func GetReasonFromBody(r *http.Response) (string, error) {
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		return "", errors.New("error reading response's body")
+	}
+
+	reason := &srverrors.ServerErrMessage{}
+	err = json.Unmarshal(body, reason)
+	if err != nil {
+		return "", errors.New("error unmarshaling JSON")
+	}
+
+	if reason.Reason == "" {
+		return "", errors.New("no reason")
+	}
+
+	return reason.Reason, nil
 }
