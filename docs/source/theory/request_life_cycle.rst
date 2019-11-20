@@ -25,18 +25,17 @@ answered by the User HTTP Interface.
    - ``KAPOW_DATAAPI_URL``: With the URL of the `data interface`
    - ``KAPOW_CONTROLAPI_URL``: With the URL of the `control interface`
 
-3-4. During the lifetime of the shell, the request and response resources are
-   available via these commands:
+3. During the lifetime of the shell, the request and response resources are available via these commands:
 
    - ``kapow get /request/...``
    - ``kapow set /response/...``
 
-   These commands use the aforementioned environment variables to read
-   data from the user request and to write the response.
+   These commands use the aforementioned environment variables to read data from the user request and to write the response.
 
-   .. todo::
+4. The shell dies
+5. ``kapow`` finalizes the original request
 
-      link to resource tree
 
-5. The shell dies
-6. ``kapow`` finalizes the original request
+.. todo::
+
+   link to resource tree
