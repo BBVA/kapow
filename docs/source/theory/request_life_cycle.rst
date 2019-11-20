@@ -4,14 +4,17 @@ Request Life Cycle
 This section describes the sequence of events happening for each request
 answered by the User HTTP Interface.
 
-#. The user makes a request to the User HTTP Interface
+.. image:: ../_static/request_life_cycle.png
 
-#. The request is matched against the route table
 
-#. ``kapow`` provides a `HANDLER_ID` to identify this request and don't mix it
-   with other requests that could be running concurrently.
+1. The user makes a request to the User HTTP Interface
 
-#. ``kapow`` spawns the binary specified as entrypoint in the matching route
+   - The request is matched against the route table
+
+   - ``kapow`` provides a `HANDLER_ID` to identify this request and don't mix it
+     with other requests that could be running concurrently.
+
+2. ``kapow`` spawns the binary specified as entrypoint in the matching route
 
    The default entrypoint is /bin/sh; we'll explain this workflow for now.
 
@@ -22,7 +25,7 @@ answered by the User HTTP Interface.
    - ``KAPOW_DATAAPI_URL``: With the URL of the `data interface`
    - ``KAPOW_CONTROLAPI_URL``: With the URL of the `control interface`
 
-#. During the lifetime of the shell, the request and response resources are
+3-4. During the lifetime of the shell, the request and response resources are
    available via these commands:
 
    - ``kapow get /request/...``
@@ -35,4 +38,5 @@ answered by the User HTTP Interface.
 
       link to resource tree
 
-#. When the shell dies, ``kapow`` finalizes the original request
+5. The shell dies
+6. ``kapow`` finalizes the original request
