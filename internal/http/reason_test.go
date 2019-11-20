@@ -23,7 +23,7 @@ import (
 	"testing"
 )
 
-func TestGetReasonFromBodyExtractsReasonFromJSON(t *testing.T) {
+func TestReasonExtractsReasonFromJSON(t *testing.T) {
 	r := &nethttp.Response{
 		Status: "200 OK",
 		Body: ioutil.NopCloser(
@@ -33,14 +33,14 @@ func TestGetReasonFromBodyExtractsReasonFromJSON(t *testing.T) {
 		),
 	}
 
-	reason, _ := GetReasonFromBody(r)
+	reason, _ := Reason(r)
 
 	if reason != "Because reasons" {
 		t.Errorf(`reason mismatch, want "Because reasons", got %q`, reason)
 	}
 }
 
-func TestGetReasonFromBodyErrorsOnJSONWithNoReason(t *testing.T) {
+func TestReasonErrorsOnJSONWithNoReason(t *testing.T) {
 	r := &nethttp.Response{
 		Status: "200 OK",
 		Body: ioutil.NopCloser(
@@ -50,14 +50,14 @@ func TestGetReasonFromBodyErrorsOnJSONWithNoReason(t *testing.T) {
 		),
 	}
 
-	_, err := GetReasonFromBody(r)
+	_, err := Reason(r)
 
 	if err == nil {
 		t.Error("error not reported")
 	}
 }
 
-func TestGetReasonFromBodyErrorsOnJSONWithEmptyReason(t *testing.T) {
+func TestReasonErrorsOnJSONWithEmptyReason(t *testing.T) {
 	r := &nethttp.Response{
 		Body: ioutil.NopCloser(
 			strings.NewReader(
@@ -66,28 +66,28 @@ func TestGetReasonFromBodyErrorsOnJSONWithEmptyReason(t *testing.T) {
 		),
 	}
 
-	_, err := GetReasonFromBody(r)
+	_, err := Reason(r)
 
 	if err == nil {
 		t.Error("error not reported")
 	}
 }
 
-func TestGetReasonFromBodyErrorsOnNoJSON(t *testing.T) {
+func TestReasonErrorsOnNoJSON(t *testing.T) {
 	r := &nethttp.Response{
 		Body: ioutil.NopCloser(
 			strings.NewReader(""),
 		),
 	}
 
-	_, err := GetReasonFromBody(r)
+	_, err := Reason(r)
 
 	if err == nil {
 		t.Error("error not reported")
 	}
 }
 
-func TestGetReasonFromBodyErrorsOnInvalidJSON(t *testing.T) {
+func TestReasonErrorsOnInvalidJSON(t *testing.T) {
 	r := &nethttp.Response{
 		Body: ioutil.NopCloser(
 			strings.NewReader(
@@ -96,7 +96,7 @@ func TestGetReasonFromBodyErrorsOnInvalidJSON(t *testing.T) {
 		),
 	}
 
-	_, err := GetReasonFromBody(r)
+	_, err := Reason(r)
 
 	if err == nil {
 		t.Error("error not reported")

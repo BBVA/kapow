@@ -66,7 +66,7 @@ func Request(method string, url string, contentType string, r io.Reader, w io.Wr
 	defer res.Body.Close()
 
 	if res.StatusCode < 200 || res.StatusCode >= 300 {
-		reason, err := GetReasonFromBody(res)
+		reason, err := Reason(res)
 		if err != nil {
 			return err
 		}

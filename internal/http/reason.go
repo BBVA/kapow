@@ -25,9 +25,9 @@ import (
 	"github.com/BBVA/kapow/internal/server/srverrors"
 )
 
-// GetReasonFromBody returns the reason phrase embedded within the JSON error
+// Reason returns the reason phrase embedded within the JSON error
 // body, or an error if no reason can be extracted
-func GetReasonFromBody(r *http.Response) (string, error) {
+func Reason(r *http.Response) (string, error) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		return "", errors.New("error reading response's body")
