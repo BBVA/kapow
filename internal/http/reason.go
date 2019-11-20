@@ -34,6 +34,8 @@ func GetReason(r *http.Response) string {
 	return ""
 }
 
+// GetReasonFromBody returns the reason phrase embedded within the JSON error
+// body, or an error if no reason can be extracted
 func GetReasonFromBody(r *http.Response) (string, error) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
