@@ -6,7 +6,7 @@
 
 .. image:: https://goreportcard.com/badge/github.com/bbva/kapow
     :target: https://goreportcard.com/report/github.com/bbva/kapow
-    
+
 **Kapow!** If you can script it, you can HTTP it.
 
 
@@ -121,7 +121,7 @@ Kapow! can't help when:
 
 
 When it is your best friend:
---------------------------
+----------------------------
 
 * Easy command + Hard API = Kapow! to the rescue
 * SSH for one command?  Kapow! allows you to share only that command

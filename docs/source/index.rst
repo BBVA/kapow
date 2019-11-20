@@ -9,6 +9,12 @@
 
 .. toctree::
    :maxdepth: 2
+   :caption: Example
+
+   examples/index
+
+.. toctree::
+   :maxdepth: 2
    :caption: Tutorial
 
    tutorial
