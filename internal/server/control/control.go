@@ -24,8 +24,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 
+	"github.com/BBVA/kapow/internal/server/httperror"
 	"github.com/BBVA/kapow/internal/server/model"
-	"github.com/BBVA/kapow/internal/server/srverrors"
 	"github.com/BBVA/kapow/internal/server/user"
 )
 
@@ -53,7 +53,7 @@ func removeRoute(res http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 	id := vars["id"]
 	if err := funcRemove(id); err != nil {
-		srverrors.ErrorJSON(res, "Route Not Found", http.StatusNotFound)
+		httperror.ErrorJSON(res, "Route Not Found", http.StatusNotFound)
 		return
 	}
 
@@ -94,29 +94,29 @@ func addRoute(res http.ResponseWriter, req *http.Request) {
 	payload, _ := ioutil.ReadAll(req.Body)
 	err := json.Unmarshal(payload, &route)
 	if err != nil {
-		srverrors.ErrorJSON(res, "Malformed JSON", http.StatusBadRequest)
+		httperror.ErrorJSON(res, "Malformed JSON", http.StatusBadRequest)
 		return
 	}
 
 	if route.Method == "" {
-		srverrors.ErrorJSON(res, "Invalid Route", http.StatusUnprocessableEntity)
+		httperror.ErrorJSON(res, "Invalid Route", http.StatusUnprocessableEntity)
 		return
 	}
 
 	if route.Pattern == "" {
-		srverrors.ErrorJSON(res, "Invalid Route", http.StatusUnprocessableEntity)
+		httperror.ErrorJSON(res, "Invalid Route", http.StatusUnprocessableEntity)
 		return
 	}
 
 	err = pathValidator(route.Pattern)
 	if err != nil {
-		srverrors.ErrorJSON(res, "Invalid Route", http.StatusUnprocessableEntity)
+		httperror.ErrorJSON(res, "Invalid Route", http.StatusUnprocessableEntity)
 		return
 	}
 
 	id, err := idGenerator()
 	if err != nil {
-		srverrors.ErrorJSON(res, "Internal Server Error", http.StatusInternalServerError)
+		httperror.ErrorJSON(res, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
@@ -138,7 +138,7 @@ var funcGet func(string) (model.Route, error) = user.Routes.Get
 func getRoute(res http.ResponseWriter, req *http.Request) {
 	id := mux.Vars(req)["id"]
 	if r, err := funcGet(id); err != nil {
-		srverrors.ErrorJSON(res, "Route Not Found", http.StatusNotFound)
+		httperror.ErrorJSON(res, "Route Not Found", http.StatusNotFound)
 	} else {
 		res.Header().Set("Content-Type", "application/json")
 		rBytes, _ := json.Marshal(r)

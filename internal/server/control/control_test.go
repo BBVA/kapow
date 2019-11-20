@@ -30,8 +30,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 
+	"github.com/BBVA/kapow/internal/server/httperror"
 	"github.com/BBVA/kapow/internal/server/model"
-	"github.com/BBVA/kapow/internal/server/srverrors"
 	"github.com/BBVA/kapow/internal/server/user"
 )
 
@@ -46,7 +46,7 @@ func checkErrorResponse(r *http.Response, expectedErrcode int, expectedReason st
 		errList = append(errList, fmt.Errorf("Content-Type header mismatch. Expected: %q, got: %q", "application/json; charset=utf-8", v))
 	}
 
-	errMsg := srverrors.ServerErrMessage{}
+	errMsg := httperror.ServerErrMessage{}
 	if bodyBytes, err := ioutil.ReadAll(r.Body); err != nil {
 		errList = append(errList, fmt.Errorf("Unexpected error reading response body: %v", err))
 	} else if err := json.Unmarshal(bodyBytes, &errMsg); err != nil {
@@ -118,10 +118,10 @@ func TestPathValidatorErrorWhenInvalidPath(t *testing.T) {
 
 func TestAddRouteReturnsBadRequestWhenMalformedJSONBody(t *testing.T) {
 	reqPayload := `{
-    method": "GET",
-    url_pattern": "/hello",
-    entrypoint": null,
-    command": "echo Hello World | kapow set /response/body"
+	method": "GET",
+	url_pattern": "/hello",
+	entrypoint": null,
+	command": "echo Hello World | kapow set /response/body"
   }`
 
 	req := httptest.NewRequest(http.MethodPost, "/routes", strings.NewReader(reqPayload))
@@ -141,46 +141,46 @@ func TestAddRouteReturns422ErrorWhenMandatoryFieldsMissing(t *testing.T) {
 	}{
 		{`{}`, "EmptyBody", true},
 		{`{
-      "method": "GET"
-      }`,
+	  "method": "GET"
+	  }`,
 			"Missing url_pattern",
 			true,
 		},
 		{`{
-      "url_pattern": "/hello"
-      }`,
+	  "url_pattern": "/hello"
+	  }`,
 			"Missing method",
 			true,
 		},
 		{`{
-      "method": "GET",
-      "url_pattern": "/hello"
-      }`,
+	  "method": "GET",
+	  "url_pattern": "/hello"
+	  }`,
 			"",
 			false,
 		},
 		{`{
-      "method": "GET",
-      "url_pattern": "/hello",
-      "entrypoint": ""
-      }`,
+	  "method": "GET",
+	  "url_pattern": "/hello",
+	  "entrypoint": ""
+	  }`,
 			"",
 			false,
 		},
 		{`{
-      "method": "GET",
-      "url_pattern": "/hello",
-      "command": ""
-      }`,
+	  "method": "GET",
+	  "url_pattern": "/hello",
+	  "command": ""
+	  }`,
 			"",
 			false,
 		},
 		{`{
-      "method": "GET",
-      "url_pattern": "/hello",
-      "entrypoint": "",
-      "command": ""
-      }`,
+	  "method": "GET",
+	  "url_pattern": "/hello",
+	  "entrypoint": "",
+	  "command": ""
+	  }`,
 			"",
 			false,
 		},
@@ -210,10 +210,10 @@ func TestAddRouteReturns422ErrorWhenMandatoryFieldsMissing(t *testing.T) {
 
 func TestAddRouteGeneratesRouteID(t *testing.T) {
 	reqPayload := `{
-    "method": "GET",
-    "url_pattern": "/hello",
-    "entrypoint": "/bin/sh -c",
-    "command": "echo Hello World | kapow set /response/body"
+	"method": "GET",
+	"url_pattern": "/hello",
+	"entrypoint": "/bin/sh -c",
+	"command": "echo Hello World | kapow set /response/body"
   }`
 	req := httptest.NewRequest(http.MethodPost, "/routes", strings.NewReader(reqPayload))
 	resp := httptest.NewRecorder()
@@ -236,10 +236,10 @@ func TestAddRouteGeneratesRouteID(t *testing.T) {
 
 func TestAddRoute500sWhenIDGeneratorFails(t *testing.T) {
 	reqPayload := `{
-    "method": "GET",
-    "url_pattern": "/hello",
-    "entrypoint": "/bin/sh -c",
-    "command": "echo Hello World | kapow set /response/body"
+	"method": "GET",
+	"url_pattern": "/hello",
+	"entrypoint": "/bin/sh -c",
+	"command": "echo Hello World | kapow set /response/body"
   }`
 	req := httptest.NewRequest(http.MethodPost, "/routes", strings.NewReader(reqPayload))
 	resp := httptest.NewRecorder()
@@ -264,10 +264,10 @@ func TestAddRoute500sWhenIDGeneratorFails(t *testing.T) {
 
 func TestAddRouteReturnsCreated(t *testing.T) {
 	reqPayload := `{
-    "method": "GET",
-    "url_pattern": "/hello",
-    "entrypoint": "/bin/sh -c",
-    "command": "echo Hello World | kapow set /response/body"
+	"method": "GET",
+	"url_pattern": "/hello",
+	"entrypoint": "/bin/sh -c",
+	"command": "echo Hello World | kapow set /response/body"
   }`
 
 	req := httptest.NewRequest(http.MethodPost, "/routes", strings.NewReader(reqPayload))

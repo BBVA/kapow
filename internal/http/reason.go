@@ -22,7 +22,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/BBVA/kapow/internal/server/srverrors"
+	"github.com/BBVA/kapow/internal/server/httperror"
 )
 
 // Reason returns the reason phrase embedded within the JSON error
@@ -33,7 +33,7 @@ func Reason(r *http.Response) (string, error) {
 		return "", errors.New("error reading response's body")
 	}
 
-	reason := &srverrors.ServerErrMessage{}
+	reason := &httperror.ServerErrMessage{}
 	err = json.Unmarshal(body, reason)
 	if err != nil {
 		return "", errors.New("error unmarshaling JSON")

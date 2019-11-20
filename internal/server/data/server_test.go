@@ -24,8 +24,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/BBVA/kapow/internal/server/httperror"
 	"github.com/BBVA/kapow/internal/server/model"
-	"github.com/BBVA/kapow/internal/server/srverrors"
 )
 
 func checkErrorResponse(r *http.Response, expectedErrcode int, expectedReason string) []error {
@@ -39,7 +39,7 @@ func checkErrorResponse(r *http.Response, expectedErrcode int, expectedReason st
 		errList = append(errList, fmt.Errorf("Content-Type header mismatch. Expected: %q, got: %q", "application/json; charset=utf-8", v))
 	}
 
-	errMsg := srverrors.ServerErrMessage{}
+	errMsg := httperror.ServerErrMessage{}
 	if bodyBytes, err := ioutil.ReadAll(r.Body); err != nil {
 		errList = append(errList, fmt.Errorf("Unexpected error reading response body: %v", err))
 	} else if err := json.Unmarshal(bodyBytes, &errMsg); err != nil {

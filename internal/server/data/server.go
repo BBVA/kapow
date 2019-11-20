@@ -20,7 +20,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/BBVA/kapow/internal/server/srverrors"
+	"github.com/BBVA/kapow/internal/server/httperror"
 	"github.com/gorilla/mux"
 )
 
@@ -38,7 +38,7 @@ func configRouter(rs []routeSpec) (r *mux.Router) {
 	r.HandleFunc(
 		"/handlers/{handlerID}/{resource:.*}",
 		func(w http.ResponseWriter, r *http.Request) {
-			srverrors.ErrorJSON(w, "Invalid Resource Path", http.StatusBadRequest)
+			httperror.ErrorJSON(w, "Invalid Resource Path", http.StatusBadRequest)
 		})
 	return r
 }

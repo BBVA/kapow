@@ -1,4 +1,4 @@
-package srverrors
+package httperror
 
 import (
 	"encoding/json"
