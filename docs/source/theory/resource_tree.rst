@@ -1,5 +1,5 @@
-The Resource Tree
-=================
+The `Kapow!` Resource Tree
+==========================
 
 This is the model that Kapow! uses to expose the internals of the user request
 being serviced.

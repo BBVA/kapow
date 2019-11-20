@@ -14,15 +14,16 @@ answered by the User HTTP Interface.
 
    The default entrypoint is /bin/sh; we'll explain this workflow for now.
 
-   The spawned entrypoint is run with following variables added to its environment:
-- KAPOW_HANDLER_ID
-- KAPOW_DATAAPI_URL
-- KAPOW_CONTROLAPI_URL
+   The spawned entrypoint is run with the following variables added to its environment:
+
+   - KAPOW_HANDLER_ID
+   - KAPOW_DATAAPI_URL
+   - KAPOW_CONTROLAPI_URL
 
 #.  During the lifetime of the shell, the request and response resources are available via these commands:
 
-- kapow get /request/...
-- kapow set /response/...
+   - kapow get /request/...
+   - kapow set /response/...
 
 TODO: link to resource tree
 
