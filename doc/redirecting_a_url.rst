@@ -8,5 +8,5 @@ We can do them in Kapow! with little effort:
 In this example, we read the header ``User-Agent`` and feed it to the response:
 .. code-block:: bash
 
-   echo -n 302 | kapow set /response/status
-   echo -n http://foobar-url.example | kapow set /response/headers/Location
+   kapow set /response/headers/Location 'http://example.org'
+   kapow set /response/status 301
