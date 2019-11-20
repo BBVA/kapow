@@ -8,7 +8,7 @@ answered by the User HTTP Interface.
 
 #. The request is matched against the route table
 
-#. Kapow! provides a HANDLER_ID to identify this request
+#. Kapow! provides a `HANDLER_ID` to identify this request
 
 #. Kapow! spawns the binary specified as entrypoint in the matching route
 
@@ -16,15 +16,18 @@ answered by the User HTTP Interface.
 
    The spawned entrypoint is run with the following variables added to its environment:
 
-   - KAPOW_HANDLER_ID
-   - KAPOW_DATAAPI_URL
-   - KAPOW_CONTROLAPI_URL
+   - ``KAPOW_HANDLER_ID``: Containing the `HANDLER_ID`
+   - ``KAPOW_DATAAPI_URL``: With the URL of the `data interface`
+   - ``KAPOW_CONTROLAPI_URL``: With the URL of the `control interface`
 
 #.  During the lifetime of the shell, the request and response resources are available via these commands:
 
-   - kapow get /request/...
-   - kapow set /response/...
+   - ``kapow get /request/...``
+   - ``kapow set /response/...``
+
+   These commands use the aforementioned environment variables to read
+   data of the user request and to write the response.
 
 TODO: link to resource tree
 
-#. When the shell dies, Kapow! finalizes the original request.
+#. When the shell dies, Kapow! finalizes the original request
