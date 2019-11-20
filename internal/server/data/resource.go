@@ -40,7 +40,7 @@ func getRequestBody(w http.ResponseWriter, r *http.Request, h *model.Handler) {
 	n, err := io.Copy(w, h.Request.Body)
 	if err != nil {
 		if n == 0 {
-			srverrors.WriteErrorResponse(http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError), w)
+			srverrors.ErrorJSON(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		} else {
 			// Only way to abort current connection as of go 1.13
 			// https://github.com/golang/go/issues/16542
@@ -72,7 +72,7 @@ func getRequestMatches(w http.ResponseWriter, r *http.Request, h *model.Handler)
 	if value, ok := vars[name]; ok {
 		_, _ = w.Write([]byte(value))
 	} else {
-		srverrors.WriteErrorResponse(http.StatusNotFound, ResourceItemNotFound, w)
+		srverrors.ErrorJSON(w, ResourceItemNotFound, http.StatusNotFound)
 	}
 }
 
@@ -82,7 +82,7 @@ func getRequestParams(w http.ResponseWriter, r *http.Request, h *model.Handler) 
 	if values, ok := h.Request.URL.Query()[name]; ok {
 		_, _ = w.Write([]byte(values[0]))
 	} else {
-		srverrors.WriteErrorResponse(http.StatusNotFound, ResourceItemNotFound, w)
+		srverrors.ErrorJSON(w, ResourceItemNotFound, http.StatusNotFound)
 	}
 }
 
@@ -92,7 +92,7 @@ func getRequestHeaders(w http.ResponseWriter, r *http.Request, h *model.Handler)
 	if values, ok := h.Request.Header[textproto.CanonicalMIMEHeaderKey(name)]; ok {
 		_, _ = w.Write([]byte(values[0]))
 	} else {
-		srverrors.WriteErrorResponse(http.StatusNotFound, ResourceItemNotFound, w)
+		srverrors.ErrorJSON(w, ResourceItemNotFound, http.StatusNotFound)
 	}
 }
 
@@ -102,7 +102,7 @@ func getRequestCookies(w http.ResponseWriter, r *http.Request, h *model.Handler)
 	if cookie, err := h.Request.Cookie(name); err == nil {
 		_, _ = w.Write([]byte(cookie.Value))
 	} else {
-		srverrors.WriteErrorResponse(http.StatusNotFound, ResourceItemNotFound, w)
+		srverrors.ErrorJSON(w, ResourceItemNotFound, http.StatusNotFound)
 	}
 }
 
@@ -118,11 +118,11 @@ func getRequestForm(w http.ResponseWriter, r *http.Request, h *model.Handler) {
 	// We tried to exercise this execution path but didn't know how.
 	err := h.Request.ParseForm()
 	if err != nil {
-		srverrors.WriteErrorResponse(http.StatusNotFound, ResourceItemNotFound, w)
+		srverrors.ErrorJSON(w, ResourceItemNotFound, http.StatusNotFound)
 	} else if values, ok := h.Request.Form[name]; ok {
 		_, _ = w.Write([]byte(values[0]))
 	} else {
-		srverrors.WriteErrorResponse(http.StatusNotFound, ResourceItemNotFound, w)
+		srverrors.ErrorJSON(w, ResourceItemNotFound, http.StatusNotFound)
 	}
 }
 
@@ -133,7 +133,7 @@ func getRequestFileName(w http.ResponseWriter, r *http.Request, h *model.Handler
 	if err == nil {
 		_, _ = w.Write([]byte(header.Filename))
 	} else {
-		srverrors.WriteErrorResponse(http.StatusNotFound, ResourceItemNotFound, w)
+		srverrors.ErrorJSON(w, ResourceItemNotFound, http.StatusNotFound)
 	}
 }
 
@@ -144,7 +144,7 @@ func getRequestFileContent(w http.ResponseWriter, r *http.Request, h *model.Hand
 	if err == nil {
 		_, _ = io.Copy(w, file)
 	} else {
-		srverrors.WriteErrorResponse(http.StatusNotFound, ResourceItemNotFound, w)
+		srverrors.ErrorJSON(w, ResourceItemNotFound, http.StatusNotFound)
 	}
 }
 
@@ -153,14 +153,14 @@ func getRequestFileContent(w http.ResponseWriter, r *http.Request, h *model.Hand
 func setResponseStatus(w http.ResponseWriter, r *http.Request, h *model.Handler) {
 	sb, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		srverrors.WriteErrorResponse(http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError), w)
+		srverrors.ErrorJSON(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
 
 	if si, err := strconv.Atoi(string(sb)); err != nil {
-		srverrors.WriteErrorResponse(http.StatusUnprocessableEntity, NonIntegerValue, w)
+		srverrors.ErrorJSON(w, NonIntegerValue, http.StatusUnprocessableEntity)
 	} else if http.StatusText(si) == "" {
-		srverrors.WriteErrorResponse(http.StatusBadRequest, InvalidStatusCode, w)
+		srverrors.ErrorJSON(w, InvalidStatusCode, http.StatusBadRequest)
 	} else {
 		h.Writer.WriteHeader(int(si))
 	}
@@ -170,7 +170,7 @@ func setResponseHeaders(w http.ResponseWriter, r *http.Request, h *model.Handler
 	name := mux.Vars(r)["name"]
 	vb, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		srverrors.WriteErrorResponse(http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError), w)
+		srverrors.ErrorJSON(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
 
@@ -186,7 +186,7 @@ func setResponseCookies(w http.ResponseWriter, r *http.Request, h *model.Handler
 	name := mux.Vars(r)["name"]
 	vb, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		srverrors.WriteErrorResponse(http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError), w)
+		srverrors.ErrorJSON(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
 
@@ -199,6 +199,6 @@ func setResponseBody(w http.ResponseWriter, r *http.Request, h *model.Handler) {
 		if n > 0 {
 			panic("Truncated body")
 		}
-		srverrors.WriteErrorResponse(http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError), w)
+		srverrors.ErrorJSON(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 	}
 }

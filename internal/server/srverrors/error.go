@@ -10,13 +10,15 @@ type ServerErrMessage struct {
 	Reason string `json:"reason"`
 }
 
-// WriteErrorResponse writes the error JSON body to the provided http.ResponseWriter,
-// after setting the appropiate Content-Type header
-func WriteErrorResponse(statusCode int, reasonMsg string, res http.ResponseWriter) {
-	respBody := ServerErrMessage{}
-	respBody.Reason = reasonMsg
-	bb, _ := json.Marshal(respBody)
-	res.Header().Set("Content-Type", "application/json; charset=utf-8")
-	res.WriteHeader(statusCode)
-	_, _ = res.Write(bb)
+// ErrorJSON writes the provided error as a JSON body to the provided
+// http.ResponseWriter, after setting the appropriate Content-Type header
+func ErrorJSON(w http.ResponseWriter, error string, code int) {
+	body, _ := json.Marshal(
+		ServerErrMessage{
+			Reason: error,
+		},
+	)
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(code)
+	_, _ = w.Write(body)
 }

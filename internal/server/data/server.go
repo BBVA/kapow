@@ -38,7 +38,7 @@ func configRouter(rs []routeSpec) (r *mux.Router) {
 	r.HandleFunc(
 		"/handlers/{handlerID}/{resource:.*}",
 		func(w http.ResponseWriter, r *http.Request) {
-			srverrors.WriteErrorResponse(http.StatusBadRequest, "Invalid Resource Path", w)
+			srverrors.ErrorJSON(w, "Invalid Resource Path", http.StatusBadRequest)
 		})
 	return r
 }

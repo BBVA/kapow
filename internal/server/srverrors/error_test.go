@@ -10,31 +10,31 @@ import (
 	"github.com/BBVA/kapow/internal/server/srverrors"
 )
 
-func TestWriteErrorResponseSetsAppJsonContentType(t *testing.T) {
+func TestErrorJSONSetsAppJsonContentType(t *testing.T) {
 	w := httptest.NewRecorder()
 
-	srverrors.WriteErrorResponse(0, "Not Important Here", w)
+	srverrors.ErrorJSON(w, "Not Important Here", 0)
 
 	if v := w.Result().Header.Get("Content-Type"); v != "application/json; charset=utf-8" {
 		t.Errorf("Content-Type header mismatch. Expected: %q, got: %q", "application/json; charset=utf-8", v)
 	}
 }
 
-func TestWriteErrorResponseSetsRequestedStatusCode(t *testing.T) {
+func TestErrorJSONSetsRequestedStatusCode(t *testing.T) {
 	w := httptest.NewRecorder()
 
-	srverrors.WriteErrorResponse(http.StatusGone, "Not Important Here", w)
+	srverrors.ErrorJSON(w, "Not Important Here", http.StatusGone)
 
 	if v := w.Result().StatusCode; v != http.StatusGone {
 		t.Errorf("Status code mismatch. Expected: %d, got: %d", http.StatusGone, v)
 	}
 }
 
-func TestWriteErrorResponseSetsBodyCorrectly(t *testing.T) {
+func TestErrorJSONSetsBodyCorrectly(t *testing.T) {
 	expectedReason := "Something Not Found"
 	w := httptest.NewRecorder()
 
-	srverrors.WriteErrorResponse(http.StatusNotFound, expectedReason, w)
+	srverrors.ErrorJSON(w, expectedReason, http.StatusNotFound)
 
 	errMsg := srverrors.ServerErrMessage{}
 	if bodyBytes, err := ioutil.ReadAll(w.Result().Body); err != nil {
