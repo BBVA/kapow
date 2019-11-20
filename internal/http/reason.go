@@ -21,18 +21,9 @@ import (
 	"errors"
 	"io/ioutil"
 	"net/http"
-	"strings"
 
 	"github.com/BBVA/kapow/internal/server/srverrors"
 )
-
-// GetReason returns the reason phrase part of an HTTP response
-func GetReason(r *http.Response) string {
-	if i := strings.IndexByte(r.Status, ' '); i != -1 {
-		return r.Status[i+1:]
-	}
-	return ""
-}
 
 // GetReasonFromBody returns the reason phrase embedded within the JSON error
 // body, or an error if no reason can be extracted
