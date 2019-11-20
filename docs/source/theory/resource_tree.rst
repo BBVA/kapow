@@ -17,36 +17,35 @@ Overview
 
 .. code-block:: plain
 
-    /                               The root of the resource paths tree
+    /
     │
-    ├─ request                      All information related to the HTTP request.  Read-Only
+    ├─ request
     │  ├──── method                 Used HTTP Method (GET, POST)
     │  ├──── host                   Host part of the URL
     │  ├──── path                   Complete URL path (URL-unquoted)
-    │  ├──── matches                Previously matched URL path parts
-    │  │     └──── <name>
-    │  ├──── params                 URL parameters (after the "?" symbol)
-    │  │     └──── <name>
-    │  ├──── headers                HTTP request headers
-    │  │     └──── <name>
-    │  ├──── cookies                HTTP request cookie
-    │  │     └──── <name>
-    │  ├──── form                   Form-urlencoded form fields (names only)
+    │  ├──── matches
+    │  │     └──── <name>           Previously matched URL path parts
+    │  ├──── params
+    │  │     └──── <name>           URL parameters (after the "?" symbol)
+    │  ├──── headers
+    │  │     └──── <name>           HTTP request headers
+    │  ├──── cookies
+    │  │     └──── <name>           HTTP request cookie
+    │  ├──── form
     │  │     └──── <name>           Value of the form field with name <name>
-    │  ├──── files                  Files uploaded via multi-part form fields (names only)
+    │  ├──── files
     │  │     └──── <name>
-    │  │           └──── filename   Original file name
-    │  │           └──── content    The file content
+    │  │           └──── filename   Original file name of the file uploaded in the form field <name>
+    │  │           └──── content    The contents of the file uploaded in the form field <name>
     │  └──── body                   HTTP request body
     │
-    └─ response                     All information related to the HTTP request.  Write-Only
-      ├──── status                 HTTP status code
-      ├──── headers                HTTP response headers
-      │     └──── <name>
-      ├──── cookies                HTTP request cookie
-      │     └──── <name>
-      ├──── body                   Response body.  Mutually exclusive with response/stream
-      └──── stream                 Alias for /response/body
+    └─ response
+      ├──── status                  HTTP status code
+      ├──── headers
+      │     └──── <name>            HTTP response headers
+      ├──── cookies
+      │     └──── <name>            HTTP request cookie
+      └──── body                    Response body
 
 Resources
 ---------
