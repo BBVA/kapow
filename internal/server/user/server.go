@@ -23,10 +23,12 @@ import (
 	"github.com/BBVA/kapow/internal/server/user/mux"
 )
 
+// Server is a singleton that stores the http.Server for the user package
 var Server = http.Server{
 	Handler: mux.New(),
 }
 
+// Run finishes configuring Server and runs ListenAndServe on it
 func Run(bindAddr string) {
 	Server = http.Server{
 		Addr:    bindAddr,

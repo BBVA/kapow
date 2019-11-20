@@ -28,6 +28,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// Constants for error reasons
 const (
 	ResourceItemNotFound = "Resource Item Not Found"
 	NonIntegerValue      = "Non Integer Value"

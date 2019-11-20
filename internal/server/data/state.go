@@ -27,8 +27,10 @@ type safeHandlerMap struct {
 	m  *sync.RWMutex
 }
 
+// Singleton containing all current handlers as a safeHandlerMap
 var Handlers = New()
 
+// New creates a read-to-use safeHandlerMap
 func New() safeHandlerMap {
 	return safeHandlerMap{
 		hs: make(map[string]*model.Handler),

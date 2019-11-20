@@ -8,6 +8,8 @@ import (
 	"strings"
 )
 
+// An Output represents the execution context,
+// meaning the command line and the environment
 type Output struct {
 	Cmdline []string          `json:"cmdline"`
 	Env     map[string]string `json:"env"`
