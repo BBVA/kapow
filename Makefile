@@ -1,7 +1,8 @@
 .PHONY: lint build test jaillover race coverage install acceptance deps docker
 
 GOCMD=go
-GOBUILD=$(GOCMD) build
+GOBUILD=$(GOCMD) build -trimpath
+GOINSTALL=$(GOCMD) install -trimpath
 GOGET=$(GOCMD) get
 GOTEST=$(GOCMD) test
 GOTOOL=$(GOCMD) tool
@@ -39,7 +40,7 @@ coverage: test race
 	$(GOTOOL) cover -html=$(TMP_DIR)/c.out -o $(OUTPUT_DIR)/coverage.html
 
 install: build
-	CGO_ENABLED=0 go install ./...
+	CGO_ENABLED=0 $(GOINSTALL) ./...
 
 acceptance: install
 	make -C ./spec/test
