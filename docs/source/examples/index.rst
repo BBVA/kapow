@@ -374,8 +374,8 @@ In this example we'll redirect our users to Google:
     * Connection #0 to host localhost left intact
 
 
-How to execute two processes parallel
-+++++++++++++++++++++++++++++++++++++
+How to execute two processes in parallel
+++++++++++++++++++++++++++++++++++++++++
 
 We want to samp:`ping` two machines parallel. Kapow! get IPs from query params:
 
@@ -398,4 +398,3 @@ Calling with curl:
 
 Manage cookies
 ++++++++++++++
-

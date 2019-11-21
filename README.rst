@@ -21,7 +21,7 @@ share programming language.  Ye be warned.
 What is it?
 ===========
 
-Kapow! is an adapter between the world of Pure UNIX® Shell and a HTTP service.
+Kapow! is an adapter between the world of Pure UNIX® Shell and an HTTP service.
 
 Some tasks are more convenient in the shell, like cloud interactions, or some
 administrative tools.  On the other hand, some tasks are more convenient as a
