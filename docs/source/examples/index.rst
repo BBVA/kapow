@@ -384,8 +384,8 @@ We want to samp:`ping` two machines parallel. Kapow! get IPs from query params:
 
     $ cat parallel.pow
     kapow route add /parallel/{ip1}/{ip2} - <<-'EOF'
-        ping -c 1 $(kapow get /request/matches/ip1) | kapow set /response/body &
-        ping -c 1 $(kapow get /request/matches/ip2) | kapow set /response/body &
+        ping -c 1 "$(kapow get /request/matches/ip1)" | kapow set /response/body &
+        ping -c 1 "$(kapow get /request/matches/ip2)" | kapow set /response/body &
         wait
     EOF
 
