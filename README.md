@@ -8,7 +8,7 @@ Kapow!
 [![Test status](https://circleci.com/gh/BBVA/kapow/tree/master.svg?style=svg)](https://circleci.com/gh/BBVA/kapow/tree/master)
 [![Go Report](https://goreportcard.com/badge/github.com/bbva/kapow)](https://goreportcard.com/report/github.com/bbva/kapow)
 
-|Section         |                   |
+|Section         | Info                                           |
 |----------------|------------------------------------------------|
 |Project site    | https://github.com/BBVA/kapow                  |
 |Issues          | https://github.com/BBVA/kapow/issues/          |
