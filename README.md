@@ -62,7 +62,7 @@ Here you can find the complete documentation and examples [here](https://kapow.r
 
 Kapow! is being developed by BBVA-Labs Security team members:
 
-- Roberto Martinez
+- Roberto Abdelkader Martínez Pérez
 - Hector Hurtado
 - César Gallego
 - pancho horrillo
