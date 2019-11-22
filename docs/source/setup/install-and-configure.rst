@@ -9,7 +9,7 @@ options
 Download and install a binary
 -----------------------------
 
-Binaries for several platforms are availables from our
+Binaries for several platforms are available from our
 `releases <https://github.com/BBVA/kapow/releases>`_ section, visit the latest
 release page and download the binary corresponding to the platfom and
 architecture you want to install Kapow! in.
@@ -22,7 +22,7 @@ Install the downloaded binary using the following command as a privileged user.
 
 .. code-block:: bash
 
-    install -t /usr/local/bin path_to_downloaded_binary
+  $ install -t /usr/local/bin path_to_downloaded_binary
 
 
 Windows
@@ -40,7 +40,7 @@ the go runtime in the host where you want to run Kapow!, simply run:
 
 .. code-block:: bash
 
-    go get -u github.com/BBVA/kapow
+  $ go get -u github.com/BBVA/kapow
 
 
 Include Kapow! in your container image
@@ -63,6 +63,21 @@ Kapow!.
   ENTRYPOINT ["/usr/bin/kapow"]
 
 If the container is intended to run the server and you want to dinamically
-configure it, remember to include a --contorl-bind param with an external bind
+configure it, remember to include a --control-bind param with an external bind
 address (i.e. 0.0.0.0) and to map all the needed ports in order to get access
-to the control interfgace.
+to the control interface.
+
+After building the image you can run the container with:
+
+.. code-block:: bash
+
+  $ docker run --rm -i -p 8080:8080 kapow:latest server < whatever.pow
+
+
+
+
+
+
+
+
+kapow route add /hello/{who} -c 'echo Hello $(kapow get /request/matches/who) | kapow set /response/body'
