@@ -2,32 +2,61 @@ Request Life Cycle
 ==================
 
 This section describes the sequence of events happening for each request
-answered by the User HTTP Interface.
+answered by the `User HTTP Interface`.
 
-#. The user makes a request to the User HTTP Interface
+.. image:: ../_static/request_life_cycle.png
 
-#. The request is matched against the route table
 
-#. Kapow! provides a `HANDLER_ID` to identify this request
+1. request
+----------
 
-#. Kapow! spawns the binary specified as entrypoint in the matching route
+The user makes a request to the `User HTTP Interface`.
 
-   The default entrypoint is /bin/sh; we'll explain this workflow for now.
+- The request is matched against the route table
 
-   The spawned entrypoint is run with the following variables added to its environment:
+- ``kapow`` provides a `HANDLER_ID` to identify this request and don't mix it
+  with other requests that could be running concurrently.
 
-   - ``KAPOW_HANDLER_ID``: Containing the `HANDLER_ID`
-   - ``KAPOW_DATAAPI_URL``: With the URL of the `data interface`
-   - ``KAPOW_CONTROLAPI_URL``: With the URL of the `control interface`
+2. spawn
+--------
 
-#.  During the lifetime of the shell, the request and response resources are available via these commands:
+``kapow`` spawns the executable specified as entrypoint in the matching
+route.
 
-   - ``kapow get /request/...``
-   - ``kapow set /response/...``
+The default entrypoint is ``/bin/sh``; we'll explain this workflow for now.
 
-   These commands use the aforementioned environment variables to read
-   data of the user request and to write the response.
+The spawned entrypoint is run with the following variables added to its
+environment:
 
-TODO: link to resource tree
+- ``KAPOW_HANDLER_ID``: Containing the `HANDLER_ID`
+- ``KAPOW_DATAAPI_URL``: With the URL of the `Data HTTP Interface`
+- ``KAPOW_CONTROLAPI_URL``: With the URL of the `Control HTTP Interface`
 
-#. When the shell dies, Kapow! finalizes the original request
+3. ``kapow set /response/body banana``
+--------------------------------------
+
+During the lifetime of the shell, the request and response resources are
+available via these commands:
+
+- ``kapow get /request/...``
+
+- ``kapow set /response/...``
+
+These commands use the aforementioned environment variables to read data
+from the user request and to write the response.  They accept data
+either as arguments or from ``stdin``.
+
+4. exit
+-------
+
+The shell dies.
+
+5. response
+-----------
+
+``kapow`` finalizes the original request.
+
+
+.. todo::
+
+   link to resource tree

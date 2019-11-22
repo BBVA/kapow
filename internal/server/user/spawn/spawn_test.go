@@ -104,8 +104,8 @@ func TestSpawnSetsKapowURLEnvVar(t *testing.T) {
 	_ = Spawn(h, out)
 
 	jldata := decodeJailLover(out.Bytes())
-	if v, ok := jldata.Env["KAPOW_URL"]; !ok || v != "http://localhost:8081" {
-		t.Error("KAPOW_URL is not set properly")
+	if v, ok := jldata.Env["KAPOW_DATA_URL"]; !ok || v != "http://localhost:8082" {
+		t.Error("KAPOW_DATA_URL is not set properly")
 	}
 }
 
