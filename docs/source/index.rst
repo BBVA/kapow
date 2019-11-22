@@ -20,8 +20,8 @@
    theory/philosophy
    theory/request_life_cycle
    theory/resource_tree
+   theory/route_matching
    theory/routes
-
 
 
 Indices and tables
