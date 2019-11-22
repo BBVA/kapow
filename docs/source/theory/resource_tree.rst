@@ -50,8 +50,8 @@ Overview
 Resources
 ---------
 
-``/request/method``
-~~~~~~~~~~~~~~~~~~~
+``/request/method`` Resource
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The HTTP method of the incoming request.
 
@@ -71,8 +71,8 @@ then, when handling the request:
    POST
 
 
-``/request/host``
-~~~~~~~~~~~~~~~~~
+``/request/host`` Resource
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The ``Host`` header as defined in the HTTP/1.1 spec of the incoming
 request.
@@ -93,8 +93,8 @@ then, when handling the request:
    kapow.example
 
 
-``/request/path``
-~~~~~~~~~~~~~~~~~
+``/request/path`` Resource
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Contains the path substring of the URL.
 
@@ -113,8 +113,8 @@ then, when handling the request:
    $ kapow get /request/path
    /foo/bar
 
-``/request/matches/<name>``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``/request/matches/<name>`` Resource
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Contains the part of the URL captured by the pattern ``name``.
 
@@ -139,8 +139,8 @@ then, when handling the request:
    $ kapow get /request/matches/mymatch
    1234
 
-``/request/params/<name>``
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+``/request/params/<name>`` Resource
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Contains the value of the URL parameter ``name``
 
@@ -160,8 +160,8 @@ then, when handling the request:
    myparam
 
 
-``/request/headers/<name>``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``/request/headers/<name>`` Resource
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Contains the value of the HTTP header ``name`` of the incoming request.
 
@@ -181,8 +181,8 @@ then, when handling the request:
    Bar
 
 
-``/request/cookies/<name>``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``/request/cookies/<name>`` Resource
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Contains the value of the HTTP cookie ``name`` of the incoming request.
 
@@ -201,8 +201,8 @@ then, when handling the request:
    $ kapow get /request/cookies/MYCOOKIE
    Bar
 
-``/request/form/<name>``
-~~~~~~~~~~~~~~~~~~~~~~~~
+``/request/form/<name>`` Resource
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Contains the value of the field ``name`` of the incoming request.
 
@@ -222,8 +222,8 @@ then, when handling the request:
    foo
 
 
-``/request/files/<name>/filename``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``/request/files/<name>/filename`` Resource
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Contains the name of the file uploaded through the incoming request.
 
@@ -243,8 +243,8 @@ then, when handling the request:
    filename.txt
 
 
-``/request/files/<name>/content``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``/request/files/<name>/content`` Resource
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Contents of the file that is being uploaded in the incoming request.
 
@@ -264,8 +264,8 @@ then, when handling the request:
    ...filename.txt contents...
 
 
-``/request/body``
-~~~~~~~~~~~~~~~~~
+``/request/body`` Resource
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Raw contents of the incoming request HTTP body.
 
@@ -285,8 +285,8 @@ then, when handling the request:
    foobar
 
 
-``/response/status``
-~~~~~~~~~~~~~~~~~~~~
+``/response/status`` Resource
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Contains the status code given in the user response.
 
@@ -301,8 +301,8 @@ If during the request handling:
 then the response will have the status code ``418 I am a Teapot``.
 
 
-``/response/headers/<name>``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``/response/headers/<name>`` Resource
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Contains the value of the header ``name`` in the user response.
 
@@ -318,8 +318,8 @@ then the response will contain an HTTP header named ``X-My-Header`` with
 value ``Foo``.
 
 
-``/response/cookies/<name>``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``/response/cookies/<name>`` Resource
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Contains the value of the cookie ``name`` that will be set to the user
 response.
@@ -337,8 +337,8 @@ then the response will set the cookie ``MYCOOKIE`` to the user in
 following requests.
 
 
-``/response/body``
-~~~~~~~~~~~~~~~~~~
+``/response/body`` Resource
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Contains the value of the response HTTP body.
 
