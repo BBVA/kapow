@@ -23,6 +23,11 @@
    theory/route_matching
    theory/routes
 
+.. toctree::
+   :maxdepth: 2
+   :caption: Tutorial
+
+   tutorial/_brianstorm
 
 Indices and tables
 ==================
