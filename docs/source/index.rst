@@ -20,6 +20,7 @@
    theory/philosophy
    theory/request_life_cycle
    theory/resource_tree
+   theory/routes
 
 
 
