@@ -6,9 +6,9 @@ If you can script it, you can HTTP it.
 
 [![Test status](https://circleci.com/gh/BBVA/kapow/tree/master.svg?style=svg)](https://circleci.com/gh/BBVA/kapow/tree/master)
 [![Go Report](https://goreportcard.com/badge/github.com/bbva/kapow)](https://goreportcard.com/report/github.com/bbva/kapow)
-[![Open Issues](https://github.com/BBVA/kapow/issues/)](https://img.shields.io/github/issues/BBVA/kapow)
-[![Documentation](https://kapow.readthedocs.io)](https://img.shields.io/readthedocs/kapow)
-[![Current Version](https://github.com/BBVA/kapow/releases)](https://img.shields.io/github/v/release/BBVA/kapow?include_prereleases)
+[![Open Issues](https://img.shields.io/github/issues/BBVA/kapow)](https://github.com/BBVA/kapow/issues/)
+[![Documentation](https://img.shields.io/readthedocs/kapow)](https://kapow.readthedocs.io)
+[![Current Version](https://img.shields.io/github/v/release/BBVA/kapow?include_prereleases)](https://github.com/BBVA/kapow/releases)
 
 
 ## What's Kapow!
