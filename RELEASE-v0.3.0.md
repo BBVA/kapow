@@ -1,4 +1,4 @@
-# v0.3.0
+Kapow v0.3.0
 
 ## Features
 
