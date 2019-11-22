@@ -225,6 +225,13 @@ Testing with curl:
 Modify JSON by using shell
 ++++++++++++++++++++++++++
 
+.. note::
+
+    Nowadays webservices are json based so making your script json aware is probably a good choice. In order to be able to extract data from and compose json documents from a script you can use
+    `jq <https://https://stedolan.github.io/jq/>`_.
+
+**Example 1**
+
 In this example our Kapow! service will receive a JSON value with an incorrect date, then our .pow file will fix then and return the correct value to the user.
 
 .. code-block:: console
@@ -246,8 +253,39 @@ Call service with curl:
       "incorrectDate": "2019-11-22_10-42-06"
    }
 
+**Example 2**
+
+In this example we extract the name field from the incoming json document in order to generate a two attribute json response.
+
+.. code-block:: console
+
+   $ cat echo-attribute.pow
+   kapow route add -X POST '/echo-attribute' - <<-'EOF'
+      JSON_WHO=$(kapow get /request/body | jq -r .name)
+
+      kapow set /response/headers/Content-Type "application/json"
+      kapow set /response/status 200
+
+      jq --arg greet "Hello" --arg value "${JSON_WHO:-World}" -n \{greet:\$greet\,to:\$value\} | kapow set /response/body
+
+   EOF
+
+Call service with curl:
+
+.. code-block:: console
+   :linenos:
+   :emphasize-lines: 4
+
+   $ curl -X POST http://localhost:8080/echo-attribute -H "Content-Type: application/json" -d '{"name": "MyName"}'
+   {
+     "greet": "Hello",
+     "to": "MyName"
+   }
+
 Upload files
 ++++++++++++
+
+**Example 1**
 
 Upload a file using Kapow! is very simple:
 
@@ -266,6 +304,36 @@ Upload a file using Kapow! is very simple:
    {"hello": "world"}
    $  curl	-X POST -H "Content-Type: multipart/form-data" -F "data=@results.json" http://localhost:8080/upload-file
    {"hello": "world"}
+
+**Example 2**
+
+In this example we respond back with the line count of the file received in the request:
+
+.. code-block:: console
+   :linenos:
+
+   $ cat count-file-lines.pow
+   kapow route add -X POST '/count-file-lines' - <<-'EOF'
+
+      # Get sent file
+      FNAME="$(kapow get /request/files/myfile/filename)"
+
+      # Counting file lines
+      LCOUNT="$(kapow get /request/files/myfile/content | wc -l)"
+
+      kapow set /response/status 200
+
+      echo "$FNAME has $LCOUNT lines" | kapow set /response/body
+   EOF
+
+.. code-block:: console
+   :linenos:
+
+   $ cat file.txt
+   hello
+   World
+   $ curl -F "myfile=@file.txt" http://localhost:8080/count-file-lines
+   file.txt has        2 lines
 
 Protecting again Command Injection Attacks
 ++++++++++++++++++++++++++++++++++++++++++
@@ -444,8 +512,3 @@ Calling with curl:
    <
    Ok
    * Connection #0 to host localhost left intact
-
-TODO:
-+ QUITAR LOS COMMAND IJECTIONS
-+ corregir los :samp:
-- negritas
