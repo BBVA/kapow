@@ -25,22 +25,28 @@ Say you have nice cozy **shell command** that solves a problem for you. Kapow! l
 
 We want to expose **log entries** for files not found on our **Apache Web Server**, as an HTTP API. With Kapow! we just need to write this file: 
 
-    [apache-host]$ cat search-apache-errors.pow
-    kapow route add /apache-errors - <<-'EOF'
-       cat /var/log/apache2/access.log | grep "File does not exist" | kapow set /response/body
-    EOF
+```bash
+[apache-host]$ cat search-apache-errors.pow
+kapow route add /apache-errors - <<-'EOF'
+   cat /var/log/apache2/access.log | grep "File does not exist" | kapow set /response/body
+EOF
+```
     
 and then, run it using Kapow!
 
-    [apache-host]$ kapow server --bind 0.0.0.0:8080 search-apache-errors.pow
+```bash
+[apache-host]$ kapow server --bind 0.0.0.0:8080 search-apache-errors.pow
+```
 
 finally, we can read from the just-defined endpoint:
 
-    [another-host]$ curl http://apache-host:8080/apache-errors
-    [Fri Feb 01 22:07:57.154391 2019] [core:info] [pid 7:tid 140284200093440] [client 172.17.0.1:50756] AH00128: File does not exist: /usr/var/www/mysite/favicon.ico
-    [Fri Feb 01 22:07:57.808291 2019] [core:info] [pid 8:tid 140284216878848] [client 172.17.0.1:50758] AH00128: File does not exist: /usr/var/www/mysite/favicon.ico
-    [Fri Feb 01 22:07:57.878149 2019] [core:info] [pid 8:tid 140284208486144] [client 172.17.0.1:50758] AH00128: File does not exist: /usr/var/www/mysite/favicon.ico
-    ...
+```bash
+[another-host]$ curl http://apache-host:8080/apache-errors
+[Fri Feb 01 22:07:57.154391 2019] [core:info] [pid 7:tid 140284200093440] [client 172.17.0.1:50756] AH00128: File does not exist: /usr/var/www/mysite/favicon.ico
+[Fri Feb 01 22:07:57.808291 2019] [core:info] [pid 8:tid 140284216878848] [client 172.17.0.1:50758] AH00128: File does not exist: /usr/var/www/mysite/favicon.ico
+[Fri Feb 01 22:07:57.878149 2019] [core:info] [pid 8:tid 140284208486144] [client 172.17.0.1:50758] AH00128: File does not exist: /usr/var/www/mysite/favicon.ico
+...
+```
 
 **Why Kapow! shines in these cases**
 
