@@ -8,26 +8,12 @@ Kapow!
 [![Test status](https://circleci.com/gh/BBVA/kapow/tree/master.svg?style=svg)](https://circleci.com/gh/BBVA/kapow/tree/master)
 [![Go Report](https://goreportcard.com/badge/github.com/bbva/kapow)](https://goreportcard.com/report/github.com/bbva/kapow)
 
-.. image:: https://trello-attachments.s3.amazonaws.com/5c824318411d973812cbef67/5ca1af818bc9b53e31696de3/f51eb40412bf09c8c800511d7bbe5634/kapow-1601675_480.png
-    :alt: Kapow!
-
-.. image:: https://circleci.com/gh/BBVA/kapow/tree/master.svg?style=svg
-    :target: https://circleci.com/gh/BBVA/kapow/tree/master
-
-.. image:: https://goreportcard.com/badge/github.com/bbva/kapow
-    :target: https://goreportcard.com/report/github.com/bbva/kapow
-
-+----------------+------------------------------------------------+
 |Project site    | https://github.com/BBVA/kapow                  |
-+----------------+------------------------------------------------+
+|----------------|------------------------------------------------|
 |Issues          | https://github.com/BBVA/kapow/issues/          |
-+----------------+------------------------------------------------+
 |Documentation   | https://kapow.readthedocs.io                   |
-+----------------+------------------------------------------------+
 |Author          | BBVA Innovation Labs                           |
-+----------------+------------------------------------------------+
 |Latest Version  | v0.3.0                                         |
-+----------------+------------------------------------------------+
 
 What's Kapow!
 -------------
