@@ -16,12 +16,11 @@ Kapow!
 |Latest Version  | v0.3.0                                         |
 
 
-What's Kapow!
--------------
+# What's Kapow!
 
 Say you have nice cozy **shell command** that solves a problem for you. Kapow! let us easily **turn that into an HTTP API**. 
 
-**Let's explain this with an example**
+## Let's see this with an example
 
 We want to expose **log entries** for files not found on our **Apache Web Server**, as an HTTP API. With Kapow! we just need to write this file: 
 
@@ -48,19 +47,17 @@ finally, we can read from the just-defined endpoint:
 ...
 ```
 
-**Why Kapow! shines in these cases**
+## Why Kapow! shines in these cases
 
 - We can share information without having grant SSH access to anybody.
 - We want to limit what is executed.
 - We can share information easily over HTTP. 
 
-Documentation
--------------
+# Documentation
 
 Here you can find the complete documentation [here](https://kapow.readthedocs.io)
 
-Authors
--------
+# Authors
 
 Kapow! is being developed by BBVA-Labs Security team members:
 
@@ -71,7 +68,6 @@ Kapow! is being developed by BBVA-Labs Security team members:
 
 Kapow! is Open Source Software and available under the [Apache 2 license](https://raw.githubusercontent.com/BBVA/kapow/master/LICENSE).
 
-Contributions
--------------
+# Contributions
 
 Contributions are of course welcome. See [CONTRIBUTING](https://raw.githubusercontent.com/BBVA/kapow/blob/master/CONTRIBUTING.rst) or skim existing tickets to see where you could help out.
