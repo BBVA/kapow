@@ -15,131 +15,57 @@ Kapow!
 |Author          | BBVA Innovation Labs                           |
 |Latest Version  | v0.3.0                                         |
 
+
 What's Kapow!
 -------------
 
+Say you have nice cozy **shell command** that solves a problem for you. Kapow! let us easily **turn that into an HTTP API**. 
 
+**Let's explain this with an example**
 
+We want to expose **log entries** for files not found on our **Apache Web Server**, as an HTTP API. With Kapow! we just need to write this file: 
 
-CAVEAT EMPTOR
-=============
+    [apache-host]$ cat search-apache-errors.pow
+    kapow route add /apache-errors - <<-'EOF'
+       cat /var/log/apache2/access.log | grep "File does not exist" | kapow set /response/body
+    EOF
+    
+and then, run it using Kapow!
 
-**Warning!!! Kapow!** is under **heavy development** and `specification </spec>`_;
-the provided code is a Proof of Concept and the final version will not even
-share programming language.  Ye be warned.
+    [apache-host]$ kapow server --bind 0.0.0.0:8080 search-apache-errors.pow
 
+finally, we can read from the just-defined endpoint:
 
-What is it?
-===========
+    [another-host]$ curl http://apache-host:8080/apache-errors
+    [Fri Feb 01 22:07:57.154391 2019] [core:info] [pid 7:tid 140284200093440] [client 172.17.0.1:50756] AH00128: File does not exist: /usr/var/www/mysite/favicon.ico
+    [Fri Feb 01 22:07:57.808291 2019] [core:info] [pid 8:tid 140284216878848] [client 172.17.0.1:50758] AH00128: File does not exist: /usr/var/www/mysite/favicon.ico
+    [Fri Feb 01 22:07:57.878149 2019] [core:info] [pid 8:tid 140284208486144] [client 172.17.0.1:50758] AH00128: File does not exist: /usr/var/www/mysite/favicon.ico
+    ...
 
-Kapow! is an adapter between the world of Pure UNIX® Shell and an HTTP service.
+**Why Kapow! shines in these cases**
 
-Some tasks are more convenient in the shell, like cloud interactions, or some
-administrative tools.  On the other hand, some tasks are more convenient as a
-service, like DevSecOps tooling.
+- We can share information without having grant SSH access to anybody.
+- We want to limit what is executed.
+- We can share information easily over HTTP. 
 
-Kapow! lies between these two worlds, making your life easier.  Maybe you wonder
-about how this kind of magic can happen; if you want to know the nitty-gritty
-details, just read our `specification </spec>`_;.  Or, if you want to know how
-Kapow! can help you first, let's start with a common situation.
+Documentation
+-------------
 
-Think about that awesome command that you use every day, something very
-familiar, like ``cloudx storage ls /backups``.  Then someone asks you for an
-specific backup, so you ``ssh`` into the host, execute your command, possibly
-``grepping`` through its output, copy the result and send it back to him.
-And that's fine... for the 100 first times.
+Here you can find the complete documentation [here](https://kapow.readthedocs.io)
 
-Then you decide, let's use an API for this and generate an awesome web server
-with it.  So, you create a project, manage its dependencies, code the server,
-parse the request, learn how to use the API, call the API and deploy it
-somewhere.  And that's fine... until you find yourself again in the same
-situation with another awesome command.
+Authors
+-------
 
-The awesomeness of UNIX® commands is infinite, so you'll be in this situation
-an infinite number of times!  Instead, let's put Kapow! into action.
+Kapow! is being developed by BBVA-Labs Security team members:
 
-With Kapow! you just need to create a ``.pow`` file named ``backups.pow`` that
-contains:
+- Roberto Martinez
+- Hector Hurtado
+- César Gallego
+- pancho horrillo
 
-.. code-block:: sh
+Kapow! is Open Source Software and available under the [Apache 2 license](https://raw.githubusercontent.com/BBVA/kapow/master/LICENSE).
 
-    kapow route add /backups \
-        -c 'cloudx storage ls /backups | grep "$(kapow get /request/params/query)" | kapow set /response/body'
+Contributions
+-------------
 
-and execute it in the remote host with the command:
-
-.. code-block:: sh
-
-    kapow server backups.pow
-
-and that's it.  Done.  You have a web server that people can use to request
-their backups every time they need only by invoking the URL
-`http://remotehost/backups?query=project`
-
-Do you like it? yes?  Then let's start learning a little more, you can access
-the `documentation </doc>`_; section to find installation instructions and some
-examples.
-
-
-
-
-
-
-
-How it was born
----------------
-
-Some awesome history is coming.
-
-
-Kapow! for the impatient
-========================
-
-When you need to **share** a ``command`` but **not** a complete remote ``ssh
-access``, Kapow!  will help you with the power of HTTP:
-
-.. image:: https://trello-attachments.s3.amazonaws.com/5c824318411d973812cbef67/5ca1af818bc9b53e31696de3/784a183fba3f24872dd97ee28e765922/Kapow!.png
-    :alt: Where Kapow! lives
-
-Kapow! allows you to write a litte script that will **serve an executable as REST
-service**.  This script will let you define how to connect HTTP and the  Shell
-using Kapow!'s shell abstractions to the HTTP world. See it to believe:
-
-.. image:: resources/kapow.gif?raw=true
-    :alt: Kapow! in action
-
-
-Superpowers
------------
-
-Kapow! gives you:
-
-* A very simple way to turn any shell **executable into an API**
-* A **remote administration** API
-* A way to define the integration in you own terms, obligations-free!
-
-
-Curses
-------
-
-Kapow! can't help when:
------------------------
-
-* You need high throughput: Kapow! spawns a new executable for every HTTP call
-* You must perform complex logic to attend the request: never use Kapow! if
-  your executables don't perform al least 90% of the hard work
-* You are building a huge application
-
-
-When it is your best friend:
-----------------------------
-
-* Easy command + Hard API = Kapow! to the rescue
-* SSH for one command?  Kapow! allows you to share only that command
-* Remote instrumentation of several machines?  Make it easy with Kapow!
-
-
-The more you know
-=================
-
-If you want to know more, please follow our `documentation </doc>`_.
+Contributions are of course welcome. See [CONTRIBUTING](https://raw.githubusercontent.com/BBVA/kapow/blob/master/CONTRIBUTING.rst) or skim existing tickets to see where you could help out.
