@@ -344,6 +344,8 @@ Contains the value of the response HTTP body.
 
 **Sample Usage**
 
+If during the request handling:
+
 .. code-block:: bash
 
    $ kapow set /response/body foobar
