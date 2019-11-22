@@ -4,5 +4,5 @@ Sorted by name length:
 - César Gallego
 - Hector Hurtado
 - pancho horrillo
-- Daniel Hernández
+- Daniel García (cr0hn)
 - Roberto Abdelkader Martínez Pérez
