@@ -1,7 +1,6 @@
-Kapow!
-======
+# Kapow!
 
-**Kapow!** If you can script it, you can HTTP it.
+If you can script it, you can HTTP it.
 
 ![Kapow! Logo](https://raw.githubusercontent.com/BBVA/kapow/master/docs/source/_static/logo-200px.png)
 
@@ -16,22 +15,27 @@ Kapow!
 |Author          | BBVA Innovation Labs                           |
 |Latest Version  | v0.3.0                                         |
 
+----
 
-# What's Kapow!
 
-Say you have nice cozy **shell command** that solves a problem for you. Kapow! let us easily **turn that into an HTTP API**. 
+## What's Kapow!
 
-## Let's see this with an example
+Say we have a nice cozy **shell command** that solves our problem. Kapow! lets
+us easily **turn that into an HTTP API**.
 
-We want to expose **log entries** for files not found on our **Apache Web Server**, as an HTTP API. With Kapow! we just need to write this file: 
+
+### Let's see this with an example
+
+We want to expose **log entries** for files not found on our **Apache Web
+Server**, as an HTTP API.  With Kapow! we just need to write this file:
 
 ```bash
 [apache-host]$ cat search-apache-errors.pow
 kapow route add /apache-errors - <<-'EOF'
-   cat /var/log/apache2/access.log | grep "File does not exist" | kapow set /response/body
+    cat /var/log/apache2/access.log | grep 'File does not exist' | kapow set /response/body
 EOF
 ```
-    
+
 and then, run it using Kapow!
 
 ```bash
@@ -48,27 +52,35 @@ finally, we can read from the just-defined endpoint:
 ...
 ```
 
-## Why Kapow! shines in these cases
+### Why Kapow! shines in these cases
 
-- We can share information **without having grant SSH access** to anybody.
-- We want to **limit** what is executed.
-- We can share information easily **over HTTP**. 
+- We can share information **without having to grant SSH access** to anybody.
+- We can share information easily **over HTTP**.
+- We can **limit** what is executed.
 
-# Documentation
 
-Here you can find the complete documentation and examples [here](https://kapow.readthedocs.io)
+## Documentation
 
-# Authors
+You can find the complete documentation and examples
+[here](https://kapow.readthedocs.io).
 
-Kapow! is being developed by BBVA-Labs Security team members:
 
-- Roberto Abdelkader Martínez Pérez
-- Hector Hurtado
+## Authors
+
+Kapow! is being developed by BBVA-Labs Security team members, sorted by name length:
+
 - César Gallego
+- Hector Hurtado
 - pancho horrillo
+- Daniel Hernández
+- Roberto Abdelkader Martínez Pérez
 
-Kapow! is Open Source Software and available under the [Apache 2 license](https://raw.githubusercontent.com/BBVA/kapow/master/LICENSE).
+Kapow! is Open Source Software and available under the [Apache 2
+license](https://raw.githubusercontent.com/BBVA/kapow/master/LICENSE).
 
-# Contributions
 
-Contributions are of course welcome. See [CONTRIBUTING](https://raw.githubusercontent.com/BBVA/kapow/blob/master/CONTRIBUTING.rst) or skim existing tickets to see where you could help out.
+## Contributions
+
+Contributions are of course welcome. See
+[CONTRIBUTING](https://raw.githubusercontent.com/BBVA/kapow/blob/master/CONTRIBUTING.rst)
+or skim existing tickets to see where you could help out.
