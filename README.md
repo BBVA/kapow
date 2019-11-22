@@ -6,16 +6,9 @@ If you can script it, you can HTTP it.
 
 [![Test status](https://circleci.com/gh/BBVA/kapow/tree/master.svg?style=svg)](https://circleci.com/gh/BBVA/kapow/tree/master)
 [![Go Report](https://goreportcard.com/badge/github.com/bbva/kapow)](https://goreportcard.com/report/github.com/bbva/kapow)
-
-|Section         | Info                                           |
-|----------------|------------------------------------------------|
-|Project site    | https://github.com/BBVA/kapow                  |
-|Issues          | https://github.com/BBVA/kapow/issues/          |
-|Documentation   | https://kapow.readthedocs.io                   |
-|Author          | BBVA Innovation Labs                           |
-|Latest Version  | v0.3.0                                         |
-
-----
+[![Open Issues](https://github.com/BBVA/kapow/issues/)](https://img.shields.io/github/issues/BBVA/kapow)
+[![Documentation](https://kapow.readthedocs.io)](https://img.shields.io/readthedocs/kapow)
+[![Current Version](https://github.com/BBVA/kapow/releases)](https://img.shields.io/github/v/release/BBVA/kapow?include_prereleases)
 
 
 ## What's Kapow!
@@ -61,19 +54,12 @@ finally, we can read from the just-defined endpoint:
 
 ## Documentation
 
-You can find the complete documentation and examples
-[here](https://kapow.readthedocs.io).
+You can find the complete documentation and examples [here](https://kapow.readthedocs.io).
 
 
 ## Authors
 
-*Kapow!* is being developed by BBVA-Labs Security team members, sorted by name length:
-
-- César Gallego
-- Hector Hurtado
-- pancho horrillo
-- Daniel Hernández
-- Roberto Abdelkader Martínez Pérez
+*Kapow!* is being developed by [BBVA-Labs Security team members](https://raw.githubusercontent.com/BBVA/kapow/master/AUTHORS.rst).
 
 *Kapow!* is Open Source Software and available under the [Apache 2
 license](https://raw.githubusercontent.com/BBVA/kapow/master/LICENSE).
