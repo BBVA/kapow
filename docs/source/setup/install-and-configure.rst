@@ -1,68 +1,68 @@
 Installing Kapow!
 =================
 
-Kapow! has a reference implementation in Go that is under active develpment
-right now.  If you want to start using Kapow! you can:
-- Download a binary (linux, at this moment) from our
-`releases <https://github.com/BBVA/kapow/releases>`_ section
-- Install the package with the get command (you need the Go runtime installed
-and `configured <https://golang.org/cmd/go/>`)
+Kapow! has a reference implementation in Go that is under active development
+right now.  If you want to start using Kapow! you can choose from several
+options
+
+
+Download and install a binary
+-----------------------------
+
+Binaries for several platforms are availables from our
+`releases <https://github.com/BBVA/kapow/releases>`_ section, visit the latest
+release page and download the binary corresponding to the platfom and
+architecture you want to install Kapow! in.
+
+
+Linux
+^^^^^
+
+Install the downloaded binary using the following command as a privileged user.
+
+.. code-block:: bash
+
+    install -t /usr/local/bin path_to_downloaded_binary
+
+
+Windows
+^^^^^^^
+
+Copy the downloaded binary to a directory of your choice and update the system
+PATH variable to include that directory.
+
+
+Install the package with go get
+-------------------------------
+
+If you already have `installed and configured <https://golang.org/cmd/go/>`_
+the go runtime in the host where you want to run Kapow!, simply run:
 
 .. code-block:: bash
 
     go get -u github.com/BBVA/kapow
 
-Using Kapow!
-============
 
-Kapow! binary gives you both, a way to start the server and a command line
-client to interact with it.
+Include Kapow! in your container image
+--------------------------------------
 
-Running the server
-------------------
+If you want to include Kapow! in a Docker image you can add the binary directly
+from the releases section.  Following is an example dockerfile that includes
+Kapow!.
 
-You start a Kapow! server by using the server command ``kapow server``.  It
-automatically binds the three HTTP modules when it starts:
+.. code-block:: dockerfile
 
-- The control server: Used to manage the user defined routes.  It exposes the
-control API and listens by default in the loopback interface at port 8081.  You
-can change this configurtation by ussing the
---control-bind <listen_address>:<listen_port> parameter.
-- The data server: Allows access to the resources tree to the scripts triggered
-by user's requests.  It exposes the control API and listens by default in the
-loopback interface at port 8082.  You can change this configurtation by ussing
-the --data-bind <listen_address>:<listen_port> parameter.
-- The ``user server``: This server is the one that makes available to the
-outside all the routes configured through the control server.  It listens by
-default in the port 8080 of all configured interfaces (0.0.0.0). You can change this
-configurtation by ussing the --bind <listen_address>:<listen_port> parameter.
+  FROM debian:stretch-slim
 
+  RUN apt-get update
 
+  ADD https://github.com/BBVA/kapow/releases/download/<VERSION>/kapow_linux_amd64 /usr/bin/kapow
 
-********--------********--------********----------------********--------********--------********
+  RUN chmod 755 /usr/bin/kapow
 
-You start a Kapow! server by using the server command ``kapow server``.  You can
-configure the listen address of the different modules by using the
-corresponding parameters:
+  ENTRYPOINT ["/usr/bin/kapow"]
 
-- --control-bind <listen_address>:<listen_port>: Allows to manage the user
-defined routes.  Defaults to 'localhost:8081' (loopback interface).
-- --data-bind <listen_address>:<listen_port>: Allows access to the resources
-tree to the scripts triggered by user's requests.  Defailts to 'localhost:8081'
-(loopback interface).
-- --bind <listen_address>:<listen_port>: Publishes the routes configured
-through the control server to the outside world.  Defaults to '0.0.0.0:8080'
-(all configured host's interfaces.)
-
-
-Managing routes
----------------
-
-Kapow!'s route command allows us to manage the routes that we want to publish
-to the outside world.  In order to contact with the desired Kapow! server you
-can use the ``--control-url`` command line parameter or the KAPOW_CONTROL_URL
-environmental variable to set the correct value.
-
-In the same way the ``--data-url`` command line parameter or the KAPOW_DATA_URL
-environmental variable will allow you to set to set the server listen address
-when accesing the data server, although this case is less frequent.
+If the container is intended to run the server and you want to dinamically
+configure it, remember to include a --contorl-bind param with an external bind
+address (i.e. 0.0.0.0) and to map all the needed ports in order to get access
+to the control interfgace.
