@@ -9,7 +9,6 @@ Kapow!
 [![Go Report](https://goreportcard.com/badge/github.com/bbva/kapow)](https://goreportcard.com/report/github.com/bbva/kapow)
 
 |Project site    | https://github.com/BBVA/kapow                  |
-|----------------|------------------------------------------------|
 |Issues          | https://github.com/BBVA/kapow/issues/          |
 |Documentation   | https://kapow.readthedocs.io                   |
 |Author          | BBVA Innovation Labs                           |
