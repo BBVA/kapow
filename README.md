@@ -20,14 +20,14 @@ If you can script it, you can HTTP it.
 
 ## What's Kapow!
 
-Say we have a nice cozy **shell command** that solves our problem. Kapow! lets
+Say we have a nice cozy **shell command** that solves our problem. *Kapow!* lets
 us easily **turn that into an HTTP API**.
 
 
 ### Let's see this with an example
 
 We want to expose **log entries** for files not found on our **Apache Web
-Server**, as an HTTP API.  With Kapow! we just need to write this file:
+Server**, as an HTTP API.  With *Kapow!* we just need to write this file:
 
 ```bash
 [apache-host]$ cat search-apache-errors.pow
@@ -67,7 +67,7 @@ You can find the complete documentation and examples
 
 ## Authors
 
-Kapow! is being developed by BBVA-Labs Security team members, sorted by name length:
+*Kapow!* is being developed by BBVA-Labs Security team members, sorted by name length:
 
 - César Gallego
 - Hector Hurtado
@@ -75,12 +75,12 @@ Kapow! is being developed by BBVA-Labs Security team members, sorted by name len
 - Daniel Hernández
 - Roberto Abdelkader Martínez Pérez
 
-Kapow! is Open Source Software and available under the [Apache 2
+*Kapow!* is Open Source Software and available under the [Apache 2
 license](https://raw.githubusercontent.com/BBVA/kapow/master/LICENSE).
 
 
 ## Contributions
 
-Contributions are of course welcome. See
+Contributions are of course welcome.  See
 [CONTRIBUTING](https://raw.githubusercontent.com/BBVA/kapow/blob/master/CONTRIBUTING.rst)
 or skim existing tickets to see where you could help out.
