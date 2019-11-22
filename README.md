@@ -59,7 +59,7 @@ You can find the complete documentation and examples [here](https://kapow.readth
 
 ## Authors
 
-*Kapow!* is being developed by [BBVA-Labs Security team members](https://raw.githubusercontent.com/BBVA/kapow/master/AUTHORS.rst).
+*Kapow!* is being developed by [BBVA-Labs Security team members](https://github.com/BBVA/kapow/blob/master/AUTHORS.rst).
 
 *Kapow!* is Open Source Software and available under the [Apache 2
 license](https://raw.githubusercontent.com/BBVA/kapow/master/LICENSE).
