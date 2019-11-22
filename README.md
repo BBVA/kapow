@@ -50,13 +50,13 @@ finally, we can read from the just-defined endpoint:
 
 ## Why Kapow! shines in these cases
 
-- We can share information without having grant SSH access to anybody.
-- We want to limit what is executed.
-- We can share information easily over HTTP. 
+- We can share information **without having grant SSH access** to anybody.
+- We want to **limit** what is executed.
+- We can share information easily **over HTTP**. 
 
 # Documentation
 
-Here you can find the complete documentation [here](https://kapow.readthedocs.io)
+Here you can find the complete documentation and examples [here](https://kapow.readthedocs.io)
 
 # Authors
 
