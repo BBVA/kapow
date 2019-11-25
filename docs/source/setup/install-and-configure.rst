@@ -71,13 +71,7 @@ After building the image you can run the container with:
 
 .. code-block:: bash
 
-  $ docker run --rm -i -p 8080:8080 kapow:latest server < whatever.pow
+  $ docker run --rm -i -p 8080:8080 -v $(pwd)/whatever.pow:/opt/whatever.pow kapow:latest server /opt/whatever.pow
 
-
-
-
-
-
-
-
-kapow route add /hello/{who} -c 'echo Hello $(kapow get /request/matches/who) | kapow set /response/body'
+With the -v parameter we map a local file into the container's filesystem so we
+can use it to configure our Kapow! server on startup.
