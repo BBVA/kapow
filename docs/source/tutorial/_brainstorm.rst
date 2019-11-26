@@ -45,21 +45,27 @@ User Journey
   - Problem/Motivation: Each time an ACME project is finished it is
     desirable to make a backup of the entire database.  Given that the
     database server is a critical machine we don't want to grant SSH
-    access to lowly developers.  The script is very fast because the
+    access to lowly developers.  The script is fast because the
     database is small (for now).
   - pre-Kapow! solution: Launching the script via SSH shell.
-    ```
-    ssh user@server
-    $ ./backup_db.sh
-    ```
+
+    .. code-block:: console
+
+       $ ssh user@server
+       Password:
+       (server)$ ./backup_db.sh
+
   - Kapow!-enabled solution: Provide an HTTP endpoint that when accessed
     triggers the run of the backup script.
-    ```
-    curl -X PUT http://server:8080/db/backup
-    ```
-    ```
-    kapow route add -X PUT /db/backup -e ./backup_db.sh
-    ```
+
+    .. code-block:: console
+
+       $ curl -X PUT http://server:8080/db/backup
+
+
+    .. code-block:: console
+
+       $ kapow route add -X PUT /db/backup -e ./backup_db.sh
 
 #. Basic server monitoring
 
@@ -71,9 +77,10 @@ User Journey
   - pre-Kapow! solution: SSH into the host + cat /tmp/backup_db.log.
   - Kapow!-enabled solution: Provide an endpoint that returns the contents of
     /tmp/backup_db.log.
-    ```
-    cat /var/log/backup_db.log | kapow set /response/body
-    ```
+
+    .. code-block:: console
+
+       $ cat /var/log/backup_db.log | kapow set /response/body
 
 #. Filter over basic monitoring
 
@@ -89,13 +96,14 @@ User Journey
     this task.
 
   - Kapow!-enabled solution:
-    ```
-    LINES="$(kapow get /request/params/lines)"
-    FILTER="$(kapow get /request/params/filter)"
-    grep "$FILTER" /var/log/backup_db.log \
-      | tail -n"$LINES" \
-      | kapow set /response/body
-    ```
+
+    .. code-block:: sh
+
+       LINES="$(kapow get /request/params/lines)"
+       FILTER="$(kapow get /request/params/filter)"
+       grep "$FILTER" /var/log/backup_db.log \
+         | tail -n"$LINES" \
+         | kapow set /response/body
 
 #. Advanced database monitoring
 
@@ -104,36 +112,57 @@ User Journey
   - Problem/Motivation:
   - pre-Kapow! solution:
   - Kapow!-enabled solution:
-    ```
-    {
-      echo Memory:
-      free -m
-      echo ================================================================================
-      echo Load:
-      uptime
-      echo ================================================================================
-      echo Disk:
-      df -h
-    } | kapow set /response/body
-    ```
+
+    From this:
+
+    .. code-block:: sh
+
+       echo Date: | kapow set /response/body
+       echo ======...==== | kapow set /response/body
+       echo Memory | kapow set /response/body
+       # ...
+
+
+    To this:
+
+    .. code-block:: sh
+
+       {
+         echo Date:
+         date
+         echo ================================================================================
+         echo Memory:
+         free -m
+         echo ================================================================================
+         echo Load:
+         uptime
+         echo ================================================================================
+         echo Disk:
+         df -h
+       } | kapow set /response/body
 
 #. Share your achievements
 
   - User Learns: Format a complex HTTP response with JSON format to feed the corporate dashboard.
   - Kapow! Concepts: backtick interpolation and `kapow set /response/headers`
   - Problem/Motivation:
-  - pre-Kapow! solution:
+  - pre-Kapow! solution: Write a php/perl/python script to serve this
   - Kapow!-enabled solution:
-    ``` DON'T HANDWRITE JSON
-    echo "{memory: `free -m`, ...uups..}'  | kapow set /response/body
-    ```
 
-    ``` USE JQ
-    MEMORY=$(free -m)
-    LOAD=$(uptime)
-    DISK=$(df -h)
-    jq -nc --arg memory "$MEMORY" '{"memory": $memory}'
-    ```
+    Don't handwrite JSON
+
+    .. code-block:: sh
+
+       echo "{memory: `free -m`, ...uups..}"  | kapow set /response/body
+
+    Use jq
+
+    .. code-block:: sh
+
+       MEMORY=$(free -m)
+       LOAD=$(uptime)
+       DISK=$(df -h)
+       jq -nc --arg memory "$MEMORY" '{"memory": $memory}'
 
 Ideas
 -----
