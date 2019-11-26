@@ -48,7 +48,7 @@ Table of content
 
    the_project/overview
    the_project/quickstart
-   the_project/install-and-configure
+   the_project/install_and_configure
 
 .. toctree::
    :maxdepth: 2
