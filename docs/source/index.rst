@@ -71,8 +71,13 @@ Table of content
    :maxdepth: 2
    :caption: Tutorial
 
+   tutorial/index
    tutorial/tutorial00
    tutorial/tutorial01
+   tutorial/tutorial02
+   tutorial/tutorial03
+   tutorial/tutorial04
+   tutorial/tutorial05
    tutorial/_brainstorm
 
 Indices and tables
