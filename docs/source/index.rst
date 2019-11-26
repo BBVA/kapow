@@ -25,6 +25,8 @@
    :maxdepth: 2
    :caption: Tutorial
 
+   tutorial/tutorial00
+   tutorial/tutorial01
    tutorial/_brainstorm
 
 Indices and tables

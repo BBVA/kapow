@@ -35,6 +35,12 @@ ACME's Infrastructure
   - Corporate Server
   - Backup Server
 
+Characters
+----------
+
+- Seasoned Ops
+- Junior Ops
+
 User Journey
 ------------
 
@@ -60,12 +66,11 @@ User Journey
 
     .. code-block:: console
 
-       $ curl -X PUT http://server:8080/db/backup
-
+       $ kapow route add -X PUT /db/backup -e ./backup_db.sh
 
     .. code-block:: console
 
-       $ kapow route add -X PUT /db/backup -e ./backup_db.sh
+       $ curl -X PUT http://server:8080/db/backup
 
 #. Basic server monitoring
 
@@ -80,7 +85,7 @@ User Journey
 
     .. code-block:: console
 
-       $ cat /var/log/backup_db.log | kapow set /response/body
+       $ cat /tmp/backup_db.log | kapow set /response/body
 
 #. Filter over basic monitoring
 
@@ -109,8 +114,11 @@ User Journey
 
   - User Learns: Compose complex HTTP responses with more than one local command.
   - Kapow! Concepts: HEREDOC and subshells
-  - Problem/Motivation:
-  - pre-Kapow! solution:
+  - Problem/Motivation: The OPs manager needs to have information about
+    the health status of our servers. And she is always asking to the
+    team to write a report that involves calling several commands.
+  - pre-Kapow! solution: SSH into the server and manually execute the
+    commands, collect the output and write the report.
   - Kapow!-enabled solution:
 
     From this:
@@ -127,6 +135,7 @@ User Journey
 
     .. code-block:: sh
 
+       kapow set /response/headers/Content-Type text/plain
        {
          echo Date:
          date
@@ -145,24 +154,29 @@ User Journey
 
   - User Learns: Format a complex HTTP response with JSON format to feed the corporate dashboard.
   - Kapow! Concepts: backtick interpolation and `kapow set /response/headers`
-  - Problem/Motivation:
+  - Problem/Motivation: The OPs manager wants to create a dashboard to
+    see the server health information in real time. She hired a fronted
+    developer to make a nice dashboard application and we need to
+    provide him with the information in a format suitable for display.
   - pre-Kapow! solution: Write a php/perl/python script to serve this
   - Kapow!-enabled solution:
 
-    Don't handwrite JSON
+    Don't handwrite `JSON`
 
     .. code-block:: sh
 
-       echo "{memory: `free -m`, ...uups..}"  | kapow set /response/body
+       kapow set /response/body application/json
+       echo "{memory: `free -m`, ...uups...}"  | kapow set /response/body
 
-    Use jq
+    Use ``jq``
 
     .. code-block:: sh
 
        MEMORY=$(free -m)
        LOAD=$(uptime)
        DISK=$(df -h)
-       jq -nc --arg memory "$MEMORY" '{"memory": $memory}'
+       kapow set /response/body application/json
+       jq -nc --arg memory "$MEMORY" '{"memory": $memory}' | kapow set /response/body
 
 Ideas
 -----
@@ -176,3 +190,32 @@ Ideas
 
    Add this to serve the webpage that uses the implemented HTTP API
    kapow route add / -c 'kapow set /resonse/headers/Content-Type text/html ; curl --output - http:// | kapow set /response/body'
+
+
+Test
+----
+
+**User**
+
+  Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
+  tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
+  vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
+  no sea takimata sanctus est Lorem ipsum dolor sit amet.
+
+**Admin**
+
+  Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
+  tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
+  vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
+  no sea takimata sanctus est Lorem ipsum dolor sit amet.
+
+**User**
+
+  Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
+  tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. 
+
+  .. code-block:: console
+
+     $ cat something.txt
+
+  Right?
