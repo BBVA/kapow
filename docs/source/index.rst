@@ -78,7 +78,6 @@ Table of content
    tutorial/tutorial03
    tutorial/tutorial04
    tutorial/tutorial05
-   tutorial/_brainstorm
 
 Indices and tables
 ==================
