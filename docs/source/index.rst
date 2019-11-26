@@ -15,7 +15,7 @@ Welcome to Kapow!
 What's Kapow!
 =============
 
-Think in this **software** that you need but **only can runs in command line**. Kapow! lets you to **wrap it into an HTTP API without write any line of code**.
+Think in that **software** that you need but **only runs as command line**. Kapow! lets you to **wrap it into an HTTP API without write a single line of code**.
 
 .. image::  _static/kapow-quick-overview.png
    :width: 80%
