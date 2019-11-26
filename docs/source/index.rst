@@ -21,7 +21,7 @@ Think in this **software** that you need but **only can runs in command line**. 
    :width: 80%
    :align: center
 
-Want to know more? Check the :doc:`the_project/overview` section for a long explanation of what Kapow! does.
+Want to know more? Check the :doc:`the_project/quickstart` section for a long explanation of what Kapow! does.
 
 Authors
 =======
