@@ -9,8 +9,6 @@
    :caption: Examples
 
    examples/index
-   examples/greet-json
-   examples/upload
 
 .. toctree::
    :maxdepth: 2
@@ -27,7 +25,7 @@
    :maxdepth: 2
    :caption: Tutorial
 
-   tutorial/_brianstorm
+   tutorial/_brainstorm
 
 Indices and tables
 ==================
