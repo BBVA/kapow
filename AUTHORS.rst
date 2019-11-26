@@ -1,6 +1,6 @@
 Sorted by name length:
 
-- Luiz Sáiz
+- Luis Saiz
 - César Gallego
 - Hector Hurtado
 - pancho horrillo
