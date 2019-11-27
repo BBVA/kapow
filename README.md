@@ -49,7 +49,7 @@ finally, we can read from the just-defined endpoint:
 
 - We can share information **without having to grant SSH access** to anybody.
 - We can share information easily **over HTTP**.
-- We can **limit** what is executed.
+- We can effectively **limit** what gets executed.
 
 
 ## Documentation
