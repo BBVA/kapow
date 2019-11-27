@@ -24,22 +24,22 @@ Scenario
 Limitations and constraints
 --------------------------
 
-  1. We **don't want** to **grant access** to the :samp:`External Host` to
+  #. We **don't want** to **grant access** to the :samp:`External Host` to
   anybody.
-  2. We **don't want** to manage VPNs or any similar solutions to access to
+  #. We **don't want** to manage VPNs or any similar solutions to access to
   *Internal Host* from the Internet.
-  3. We **want to limit the actions** that an user can perform in our intranet
+  #. We **want to limit the actions** that an user can perform in our intranet
   while it is checking if :samp:`Internal Host` is alive.
-  4. We **want** to use the most standard mechanism.  Easy to use and that
+  #. We **want** to use the most standard mechanism.  Easy to use and that
   facilitates the automation.
-  5. We **don't have a budget** to invest in a custom solution.
+  #. We **don't have a budget** to invest in a custom solution.
 
 
 What options we have?
 ---------------------
 
   Alter analyzyng the problem and our goal we conclude that is enough
-  **to use a simple** :samp:`ping` **to** :samp:`Internal Host`.**
+  **to use a simple** :samp:`ping` **to** :samp:`Internal Host`**.**
 
   So, the next step is to **analyze how to perform the ping.**
 
@@ -51,7 +51,7 @@ Accessing via SSH to :samp:`External Host`
   via :samp:`SSH` to :samp:`External Host` for every person that needs to
   check for :samp:`Internal host` status.
 
-  Conclusion: **Not a very good idea**
+  Conclusion: **Not a good idea**
 
   Reasons:
 
