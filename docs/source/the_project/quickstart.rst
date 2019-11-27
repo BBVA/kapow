@@ -18,13 +18,14 @@ Scenario
   Our organization has an external host that act as a bridget between our
   intranet an the public Internet.
 
-  **Our goal: We need to check if the the** :samp:`Internal Host` **is alive.**
+  **Our goal: We need to check if the** :samp:`Internal Host` **is alive.**
 
 
 Limitations and constraints
 --------------------------
 
-  1. We **don't want** to **grant access** to the :samp:`External Host` to anybody.
+  1. We **don't want** to **grant access** to the :samp:`External Host` to
+  anybody.
   2. We **don't want** to manage VPNs or any similar solutions to access to :samp:`Internal Host` from the Internet.
   3. We **want to limit the actions** that an user can perform in our intranet while it is checking if :samp:`Internal Host` is alive.
   4. We **want** to use the most standard mechanism.  Easy to use and that facilitates the automation.
