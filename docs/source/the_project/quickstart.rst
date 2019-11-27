@@ -42,13 +42,13 @@ Accessing via SSH to :samp:`External Host`
 
   If we choose this option then we need to create a user and grant him access via :samp:`SSH` to :samp:`External Host` for every person that needs to check for :samp:`Internal host` status.
 
-  Conclusion: **Not a good idea**
+  Conclusion: **Not a good idea.**
 
   Reasons:
 
-    1. We need to manage users (violates a constraint)
-    2. We need to grant access for users to system (violates a constraint)
-    3. We can't control what :samp:`ping` options the user can use to ping :samp:`Internal Host` (violates a constraint)
+    1. We need to manage users (violates a constraint.)
+    2. We need to grant access for users to system (violates a constraint.)
+    3. We can't control what :samp:`ping` options the user can use to ping :samp:`Internal Host` (violates a constraint.)
 
 
 Develop and deploy a custom solution
@@ -60,12 +60,12 @@ Develop and deploy a custom solution
   2. We need to wait for for the development to be production ready.
   3. We need a bucket, even we have developers in our organization.
 
-  Conclusion: **Not a good idea**
+  Conclusion: **Not a good idea.**
 
   Reasons:
 
-      1. Need to spend money (violates a constraint)
-      2. Need to spend time
+      1. Need to spend money (violates a constraint.)
+      2. Need to spend time.
 
 
 Using Kapow! (Spoiler: the winner!)
@@ -74,12 +74,10 @@ Using Kapow! (Spoiler: the winner!)
   Ok, lets analyze Kapow! and check it for our constraints:
 
   1. Kapow! is Open Source, so **it's free**.
-  2. By using kapow! we don't need to program our own solution, so
-  **don't waste time**.
-  3. By using Kapow! we can run any command in the :samp:`External Host`
-  limiting the command parameters, so **it's safe**.
+  2. By using kapow! we don't need to program our own solution, so we **don't waste time**.
+  3. By using Kapow! we can run any command in the :samp:`External Host` limiting the command parameters, so **it's safe**.
   4. By using Kapow! we can launch any system command as an HTTP API easily,
-  so **we don't need to grant login access to anybody to ``External Host``**
+  so **we don't need to grant login access to anybody to** :samp:`External Host`**.**
 
   Conclusion: **Kapow! is the best choice**.
 
