@@ -176,8 +176,8 @@ Some time you need to write more complex actions. So you can write multiline com
     Multiline depends of the shell you're using (Bash by default). If you want to learn more of multiline see: `Here Doc <https://en.wikipedia.org/wiki/Here_document>`_
 
 
-Add or modify a HTTP Header
-+++++++++++++++++++++++++++
+Add or modify an HTTP Header
+++++++++++++++++++++++++++++
 
 Some times you want add some extra HTTP header to response.
 
