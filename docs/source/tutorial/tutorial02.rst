@@ -47,7 +47,7 @@ What we've done?
 **Senior**
 
   Looks good to me, clean and simple, and it is a very good idea to use ``GET``
-  this as it wont change anything in the server. Restart Kapow! and try it.
+  here as it wont change anything in the server. Restart Kapow! and try it.
 
 **Junior**
 

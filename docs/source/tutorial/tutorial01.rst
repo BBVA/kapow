@@ -72,13 +72,13 @@ Backup that Database!
 
 **Junior**
 
-  Sounds like less work for me.  I like it. 
+  Sounds like less work for me.  I like it.
 
 **Senior**
 
   Ok then, let's try on your laptop first.
 
-  First of all you have to follow the installation instructions XXX. 
+  First of all you have to follow the `installation instructions </the_project/install_and_configure>`_. 
 
 **Junior**
 

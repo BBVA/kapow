@@ -31,7 +31,7 @@ We need to filter
 
 **Senior**
 
-  Sounds great!  How could we live without Kapow! all this time?
+  Sounds great!  How we have lived without Kapow! all this time?
 
   As they requested, we can offer them with a parameter to filter the registers
   they want to pick and another parameter to limit the output size in lines.
