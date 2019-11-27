@@ -18,7 +18,7 @@ Scenario
   Our organization has an external host that act as a bridget between our
   intranet an the public Internet.
 
-  **Our goal: We need to check if the the ``Internal Host`` is alive.**
+  **Our goal: We need to check if the the** :samp:`Internal Host` **is alive.**
 
 
 Limitations and constraints
@@ -39,7 +39,7 @@ What options we have?
 ---------------------
 
   Alter analyzyng the problem and our goal we conclude that is enough
-  **to use a simple ``ping`` to ``Internal Host``.**
+  **to use a simple** :samp:`ping` **to** :samp:`Internal Host`.**
 
   So, the next step is to **analyze how to perform the ping.**
 
