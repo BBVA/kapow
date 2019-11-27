@@ -76,10 +76,9 @@ Using Kapow! (Spoiler: the winner!)
   1. Kapow! is Open Source, so **it's free**.
   2. By using kapow! we don't need to program our own solution, so we **don't waste time**.
   3. By using Kapow! we can run any command in the :samp:`External Host` limiting the command parameters, so **it's safe**.
-  4. By using Kapow! we can launch any system command as an HTTP API easily,
-  so **we don't need to grant login access to anybody to** :samp:`External Host`**.**
+  4. By using Kapow! we can launch any system command as an HTTP API easily, so **we don't need to grant login access to anybody to** :samp:`External Host`.
 
-  Conclusion: **Kapow! is the best choice**.
+  Conclusion: **Kapow! is the best choice.**
 
   Reasons: It satisfies all of our requirements.
 
@@ -87,8 +86,7 @@ Using Kapow! (Spoiler: the winner!)
 Using Kapow!
 ------------
 
-  In order to get the :ref:`Scenario <quickstart_image>` example working we need
-  to follow these steps:
+  In order to get our example :ref:`Scenario <quickstart_image>` working we need to follow the below steps.
 
 
 Install Kapow!
@@ -100,9 +98,7 @@ Install Kapow!
 Write ping.pow file
 +++++++++++++++++++
 
-  Kapow! use plain text files (called ``POW`` files) so you can define the
-  endpoints you want to expose the system command with.  For our example we need
-  a file like this:
+  Kapow! use plain text files (called ``POW`` files) so you can define the endpoints you want to expose the system command with.  For our example we need a file like this:
 
   .. code-block:: console
 
@@ -111,15 +107,10 @@ Write ping.pow file
 
   Explanation:
 
-  1. :samp:`kapow route add /ping` - adds a new HTTP API endpoint at
-  :samp:`/ping` path in the Kapow! server.  You have to use GET method to
-  invoke the endpoint.
-  2. :samp:`-c` - after this parameter we write the system command that Kapow!
-  will run each time the endpint is invoked.
-  3. :samp:`ping -c 1 10.10.10.100` - sends 1 ping package to the host
-  *10.10.10.100*, i.e. :samp:`Internal Host`.
-  4. :samp:`| kapow set /response/body` - writes the ping output to the
-  response so you can see it.
+  1. :samp:`kapow route add /ping` - adds a new HTTP API endpoint at :samp:`/ping` path in the Kapow! server.  You have to use GET method to invoke the endpoint.
+  2. :samp:`-c` - after this parameter we write the system command that Kapow! will run each time the endpint is invoked.
+  3. :samp:`ping -c 1 10.10.10.100` - sends 1 ping package to the host *10.10.10.100*, i.e. :samp:`Internal Host`.
+  4. :samp:`| kapow set /response/body` - writes the ping output to the response so you can see it.
 
 
 Launch the service
