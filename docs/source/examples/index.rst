@@ -1,9 +1,11 @@
-Using a .pow file
+Using a .pow File
 +++++++++++++++++
 
-A .pow file is a plain text with shell instructions, usually, you can use Kapow!
+A ``.pow`` file is just a ``bash`` script, where you make calls to the ``kapow route``
+command.
 
-**Starting Kapow! using .pow file**
+
+**Starting Kapow! using a .pow file**
 
 .. code-block:: console
    :linenos:
@@ -19,20 +21,22 @@ With the example.pow:
    #
    # This is a simple example of a .pow file
    #
-   echo "[*] Starting my script"
+   echo '[*] Starting my script'
 
    # We add 2 Kapow! routes
-   kapow route add '/my/route' -c 'echo "hello world" | kapow set /response/body'
-   kapow route add -X POST /echo -c '"$(kapow get /request/body)" | kapow set /response/body'
+   kapow route add /my/route -c 'echo hello world | kapow set /response/body'
+   kapow route add -X POST /echo -c 'kapow get /request/body | kapow set /response/body'
 
 .. note::
 
-    Every manage task you with Kapow! could be done by .pow file
+   **Kapow!** can be fully configured using just ``.pow`` files
 
-Load more than 1 .pow file
-++++++++++++++++++++++++++
 
-You can load more than one .pow file at time. This can help you have your .pow files ordered.
+Load More Than One ``.pow`` File
+++++++++++++++++++++++++++++++
+
+You can load more than one .pow file at time. This can help you keep your
+``.pow`` files tidy.
 
 .. code-block:: console
    :linenos:
@@ -41,19 +45,22 @@ You can load more than one .pow file at time. This can help you have your .pow f
    example-1.pow   example-2.pow
    $ kapow server <(cat pow-files/*.pow)
 
-Add a new route
+
+Add a New Route
 +++++++++++++++
 
 .. warning::
 
-    Be aware when you defined more than routes in same path, only first routed added will be resolved.
+    Be aware that if you register more than one route with same path, only the
+    first route added will be used.
 
     For example, if you add these routes:
 
     1. http://localhost:8080/echo
     2. http://localhost:8080/echo/{message}
 
-    Only first one route will be resolved.
+    only first one will be used.
+
 
 **GET route**
 
@@ -62,7 +69,8 @@ Defining route:
 .. code-block:: console
    :linenos:
 
-   $ kapow route add '/my/route' -c 'echo "hello world" | kapow set /response/body'
+   $ kapow route add /my/route -c 'echo hello world | kapow set /response/body'
+
 
 Calling route:
 
@@ -72,6 +80,7 @@ Calling route:
    $ curl http://localhost:8080/my/route
    hello world
 
+
 **POST route**
 
 Defining route:
@@ -79,15 +88,17 @@ Defining route:
 .. code-block:: console
    :linenos:
 
-   $ kapow route add -X POST /echo -c '"$(kapow get /request/body)" | kapow set /response/body'
+   $ kapow route add -X POST /echo -c 'kapow get /request/body | kapow set /response/body'
+
 
 Calling route:
 
 .. code-block:: console
    :linenos:
 
-   $ curl -d "hello world" -X POST http://localhost:8080/echo
-   hello world%
+   $ curl -d 'hello world' -X POST http://localhost:8080/echo
+   hello world
+
 
 **Adding URL params**
 
@@ -96,7 +107,8 @@ Defining route:
 .. code-block:: console
    :linenos:
 
-   $ kapow route add '/echo/{message}' -c '"$(kapow get /request/matches/message)" | kapow set /response/body'
+   $ kapow route add '/echo/{message}' -c 'kapow get /request/matches/message | kapow set /response/body'
+
 
 Calling route:
 
@@ -104,13 +116,13 @@ Calling route:
    :linenos:
 
    $ curl http://localhost:8080/echo/hello%20world
-   hello world%
+   hello world
 
 
-Listing routes
+Listing Routes
 ++++++++++++++
 
-You can list active route in kapow! server.
+You can list the active routes in the **Kapow!** server.
 
 .. _examples_listing_routes:
 
@@ -118,9 +130,9 @@ You can list active route in kapow! server.
    :linenos:
 
    $ kapow route list
-   [{"id":"20c98328-0b82-11ea-90a8-784f434dfbe2","method":"GET","url_pattern":"/echo/{message}","entrypoint":"/bin/sh -c","command":"echo \"$(kapow get /request/matches/message)\" | kapow set /response/body","index":0}]
+   [{"id":"20c98328-0b82-11ea-90a8-784f434dfbe2","method":"GET","url_pattern":"/echo/{message}","entrypoint":"/bin/sh -c","command":"kapow get /request/matches/message | kapow set /response/body"}]
 
-Or, for pretty output, you can use :samp:`jq`:
+Or, if you want human-readable output, you can use :samp:`jq`:
 
 .. code-block:: console
    :linenos:
@@ -132,31 +144,33 @@ Or, for pretty output, you can use :samp:`jq`:
        "method": "GET",
        "url_pattern": "/echo/{message}",
        "entrypoint": "/bin/sh -c",
-       "command": "\"$(kapow get /request/matches/message)\" | kapow set /response/body",
-       "index": 0
+       "command": "kapow get /request/matches/message | kapow set /response/body",
      }
    ]
 
 
 .. note::
 
-    Kapow! server has a administration interface, by default, listen at **localhost:8081**
+    **Kapow!** has an `HTTP` admin interface, by default listening at **localhost:8081**
 
 
-Deleting routes
+Deleting Routes
 +++++++++++++++
 
-If we want to delete a route you need their ID. Using de :ref:`listing routes example <examples_listing_routes>`, you can delete the route by typing:
+You need the ID of a route to delete it.
+Using the :ref:`listing routes example <examples_listing_routes>`, you can
+obtain the ID of the route, and then delete it by typing:
 
 .. code-block:: console
    :linenos:
 
    $ kapow route remove 20c98328-0b82-11ea-90a8-784f434dfbe2
 
-Writing multiline .pow files
-++++++++++++++++++++++++++++
 
-Some time you need to write more complex actions. So you can write multiline commands:
+Writing Multiline ``.pow`` Files
+++++++++++++++++++++++++++++++++
+
+If you need to write more complex actions, you can leverage multiline commands:
 
 .. code-block:: console
    :linenos:
@@ -169,28 +183,30 @@ Some time you need to write more complex actions. So you can write multiline com
 
 .. warning::
 
-    Be aware with the **"-"** at the end of Kapow! command. It allows to read commands from the :samp:`stdin`.
+    Be aware of the **"-"** at the end of the ``kapow route add`` command.
+    It tells ``kapow route add`` to read commands from the :samp:`stdin`.
 
 .. warning::
 
-    Multiline depends of the shell you're using (Bash by default). If you want to learn more of multiline see: `Here Doc <https://en.wikipedia.org/wiki/Here_document>`_
+    If you want to learn more of multiline usage, see: `Here Doc
+    <https://en.wikipedia.org/wiki/Here_document>`_
 
 
-Add or modify an HTTP Header
+Add or Modify an HTTP Header
 ++++++++++++++++++++++++++++
 
-Some times you want add some extra HTTP header to response.
+You may want to add some extra HTTP header to the response.
 
-In this example we'll adding the security header "nosniff" in a sniff.pow:
+In this example we'll be adding the security header ``nosniff`` to the response.
 
 .. code-block:: console
    :linenos:
 
    $ cat sniff.pow
    kapow route add /sec-hello-world - <<-'EOF'
-       kapow set /response/headers/X-Content-Type-Options "nosniff"
+       kapow set /response/headers/X-Content-Type-Options nosniff
 
-       echo "more secure hello world" | kapow set /response/body
+       echo more secure hello world | kapow set /response/body
    EOF
 
    $ kapow server nosniff.pow
@@ -220,42 +236,50 @@ Testing with curl:
 
 .. note::
 
-    You can read more about nosniff header `here <https://developer.mozilla.org/es/docs/Web/HTTP/Headers/X-Content-Type-Options>`_.
+    You can read more about the ``nosniff`` header `here
+    <https://developer.mozilla.org/es/docs/Web/HTTP/Headers/X-Content-Type-Options>`_.
 
-Modify JSON by using shell
-++++++++++++++++++++++++++
+
+Modify JSON by Using Shell Commands
++++++++++++++++++++++++++++++++++++
 
 .. note::
 
-    Nowadays webservices are json based so making your script json aware is probably a good choice. In order to be able to extract data from and compose json documents from a script you can use
+    Nowadays Web services are JSON-based so making your script JSON aware is
+    probably a good choice.  In order to be able to extract data from a JSON
+    document as well as composing JSON documents from a script, you can leverage
     `jq <https://https://stedolan.github.io/jq/>`_.
+
 
 **Example 1**
 
-In this example our Kapow! service will receive a JSON value with an incorrect date, then our .pow file will fix then and return the correct value to the user.
+In this example our **Kapow!** service will receive a JSON value with an incorrect
+date, then our ``.pow`` file will fix it and return the correct value to the user.
 
 .. code-block:: console
    :linenos:
 
    $ cat fix_date.pow
-   kapow route add -X POST '/fix-date' - <<-'EOF'
-       kapow set /response/headers/Content-Type "application/json"
-       echo "$(kapow get /request/body)" | jq --arg newdate $(date +"%Y-%m-%d_%H-%M-%S") '.incorrectDate=$newdate' | kapow set /response/body
+   kapow route add -X POST /fix-date - <<-'EOF'
+       kapow set /response/headers/Content-Type application/json
+       kapow get /request/body | jq --arg newdate "$(date +'%Y-%m-%d_%H-%M-%S')"" '.incorrectDate=$newdate' | kapow set /response/body
    EOF
 
-Call service with curl:
+Call the service with ``curl``:
 
 .. code-block:: console
    :linenos:
 
-   $ curl -X POST http://localhost:8080/fix-date -H "Content-Type: application/json" -d '{"incorrectDate": "no way"}'
+   $ curl -X POST http://localhost:8080/fix-date -H 'Content-Type: application/json' -d '{"incorrectDate": "no way, Jose"}'
    {
       "incorrectDate": "2019-11-22_10-42-06"
    }
 
+
 **Example 2**
 
-In this example we extract the name field from the incoming json document in order to generate a two attribute json response.
+In this example we extract the name field from the incoming JSON document in
+order to generate a two-attribute JSON response.
 
 .. code-block:: console
 
@@ -263,38 +287,39 @@ In this example we extract the name field from the incoming json document in ord
    kapow route add -X POST '/echo-attribute' - <<-'EOF'
       JSON_WHO=$(kapow get /request/body | jq -r .name)
 
-      kapow set /response/headers/Content-Type "application/json"
+      kapow set /response/headers/Content-Type application/json
       kapow set /response/status 200
 
-      jq --arg greet "Hello" --arg value "${JSON_WHO:-World}" -n \{greet:\$greet\,to:\$value\} | kapow set /response/body
-
+      jq --arg greet Hello --arg value "${JSON_WHO:-World}" --null-input '{ greet: $greet, to: $value }' | kapow set /response/body
    EOF
 
-Call service with curl:
+Call the service with ``curl``:
 
 .. code-block:: console
    :linenos:
    :emphasize-lines: 4
 
-   $ curl -X POST http://localhost:8080/echo-attribute -H "Content-Type: application/json" -d '{"name": "MyName"}'
+   $ curl -X POST http://localhost:8080/echo-attribute -H 'Content-Type: application/json' -d '{"name": "MyName"}'
    {
      "greet": "Hello",
      "to": "MyName"
    }
 
-Upload files
+
+Upload Files
 ++++++++++++
+
 
 **Example 1**
 
-Upload a file using Kapow! is very simple:
+Uploading a file using **Kapow!** is very simple:
 
 .. code-block:: console
    :linenos:
 
    $ cat upload.pow
-   kapow route add -X POST '/upload-file' - <<-'EOF'
-       echo "$(kapow get /request/files/data/content) | kapow set /response/body
+   kapow route add -X POST /upload-file - <<-'EOF'
+       kapow get /request/files/data/content | kapow set /response/body
    EOF
 
 .. code-block:: console
@@ -302,8 +327,9 @@ Upload a file using Kapow! is very simple:
 
    $ cat results.json
    {"hello": "world"}
-   $  curl	-X POST -H "Content-Type: multipart/form-data" -F "data=@results.json" http://localhost:8080/upload-file
+   $ curl	-X POST -H 'Content-Type: multipart/form-data' -F data=@results.json http://localhost:8080/upload-file
    {"hello": "world"}
+
 
 **Example 2**
 
@@ -316,14 +342,14 @@ In this example we respond back with the line count of the file received in the 
    kapow route add -X POST '/count-file-lines' - <<-'EOF'
 
       # Get sent file
-      FNAME="$(kapow get /request/files/myfile/filename)"
+      FNAME=$(kapow get /request/files/myfile/filename)
 
       # Counting file lines
-      LCOUNT="$(kapow get /request/files/myfile/content | wc -l)"
+      LCOUNT=$(kapow get /request/files/myfile/content | wc -l)
 
       kapow set /response/status 200
 
-      echo "$FNAME has $LCOUNT lines" | kapow set /response/body
+      echo $FNAME has $LCOUNT lines | kapow set /response/body
    EOF
 
 .. code-block:: console
@@ -335,21 +361,24 @@ In this example we respond back with the line count of the file received in the 
    $ curl -F "myfile=@file.txt" http://localhost:8080/count-file-lines
    file.txt has        2 lines
 
+
 Protecting again Command Injection Attacks
 ++++++++++++++++++++++++++++++++++++++++++
 
-When you resolve variable values be careful to *escape* by using double quotes. Otherwise you could be vulnerable to **command injection attack**.
+When you resolve variable values be careful to tokenize correctly by using
+double quotes.  Otherwise you could be vulnerable to **parameter injection
+attacks**.
 
-**This examples is VULNERABLE to command injection**
+**This example is VULNERABLE to parameter injection**
 
-In this example, an attacker can execute arbitrary command.
+In this example, an attacker can inject arbitrary parameters to ``ls``.
 
 .. code-block:: console
    :linenos:
 
    $ cat command-injection.pow
    kapow route add '/vulnerable/{value}' - <<-'EOF'
-        ls "$(kapow get /request/matches/value)" | kapow set /response/body
+        ls $(kapow get /request/matches/value) | kapow set /response/body
    EOF
 
 Exploding using curl:
@@ -357,23 +386,25 @@ Exploding using curl:
 .. code-block:: console
    :linenos:
 
-   $ curl "http://localhost:8080/vulnerable/;echo%20hello"
+   $ curl "http://localhost:8080/vulnerable/-li%20hello"
 
-**This examples is NOT VULNERABLE to command injection**
+**This examples is NOT VULNERABLE to parameter injection**
 
-Be aware of we add double quotes when we recover *value* data from url:
+Be aware of how we add double quotes when we recover *value* data from the
+request:
 
 .. code-block:: console
    :linenos:
 
    $ cat command-injection.pow
-   kapow route add '/vulnerable/{value}' - <<-'EOF'
+   kapow route add '/not-vulnerable/{value}' - <<-'EOF'
         ls "$(kapow get /request/matches/value)" | kapow set /response/body
    EOF
 
 .. note::
 
    If want to read more about command injection, you can check `OWASP site <https://www.owasp.org/index.php/Command_Injection>`_
+
 
 Sending HTTP error codes
 ++++++++++++++++++++++++
@@ -421,7 +452,7 @@ In this example we'll redirect our users to Google:
 
    $ cat redirect.pow
    kapow route add '/redirect' - <<-'EOF'
-       kapow set /response/headers/Location 'http://google.com'
+       kapow set /response/headers/Location https://google.com
        kapow set /response/status 301
    EOF
 
@@ -446,10 +477,11 @@ In this example we'll redirect our users to Google:
    * Connection #0 to host localhost left intact
 
 
-How to execute two processes parallel
-+++++++++++++++++++++++++++++++++++++
+How to Execute Two Processes in Parallel
+++++++++++++++++++++++++++++++++++++++++
 
-We want to :samp:`ping` two machines parallel. Kapow! get IPs from query params:
+We want to :samp:`ping` two machines parallel. **Kapow!** gets IPs from query
+params:
 
 .. code-block:: console
    :linenos:
@@ -461,35 +493,36 @@ We want to :samp:`ping` two machines parallel. Kapow! get IPs from query params:
        wait
    EOF
 
-Calling with curl:
+Calling with ``curl``:
 
 .. code-block:: console
    :linenos:
 
     $ curl -v http://localhost:8080/parallel/10.0.0.1/10.10.10.1
 
-Manage cookies
+Manage Cookies
 ++++++++++++++
 
-Sometimes you need track down some user state. Kapow! allows you manage Request/Response Cookies.
+If you track down some user state, **Kapow!** allows you manage Request/Response
+Cookies.
 
-Next example we'll set a cookie:
+In the next example we'll set a cookie:
 
 .. code-block:: console
    :linenos:
 
    $ cat cookie.pow
    kapow route add /setcookie - <<-'EOF'
-      CURRENT_STATUS="$(kapow get /request/cookies/kapow-status)"
+      CURRENT_STATUS=$(kapow get /request/cookies/kapow-status)
 
-      if [ -z "$CURRENT_SATUS" ]; then
-         kapow set /response/cookies/Kapow-Status "Kapow Cookie Set"
+      if [ -z "$CURRENT_STATUS" ]; then
+         kapow set /response/cookies/Kapow-Status 'Kapow Cookie Set'
       fi
 
-      echo "Ok" | kapow set /response/body
+      echo OK | kapow set /response/body
    EOF
 
-Calling with curl:
+Calling with ``curl``:
 
 .. code-block:: console
    :linenos:

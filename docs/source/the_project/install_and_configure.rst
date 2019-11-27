@@ -1,18 +1,18 @@
 Installing Kapow!
 =================
 
-Kapow! has a reference implementation in Go that is under active development
-right now.  If you want to start using Kapow! you can choose from several
+Kapow! has a reference implementation in ``Go`` that is under active development
+right now.  If you want to start using **Kapow!** you can choose from several
 options.
 
 
-Download and install a binary
+Download and Install a Binary
 -----------------------------
 
-Binaries for several platforms are available from our
+Binaries for several platforms are available from the
 `releases <https://github.com/BBVA/kapow/releases>`_ section, visit the latest
 release page and download the binary corresponding to the platfom and
-architecture you want to install Kapow! in.
+architecture you want to install **Kapow!** in.
 
 
 Linux
@@ -29,26 +29,26 @@ Windows
 ^^^^^^^
 
 Copy the downloaded binary to a directory of your choice and update the system
-PATH variable to include that directory.
+``PATH`` variable to include that directory.
 
 
 Install the package with go get
 -------------------------------
 
 If you already have `installed and configured <https://golang.org/cmd/go/>`_
-the go runtime in the host where you want to run Kapow!, simply run:
+the ``go`` runtime in the host where you want to run **Kapow!**, simply run:
 
 .. code-block:: bash
 
   $ go get -u github.com/BBVA/kapow
 
 
-Include Kapow! in your container image
+Include Kapow! in your Container Image
 --------------------------------------
 
-If you want to include Kapow! in a Docker image you can add the binary directly
-from the releases section.  Following is an example dockerfile that includes
-Kapow!.
+If you want to include **Kapow!** in a ``Docker`` image you can add the binary
+directly from the releases section. Following is an example ``Dockerfile`` that
+includes **Kapow!**.
 
 .. code-block:: dockerfile
 
@@ -62,9 +62,9 @@ Kapow!.
 
   ENTRYPOINT ["/usr/bin/kapow"]
 
-If the container is intended to run the server and you want to dinamically
-configure it, remember to include a --control-bind param with an external bind
-address (i.e. 0.0.0.0) and to map all the needed ports in order to get access
+If the container is intended for running the server and you want to dinamically
+configure it, remember to include a `--control-bind` param with an external bind
+address (i.e. ``0.0.0.0``) and to map all the needed ports in order to get access
 to the control interface.
 
 After building the image you can run the container with:
@@ -73,5 +73,5 @@ After building the image you can run the container with:
 
   $ docker run --rm -i -p 8080:8080 -v $(pwd)/whatever.pow:/opt/whatever.pow kapow:latest server /opt/whatever.pow
 
-With the -v parameter we map a local file into the container's filesystem so we
-can use it to configure our Kapow! server on startup.
+With the `-v` parameter we map a local file into the container's filesystem so
+we can use it to configure our **Kapow!** server on startup.

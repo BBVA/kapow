@@ -16,23 +16,24 @@ Welcome to Kapow!
 What's Kapow!
 =============
 
-  Think of that **software** that you need but **only runs as command line**.
-  Kapow! lets you to **wrap it into an HTTP API without write a single line of
-  code**.
+  Think of that **software** that you need but **only runs in the command
+  line**.  **Kapow!** lets you **wrap it into an HTTP API without writing a
+  single line of code**.
 
   .. image::  _static/kapow-quick-overview.png
      :width: 80%
      :align: center
 
-  Want to know more? Check the :doc:`the_project/quickstart` section for a long
-  explanation of what Kapow! does.
+  Want to know more?
+  Check the :doc:`the_project/quickstart` section for a longer explanation of
+  what **Kapow!** does.
 
 
 Authors
 =======
 
-  **Kapow!** is being developed by
-  `BBVA-Labs Security team members <https://github.com/BBVA/kapow/blob/master/AUTHORS.rst>`_.
+  **Kapow!** is being developed by the
+  `BBVA-Labs Security team <https://github.com/BBVA/kapow/blob/master/AUTHORS.rst>`_.
 
 
 License
@@ -51,7 +52,7 @@ Contributions
 
 
 Table of Contents
-================
+=================
 
 .. toctree::
    :maxdepth: 2
@@ -63,7 +64,7 @@ Table of Contents
 
 .. toctree::
    :maxdepth: 2
-   :caption: Usage examples
+   :caption: Usage Examples
 
    examples/index
 
@@ -90,7 +91,7 @@ Table of Contents
    tutorial/tutorial04
    tutorial/tutorial05
 
-Indices and tables
+Indices and Tables
 ==================
 
 * :ref:`genindex`
