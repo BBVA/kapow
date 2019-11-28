@@ -58,7 +58,6 @@ Table of Contents
    :maxdepth: 2
    :caption: The Project
 
-   the_project/overview
    the_project/quickstart
    the_project/install_and_configure
 
