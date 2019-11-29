@@ -381,14 +381,14 @@ In this example, an attacker can inject arbitrary parameters to ``ls``.
         ls $(kapow get /request/matches/value) | kapow set /response/body
    EOF
 
-Exploding using curl:
+Exploiting using curl:
 
 .. code-block:: console
    :linenos:
 
    $ curl "http://localhost:8080/vulnerable/-li%20hello"
 
-**This examples is NOT VULNERABLE to parameter injection**
+**This example is NOT VULNERABLE to parameter injection**
 
 Be aware of how we add double quotes when we recover *value* data from the
 request:
