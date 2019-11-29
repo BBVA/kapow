@@ -21,7 +21,7 @@ If your pull request is not accepted on the first try, don't be discouraged! If
 there's a problem with the implementation, hopefully you'll receive feedback on
 what to improve.
 
-Submit unit tests for your changes. Python has a great testing framework built
+Submit unit tests for your changes. Go has a great testing framework built
 in; use it! Take a look at existing tests for inspiration. Run the full test
 suite on your branch before submitting a pull request.
 
