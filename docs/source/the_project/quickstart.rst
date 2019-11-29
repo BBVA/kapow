@@ -8,23 +8,24 @@ why it is so awesome :-).
 Scenario
 --------
 
-Let's suppose that we're in a corporate network like the following one:
+In this example we'll consider that our scenario is a corporate network like
+this:
 
 .. _quickstart_image:
 .. image:: /_static/network.png
    :align: center
    :width: 80%
 
-Our organization has an external host that act as a bridge between our intranet
+Our organization has an external host that acts as a bridge between our intranet
 an the public Internet.
 
-**Our goal: We need to check if the** :samp:`Internal Host` **is alive.**
+**Our goal: Our team needs to check if the** :samp:`Internal Host` **is alive.**
 
 
 Limitations and Constraints
 ---------------------------
 
-1. We **don't want** to **grant access** to the :samp:`External Host` to anybody.
+1. We **don't want** to **grant access** to the :samp:`*External Host*` to anybody.
 2. We **don't want** to manage VPNs or any similar solutions to access :samp:`Internal Host` from the Internet.
 3. We **want to limit the actions** that a user can perform in our intranet while it is checking if :samp:`Internal Host` is alive.
 4. We **want** to use the most standard mechanism.  Easy to use and automate.
@@ -61,9 +62,10 @@ Develop and Deploy a Custom Solution
 
 Ok, this approach could be the best choice for our organization, but:
 
-1. We'll need to create a new project, develop, test, manage and maintain it.
+1. We'll need to start a new project, develop, test, manage and maintain it.
 2. We need to wait for for the development to be production ready.
-3. We need a budget, even if we have developers in our organization.
+3. We need a budget.  Even if we have developers in our organization, their time
+   it's not free.
 
 Conclusion: **Not a good idea.**
 
@@ -79,7 +81,7 @@ Using Kapow! (spoiler: it's the winner!)
 Ok, let's analyze **Kapow!** and check if it is compatible with our constraints:
 
 1. **Kapow!** is Open Source, so **it's also free as in beer**.
-2. By using kapow! we don't need to program our own solution, so we **don't have to waste time**.
+2. By using kapow! we don't need to code our own solution, so we **don't have to waste time**.
 3. By using Kapow! we can run any command in the :samp:`External Host` limiting the command parameters, so **it's safe**.
 4. By using Kapow! we can launch any system command as an HTTP API easily, so **we don't need to grant login access to anybody to** :samp:`External Host`.
 
@@ -100,8 +102,8 @@ Install Kapow!
 Follow :doc:`Install Kapow! <install_and_configure>` instructions.
 
 
-Write a `ping.pow` File
-+++++++++++++++++++++++
+Write a ``ping.pow`` File
++++++++++++++++++++++++++
 
 Kapow! uses plain text files (called ``POW`` files) so you can define the
 endpoints you want to expose the system command with.  For our example we need a

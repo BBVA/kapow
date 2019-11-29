@@ -33,7 +33,7 @@ With the example.pow:
 
 
 Load More Than One ``.pow`` File
-++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++
 
 You can load more than one .pow file at time. This can help you keep your
 ``.pow`` files tidy.
