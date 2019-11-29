@@ -76,7 +76,7 @@ Reasons:
 Using Kapow! (spoiler: it's the winner!)
 ++++++++++++++++++++++++++++++++++++++++
 
-Ok, lets analyze **Kapow!** and check if it is compatible with our constraints:
+Ok, let's analyze **Kapow!** and check if it is compatible with our constraints:
 
 1. **Kapow!** is Open Source, so **it's also free as in beer**.
 2. By using kapow! we don't need to program our own solution, so we **don't have to waste time**.
@@ -148,7 +148,7 @@ et voilà !
 Under the Hood
 ++++++++++++++
 
-To understand what's happening under the hood with **Kapow!** lets see the
+To understand what's happening under the hood with **Kapow!** let's see the
 following diagram:
 
 .. image:: /_static/sequence.png
