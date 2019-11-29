@@ -16,7 +16,7 @@ What we've done?
 
 **Senior**
 
-  Sure!  Lets take a look at the documentation to see how can we tweak with the
+  Sure!  Let's take a look at the documentation to see how can we tweak with the
   logic of the request.
 
 **Junior**
