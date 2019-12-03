@@ -22,7 +22,7 @@ Install the downloaded binary using the following command as a privileged user.
 
 .. code-block:: bash
 
-  $ install -t /usr/local/bin path_to_downloaded_binary
+  $ install -t /usr/local/bin/kapow path_to_downloaded_binary
 
 
 Windows
