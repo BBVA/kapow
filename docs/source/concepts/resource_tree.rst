@@ -15,7 +15,7 @@ subcommands.
 Overview
 --------
 
-.. code-block:: plain
+.. code-block:: text
 
     /
     │

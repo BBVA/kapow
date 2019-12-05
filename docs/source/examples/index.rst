@@ -362,8 +362,8 @@ In this example we respond back with the line count of the file received in the 
    file.txt has        2 lines
 
 
-Protecting again Command Injection Attacks
-++++++++++++++++++++++++++++++++++++++++++
+Protecting again Parameter Injection Attacks
+++++++++++++++++++++++++++++++++++++++++++++
 
 When you resolve variable values be careful to tokenize correctly by using
 double quotes.  Otherwise you could be vulnerable to **parameter injection
@@ -401,9 +401,12 @@ request:
         ls "$(kapow get /request/matches/value)" | kapow set /response/body
    EOF
 
-.. note::
 
-   If want to read more about command injection, you can check `OWASP site <https://www.owasp.org/index.php/Command_Injection>`_
+.. warning::
+
+   Quotes around parameters only protect against injection of additional
+   arguments, but not against turning a non-option into option or vice-versa.
+   See the "Security Concern" section on the docs.
 
 
 Sending HTTP error codes

@@ -59,24 +59,8 @@ Table of Contents
    :caption: The Project
 
    the_project/quickstart
+   the_project/security
    the_project/install_and_configure
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Usage Examples
-
-   examples/index
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Theory
-
-   theory/interfaces
-   theory/philosophy
-   theory/request_life_cycle
-   theory/resource_tree
-   theory/route_matching
-   theory/routes
 
 .. toctree::
    :maxdepth: 2
@@ -89,6 +73,23 @@ Table of Contents
    tutorial/tutorial03
    tutorial/tutorial04
    tutorial/tutorial05
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Usage Examples
+
+   examples/index
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Concepts
+
+   concepts/interfaces
+   concepts/philosophy
+   concepts/request_life_cycle
+   concepts/resource_tree
+   concepts/route_matching
+   concepts/routes
 
 Indices and Tables
 ==================
