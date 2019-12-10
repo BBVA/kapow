@@ -177,8 +177,8 @@ If you need to write more complex actions, you can leverage multiline commands:
 
    $ cat multiline.pow
    kapow route add /log_and_stuff - <<-'EOF'
-       echo this is a quite long sentence and other stuff | tee log.txt | kapow set /response/body
-       cat log.txt | kapow set /response/body
+   	echo this is a quite long sentence and other stuff | tee log.txt | kapow set /response/body
+   	cat log.txt | kapow set /response/body
    EOF
 
 .. warning::
@@ -204,9 +204,9 @@ In this example we'll be adding the security header ``nosniff`` to the response.
 
    $ cat sniff.pow
    kapow route add /sec-hello-world - <<-'EOF'
-       kapow set /response/headers/X-Content-Type-Options nosniff
+   	kapow set /response/headers/X-Content-Type-Options nosniff
 
-       echo more secure hello world | kapow set /response/body
+   	echo more secure hello world | kapow set /response/body
    EOF
 
    $ kapow server nosniff.pow
@@ -261,8 +261,8 @@ date, then our ``.pow`` file will fix it and return the correct value to the use
 
    $ cat fix_date.pow
    kapow route add -X POST /fix-date - <<-'EOF'
-       kapow set /response/headers/Content-Type application/json
-       kapow get /request/body | jq --arg newdate "$(date +'%Y-%m-%d_%H-%M-%S')"" '.incorrectDate=$newdate' | kapow set /response/body
+   	kapow set /response/headers/Content-Type application/json
+   	kapow get /request/body | jq --arg newdate "$(date +'%Y-%m-%d_%H-%M-%S')"" '.incorrectDate=$newdate' | kapow set /response/body
    EOF
 
 Call the service with ``curl``:
@@ -285,12 +285,12 @@ order to generate a two-attribute JSON response.
 
    $ cat echo-attribute.pow
    kapow route add -X POST /echo-attribute - <<-'EOF'
-      JSON_WHO=$(kapow get /request/body | jq -r .name)
+   	JSON_WHO=$(kapow get /request/body | jq -r .name)
 
-      kapow set /response/headers/Content-Type application/json
-      kapow set /response/status 200
+   	kapow set /response/headers/Content-Type application/json
+   	kapow set /response/status 200
 
-      jq --arg greet Hello --arg value "${JSON_WHO:-World}" --null-input '{ greet: $greet, to: $value }' | kapow set /response/body
+   	jq --arg greet Hello --arg value "${JSON_WHO:-World}" --null-input '{ greet: $greet, to: $value }' | kapow set /response/body
    EOF
 
 Call the service with ``curl``:
@@ -319,7 +319,7 @@ Uploading a file using *Kapow!* is very simple:
 
    $ cat upload.pow
    kapow route add -X POST /upload-file - <<-'EOF'
-       kapow get /request/files/data/content | kapow set /response/body
+   	kapow get /request/files/data/content | kapow set /response/body
    EOF
 
 .. code-block:: console
@@ -341,15 +341,15 @@ In this example we respond back with the line count of the file received in the 
    $ cat count-file-lines.pow
    kapow route add -X POST /count-file-lines - <<-'EOF'
 
-      # Get sent file
-      FNAME=$(kapow get /request/files/myfile/filename)
+   	# Get sent file
+   	FNAME=$(kapow get /request/files/myfile/filename)
 
-      # Counting file lines
-      LCOUNT=$(kapow get /request/files/myfile/content | wc -l)
+   	# Counting file lines
+   	LCOUNT=$(kapow get /request/files/myfile/content | wc -l)
 
-      kapow set /response/status 200
+   	kapow set /response/status 200
 
-      echo -- "$FNAME has $LCOUNT lines" | kapow set /response/body
+   	echo -- "$FNAME has $LCOUNT lines" | kapow set /response/body
    EOF
 
 .. code-block:: console
@@ -378,7 +378,7 @@ In this example, an attacker can inject arbitrary parameters to ``ls``.
 
    $ cat command-injection.pow
    kapow route add '/vulnerable/{value}' - <<-'EOF'
-        ls $(kapow get /request/matches/value) | kapow set /response/body
+   	ls $(kapow get /request/matches/value) | kapow set /response/body
    EOF
 
 Exploiting using curl:
@@ -398,7 +398,7 @@ request:
 
    $ cat command-injection.pow
    kapow route add '/not-vulnerable/{value}' - <<-'EOF'
-        ls -- "$(kapow get /request/matches/value)" | kapow set /response/body
+   	ls -- "$(kapow get /request/matches/value)" | kapow set /response/body
    EOF
 
 
@@ -421,8 +421,8 @@ You can specify custom status code for HTTP response:
 
    $ cat error.pow
    kapow route add /error - <<-'EOF'
-       kapow set /response/status 401
-       echo -n '401 error' | kapow set /response/body
+   	kapow set /response/status 401
+   	echo -n '401 error' | kapow set /response/body
    EOF
 
 Testing with curl:
@@ -457,8 +457,8 @@ In this example we'll redirect our users to Google:
 
    $ cat redirect.pow
    kapow route add /redirect - <<-'EOF'
-       kapow set /response/headers/Location https://google.com
-       kapow set /response/status 301
+   	kapow set /response/headers/Location https://google.com
+   	kapow set /response/status 301
    EOF
 
 .. code-block:: console
@@ -493,9 +493,9 @@ params:
 
    $ cat parallel.pow
    kapow route add '/parallel/{ip1}/{ip2}' - <<-'EOF'
-       ping -c 1 -- "$(kapow get /request/matches/ip1)" | kapow set /response/body &
-       ping -c 1 -- "$(kapow get /request/matches/ip2)" | kapow set /response/body &
-       wait
+   	ping -c 1 -- "$(kapow get /request/matches/ip1)" | kapow set /response/body &
+   	ping -c 1 -- "$(kapow get /request/matches/ip2)" | kapow set /response/body &
+   	wait
    EOF
 
 Calling with ``curl``:
@@ -518,13 +518,13 @@ In the next example we'll set a cookie:
 
    $ cat cookie.pow
    kapow route add /setcookie - <<-'EOF'
-      CURRENT_STATUS=$(kapow get /request/cookies/kapow-status)
+   	CURRENT_STATUS=$(kapow get /request/cookies/kapow-status)
 
-      if [ -z "$CURRENT_STATUS" ]; then
-         kapow set /response/cookies/Kapow-Status 'Kapow Cookie Set'
-      fi
+   	if [ -z "$CURRENT_STATUS" ]; then
+   	        kapow set /response/cookies/Kapow-Status 'Kapow Cookie Set'
+   	fi
 
-      echo -n OK | kapow set /response/body
+   	echo -n OK | kapow set /response/body
    EOF
 
 Calling with ``curl``:

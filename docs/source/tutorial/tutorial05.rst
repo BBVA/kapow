@@ -41,7 +41,7 @@ Sharing the Stats
   .. code-block:: bash
 
      kapow route add /capacitystats - <<-'EOF'
-       echo "{\"memory\": \"`free -m`\"}"  | kapow set /response/body
+     	echo "{\"memory\": \"`free -m`\"}"  | kapow set /response/body
      EOF
 
 **Senior**
@@ -146,14 +146,14 @@ Sharing the Stats
   .. code-block:: bash
 
      kapow route add /capacitystats - <<-'EOF'
-       jq -n \
-          --arg hostname "$(hostname)" \
-          --arg date "$(date)" \
-          --arg memory "$(free -m)" \
-          --arg load "$(uptime)" \
-          --arg disk "$(df -h)" \
-          '{"hostname": $hostname, "date": $date, "memory": $memory, "load": $load, "disk": $disk}' \
-       | kapow set /response/body
+     	jq -n \
+     	   --arg hostname "$(hostname)" \
+     	   --arg date "$(date)" \
+     	   --arg memory "$(free -m)" \
+     	   --arg load "$(uptime)" \
+     	   --arg disk "$(df -h)" \
+     	   '{"hostname": $hostname, "date": $date, "memory": $memory, "load": $load, "disk": $disk}' \
+     	| kapow set /response/body
      EOF
 
   What do you think?
@@ -180,15 +180,15 @@ Sharing the Stats
   .. code-block:: bash
 
      kapow route add /capacitystats - <<-'EOF'
-       jq -n \
-          --arg hostname "$(hostname)" \
-          --arg date "$(date)" \
-          --arg memory "$(free -m)" \
-          --arg load "$(uptime)" \
-          --arg disk "$(df -h)" \
-          '{"hostname": $hostname, "date": $date, "memory": $memory, "load": $load, "disk": $disk}' \
-       | kapow set /response/body
-       echo application/json | kapow set /response/headers/Content-Type
+     	jq -n \
+     	   --arg hostname "$(hostname)" \
+     	   --arg date "$(date)" \
+     	   --arg memory "$(free -m)" \
+     	   --arg load "$(uptime)" \
+     	   --arg disk "$(df -h)" \
+     	   '{"hostname": $hostname, "date": $date, "memory": $memory, "load": $load, "disk": $disk}' \
+     	| kapow set /response/body
+     	echo application/json | kapow set /response/headers/Content-Type
      EOF
 
 **Senior**
@@ -212,15 +212,15 @@ Sharing the Stats
   .. code-block:: bash
 
      kapow route add /capacitystats - <<-'EOF'
-       kapow set /response/headers/Content-Type application/json
-       jq -n \
-          --arg hostname "$(hostname)" \
-          --arg date "$(date)" \
-          --arg memory "$(free -m)" \
-          --arg load "$(uptime)" \
-          --arg disk "$(df -h)" \
-          '{"hostname": $hostname, "date": $date, "memory": $memory, "load": $load, "disk": $disk}' \
-       | kapow set /response/body
+     	kapow set /response/headers/Content-Type application/json
+     	jq -n \
+     	   --arg hostname "$(hostname)" \
+     	   --arg date "$(date)" \
+     	   --arg memory "$(free -m)" \
+     	   --arg load "$(uptime)" \
+     	   --arg disk "$(df -h)" \
+     	   '{"hostname": $hostname, "date": $date, "memory": $memory, "load": $load, "disk": $disk}' \
+     	| kapow set /response/body
      EOF
 
 **Senior**

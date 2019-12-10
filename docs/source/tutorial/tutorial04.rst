@@ -131,11 +131,11 @@ I Need My Report
 
   .. code-block:: console
 
-     $ cat <<'EOF'
-        you can put
-        more than one line
-        here
-       EOF
+     $ cat <<-'EOF'
+     	you can put
+     	more than one line
+     	here
+     EOF
 
   The shell will put the data between the first ``EOF`` and the second
   ``EOF`` as the ``stdin`` of the ``cat`` process.
@@ -151,16 +151,16 @@ I Need My Report
   .. code-block:: bash
 
      kapow route add /capacityreport - <<-'EOF'
-         hostname | kapow set /response/body
-         echo ================================================================================ | kapow set /response/body
-         date | kapow set /response/body
-         echo ================================================================================ | kapow set /response/body
-         free -m | kapow set /response/body
-         echo ================================================================================ | kapow set /response/body
-         uptime | kapow set /response/body
-         echo ================================================================================ | kapow set /response/body
-         df -h | kapow set /response/body
-         echo ================================================================================ | kapow set /response/body
+     	hostname | kapow set /response/body
+     	echo ================================================================================ | kapow set /response/body
+     	date | kapow set /response/body
+     	echo ================================================================================ | kapow set /response/body
+     	free -m | kapow set /response/body
+     	echo ================================================================================ | kapow set /response/body
+     	uptime | kapow set /response/body
+     	echo ================================================================================ | kapow set /response/body
+     	df -h | kapow set /response/body
+     	echo ================================================================================ | kapow set /response/body
      EOF
 
 **Senior**
@@ -196,18 +196,18 @@ I Need My Report
   .. code-block:: bash
 
      kapow route add /capacityreport - <<-'EOF'
-         {
-         hostname
-         echo ================================================================================
-         date
-         echo ================================================================================
-         free -m
-         echo ================================================================================
-         uptime
-         echo ================================================================================
-         df -h
-         echo ================================================================================
-         } | kapow set /response/body
+     	{
+     	hostname
+     	echo ================================================================================
+     	date
+     	echo ================================================================================
+     	free -m
+     	echo ================================================================================
+     	uptime
+     	echo ================================================================================
+     	df -h
+     	echo ================================================================================
+     	} | kapow set /response/body
      EOF
 
 **Senior**
