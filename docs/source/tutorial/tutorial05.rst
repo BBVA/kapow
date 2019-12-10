@@ -85,7 +85,7 @@ Sharing the Stats
 
 **Junior**
 
-  Let's use it then! 
+  Let's use it then!
 
   How can we generate a JSON document with ``jq``?
 
@@ -157,7 +157,7 @@ Sharing the Stats
      EOF
 
   What do you think?
-   
+
 **Senior**
 
   You forgot one more thing.
@@ -196,9 +196,9 @@ Sharing the Stats
   Just a couple of details.
 
   1. You have to set the headers **before** the body.  This is because the body
-     can be so big that Kapow! is forced to start sending it out.
+     can be so big that *Kapow!* is forced to start sending it out.
   2. In cases where you want to set a small piece of data (like the header) is
-     better to not use the ``stdin``.  Kapow! provides a secondary syntax for these
+     better to not use the ``stdin``.  *Kapow!* provides a secondary syntax for these
      cases:
 
      .. code-block:: console

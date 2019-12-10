@@ -1,7 +1,7 @@
 Quick Start Guide
 =================
 
-We'll explain a simple example to help you understand what **Kapow!** can do and
+We'll explain a simple example to help you understand what *Kapow!* can do and
 why it is so awesome :-).
 
 
@@ -75,17 +75,17 @@ Reasons:
 2. Need to spend time (and time is money, see reason #1)
 
 
-Using Kapow! (spoiler: it's the winner!)
-++++++++++++++++++++++++++++++++++++++++
+Using *Kapow!* (spoiler: it's the winner!)
+++++++++++++++++++++++++++++++++++++++++++
 
-Ok, let's analyze **Kapow!** and check if it is compatible with our constraints:
+Ok, let's analyze *Kapow!* and check if it is compatible with our constraints:
 
-1. **Kapow!** is Open Source, so **it's also free as in beer**.
+1. *Kapow!* is Open Source, so **it's also free as in beer**.
 2. By using kapow! we don't need to code our own solution, so we **don't have to waste time**.
-3. By using Kapow! we can run any command in the :samp:`External Host` limiting the command parameters, so **it's safe**.
-4. By using Kapow! we can launch any system command as an HTTP API easily, so **we don't need to grant login access to anybody to** :samp:`External Host`.
+3. By using *Kapow!* we can run any command in the :samp:`External Host` limiting the command parameters, so **it's safe**.
+4. By using *Kapow!* we can launch any system command as an HTTP API easily, so **we don't need to grant login access to anybody to** :samp:`External Host`.
 
-Conclusion: **Kapow! is the best choice.**
+Conclusion: *Kapow!* **is the best choice.**
 
 Reasons: It satisfies all of our requirements.
 
@@ -99,13 +99,13 @@ In order to get our example :ref:`Scenario <quickstart_image>` working we need t
 Install Kapow!
 ++++++++++++++
 
-Follow :doc:`Install Kapow! <install_and_configure>` instructions.
+Follow :doc:`Install *Kapow!* <install_and_configure>` instructions.
 
 
 Write a ``ping.pow`` File
 +++++++++++++++++++++++++
 
-Kapow! uses plain text files (called ``POW`` files) so you can define the
+*Kapow!* uses plain text files (called ``POW`` files) so you can define the
 endpoints you want to expose the system command with.  For our example we need a
 file like this:
 
@@ -116,8 +116,8 @@ file like this:
 
 Explanation:
 
-1. :samp:`kapow route add /ping` - adds a new HTTP API endpoint at :samp:`/ping` path in the Kapow! server.  You have to use `GET` method to invoke the endpoint.
-2. :samp:`-c` - after this parameter we write the system command that **Kapow!** will run each time the endpoint is invoked.
+1. :samp:`kapow route add /ping` - adds a new HTTP API endpoint at :samp:`/ping` path in the *Kapow!* server.  You have to use `GET` method to invoke the endpoint.
+2. :samp:`-c` - after this parameter we write the system command that *Kapow!* will run each time the endpoint is invoked.
 3. :samp:`ping -c 1 10.10.10.100` - sends 1 ping package to the host *10.10.10.100*, i.e. :samp:`Internal Host`.
 4. :samp:`| kapow set /response/body` - writes the output of `ping` to the body of the response, so you can see it.
 
@@ -150,12 +150,12 @@ et voilà !
 Under the Hood
 ++++++++++++++
 
-To understand what's happening under the hood with **Kapow!** let's see the
+To understand what's happening under the hood with *Kapow!* let's see the
 following diagram:
 
 .. image:: /_static/sequence.png
    :align: center
    :width: 80%
 
-As you can see, **Kapow!** provides the necessary *magic* to turn a **system
+As you can see, *Kapow!* provides the necessary *magic* to turn a **system
 command** into an ``HTTP API``.

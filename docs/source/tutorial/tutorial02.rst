@@ -11,7 +11,7 @@ What we've done?
 
 **Junior**
 
-  Makes sense.  Do you think that Kapow! can help with this? I feel that this is
+  Makes sense.  Do you think that *Kapow!* can help with this? I feel that this is
   the way to do it.
 
 **Senior**
@@ -47,7 +47,7 @@ What we've done?
 **Senior**
 
   Looks good to me, clean and simple, and it is a very good idea to use ``GET``
-  here as it wont change anything in the server. Restart Kapow! and try it.
+  here as it wont change anything in the server. Restart *Kapow!* and try it.
 
 **Junior**
 

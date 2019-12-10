@@ -5,7 +5,7 @@ A ``.pow`` file is just a ``bash`` script, where you make calls to the ``kapow r
 command.
 
 
-**Starting Kapow! using a .pow file**
+**Starting** *Kapow!* **using a .pow file**
 
 .. code-block:: console
    :linenos:
@@ -29,7 +29,7 @@ With the example.pow:
 
 .. note::
 
-   **Kapow!** can be fully configured using just ``.pow`` files
+   *Kapow!* can be fully configured using just ``.pow`` files
 
 
 Load More Than One ``.pow`` File
@@ -122,7 +122,7 @@ Calling route:
 Listing Routes
 ++++++++++++++
 
-You can list the active routes in the **Kapow!** server.
+You can list the active routes in the *Kapow!* server.
 
 .. _examples_listing_routes:
 
@@ -151,7 +151,7 @@ Or, if you want human-readable output, you can use :samp:`jq`:
 
 .. note::
 
-    **Kapow!** has an `HTTP` admin interface, by default listening at **localhost:8081**
+    *Kapow!* has an `HTTP` admin interface, by default listening at **localhost:8081**
 
 
 Deleting Routes
@@ -253,7 +253,7 @@ Modify JSON by Using Shell Commands
 
 **Example 1**
 
-In this example our **Kapow!** service will receive a JSON value with an incorrect
+In this example our *Kapow!* service will receive a JSON value with an incorrect
 date, then our ``.pow`` file will fix it and return the correct value to the user.
 
 .. code-block:: console
@@ -312,7 +312,7 @@ Upload Files
 
 **Example 1**
 
-Uploading a file using **Kapow!** is very simple:
+Uploading a file using *Kapow!* is very simple:
 
 .. code-block:: console
    :linenos:
@@ -485,7 +485,7 @@ In this example we'll redirect our users to Google:
 How to Execute Two Processes in Parallel
 ++++++++++++++++++++++++++++++++++++++++
 
-We want to :samp:`ping` two machines parallel. **Kapow!** gets IPs from query
+We want to :samp:`ping` two machines parallel. *Kapow!* gets IPs from query
 params:
 
 .. code-block:: console
@@ -508,7 +508,7 @@ Calling with ``curl``:
 Manage Cookies
 ++++++++++++++
 
-If you track down some user state, **Kapow!** allows you manage Request/Response
+If you track down some user state, *Kapow!* allows you manage Request/Response
 Cookies.
 
 In the next example we'll set a cookie:

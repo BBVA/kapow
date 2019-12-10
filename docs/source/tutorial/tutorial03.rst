@@ -19,9 +19,9 @@ We need to filter
 **Senior**
 
   By sure, but in addition to some good shell plumbing we're going to squeeze
-  Kapow!'s superpowers a litle bit more to get a really good solution.
+  *Kapow!*'s superpowers a litle bit more to get a really good solution.
 
-  Can you take a look at Kapow!'s documentation to see if something can be done?
+  Can you take a look at *Kapow!*'s documentation to see if something can be done?
 
 **Junior**
 
@@ -31,7 +31,7 @@ We need to filter
 
 **Senior**
 
-  Sounds great!  How we have lived without Kapow! all this time?
+  Sounds great!  How we have lived without *Kapow!* all this time?
 
   As they requested, we can offer them with a parameter to filter the registers
   they want to pick and another parameter to limit the output size in lines.

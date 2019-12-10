@@ -1,5 +1,5 @@
-Welcome to Kapow!
-=================
+Welcome to *Kapow!*
+===================
 
 .. image:: https://circleci.com/gh/BBVA/kapow/tree/master.svg?style=svg
    :target: https://circleci.com/gh/BBVA/kapow/tree/master
@@ -13,11 +13,11 @@ Welcome to Kapow!
 **If you can script it, you can HTTP it**
 
 
-What's Kapow!
-=============
+What's *Kapow!*
+===============
 
   Think of that **software** that you need but **only runs in the command
-  line**.  **Kapow!** lets you **wrap it into an HTTP API without writing a
+  line**.  *Kapow!* lets you **wrap it into an HTTP API without writing a
   single line of code**.
 
   .. image::  _static/kapow-quick-overview.png
@@ -26,20 +26,20 @@ What's Kapow!
 
   Want to know more?
   Check the :doc:`the_project/quickstart` section for a longer explanation of
-  what **Kapow!** does.
+  what *Kapow!* does.
 
 
 Authors
 =======
 
-  **Kapow!** is being developed by the
+  *Kapow!* is being developed by the
   `BBVA-Labs Security team <https://github.com/BBVA/kapow/blob/master/AUTHORS.rst>`_.
 
 
 License
 =======
 
-  **Kapow!** is Open Source Software and available under the
+  *Kapow!* is Open Source Software and available under the
   `Apache 2 license <https://raw.githubusercontent.com/BBVA/kapow/master/LICENSE>`_.
 
 

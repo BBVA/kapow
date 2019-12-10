@@ -4,7 +4,7 @@ Security Concerns
 Special care has to be taken when using parameters provided by the user when
 composing command line invocations.
 
-Sanitizing user input is not a new problem, but in the case of **Kapow!**, we
+Sanitizing user input is not a new problem, but in the case of *Kapow!*, we
 have to take into account also the way that the shell parses its arguments,
 as well as the way the command itself interprets them, in order to get it right.
 
@@ -81,6 +81,6 @@ Let's see how we can handle this particular case:
 
 .. note::
 
-   Since this is critical for keeping your Kapow! services secure, we are working
+   Since this is critical for keeping your *Kapow!* services secure, we are working
    on a way to make this more transparent and safe, while at the same time keeping
    it Kapowy.

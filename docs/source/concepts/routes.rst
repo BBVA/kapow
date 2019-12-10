@@ -1,10 +1,10 @@
 Routes
 ======
 
-A Kapow! route specifies the matching criteria for an incoming request on
+A *Kapow!* route specifies the matching criteria for an incoming request on
 the `User HTTP Interface`, and the details to handle it.
 
-Kapow! implements a *route table* where all routes reside.
+*Kapow!* implements a *route table* where all routes reside.
 
 
 A route can be set like this:
@@ -39,7 +39,7 @@ Uniquely identifies each route. It is used for instance by ``kapow route remove
 
 .. note::
 
-   The current implementation of Kapow! autogenerates a `UUID` for this field.
+   The current implementation of *Kapow!* autogenerates a `UUID` for this field.
    In the future the use will be able to specify a custom value.
 
 
@@ -61,7 +61,7 @@ It can contain regex placeholders for easily capturing fragments of the path.
 In the route shown above, a request with a URL ``/register/joe`` would match,
 assigning `joe` to the placeholder ``username``.
 
-Kapow! leverages Gorilla Mux for managing routes.  For the full story, see
+*Kapow!* leverages Gorilla Mux for managing routes.  For the full story, see
 https://github.com/gorilla/mux#examples
 
 
@@ -115,7 +115,7 @@ incantation to be executed:
 Matching Algorithm
 ------------------
 
-`Kapow!` leverages Gorilla Mux for this task. You can see the gory details in
+`*Kapow!*` leverages Gorilla Mux for this task. You can see the gory details in
 their documentation.
 
 

@@ -13,7 +13,7 @@ Single Static Binary
 Shell Agnostic
 --------------
 
-- Kapow! knows nothing, and makes no assumptions, about the shell you are using.
+- *Kapow!* knows nothing, and makes no assumptions, about the shell you are using.
   It only spawns executables.
 
 - You are free to implement a client to the Data API directly if you are so
@@ -23,9 +23,9 @@ Shell Agnostic
 Not a Silver Bullet
 -------------------
 
-You should not use Kapow! if your project requires complex business logic.
+You should not use *Kapow!* if your project requires complex business logic.
 
 If you try to encode business logic in a shell script, you will **deeply**
 regret it.
 
-Kapow! is designed for automating simple stuff.
+*Kapow!* is designed for automating simple stuff.

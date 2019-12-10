@@ -1,8 +1,8 @@
 Installing Kapow!
 =================
 
-Kapow! has a reference implementation in ``Go`` that is under active development
-right now.  If you want to start using **Kapow!** you can choose from several
+*Kapow!* has a reference implementation in ``Go`` that is under active development
+right now.  If you want to start using *Kapow!* you can choose from several
 options.
 
 
@@ -12,7 +12,7 @@ Download and Install a Binary
 Binaries for several platforms are available from the
 `releases <https://github.com/BBVA/kapow/releases>`_ section, visit the latest
 release page and download the binary corresponding to the platfom and
-architecture you want to install **Kapow!** in.
+architecture you want to install *Kapow!* in.
 
 
 Linux
@@ -36,19 +36,19 @@ Install the package with go get
 -------------------------------
 
 If you already have `installed and configured <https://golang.org/cmd/go/>`_
-the ``go`` runtime in the host where you want to run **Kapow!**, simply run:
+the ``go`` runtime in the host where you want to run *Kapow!*, simply run:
 
 .. code-block:: bash
 
   $ go get -u github.com/BBVA/kapow
 
 
-Include Kapow! in your Container Image
---------------------------------------
+Include *Kapow!* in your Container Image
+----------------------------------------
 
-If you want to include **Kapow!** in a ``Docker`` image you can add the binary
+If you want to include *Kapow!* in a ``Docker`` image you can add the binary
 directly from the releases section. Following is an example ``Dockerfile`` that
-includes **Kapow!**.
+includes *Kapow!*.
 
 .. code-block:: dockerfile
 
@@ -74,4 +74,4 @@ After building the image you can run the container with:
   $ docker run --rm -i -p 8080:8080 -v $(pwd)/whatever.pow:/opt/whatever.pow kapow:latest server /opt/whatever.pow
 
 With the `-v` parameter we map a local file into the container's filesystem so
-we can use it to configure our **Kapow!** server on startup.
+we can use it to configure our *Kapow!* server on startup.

@@ -27,7 +27,7 @@ I Need My Report
 
   We prepare a report with some statistics about the load of our
   servers.  This way we know when we have to buy another one.
-  
+
 **Junior**
 
   I see this company scales just like Google.
@@ -58,7 +58,7 @@ I Need My Report
 
 **Junior**
 
-  Well, I guess we can make a Kapow! endpoint to let her see all this
+  Well, I guess we can make a *Kapow!* endpoint to let her see all this
   information from the browser.  This way she doesn't need to waste any
   time asking us.
 
@@ -102,7 +102,7 @@ I Need My Report
      Memory:
      ... the output of `free -m` ...
      ================================================================================
-     ... and so on ... 
+     ... and so on ...
 
 **Junior**
 
@@ -136,13 +136,13 @@ I Need My Report
         more than one line
         here
        EOF
-  
+
   The shell will put the data between the first ``EOF`` and the second
   ``EOF`` as the ``stdin`` of the ``cat`` process.
 
 **Junior**
 
-  If I want to use this with Kapow! I have to make it read the script
+  If I want to use this with *Kapow!* I have to make it read the script
   from ``stdin``.  To do this I know that I have to put a ``-`` at the
   end.
 

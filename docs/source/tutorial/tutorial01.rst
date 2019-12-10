@@ -78,7 +78,7 @@ Backup that Database!
 
   Ok then, let's try on your laptop first.
 
-  First of all you have to follow the `installation instructions </the_project/install_and_configure>`_. 
+  First of all you have to follow the `installation instructions </the_project/install_and_configure>`_.
 
 **Junior**
 
@@ -88,9 +88,9 @@ Backup that Database!
 **Senior**
 
   Don't worry it is pretty easy.  Basically we will provide an HTTP
-  endpoint managed by Kapow! at the **Corporate Server**; when the
+  endpoint managed by *Kapow!* at the **Corporate Server**; when the
   project team wants to perform a backup they only need to call the
-  endpoint and Kapow! will call the backup script.
+  endpoint and *Kapow!* will call the backup script.
 
 **Junior**
 
@@ -145,7 +145,7 @@ Backup that Database!
      $ cat backup.pow
      kapow route add -X PUT /db/backup -e ./backup_db.sh
 
-  And then you can start Kapow! with it:
+  And then you can start *Kapow!* with it:
 
   .. code-block:: console
 
