@@ -51,15 +51,8 @@ Add a New Route
 
 .. warning::
 
-    Be aware that if you register more than one route with same path, only the
-    first route added will be used.
-
-    For example, if you add these routes:
-
-    1. http://localhost:8080/echo
-    2. http://localhost:8080/echo/{message}
-
-    only first one will be used.
+    Be aware that if you register more than one route with exactly the
+    same path, only the first route added will be used.
 
 
 **GET route**
@@ -197,7 +190,7 @@ Add or Modify an HTTP Header
 
 You may want to add some extra HTTP header to the response.
 
-In this example we'll be adding the security header ``nosniff`` to the response.
+In this example we'll be adding the header ``X-Content-Type-Options`` to the response.
 
 .. code-block:: console
    :linenos:
@@ -205,8 +198,9 @@ In this example we'll be adding the security header ``nosniff`` to the response.
    $ cat sniff.pow
    kapow route add /sec-hello-world - <<-'EOF'
    	kapow set /response/headers/X-Content-Type-Options nosniff
+   	kapow set /response/headers/Content-Type text/plain
 
-   	echo more secure hello world | kapow set /response/body
+   	echo this will be interpreted as plain text | kapow set /response/body
    EOF
 
    $ kapow server nosniff.pow
@@ -230,13 +224,19 @@ Testing with curl:
    < X-Content-Type-Options: nosniff
    < Date: Wed, 20 Nov 2019 10:56:46 GMT
    < Content-Length: 24
-   < Content-Type: text/plain; charset=utf-8
+   < Content-Type: text/plain
    <
-   more secure hello world
+   this will be interpreted as plain text
+
+.. warning::
+
+   Please be aware that if you don't explicitly specified the value of
+   the ``Content-Type`` header, *Kapow!* will guess it, effectively
+   negating the effect of the ``X-Content-Type-Options`` header.
 
 .. note::
 
-    You can read more about the ``nosniff`` header `here
+    You can read more about the ``X-Content-Type-Options: nosniff`` header `here
     <https://developer.mozilla.org/es/docs/Web/HTTP/Headers/X-Content-Type-Options>`_.
 
 
@@ -262,7 +262,7 @@ date, then our ``.pow`` file will fix it and return the correct value to the use
    $ cat fix_date.pow
    kapow route add -X POST /fix-date - <<-'EOF'
    	kapow set /response/headers/Content-Type application/json
-   	kapow get /request/body | jq --arg newdate "$(date +'%Y-%m-%d_%H-%M-%S')"" '.incorrectDate=$newdate' | kapow set /response/body
+   	kapow get /request/body | jq --arg newdate "$(date +'%Y-%m-%d_%H-%M-%S')" '.incorrectDate=$newdate' | kapow set /response/body
    EOF
 
 Call the service with ``curl``:
@@ -349,7 +349,7 @@ In this example we respond back with the line count of the file received in the 
 
    	kapow set /response/status 200
 
-   	echo -- "$FNAME has $LCOUNT lines" | kapow set /response/body
+   	echo "$FNAME has $LCOUNT lines" | kapow set /response/body
    EOF
 
 .. code-block:: console
@@ -533,7 +533,7 @@ Calling with ``curl``:
    :linenos:
    :emphasize-lines: 11
 
-   $ curl -v http://localhost:8080/set-cookie
+   $ curl -v http://localhost:8080/setcookie
    *   Trying ::1...
    * TCP_NODELAY set
    * Connected to localhost (::1) port 8080 (#0)
