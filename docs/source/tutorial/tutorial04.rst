@@ -1,23 +1,22 @@
-I Need My Report
+I Need my Report
 ================
 
 **Junior**
 
   Good morning!
 
-  You look very busy, what's the matter?
+  You look very busy, what's going on?
 
 **Senior**
 
-  I am finishing the capacity planning report.  Let me just
-  mail it... Done!
+  I am finishing the capacity planning report.  Let me just mail it... Done!
 
-  Today I am going to teach you how to do this report so we can split
-  the workload.
+  Today I am going to teach you how to write this report so we can split the
+  workload.
 
 **Junior**
 
-  Oh. That sounds... fun.  Ok, tell me about this report.
+  Oh. That sounds... fun.  OK, tell me about this report.
 
 **Senior**
 
@@ -30,37 +29,44 @@ I Need My Report
 
 **Junior**
 
-  I see this company scales just like Google.
+  I see this company scales up just like Google...
+
+**Senior**
+
+  Smartass...
+
+**Junior**
+
+  (chuckles)
 
 **Senior**
 
   We have a procedure:
 
-  1. SSH into the machine.
-  2. Execute the following commands copying its output for later fill in
-     the report:
+  1. ``ssh`` into the machine.
+  2. Execute the following commands copying its output for later filling in the
+     report:
 
      - ``hostname`` and ``date``:  To include in the report.
      - ``free -m``:  To know if we have to buy more RAM.
      - ``uptime``:  To see the load of the system.
-     - ``df -h``:  Just in case we need another hard disk.
+     - ``df -h``:  Just in case we need another hard disk drive.
 
-  3. Copy all this in a mail and send it to *Susan*, the operations
-     manager.
+  3. Copy all this in an email and send it to *Susan*, the operations manager.
 
 **Junior**
 
-  And why *Susan* don't enter the server herself to see all of this?
+  And why *Susan* can't ``ssh`` into the server herself to see all of this?
 
 **Senior**
 
-  She doesn't have time for this. She is a manager, she is very busy!
+  She doesn't have time for this.  She is a manager, and she is very busy!
 
 **Junior**
 
   Well, I guess we can make a *Kapow!* endpoint to let her see all this
-  information from the browser.  This way she doesn't need to waste any
-  time asking us.
+  information from the browser.  This way she doesn't need to waste any time
+  asking us.
 
   I started to write it already:
 
@@ -70,10 +76,10 @@ I Need My Report
 
 **Senior**
 
-  That is preposterous!
+  Not good enough!
 
-  First of all that code is not readable.  And the output would be
-  something like.
+  First of all, that code is not readable.  And the output would be something
+  like:
 
   .. code-block:: text
 
@@ -89,7 +95,7 @@ I Need My Report
 
   Which is also very difficult to read!
 
-  What *Susan* is used to see is more like:
+  What *Susan* is used to see is more like this:
 
   .. code-block:: text
 
@@ -114,9 +120,9 @@ I Need My Report
 
 **Senior**
 
-  That fix the issue for *Susan* but make it worst for us.
+  That fixes the issue for *Susan*, but makes it worse for us.
 
-  What about a HEREDOC to help us make the code more readable.
+  What about a HEREDOC to help us make the code more readable?
 
 **Junior**
 
@@ -132,9 +138,9 @@ I Need My Report
   .. code-block:: console
 
      $ cat <<-'EOF'
-     	you can put
-     	more than one line
-     	here
+             you can put
+             more than one line
+             here
      EOF
 
   The shell will put the data between the first ``EOF`` and the second
@@ -142,43 +148,44 @@ I Need My Report
 
 **Junior**
 
-  If I want to use this with *Kapow!* I have to make it read the script
-  from ``stdin``.  To do this I know that I have to put a ``-`` at the
-  end.
+  OK, I understand. That's cool, by the way.
+
+  So, if I want to use this with *Kapow!*, I have to make it read the script
+  from ``stdin``.  To do this I know that I have to put a ``-`` at the end.
 
   Let me try:
 
   .. code-block:: bash
 
      kapow route add /capacityreport - <<-'EOF'
-     	hostname | kapow set /response/body
-     	echo ================================================================================ | kapow set /response/body
-     	date | kapow set /response/body
-     	echo ================================================================================ | kapow set /response/body
-     	free -m | kapow set /response/body
-     	echo ================================================================================ | kapow set /response/body
-     	uptime | kapow set /response/body
-     	echo ================================================================================ | kapow set /response/body
-     	df -h | kapow set /response/body
-     	echo ================================================================================ | kapow set /response/body
+             hostname | kapow set /response/body
+             echo ================================================================================ | kapow set /response/body
+             date | kapow set /response/body
+             echo ================================================================================ | kapow set /response/body
+             free -m | kapow set /response/body
+             echo ================================================================================ | kapow set /response/body
+             uptime | kapow set /response/body
+             echo ================================================================================ | kapow set /response/body
+             df -h | kapow set /response/body
+             echo ================================================================================ | kapow set /response/body
      EOF
 
 **Senior**
 
-  That would work. Nevertheless I am not satisfied.
+  That would work.  Nevertheless I am not yet satisfied.
 
   What about all the repeated ``kapow set /response/body`` statements?
-  Could we do any better?
+  Do you think we could do any better?
 
 **Junior**
 
-  Maybe we can redirect all to a file and use the file as the input of
+  Maybe we can redirect all output to a file and use the file as the input of
   ``kapow set /response/body``.
 
 **Senior**
 
-  There is a better way. You can make use of another neat ``bash``
-  feature: **group commands**.
+  There is a better way.  You can make use of another neat ``bash`` feature:
+  **group commands**.
 
   Group commands allows you to execute several commands treating the
   group as one single command.
@@ -196,24 +203,26 @@ I Need My Report
   .. code-block:: bash
 
      kapow route add /capacityreport - <<-'EOF'
-     	{
-     	hostname
-     	echo ================================================================================
-     	date
-     	echo ================================================================================
-     	free -m
-     	echo ================================================================================
-     	uptime
-     	echo ================================================================================
-     	df -h
-     	echo ================================================================================
-     	} | kapow set /response/body
+             {
+                      hostname
+                      echo ================================================================================
+                      date
+                      echo ================================================================================
+                      free -m
+                      echo ================================================================================
+                      uptime
+                      echo ================================================================================
+                      df -h
+                      echo ================================================================================
+             } | kapow set /response/body
      EOF
 
 **Senior**
 
-  I am not worried about maintaining that script. Good job!
+  Nice!  Now I am not worried about maintaining that script.  Good job!
 
 **Junior**
 
-  You know me. Whatever it takes to avoid writing reports ;)
+  You know me.  Whatever it takes to avoid writing reports ;-)
+
+  (both chuckle).

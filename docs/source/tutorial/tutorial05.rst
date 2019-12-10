@@ -9,23 +9,23 @@ Sharing the Stats
 
   Just about time...  We are in trouble!
 
-  The report stuff was a complete success, so much that now *Susan* has
-  hired a frontend developer to create a custom dashboard to see the
-  stats in real time.
+  The report stuff was a complete success, so much so that now *Susan* has hired
+  a frontend developer to create a custom dashboard to see the stats in real
+  time.
 
   Now we have to provide the backend for the solution.
 
 **Junior**
 
-  And whats the problem?
+  And what's the problem?
 
 **Senior**
 
-  We are not developers what are we doing writing backend?
+  We are not developers!  What are we doing writing a backend?
 
 **Junior**
 
-  Chill out, man. Can't be that difficult?  What they need exactly?
+  Just chill out.  Can't be that difficult...  What do they need, exactly?
 
 **Senior**
 
@@ -34,20 +34,19 @@ Sharing the Stats
 
 **Junior**
 
-  So we have half of the work already done.
+  So, we have half of the work done already!
 
   What about this?
 
   .. code-block:: bash
 
      kapow route add /capacitystats - <<-'EOF'
-     	echo "{\"memory\": \"`free -m`\"}"  | kapow set /response/body
+             echo "{\"memory\": \"`free -m`\"}"  | kapow set /response/body
      EOF
 
 **Senior**
 
-  For starters that's not valid JSON. The output would be something
-  like:
+  For starters, that's not valid ``JSON``.  The output would be something like:
 
   .. code-block:: console
 
@@ -56,9 +55,8 @@ Sharing the Stats
      Mem:          31967        3121       21680         980        7166       27418
      Swap:             0           0           0"}
 
-  You can't add new lines inside a JSON string that way, you have to
-  encode with ``\n``.
-
+  You can't add new lines inside a ``JSON`` string that way, you have to escape
+  the new line characters as ``\n``.
 
 **Junior**
 
@@ -66,7 +64,7 @@ Sharing the Stats
 
 **Senior**
 
-  See it by yourself.
+  See it for yourself.
 
   .. code-block:: console
 
@@ -75,23 +73,23 @@ Sharing the Stats
 
 **Junior**
 
-  ``jq``? What is that command?
+  ``jq``?  What is that command?
 
 **Senior**
 
-  ``jq`` is a wonderful tool for working with JSON data from the command
-  line.  With you ``jq`` you can extract data from JSON and also
-  generate well-formed JSON.
+  ``jq`` is a wonderful tool for working with ``JSON`` data from the command
+  line.  With ``jq`` you can extract data from a ``JSON`` document and it also
+  allows you to generate a well-formed ``JSON`` document.
 
 **Junior**
 
-  Let's use it then!
+  Let's use it, then!
 
-  How can we generate a JSON document with ``jq``?
+  How can we generate a ``JSON`` document with ``jq``?
 
 **Senior**
 
-  To generate a document we use the ``-n`` argument:
+  To generate a document we use the ``-n`` option:
 
   .. code-block:: console
 
@@ -102,11 +100,12 @@ Sharing the Stats
 
 **Junior**
 
-  That is not very useful. The output is the same.
+  That does not seem very useful.  The output is just the same.
 
 **Senior**
 
-  It get's better. You can add variables to the JSON and ``jq`` will escape them for you.
+  Bear with me, it gets better.  You can add variables to the ``JSON`` and
+  ``jq`` will escape them for you.
 
   .. code-block:: console
 
@@ -117,7 +116,9 @@ Sharing the Stats
 
 **Junior**
 
-  That's just what I need.
+  Sweet!  That's just what I need.
+
+  (hacks away for a few minutes).
 
   What do you think of this?
 
@@ -134,8 +135,8 @@ Sharing the Stats
 
 **Senior**
 
-  That is the data we have to produce.  But the code is far from readable.  And
-  you also forgot about adding the endpoint.
+  That is the output we have to produce, right.  But the code is far from
+  readable.  And you also forgot about adding the endpoint.
 
   Can we do any better?
 
@@ -146,60 +147,61 @@ Sharing the Stats
   .. code-block:: bash
 
      kapow route add /capacitystats - <<-'EOF'
-     	jq -n \
-     	   --arg hostname "$(hostname)" \
-     	   --arg date "$(date)" \
-     	   --arg memory "$(free -m)" \
-     	   --arg load "$(uptime)" \
-     	   --arg disk "$(df -h)" \
-     	   '{"hostname": $hostname, "date": $date, "memory": $memory, "load": $load, "disk": $disk}' \
-     	| kapow set /response/body
+             jq -n \
+                --arg hostname "$(hostname)" \
+                --arg date "$(date)" \
+                --arg memory "$(free -m)" \
+                --arg load "$(uptime)" \
+                --arg disk "$(df -h)" \
+                '{"hostname": $hostname, "date": $date, "memory": $memory, "load": $load, "disk": $disk}' \
+             | kapow set /response/body
      EOF
 
   What do you think?
 
 **Senior**
 
-  You forgot one more thing.
+  I'm afraid you forgot an important detail.
 
 **Junior**
 
-  I think you are wrong, the JSON is well-formed and it contains all the
-  required data.  Also the code is very readable.
+  I don't think so! the ``JSON`` is well-formed and it contains all the required
+  data.  And the code is quite readable.
 
 **Senior**
 
-  You are right but, you are not using HTTP correctly.  You have to set the
+  You are right, but you are not using ``HTTP`` correctly.  You have to set the
   ``Content-Type`` header to let your client know the format of the data you are
   outputting.
 
 **Junior**
 
-  Ok, let me try:
+  Oh, I see.  Let me try again:
 
   .. code-block:: bash
 
      kapow route add /capacitystats - <<-'EOF'
-     	jq -n \
-     	   --arg hostname "$(hostname)" \
-     	   --arg date "$(date)" \
-     	   --arg memory "$(free -m)" \
-     	   --arg load "$(uptime)" \
-     	   --arg disk "$(df -h)" \
-     	   '{"hostname": $hostname, "date": $date, "memory": $memory, "load": $load, "disk": $disk}' \
-     	| kapow set /response/body
-     	echo application/json | kapow set /response/headers/Content-Type
+             jq -n \
+                --arg hostname "$(hostname)" \
+                --arg date "$(date)" \
+                --arg memory "$(free -m)" \
+                --arg load "$(uptime)" \
+                --arg disk "$(df -h)" \
+                '{"hostname": $hostname, "date": $date, "memory": $memory, "load": $load, "disk": $disk}' \
+             | kapow set /response/body
+             echo application/json | kapow set /response/headers/Content-Type
      EOF
 
 **Senior**
 
-  Just a couple of details.
+  Better.  Just a couple of details.
 
-  1. You have to set the headers **before** the body.  This is because the body
-     can be so big that *Kapow!* is forced to start sending it out.
-  2. In cases where you want to set a small piece of data (like the header) is
-     better to not use the ``stdin``.  *Kapow!* provides a secondary syntax for these
-     cases:
+  1. You have to set the headers **before** writing to the body.  This is
+     because the body can be so big that *Kapow!* is forced to start sending it
+     out.
+  2. In cases where you want to set a small piece of data (like the header), it
+     is better not to use ``stdin``.  *Kapow!* provides a secondary syntax
+     for these cases:
 
      .. code-block:: console
 
@@ -212,18 +214,18 @@ Sharing the Stats
   .. code-block:: bash
 
      kapow route add /capacitystats - <<-'EOF'
-     	kapow set /response/headers/Content-Type application/json
-     	jq -n \
-     	   --arg hostname "$(hostname)" \
-     	   --arg date "$(date)" \
-     	   --arg memory "$(free -m)" \
-     	   --arg load "$(uptime)" \
-     	   --arg disk "$(df -h)" \
-     	   '{"hostname": $hostname, "date": $date, "memory": $memory, "load": $load, "disk": $disk}' \
-     	| kapow set /response/body
+             kapow set /response/headers/Content-Type application/json
+             jq -n \
+                --arg hostname "$(hostname)" \
+                --arg date "$(date)" \
+                --arg memory "$(free -m)" \
+                --arg load "$(uptime)" \
+                --arg disk "$(df -h)" \
+                '{"hostname": $hostname, "date": $date, "memory": $memory, "load": $load, "disk": $disk}' \
+             | kapow set /response/body
      EOF
 
 **Senior**
 
-  That's perfect!  Let's upload this to the *Corporate Server* and tell the
-  frontend developer.
+  That's perfect!  Now, let's upload this to the *Corporate Server* and tell the
+  frontend developer about it.

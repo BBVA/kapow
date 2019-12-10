@@ -7,20 +7,22 @@ Backup that Database!
 
 **Senior**
 
-  Well, is not that simple. We of course have periodic backups. But, our
+  Well, is not that simple.  We of course have periodic backups.  But, our
   project team ask us for a backup every time a project is finished.
 
-  I've already prepared a script to do the task. Before executing it in
+  I've already prepared a script to do the task.  Before executing it in
   production download it and test it in your own machine.
 
   .. code-block:: console
 
-     $ curl --output backup_db.sh 'https://raw.githubusercontent.com/BBVA/kapow/master/docs/source/tutorial/materials/backup_db.sh'
+     $ curl --output backup_db.sh https://raw.githubusercontent.com/BBVA/kapow/master/docs/source/tutorial/materials/backup_db.sh
      $ chmod u+x backup_db.sh
 
 **Junior**
 
-  Ok, done! When I executed it the output says:
+  (after a few minutes)
+
+  OK, done!  When I executed it the output says:
 
   .. code-block:: console
 
@@ -30,11 +32,11 @@ Backup that Database!
 
 **Senior**
 
-  That's right. That script performed the backup and stored it into the
-  **Backup Server** and appended some information into the backup log
-  file at ``/tmp/backup_db.log``.
+  That's right.  That script performed the backup and stored it into the
+  **Backup Server** and appended some information into the backup log file at
+  ``/tmp/backup_db.log``.
 
-  Now you can SSH into the **Corporate Server** and make the real
+  Now you can ``ssh`` into the **Corporate Server** and make the real
   backup.
 
 
@@ -54,32 +56,33 @@ Backup that Database!
 
 **Senior**
 
-  I am the only allowed to SSH into the **Corporate Server** for obvious
-  reasons.
+  I am the only one allowed to ``ssh`` into the **Corporate Server**, for
+  obvious reasons.
 
 **Junior**
 
-  Why do you need to SSH in the first place? Couldn't it be done
-  without SSH?
+  Why do you need to ``ssh`` in the first place?  Couldn't it be done without
+  ``ssh``?
 
 **Senior**
 
-  Actually it could be done with a promising new tool I've just found...
-  Kapow!
+  Actually, it could be done with a promising new tool I've just found...
+  *Kapow!*
 
-  Is a tool that allows you to publish scripts as HTTP services.  If we
+  Is a tool that allows you to publish scripts as ``HTTP`` services.  If we
   use it here we can give them the ability to do the backup whenever
   they want.
 
 **Junior**
 
-  Sounds like less work for me.  I like it.
+  Sounds like less work for me.  I like it!
 
 **Senior**
 
-  Ok then, let's try on your laptop first.
+  OK then, let's it try on your laptop first.
 
-  First of all you have to follow the `installation instructions </the_project/install_and_configure>`_.
+  First of all, you have to follow the
+  `installation instructions </the_project/install_and_configure>`_.
 
 **Junior**
 
@@ -88,10 +91,10 @@ Backup that Database!
 
 **Senior**
 
-  Don't worry it is pretty easy.  Basically we will provide an HTTP
-  endpoint managed by *Kapow!* at the **Corporate Server**; when the
-  project team wants to perform a backup they only need to call the
-  endpoint and *Kapow!* will call the backup script.
+  Don't worry, it is pretty easy.  Basically we will provide an ``HTTP``
+  endpoint managed by *Kapow!* at the **Corporate Server**; when the project
+  team wants to perform a backup they only need to call the endpoint and
+  *Kapow!* will call the backup script.
 
 **Junior**
 
@@ -99,7 +102,7 @@ Backup that Database!
 
 **Senior**
 
-  First you have to start a fresh server. Please run this in your laptop:
+  First you have to start a fresh server.  Please run this in your laptop:
 
   .. code-block:: console
 
@@ -107,8 +110,8 @@ Backup that Database!
 
   .. warning::
 
-     It is important that you run this command in the same directory
-     in which you downloaded ``backup_db.sh``.
+     It is important that you run this command in the same directory in which
+     you downloaded ``backup_db.sh``.
 
 **Junior**
 
@@ -116,7 +119,7 @@ Backup that Database!
 
 **Senior**
 
-  Now you have the port 8080 open but don't have any endpoints defined.
+  Now you have the port ``8080`` open but don't have any endpoints defined.
   To define our endpoint you have to run this in another terminal:
 
   .. code-block:: console
@@ -124,8 +127,8 @@ Backup that Database!
      $ kapow route add -X PUT /db/backup -e ./backup_db.sh
 
   This will create an endpoint accessible via
-  ``http://localhost:8080/db/backup``. This endpoint have to be invoked
-  with the ``PUT`` method to prevent accidental calls.
+  ``http://localhost:8080/db/backup``.  This endpoint has to be invoked with the
+  ``PUT`` method to prevent accidental calls.
 
 **Junior**
 
@@ -134,10 +137,9 @@ Backup that Database!
 
 **Senior**
 
-  Not at all. The have thought of everything. You can put all your route
-  definitions in a special script file and pass it to the server on
-  startup. They call those files `POW` files and have ``.pow``
-  extension.
+  Not at all.  The creators of *Kapow!* have thought of everything.  You can put
+  all your route definitions in a special script file and pass it to the server
+  on startup.  They call those files `pow` files and they have ``.pow`` extension.
 
   It should look something like:
 
@@ -167,7 +169,7 @@ Backup that Database!
 
 **Senior**
 
-  That appears to be the case, but better we check it.
+  That appears to be the case, but we better check it.
 
   Call it with ``curl``:
 
@@ -177,11 +179,11 @@ Backup that Database!
 
 **Junior**
 
-  Yay! I can see the log file at ``/tmp/backup_db.log``
+  Yay!  I can see the log file at ``/tmp/backup_db.log``
 
 **Senior**
 
-  That's great. I am going to install all this in the *Corporate Server*
-  and forget about the old procedure.
+  That's great.  I am going to install all this in the *Corporate Server* and
+  forget about the old procedure.
 
-  That enough for your first day! You can go home.
+  That enough for your first day!  Go home now and get some rest.
