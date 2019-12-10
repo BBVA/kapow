@@ -42,7 +42,7 @@ What we've done?
 
   .. code-block:: console
 
-     kapow route add /db/backup_logs -e cat /tmp/backup_db.log | kapow set /response/body
+     kapow route add /db/backup_logs -c 'cat /tmp/backup_db.log | kapow set /response/body'
 
 **Senior**
 
