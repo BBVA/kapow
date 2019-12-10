@@ -13,9 +13,10 @@ Backup that Database!
   I've already prepared a script to do the task. Before executing it in
   production download it and test it in your own machine.
 
-  .. todo::
+  .. code-block:: console
 
-     - Link backup script from Github.
+     $ curl --output backup_db.sh 'https://raw.githubusercontent.com/BBVA/kapow/master/docs/source/tutorial/materials/backup_db.sh'
+     $ chmod u+x backup_db.sh
 
 **Junior**
 
