@@ -12,7 +12,7 @@ command.
 
    $ kapow server example.pow
 
-With the example.pow:
+With the ``example.pow``:
 
 .. code-block:: console
    :linenos:
