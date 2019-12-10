@@ -57,7 +57,7 @@ Add a New Route
 
 **GET route**
 
-Defining route:
+Defining a route:
 
 .. code-block:: console
    :linenos:
