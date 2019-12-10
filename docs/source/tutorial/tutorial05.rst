@@ -40,9 +40,9 @@ Sharing the Stats
 
   .. code-block:: bash
 
-     kapow route add /capacitystats - <<-HERE 
+     kapow route add /capacitystats - <<-'EOF'
        echo "{\"memory\": \"`free -m`\"}"  | kapow set /response/body
-     HERE
+     EOF
 
 **Senior**
 
@@ -145,7 +145,7 @@ Sharing the Stats
 
   .. code-block:: bash
 
-     kapow route add /capacitystats - <<-HERE 
+     kapow route add /capacitystats - <<-'EOF'
        jq -n \
           --arg hostname "$(hostname)" \
           --arg date "$(date)" \
@@ -154,7 +154,7 @@ Sharing the Stats
           --arg disk "$(df -h)" \
           '{"hostname": $hostname, "date": $date, "memory": $memory, "load": $load, "disk": $disk}' \
        | kapow set /response/body
-     HERE
+     EOF
 
   What do you think?
    
@@ -179,7 +179,7 @@ Sharing the Stats
 
   .. code-block:: bash
 
-     kapow route add /capacitystats - <<-HERE 
+     kapow route add /capacitystats - <<-'EOF'
        jq -n \
           --arg hostname "$(hostname)" \
           --arg date "$(date)" \
@@ -189,7 +189,7 @@ Sharing the Stats
           '{"hostname": $hostname, "date": $date, "memory": $memory, "load": $load, "disk": $disk}' \
        | kapow set /response/body
        echo application/json | kapow set /response/headers/Content-Type
-     HERE
+     EOF
 
 **Senior**
 
@@ -211,7 +211,7 @@ Sharing the Stats
 
   .. code-block:: bash
 
-     kapow route add /capacitystats - <<-HERE 
+     kapow route add /capacitystats - <<-'EOF'
        kapow set /response/headers/Content-Type application/json
        jq -n \
           --arg hostname "$(hostname)" \
@@ -221,7 +221,7 @@ Sharing the Stats
           --arg disk "$(df -h)" \
           '{"hostname": $hostname, "date": $date, "memory": $memory, "load": $load, "disk": $disk}' \
        | kapow set /response/body
-     HERE
+     EOF
 
 **Senior**
 

@@ -131,14 +131,14 @@ I Need My Report
 
   .. code-block:: console
 
-     $ cat <<HERE
+     $ cat <<'EOF'
         you can put
         more than one line
         here
-       HERE
+       EOF
   
-  The shell will put the data between the first ``HERE`` and the second
-  ``HERE`` as the ``stdin`` of the ``cat`` process.
+  The shell will put the data between the first ``EOF`` and the second
+  ``EOF`` as the ``stdin`` of the ``cat`` process.
 
 **Junior**
 
@@ -150,7 +150,7 @@ I Need My Report
 
   .. code-block:: bash
 
-     kapow route add /capacityreport - <<-HERE
+     kapow route add /capacityreport - <<-'EOF'
          hostname | kapow set /response/body
          echo ================================================================================ | kapow set /response/body
          date | kapow set /response/body
@@ -161,7 +161,7 @@ I Need My Report
          echo ================================================================================ | kapow set /response/body
          df -h | kapow set /response/body
          echo ================================================================================ | kapow set /response/body
-     HERE
+     EOF
 
 **Senior**
 
@@ -195,7 +195,7 @@ I Need My Report
 
   .. code-block:: bash
 
-     kapow route add /capacityreport - <<-HERE
+     kapow route add /capacityreport - <<-'EOF'
          {
          hostname
          echo ================================================================================
@@ -208,7 +208,7 @@ I Need My Report
          df -h
          echo ================================================================================
          } | kapow set /response/body
-     HERE
+     EOF
 
 **Senior**
 

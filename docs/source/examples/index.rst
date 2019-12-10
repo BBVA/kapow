@@ -284,7 +284,7 @@ order to generate a two-attribute JSON response.
 .. code-block:: console
 
    $ cat echo-attribute.pow
-   kapow route add -X POST '/echo-attribute' - <<-'EOF'
+   kapow route add -X POST /echo-attribute - <<-'EOF'
       JSON_WHO=$(kapow get /request/body | jq -r .name)
 
       kapow set /response/headers/Content-Type application/json
@@ -339,7 +339,7 @@ In this example we respond back with the line count of the file received in the 
    :linenos:
 
    $ cat count-file-lines.pow
-   kapow route add -X POST '/count-file-lines' - <<-'EOF'
+   kapow route add -X POST /count-file-lines - <<-'EOF'
 
       # Get sent file
       FNAME=$(kapow get /request/files/myfile/filename)
@@ -349,7 +349,7 @@ In this example we respond back with the line count of the file received in the 
 
       kapow set /response/status 200
 
-      echo $FNAME has $LCOUNT lines | kapow set /response/body
+      echo -- "$FNAME has $LCOUNT lines" | kapow set /response/body
    EOF
 
 .. code-block:: console
@@ -386,7 +386,7 @@ Exploiting using curl:
 .. code-block:: console
    :linenos:
 
-   $ curl "http://localhost:8080/vulnerable/-li%20hello"
+   $ curl "http://localhost:8080/vulnerable/-lai%20hello"
 
 **This example is NOT VULNERABLE to parameter injection**
 
@@ -398,15 +398,17 @@ request:
 
    $ cat command-injection.pow
    kapow route add '/not-vulnerable/{value}' - <<-'EOF'
-        ls "$(kapow get /request/matches/value)" | kapow set /response/body
+        ls -- "$(kapow get /request/matches/value)" | kapow set /response/body
    EOF
 
 
 .. warning::
 
    Quotes around parameters only protect against injection of additional
-   arguments, but not against turning a non-option into option or vice-versa.
-   See the "Security Concern" section on the docs.
+   arguments, but not against turning a non-option into option or
+   vice-versa.  Note that for many commands we can leverage double-dash
+   to signal the end of the options.  See the "Security Concern" section
+   on the docs.
 
 
 Sending HTTP error codes
@@ -418,9 +420,9 @@ You can specify custom status code for HTTP response:
    :linenos:
 
    $ cat error.pow
-   kapow route add '/error' - <<-'EOF'
+   kapow route add /error - <<-'EOF'
        kapow set /response/status 401
-       echo "401 error" | kapow set /response/body
+       echo -n '401 error' | kapow set /response/body
    EOF
 
 Testing with curl:
@@ -454,7 +456,7 @@ In this example we'll redirect our users to Google:
    :linenos:
 
    $ cat redirect.pow
-   kapow route add '/redirect' - <<-'EOF'
+   kapow route add /redirect - <<-'EOF'
        kapow set /response/headers/Location https://google.com
        kapow set /response/status 301
    EOF
@@ -490,9 +492,9 @@ params:
    :linenos:
 
    $ cat parallel.pow
-   kapow route add /parallel/{ip1}/{ip2} - <<-'EOF'
-       ping -c 1 "$(kapow get /request/matches/ip1)" | kapow set /response/body &
-       ping -c 1 "$(kapow get /request/matches/ip2)" | kapow set /response/body &
+   kapow route add '/parallel/{ip1}/{ip2}' - <<-'EOF'
+       ping -c 1 -- "$(kapow get /request/matches/ip1)" | kapow set /response/body &
+       ping -c 1 -- "$(kapow get /request/matches/ip2)" | kapow set /response/body &
        wait
    EOF
 
@@ -522,7 +524,7 @@ In the next example we'll set a cookie:
          kapow set /response/cookies/Kapow-Status 'Kapow Cookie Set'
       fi
 
-      echo OK | kapow set /response/body
+      echo -n OK | kapow set /response/body
    EOF
 
 Calling with ``curl``:
