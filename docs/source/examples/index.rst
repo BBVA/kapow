@@ -1,11 +1,11 @@
-Using a .pow File
-+++++++++++++++++
+Using a pow File
+++++++++++++++++
 
-A ``.pow`` file is just a ``bash`` script, where you make calls to the ``kapow route``
+A ``pow`` file is just a ``bash`` script, where you make calls to the ``kapow route``
 command.
 
 
-**Starting** *Kapow!* **using a .pow file**
+**Starting** *Kapow!* **using a** ``pow`` **file**
 
 .. code-block:: console
    :linenos:
@@ -19,7 +19,7 @@ With the example.pow:
 
    $ cat example.pow
    #
-   # This is a simple example of a .pow file
+   # This is a simple example of a pow file
    #
    echo '[*] Starting my script'
 
@@ -29,14 +29,14 @@ With the example.pow:
 
 .. note::
 
-   *Kapow!* can be fully configured using just ``.pow`` files
+   *Kapow!* can be fully configured using just ``pow`` files
 
 
-Load More Than One ``.pow`` File
-++++++++++++++++++++++++++++++++
+Load More Than One ``pow`` File
++++++++++++++++++++++++++++++++
 
-You can load more than one .pow file at time. This can help you keep your
-``.pow`` files tidy.
+You can load more than one ``pow`` file at time.  This can help you keep your
+``pow`` files tidy.
 
 .. code-block:: console
    :linenos:
@@ -160,8 +160,8 @@ obtain the ID of the route, and then delete it by typing:
    $ kapow route remove 20c98328-0b82-11ea-90a8-784f434dfbe2
 
 
-Writing Multiline ``.pow`` Files
-++++++++++++++++++++++++++++++++
+Writing Multiline ``pow`` Files
++++++++++++++++++++++++++++++++
 
 If you need to write more complex actions, you can leverage multiline commands:
 
