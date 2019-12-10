@@ -1,1 +1,0 @@
-kapow route add -X POST /echo -c 'kapow get /request/body | kapow set /response/stream'
