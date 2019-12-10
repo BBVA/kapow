@@ -23,8 +23,8 @@ Let's consider the following route:
 
    #!/bin/sh
    kapow route add /find -c <<-'EOF'
-    BASEPATH=$(kapow get /request/params/path)
-    find "$BASEPATH" | kapow set /response/body
+          BASEPATH=$(kapow get /request/params/path)
+          find "$BASEPATH" | kapow set /response/body
    EOF
 
 
@@ -61,12 +61,11 @@ The command that will eventually be executed by ``bash`` is:
 
    find -delete | kapow set /response/body
 
-This will silently delete all the files below the current directory, no
+This will *silently delete all the files below the current directory*, no
 questions asked.  Probably not what you expected.
 
 This happens because ``find`` has the last word on how to interpret its arguments.
-For ``find`` the argument `-delete` is not a path,
-
+For ``find``, the argument `-delete` is not a path.
 
 Let's see how we can handle this particular case:
 
@@ -74,13 +73,13 @@ Let's see how we can handle this particular case:
 
    #!/bin/sh
    kapow route add /find -c <<-'EOF'
-    USERINPUT=$(kapow get /request/params/path)
-    BASEPATH=$(dirname -- "$USERINPUT")/$(basename -- "$USERINPUT")
-    find "$BASEPATH" | kapow set /response/body
+           USERINPUT=$(kapow get /request/params/path)
+           BASEPATH=$(dirname -- "$USERINPUT")/$(basename -- "$USERINPUT")
+           find "$BASEPATH" | kapow set /response/body
    EOF
 
 .. note::
 
    Since this is critical for keeping your *Kapow!* services secure, we are working
    on a way to make this more transparent and safe, while at the same time keeping
-   it Kapowy.
+   it *Kapowy*.
