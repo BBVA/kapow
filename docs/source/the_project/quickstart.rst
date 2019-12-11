@@ -89,7 +89,7 @@ Ok, let's analyze *Kapow!* and check if it is compatible with our constraints:
    to waste time**.
 3. By using *Kapow!* we can run any command in the ``External Host``
    limiting the command parameters, so **it's safe**.
-4. By using *Kapow!* we can launch any system command as an ``HTTP API`` easily, so
+4. By using *Kapow!* we can launch any system command as an :any:`HTTP API` easily, so
    **we don't need to grant login access to** ``External Host`` **to
    anybody**.
 
@@ -125,7 +125,7 @@ file like this:
 
 Explanation:
 
-1. ``kapow route add /ping`` - adds a new ``HTTP API`` endpoint at ``/ping``
+1. ``kapow route add /ping`` - adds a new :any:`HTTP API` endpoint at ``/ping``
    path in the *Kapow!* server.  You have to use ``GET`` method to invoke the
    endpoint.
 2. ``-c`` - after this parameter we write the system command that *Kapow!*
@@ -172,4 +172,4 @@ following diagram:
    :width: 80%
 
 As you can see, *Kapow!* provides the necessary *magic* to turn a **system
-command** into an ``HTTP API``.
+command** into an :any:`HTTP API`.

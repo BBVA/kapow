@@ -17,7 +17,7 @@ What's *Kapow!*
 ===============
 
   Think of that **software** that you need but **only runs in the command
-  line**.  *Kapow!* lets you **wrap it into an HTTP API in the easiest
+  line**.  *Kapow!* lets you **wrap it into an :any:`HTTP API` in the easiest
   way possible**.
 
   .. image::  _static/kapow-quick-overview.png
