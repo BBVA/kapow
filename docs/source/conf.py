@@ -14,7 +14,6 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
-
 # -- Project information -----------------------------------------------------
 
 project = 'Kapow!'
@@ -39,6 +38,15 @@ templates_path = ['_templates']
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = []
 
+rst_prolog = """
+.. role:: tech(code)
+   :class: xref
+
+.. role:: nref-option(code)
+   :class: xref
+
+.. default-role:: tech
+"""
 
 # -- Options for HTML output -------------------------------------------------
 
