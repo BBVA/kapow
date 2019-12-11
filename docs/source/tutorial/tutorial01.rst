@@ -172,7 +172,7 @@ Backup that Database!
 
   That appears to be the case, but we better check it.
 
-  Call it with ``curl``:
+  Call it with :program:`curl`:
 
   .. code-block:: console
 

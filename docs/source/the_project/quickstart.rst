@@ -150,7 +150,7 @@ Consume the Service
 +++++++++++++++++++
 
 Now we can call our newly created endpoint by using our favorite HTTP client.
-In this example we're using ``curl``:
+In this example we're using :program:`curl`:
 
 .. code-block:: console
 

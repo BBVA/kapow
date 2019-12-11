@@ -203,7 +203,7 @@ In this example we'll be adding the header ``X-Content-Type-Options`` to the res
 
    $ kapow server nosniff.pow
 
-Testing with curl:
+Testing with :program:`curl`:
 
 .. code-block:: console
    :emphasize-lines: 11
@@ -263,7 +263,7 @@ date, then our ``pow`` file will fix it and return the correct value to the user
    	kapow get /request/body | jq --arg newdate "$(date +'%Y-%m-%d_%H-%M-%S')" '.incorrectDate=$newdate' | kapow set /response/body
    EOF
 
-Call the service with ``curl``:
+Call the service with :program:`curl`:
 
 .. code-block:: console
    :linenos:
@@ -291,7 +291,7 @@ order to generate a two-attribute JSON response.
    	jq --arg greet Hello --arg value "${JSON_WHO:-World}" --null-input '{ greet: $greet, to: $value }' | kapow set /response/body
    EOF
 
-Call the service with ``curl``:
+Call the service with :program:`curl`:
 
 .. code-block:: console
    :linenos:
@@ -378,7 +378,7 @@ In this example, an attacker can inject arbitrary parameters to ``ls``.
    	ls $(kapow get /request/matches/value) | kapow set /response/body
    EOF
 
-Exploiting using curl:
+Exploiting using :program:`curl`:
 
 .. code-block:: console
    :linenos:
@@ -421,7 +421,7 @@ You can specify custom status code for HTTP response:
    	echo -n '401 error' | kapow set /response/body
    EOF
 
-Testing with ``curl``:
+Testing with :program:`curl`:
 
 .. code-block:: console
    :emphasize-lines: 10
@@ -495,7 +495,7 @@ params:
    	wait
    EOF
 
-Calling with ``curl``:
+Calling with :program:`curl`:
 
 .. code-block:: console
    :linenos:
@@ -525,7 +525,7 @@ In the next example we'll set a cookie:
    	echo -n OK | kapow set /response/body
    EOF
 
-Calling with ``curl``:
+Calling with :program:`curl`:
 
 .. code-block:: console
    :linenos:
