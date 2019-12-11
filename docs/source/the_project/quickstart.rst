@@ -21,64 +21,67 @@ this:
 Our organization has an external host that acts as a bridge between our intranet
 an the public Internet.
 
-**Our goal: Our team must be able to check if the** ``Internal Host``
-**is alive on an ongoing basis.**
+.. admonition:: Goal
+   :class: hint
+
+   Our team must be able to check if the **Internal Host** is alive on an
+   ongoing basis.
 
 
 Limitations and Constraints
 ---------------------------
 
-1. We **don't want** to **grant access** to the ``External Host`` to
-   anybody.
-2. We **don't want** to manage VPNs or any similar solutions to access
-   ``Internal Host`` from the Internet.
-3. We **want to limit the actions** that a user can perform in our intranet
-   while it is checking if ``Internal Host`` is alive.
-4. We **want** to use the most standard mechanism.  Easy to use and automate.
-5. We **don't have a budget** to invest in a custom solution.
+#. We don't want to grant access to the **External Host** to anybody.
+#. We don't want to manage VPNs or any similar solutions to access
+   **Internal Host** from the Internet.
+#. We want to limit the actions that a user can perform in our intranet
+   while it is checking if **Internal Host** is alive.
+#. We want to use the most standard mechanism.  Easy to use and automate.
+#. We don't have a budget to invest in a custom solution.
 
 
 The Desired Solution
 --------------------
 
 After analyzing the problem and with our goal in mind, we conclude that it
-is enough to use a simple :program:`ping` to ``Internal Host``.
+is enough to use a simple :program:`ping` to **Internal Host**.
 
 So, the next step is to analyze how to perform the :program:`ping`.
 
 
-Accessing via SSH to ``External Host``
-++++++++++++++++++++++++++++++++++++++
+Accessing via SSH to External Host
+++++++++++++++++++++++++++++++++++
 
 If we choose this option, then, for every person that needs to check the status
-of ``Internal host``, we need to create a user in the ``External Host`` and
-grant them ``SSH`` access.
+of **Internal Host** we need to create a user in the **External Host** and
+grant them `ssh` access.
 
-Conclusion: **Not a good idea.**
+.. admonition:: Verdict
 
-Reasons:
+   This is **not a good idea**, because:
 
-  1. We need to manage users (violates a constraint.)
-  2. We need to grant usesrs access to a host (violates a constraint.)
-  3. We can't control what :program:`ping` options the user can use to ping ``Internal Host`` (violates a constraint.)
+   #. We'd need to manage users (violates a constraint).
+   #. We'd need to grant users access to a host (violates a constraint).
+   #. We would not be able to control what options the user could provide to
+      :program:`ping` (violates a constraint).
 
 
 Develop and Deploy a Custom Solution
 ++++++++++++++++++++++++++++++++++++
 
-Ok, this approach could be the best choice for our organization, but:
+OK, this approach could be the best choice for our organization, but:
 
-1. We'll need to start a new project, develop, test, manage and maintain it.
-2. We need to wait for for the development to be production ready.
-3. We need a budget.  Even if we have developers in our organization, their time
+#. We'd need to start a new project, develop, test, manage and maintain it.
+#. We'd need to wait for for the development to be production ready.
+#. We'd need a budget.  Even if we have developers in our organization, their time
    it's not free.
 
-Conclusion: **Not a good idea.**
+.. admonition:: Verdict
 
-Reasons:
+   This is **not a good idea**, because:
 
-1. Need to spend money (violates a constraint.)
-2. Need to spend time (and time is money, see reason #1)
+   #. We'd need to spend money (violates a constraint).
+   #. We'd need to spend time (and time is money, see reason #1).
 
 
 Using *Kapow!* (spoiler: it's the winner!)
@@ -86,62 +89,65 @@ Using *Kapow!* (spoiler: it's the winner!)
 
 Ok, let's analyze *Kapow!* and check if it is compatible with our constraints:
 
-1. *Kapow!* is Open Source, so it's also **free as in beer**.
-2. By using *Kapow!* we don't need to code our own solution, so we **don't have
+#. *Kapow!* is Open Source, so it's also **free as in beer**.
+#. By using *Kapow!* we don't need to code our own solution, so **we don't have
    to waste time**.
-3. By using *Kapow!* we can run any command in the ``External Host``
+#. By using *Kapow!* we can run any command in the **External Host**,
    limiting the command parameters, so **it's safe**.
-4. By using *Kapow!* we can launch any system command as an `HTTP API` easily, so
-   **we don't need to grant login access to** ``External Host`` **to
-   anybody**.
+#. By using *Kapow!* we can launch any system command as an `HTTP API` easily, so
+   **we don't need to grant login access to External Host to anybody**.
 
-Conclusion: *Kapow!* **is the best choice.**
+.. admonition:: Verdict
 
-Reasons: It satisfies all of our requirements.
+   *Kapow!* is the **best** choice, because it satisfies all of our
+   requirements.
 
 
-Using Kapow!
-------------
+Using *Kapow!*
+--------------
 
-In order to get our example :ref:`Scenario <quickstart_image>` working we need
+In order to get our :ref:`example scenario <quickstart_image>` working we need
 to follow the steps below.
 
 
-Install Kapow!
-++++++++++++++
+Install *Kapow!*
+++++++++++++++++
 
-Follow the :doc:`Installing Kapow! <install_and_configure>` instructions.
+Follow the :ref:`installation instructions <installation>`.
 
 
 Write a :file:`ping.pow` File
 +++++++++++++++++++++++++++++
 
-*Kapow!* uses plain text files (called ``pow`` files) so you can define the
-endpoints you want to expose the system command with.  For our example we need a
-file like this:
+*Kapow!* uses plain text files (called `pow` files) where the endpoints you want
+to expose are defined.
+
+For each endpoint, you can decide which commands get executed.
+
+For our example we need a file like this:
 
 .. code-block:: console
 
     $ cat ping.pow
     kapow route add /ping -c 'ping -c 1 10.10.10.100 | kapow set /response/body'
 
-Explanation:
+Let's dissect this beast piece by piece:
 
-1. ``kapow route add /ping`` - adds a new `HTTP API` endpoint at ``/ping``
-   path in the *Kapow!* server.  You have to use ``GET`` method to invoke the
-   endpoint.
-2. ``-c`` - after this parameter we write the system command that *Kapow!*
+#. ``kapow route add /ping`` - adds a new `HTTP API` endpoint at ``/ping``
+   path in the *Kapow!* server.  You have to use the ``GET`` method to invoke
+   the endpoint.
+#. ``-c`` - after this parameter, we write the system command that *Kapow!*
    will run each time the endpoint is invoked.
-3. ``ping -c 1 10.10.10.100`` - sends 1 ping packet to the host
-   *10.10.10.100*, i.e. ``Internal Host``.
-4. ``| kapow set /response/body`` - writes the output of :program:`ping` to the body
-   of the response, so you can see it.
+#. ``ping -c 1 10.10.10.100`` - sends one `ICMP ping packet` to the **Internal
+   Host**.
+#. ``| kapow set /response/body`` - writes the output of :program:`ping` to the
+   body of the response, so you can see it.
 
 
 Launch the Service
 ++++++++++++++++++
 
-At this point we only need to launch :program:`kapow` with our :file:`ping.pow`:
+At this point, we only need to launch :program:`kapow` with our :file:`ping.pow`:
 
 .. code-block:: console
 
@@ -151,7 +157,7 @@ At this point we only need to launch :program:`kapow` with our :file:`ping.pow`:
 Consume the Service
 +++++++++++++++++++
 
-Now we can call our newly created endpoint by using our favorite HTTP client.
+Now we can call our newly created endpoint by using our favorite `HTTP` client.
 In this example we're using :program:`curl`:
 
 .. code-block:: console
@@ -160,7 +166,7 @@ In this example we're using :program:`curl`:
     PING 10.10.100 (10.10.100): 56 data bytes
     64 bytes from 10.10.100: icmp_seq=0 ttl=55 time=1.425 ms
 
-et voilà !
+*et voilà !*
 
 
 Under the Hood
@@ -173,5 +179,5 @@ following diagram:
    :align: center
    :width: 80%
 
-As you can see, *Kapow!* provides the necessary *magic* to turn a **system
+As you can see, *Kapow!* provides the necessary *mojo* to turn a **system
 command** into an `HTTP API`.
