@@ -32,8 +32,8 @@ With the ``example.pow``:
    *Kapow!* can be fully configured using just ``pow`` files
 
 
-Load More Than One ``pow`` File
-+++++++++++++++++++++++++++++++
+Load More Than One pow File
++++++++++++++++++++++++++++
 
 You can load more than one ``pow`` file at time.  This can help you keep your
 ``pow`` files tidy.
@@ -159,8 +159,8 @@ obtain the ID of the route, and then delete it by typing:
    $ kapow route remove 20c98328-0b82-11ea-90a8-784f434dfbe2
 
 
-Writing Multiline ``pow`` Files
-+++++++++++++++++++++++++++++++
+Writing Multiline pow Files
++++++++++++++++++++++++++++
 
 If you need to write more complex actions, you can leverage multiline commands:
 
