@@ -14,8 +14,8 @@ The user makes a request to the `User HTTP Interface`.
 
 - The request is matched against the route table.
 
-- :program:`kapow` provides a `HANDLER_ID` to identify this request and don't mix it
-  with other requests that could be running concurrently.
+- :program:`kapow` provides a `HANDLER_ID` to identify this request and don't
+  mix it with other requests that could be running concurrently.
 
 
 2. spawn
@@ -29,9 +29,9 @@ The default entrypoint is ``/bin/sh``; let's focus on this workflow.
 The spawned entrypoint is run with the following variables added to its
 environment:
 
-- ``KAPOW_HANDLER_ID``: Containing the `HANDLER_ID`
-- ``KAPOW_DATAAPI_URL``: With the URL of the `Data HTTP Interface`
-- ``KAPOW_CONTROLAPI_URL``: With the URL of the `Control HTTP Interface`
+- :envvar:`KAPOW_HANDLER_ID`: Containing the `HANDLER_ID`
+- :envvar:`KAPOW_DATAAPI_URL`: With the URL of the `Data HTTP Interface`
+- :envvar:`KAPOW_CONTROLAPI_URL`: With the URL of the `Control HTTP Interface`
 
 
 3. ``kapow set /response/body banana``
