@@ -29,7 +29,7 @@ Sharing the Stats
 
 **Senior**
 
-  We have to provide a new endpoint to serve the same data but in :any:`JSON`
+  We have to provide a new endpoint to serve the same data but in `JSON`
   format.
 
 **Junior**
@@ -46,7 +46,7 @@ Sharing the Stats
 
 **Senior**
 
-  For starters, that's not valid :any:`JSON`.  The output would be something like:
+  For starters, that's not valid `JSON`.  The output would be something like:
 
   .. code-block:: console
 
@@ -55,7 +55,7 @@ Sharing the Stats
      Mem:          31967        3121       21680         980        7166       27418
      Swap:             0           0           0"}
 
-  You can't add new lines inside a :any:`JSON` string that way, you have to escape
+  You can't add new lines inside a `JSON` string that way, you have to escape
   the new line characters as ``\n``.
 
 **Junior**
@@ -77,15 +77,15 @@ Sharing the Stats
 
 **Senior**
 
-  :program:`jq` is a wonderful tool for working with :any:`JSON` data from the command
-  line.  With :program:`jq` you can extract data from a :any:`JSON` document and it also
-  allows you to generate a well-formed :any:`JSON` document.
+  :program:`jq` is a wonderful tool for working with `JSON` data from the command
+  line.  With :program:`jq` you can extract data from a `JSON` document and it also
+  allows you to generate a well-formed `JSON` document.
 
 **Junior**
 
   Let's use it, then!
 
-  How can we generate a :any:`JSON` document with :program:`jq`?
+  How can we generate a `JSON` document with :program:`jq`?
 
 **Senior**
 
@@ -104,7 +104,7 @@ Sharing the Stats
 
 **Senior**
 
-  Bear with me, it gets better.  You can add variables to the :any:`JSON` and
+  Bear with me, it gets better.  You can add variables to the `JSON` and
   :program:`jq` will escape them for you.
 
   .. code-block:: console
@@ -165,7 +165,7 @@ Sharing the Stats
 
 **Junior**
 
-  I don't think so! the :any:`JSON` is well-formed and it contains all the required
+  I don't think so! the `JSON` is well-formed and it contains all the required
   data.  And the code is quite readable.
 
 **Senior**

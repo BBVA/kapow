@@ -2,7 +2,7 @@ Routes
 ======
 
 A *Kapow!* route specifies the matching criteria for an incoming request on
-the :any:`User HTTP Interface`, and the details to handle it.
+the `User HTTP Interface`, and the details to handle it.
 
 *Kapow!* implements a *route table* where all routes reside.
 
@@ -79,7 +79,7 @@ which is an incomplete recipe.  It is then completed by the `command` element.
 
 .. note::
 
-   The semantics of this element closely match :any:`Docker`'s ``ENTRYPOINT`` directive.
+   The semantics of this element closely match `Docker`'s ``ENTRYPOINT`` directive.
 
 .. todo::
 
@@ -104,7 +104,7 @@ incantation to be executed:
 
 .. note::
 
-   The semantics of this element closely match :any:`Docker`'s ``COMMAND`` directive.
+   The semantics of this element closely match `Docker`'s ``COMMAND`` directive.
 
 .. todo::
 

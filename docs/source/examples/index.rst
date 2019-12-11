@@ -142,7 +142,7 @@ Or, if you want human-readable output, you can use :program:`jq`:
 
 .. note::
 
-   *Kapow!* has a :any:`Control HTTP Interface`, bound by default to
+   *Kapow!* has a `Control HTTP Interface`, bound by default to
    ``localhost:8081``
 
 
@@ -244,15 +244,15 @@ Modify JSON by Using Shell Commands
 
 .. note::
 
-    Nowadays Web services are :any:`JSON`-based, so making your script :any:`JSON` aware is
-    probably a good choice.  In order to be able to extract data from a :any:`JSON`
-    document as well as composing :any:`JSON` documents from a script, you can leverage
+    Nowadays Web services are `JSON`-based, so making your script `JSON` aware is
+    probably a good choice.  In order to be able to extract data from a `JSON`
+    document as well as composing `JSON` documents from a script, you can leverage
     `jq <https://https://stedolan.github.io/jq/>`_.
 
 
 **Example #1**
 
-In this example our *Kapow!* service will receive a :any:`JSON` value with an incorrect
+In this example our *Kapow!* service will receive a `JSON` value with an incorrect
 date, then our ``pow`` file will fix it and return the correct value to the user.
 
 .. code-block:: console
@@ -277,8 +277,8 @@ Call the service with :program:`curl`:
 
 **Example #2**
 
-In this example we extract the ``name`` field from the incoming :any:`JSON` document in
-order to generate a two-attribute :any:`JSON` response.
+In this example we extract the ``name`` field from the incoming `JSON` document in
+order to generate a two-attribute `JSON` response.
 
 .. code-block:: console
 

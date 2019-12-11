@@ -1,7 +1,7 @@
 Installing *Kapow!*
 ===================
 
-*Kapow!* has a reference implementation in :any:`Go` that is under active
+*Kapow!* has a reference implementation in `Go` that is under active
 development right now.  If you want to start using *Kapow!* you can choose from
 several options.
 
@@ -74,7 +74,7 @@ Note that *Kapow!* leverages *Go modules*, so you can target specific releases:
 Include *Kapow!* in your Container Image
 ----------------------------------------
 
-If you want to include *Kapow!* in a :any:`Docker` image, you can add the binary
+If you want to include *Kapow!* in a `Docker` image, you can add the binary
 directly from the releases section.  Below is an example :file:`Dockerfile` that
 includes *Kapow!*.
 
