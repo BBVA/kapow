@@ -63,3 +63,5 @@ html_static_path = ['_static']
 
 # https://stackoverflow.com/a/56448499
 master_doc = 'index'
+
+default_role = 'option'
