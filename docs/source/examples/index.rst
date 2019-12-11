@@ -123,7 +123,7 @@ You can list the active routes in the *Kapow!* server.
    $ kapow route list
    [{"id":"20c98328-0b82-11ea-90a8-784f434dfbe2","method":"GET","url_pattern":"/echo/{message}","entrypoint":"/bin/sh -c","command":"kapow get /request/matches/message | kapow set /response/body"}]
 
-Or, if you want human-readable output, you can use ``jq``:
+Or, if you want human-readable output, you can use :program:`jq`:
 
 .. code-block:: console
    :linenos:

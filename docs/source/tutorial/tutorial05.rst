@@ -73,19 +73,19 @@ Sharing the Stats
 
 **Junior**
 
-  ``jq``?  What is that command?
+  :program:`jq`?  What is that command?
 
 **Senior**
 
-  ``jq`` is a wonderful tool for working with ``JSON`` data from the command
-  line.  With ``jq`` you can extract data from a ``JSON`` document and it also
+  :program:`jq` is a wonderful tool for working with ``JSON`` data from the command
+  line.  With :program:`jq` you can extract data from a ``JSON`` document and it also
   allows you to generate a well-formed ``JSON`` document.
 
 **Junior**
 
   Let's use it, then!
 
-  How can we generate a ``JSON`` document with ``jq``?
+  How can we generate a ``JSON`` document with :program:`jq`?
 
 **Senior**
 
@@ -105,7 +105,7 @@ Sharing the Stats
 **Senior**
 
   Bear with me, it gets better.  You can add variables to the ``JSON`` and
-  ``jq`` will escape them for you.
+  :program:`jq` will escape them for you.
 
   .. code-block:: console
 
