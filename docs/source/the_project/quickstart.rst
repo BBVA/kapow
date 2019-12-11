@@ -19,7 +19,8 @@ this:
 Our organization has an external host that acts as a bridge between our intranet
 an the public Internet.
 
-**Our goal: Our team must be able to check if the ``Internal Host`` is alive on an ongoing basis.**
+**Our goal: Our team must be able to check if the** ``Internal Host``
+**is alive on an ongoing basis.**
 
 
 Limitations and Constraints
@@ -45,7 +46,7 @@ So, the next step is to **analyze how to perform the ping.**
 
 
 Accessing via SSH to ``External Host``
-++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++
 
 If we choose this option, then, for every person that needs to check the status
 of ``Internal host``, we need to create a user in the ``External Host`` and
