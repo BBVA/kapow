@@ -27,8 +27,8 @@ What have we done?
 
 **Senior**
 
-  Yeah, the team is used to ``cat`` the log file contents to see what happened
-  in the last execution:
+  Yeah, the team is used to :command:`cat`` the log file contents to see what
+  happened in the last execution:
 
   .. code-block:: console
 

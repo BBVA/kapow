@@ -144,7 +144,7 @@ I Need my Report!
      EOF
 
   The shell will put the data between the first ``EOF`` and the second
-  ``EOF`` as the ``stdin`` of the ``cat`` process.
+  ``EOF`` as the ``stdin`` of the :command:`cat` process.
 
 **Junior**
 
