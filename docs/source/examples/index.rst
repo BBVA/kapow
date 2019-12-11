@@ -368,7 +368,7 @@ attacks**.
 
 **This example is VULNERABLE to parameter injection**
 
-In this example, an attacker can inject arbitrary parameters to ``ls``.
+In this example, an attacker can inject arbitrary parameters to :command:`ls`.
 
 .. code-block:: console
    :linenos:
