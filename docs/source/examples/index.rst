@@ -247,7 +247,7 @@ Modify JSON by Using Shell Commands
     Nowadays Web services are `JSON`-based, so making your script `JSON` aware is
     probably a good choice.  In order to be able to extract data from a `JSON`
     document as well as composing `JSON` documents from a script, you can leverage
-    `jq <https://https://stedolan.github.io/jq/>`_.
+    `jq <https://stedolan.github.io/jq/>`_.
 
 
 **Example #1**
