@@ -40,9 +40,9 @@ The Desired Solution
 --------------------
 
 After analyzing the problem and with our goal in mind, we conclude that it
-is enough **to use a simple** ``ping`` **to** ``Internal Host``.
+is enough to use a simple :program:`ping` to ``Internal Host``.
 
-So, the next step is to **analyze how to perform the ping.**
+So, the next step is to analyze how to perform the :program:`ping`.
 
 
 Accessing via SSH to ``External Host``
@@ -58,7 +58,7 @@ Reasons:
 
   1. We need to manage users (violates a constraint.)
   2. We need to grant usesrs access to a host (violates a constraint.)
-  3. We can't control what ``ping`` options the user can use to ping ``Internal Host`` (violates a constraint.)
+  3. We can't control what :program:`ping` options the user can use to ping ``Internal Host`` (violates a constraint.)
 
 
 Develop and Deploy a Custom Solution
@@ -130,9 +130,9 @@ Explanation:
    endpoint.
 2. ``-c`` - after this parameter we write the system command that *Kapow!*
    will run each time the endpoint is invoked.
-3. ``ping -c 1 10.10.10.100`` - sends 1 ping package to the host
+3. ``ping -c 1 10.10.10.100`` - sends 1 ping packet to the host
    *10.10.10.100*, i.e. ``Internal Host``.
-4. ``| kapow set /response/body`` - writes the output of `ping` to the body
+4. ``| kapow set /response/body`` - writes the output of :program:`ping` to the body
    of the response, so you can see it.
 
 
