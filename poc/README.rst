@@ -12,8 +12,8 @@ Try the software within this directory with caution, anything can break
 at any moment.
 
 
-.. code-block:: plain
-   
+.. code-block:: none
+
             _,-._
            ; ___ :           ,------------------------------.
        ,--' (. .) '--.__    |                                |

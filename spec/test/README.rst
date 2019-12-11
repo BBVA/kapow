@@ -39,7 +39,7 @@ very directory run:
 This should test the current installed kapow implementation and output
 something like:
 
-.. code-block:: plain
+.. code-block:: none
 
    13 features passed, 0 failed, 0 skipped
    23 scenarios passed, 0 failed, 0 skipped

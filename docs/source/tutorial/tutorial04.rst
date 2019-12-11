@@ -81,7 +81,7 @@ I Need my Report
   First of all, that code is not readable.  And the output would be something
   like:
 
-  .. code-block:: text
+  .. code-block:: none
 
      corporate-server
      Tue 26 Nov 2019 01:03:44 PM CET
@@ -97,7 +97,7 @@ I Need my Report
 
   What *Susan* is used to see is more like this:
 
-  .. code-block:: text
+  .. code-block:: none
 
      Hostname:
      ... the output of `hostname` ...
