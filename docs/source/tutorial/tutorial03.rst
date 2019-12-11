@@ -46,7 +46,7 @@ We need to filter
 
   Well, we got it again, this is exactly what they need:
 
-  .. code-block:: sh
+  .. code-block:: bash
 
      kapow route add /db/backup_logs -c 'grep -- "$(kapow get /request/params/filter)" /tmp/backup_db.log \
        | tail -n "$(kapow get /request/params/lines)" \
