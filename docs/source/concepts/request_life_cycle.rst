@@ -2,7 +2,7 @@ Request Life Cycle
 ==================
 
 This section describes the sequence of events happening for each request
-answered by the `User HTTP Interface`.
+answered by the :any:`User HTTP Interface`.
 
 .. image:: ../_static/request_life_cycle.png
 
@@ -10,7 +10,7 @@ answered by the `User HTTP Interface`.
 1. request
 ----------
 
-The user makes a request to the `User HTTP Interface`.
+The user makes a request to the :any:`User HTTP Interface`.
 
 - The request is matched against the route table.
 
@@ -30,8 +30,8 @@ The spawned entrypoint is run with the following variables added to its
 environment:
 
 - :envvar:`KAPOW_HANDLER_ID`: Containing the `HANDLER_ID`
-- :envvar:`KAPOW_DATAAPI_URL`: With the URL of the `Data HTTP Interface`
-- :envvar:`KAPOW_CONTROLAPI_URL`: With the URL of the `Control HTTP Interface`
+- :envvar:`KAPOW_DATAAPI_URL`: With the URL of the :any:`Data HTTP Interface`
+- :envvar:`KAPOW_CONTROLAPI_URL`: With the URL of the :any:`Control HTTP Interface`
 
 
 3. ``kapow set /response/body banana``

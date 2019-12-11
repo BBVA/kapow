@@ -142,7 +142,8 @@ Or, if you want human-readable output, you can use :program:`jq`:
 
 .. note::
 
-    *Kapow!* has an `HTTP` admin interface, by default listening at **localhost:8081**
+   *Kapow!* has a :any:`Control HTTP Interface`, bound by default to
+   ``localhost:8081``
 
 
 Deleting Routes
