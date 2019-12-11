@@ -1,5 +1,4 @@
-Installing Kapow!
-=================
+Installing *Kapow!*
 ===================
 
 *Kapow!* has a reference implementation in :any:`Go` that is under active
