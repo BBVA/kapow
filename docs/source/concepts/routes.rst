@@ -6,10 +6,9 @@ the `User HTTP Interface`, and the details to handle it.
 
 *Kapow!* implements a *route table* where all routes reside.
 
-
 A route can be set like this:
 
-.. code-block:: bash
+.. code-block:: console
 
    $ kapow route add \
       -X POST \
@@ -40,7 +39,7 @@ Uniquely identifies each route. It is used for instance by ``kapow route remove
 .. note::
 
    The current implementation of *Kapow!* autogenerates a `UUID` for this field.
-   In the future the use will be able to specify a custom value.
+   In the future the user will be able to specify a custom value.
 
 
 ``method`` Route Element
@@ -48,7 +47,7 @@ Uniquely identifies each route. It is used for instance by ``kapow route remove
 
 Specifies the HTTP method for the route to match the incoming request.
 
-The route shown above will only match a ``POST`` request.
+Note that the route shown above will only match a ``POST`` request.
 
 
 ``url_pattern`` Route Element
@@ -71,7 +70,7 @@ https://github.com/gorilla/mux#examples
 This sets the executable to be spawned, along with any arguments required.
 
 In the route shown above, the entrypoint that will be run is ``/bin/bash -c``,
-which is an incomplete recipe.  It is completed by the `command` element.
+which is an incomplete recipe.  It is then completed by the `command` element.
 
 .. todo::
 

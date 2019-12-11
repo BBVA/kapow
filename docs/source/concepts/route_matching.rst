@@ -10,5 +10,5 @@ to.
    link routes to its section
 
 Each incoming request is matched against the routes in the route table in
-strict order, for each route in the route table, the criteria are checked.
+strict order.  For each route in the route table, the criteria are checked.
 If the request does not match, the next route in the route list is examined.
