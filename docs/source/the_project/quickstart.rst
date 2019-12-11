@@ -19,18 +19,18 @@ this:
 Our organization has an external host that acts as a bridge between our intranet
 an the public Internet.
 
-**Our goal: Our team must be able to check if the :samp:`Internal Host` is alive on an ongoing basis.**
+**Our goal: Our team must be able to check if the ``Internal Host`` is alive on an ongoing basis.**
 
 
 Limitations and Constraints
 ---------------------------
 
-1. We **don't want** to **grant access** to the :samp:`External Host` to
+1. We **don't want** to **grant access** to the ``External Host`` to
    anybody.
 2. We **don't want** to manage VPNs or any similar solutions to access
-   :samp:`Internal Host` from the Internet.
+   ``Internal Host`` from the Internet.
 3. We **want to limit the actions** that a user can perform in our intranet
-   while it is checking if :samp:`Internal Host` is alive.
+   while it is checking if ``Internal Host`` is alive.
 4. We **want** to use the most standard mechanism.  Easy to use and automate.
 5. We **don't have a budget** to invest in a custom solution.
 
@@ -39,16 +39,16 @@ The Desired Solution
 --------------------
 
 After analyzing the problem and with our goal in mind, we conclude that it
-is enough **to use a simple** :samp:`ping` **to** :samp:`Internal Host`.
+is enough **to use a simple** ``ping`` **to** ``Internal Host``.
 
 So, the next step is to **analyze how to perform the ping.**
 
 
-Accessing via SSH to :samp:`External Host`
+Accessing via SSH to ``External Host``
 ++++++++++++++++++++++++++++++++++++++++++
 
 If we choose this option, then, for every person that needs to check the status
-of :samp:`Internal host`, we need to create a user in the ``Extarnal Host`` and
+of ``Internal host``, we need to create a user in the ``External Host`` and
 grant them ``SSH`` access.
 
 Conclusion: **Not a good idea.**
@@ -57,7 +57,7 @@ Reasons:
 
   1. We need to manage users (violates a constraint.)
   2. We need to grant usesrs access to a host (violates a constraint.)
-  3. We can't control what :samp:`ping` options the user can use to ping :samp:`Internal Host` (violates a constraint.)
+  3. We can't control what ``ping`` options the user can use to ping ``Internal Host`` (violates a constraint.)
 
 
 Develop and Deploy a Custom Solution
@@ -86,10 +86,10 @@ Ok, let's analyze *Kapow!* and check if it is compatible with our constraints:
 1. *Kapow!* is Open Source, so it's also **free as in beer**.
 2. By using *Kapow!* we don't need to code our own solution, so we **don't have
    to waste time**.
-3. By using *Kapow!* we can run any command in the :samp:`External Host`
+3. By using *Kapow!* we can run any command in the ``External Host``
    limiting the command parameters, so **it's safe**.
 4. By using *Kapow!* we can launch any system command as an ``HTTP API`` easily, so
-   **we don't need to grant login access to** :samp:`External Host` **to
+   **we don't need to grant login access to** ``External Host`` **to
    anybody**.
 
 Conclusion: *Kapow!* **is the best choice.**
@@ -124,21 +124,21 @@ file like this:
 
 Explanation:
 
-1. :samp:`kapow route add /ping` - adds a new ``HTTP API`` endpoint at :samp:`/ping`
+1. ``kapow route add /ping`` - adds a new ``HTTP API`` endpoint at ``/ping``
    path in the *Kapow!* server.  You have to use ``GET`` method to invoke the
    endpoint.
-2. :samp:`-c` - after this parameter we write the system command that *Kapow!*
+2. ``-c`` - after this parameter we write the system command that *Kapow!*
    will run each time the endpoint is invoked.
-3. :samp:`ping -c 1 10.10.10.100` - sends 1 ping package to the host
-   *10.10.10.100*, i.e. :samp:`Internal Host`.
-4. :samp:`| kapow set /response/body` - writes the output of `ping` to the body
+3. ``ping -c 1 10.10.10.100`` - sends 1 ping package to the host
+   *10.10.10.100*, i.e. ``Internal Host``.
+4. ``| kapow set /response/body`` - writes the output of `ping` to the body
    of the response, so you can see it.
 
 
 Launch the Service
 ++++++++++++++++++
 
-At this point we only need to launch ``kapow`` with our :samp:`ping.pow`:
+At this point we only need to launch ``kapow`` with our ``ping.pow``:
 
 .. code-block:: console
 
@@ -149,7 +149,7 @@ Consume the Service
 +++++++++++++++++++
 
 Now we can call our newly created endpoint by using our favorite HTTP client.
-In this example we're using :samp:`curl`:
+In this example we're using ``curl``:
 
 .. code-block:: console
 

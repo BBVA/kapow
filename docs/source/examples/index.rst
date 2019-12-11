@@ -123,7 +123,7 @@ You can list the active routes in the *Kapow!* server.
    $ kapow route list
    [{"id":"20c98328-0b82-11ea-90a8-784f434dfbe2","method":"GET","url_pattern":"/echo/{message}","entrypoint":"/bin/sh -c","command":"kapow get /request/matches/message | kapow set /response/body"}]
 
-Or, if you want human-readable output, you can use :samp:`jq`:
+Or, if you want human-readable output, you can use ``jq``:
 
 .. code-block:: console
    :linenos:
@@ -175,7 +175,7 @@ If you need to write more complex actions, you can leverage multiline commands:
 .. warning::
 
     Be aware of the **"-"** at the end of the ``kapow route add`` command.
-    It tells ``kapow route add`` to read commands from :samp:`stdin`.
+    It tells ``kapow route add`` to read commands from ``stdin``.
 
 .. warning::
 
@@ -482,7 +482,7 @@ In this example we'll redirect our users to Google:
 How to Execute Two Processes in Parallel
 ++++++++++++++++++++++++++++++++++++++++
 
-We want to :samp:`ping` two machines parallel.  *Kapow!* can get IPs from query
+We want to ``ping`` two machines parallel.  *Kapow!* can get IPs from query
 params:
 
 .. code-block:: console
