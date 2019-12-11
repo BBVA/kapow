@@ -54,7 +54,6 @@ Add a New Route
     Be aware that if you register more than one route with exactly the
     same path, only the first route added will be used.
 
-
 **GET route**
 
 Defining a route:
@@ -72,7 +71,6 @@ Calling route:
 
    $ curl http://localhost:8080/my/route
    hello world
-
 
 **POST route**
 
@@ -177,11 +175,11 @@ If you need to write more complex actions, you can leverage multiline commands:
 .. warning::
 
     Be aware of the **"-"** at the end of the ``kapow route add`` command.
-    It tells ``kapow route add`` to read commands from the :samp:`stdin`.
+    It tells ``kapow route add`` to read commands from :samp:`stdin`.
 
 .. warning::
 
-    If you want to learn more of multiline usage, see: `Here Doc
+    If you want to learn more about multiline usage, see: `Here Doc
     <https://en.wikipedia.org/wiki/Here_document>`_
 
 
@@ -230,7 +228,7 @@ Testing with curl:
 
 .. warning::
 
-   Please be aware that if you don't explicitly specified the value of
+   Please be aware that if you don't explicitly specify the value of
    the ``Content-Type`` header, *Kapow!* will guess it, effectively
    negating the effect of the ``X-Content-Type-Options`` header.
 
@@ -245,16 +243,16 @@ Modify JSON by Using Shell Commands
 
 .. note::
 
-    Nowadays Web services are JSON-based so making your script JSON aware is
+    Nowadays Web services are JSON-based, so making your script JSON aware is
     probably a good choice.  In order to be able to extract data from a JSON
     document as well as composing JSON documents from a script, you can leverage
     `jq <https://https://stedolan.github.io/jq/>`_.
 
 
-**Example 1**
+**Example #1**
 
 In this example our *Kapow!* service will receive a JSON value with an incorrect
-date, then our ``.pow`` file will fix it and return the correct value to the user.
+date, then our ``pow`` file will fix it and return the correct value to the user.
 
 .. code-block:: console
    :linenos:
@@ -276,9 +274,9 @@ Call the service with ``curl``:
    }
 
 
-**Example 2**
+**Example #2**
 
-In this example we extract the name field from the incoming JSON document in
+In this example we extract the ``name`` field from the incoming JSON document in
 order to generate a two-attribute JSON response.
 
 .. code-block:: console
@@ -309,8 +307,7 @@ Call the service with ``curl``:
 Upload Files
 ++++++++++++
 
-
-**Example 1**
+**Example #1**
 
 Uploading a file using *Kapow!* is very simple:
 
@@ -331,9 +328,9 @@ Uploading a file using *Kapow!* is very simple:
    {"hello": "world"}
 
 
-**Example 2**
+**Example #2**
 
-In this example we respond back with the line count of the file received in the request:
+In this example we reply the line count of the file received in the request:
 
 .. code-block:: console
    :linenos:
@@ -358,12 +355,12 @@ In this example we respond back with the line count of the file received in the 
    $ cat file.txt
    hello
    World
-   $ curl -F "myfile=@file.txt" http://localhost:8080/count-file-lines
+   $ curl -F myfile=@file.txt http://localhost:8080/count-file-lines
    file.txt has        2 lines
 
 
-Protecting again Parameter Injection Attacks
-++++++++++++++++++++++++++++++++++++++++++++
+Protecting Against Parameter Injection Attacks
+++++++++++++++++++++++++++++++++++++++++++++++
 
 When you resolve variable values be careful to tokenize correctly by using
 double quotes.  Otherwise you could be vulnerable to **parameter injection
@@ -386,11 +383,11 @@ Exploiting using curl:
 .. code-block:: console
    :linenos:
 
-   $ curl "http://localhost:8080/vulnerable/-lai%20hello"
+   $ curl http://localhost:8080/vulnerable/-lai%20hello
 
 **This example is NOT VULNERABLE to parameter injection**
 
-Be aware of how we add double quotes when we recover *value* data from the
+Note how we add double quotes when we recover *value* data from the
 request:
 
 .. code-block:: console
@@ -404,11 +401,10 @@ request:
 
 .. warning::
 
-   Quotes around parameters only protect against injection of additional
-   arguments, but not against turning a non-option into option or
-   vice-versa.  Note that for many commands we can leverage double-dash
-   to signal the end of the options.  See the "Security Concern" section
-   on the docs.
+   Quotes around parameters only protect against the injection of additional
+   arguments, but not against turning a non-option into option or vice-versa.
+   Note that for many commands we can leverage double-dash to signal the end of
+   the options.  See the "Security Concern" section on the docs.
 
 
 Sending HTTP error codes
@@ -425,7 +421,7 @@ You can specify custom status code for HTTP response:
    	echo -n '401 error' | kapow set /response/body
    EOF
 
-Testing with curl:
+Testing with ``curl``:
 
 .. code-block:: console
    :emphasize-lines: 10
@@ -446,6 +442,7 @@ Testing with curl:
    < Content-Type: text/plain; charset=utf-8
    <
    401 error
+
 
 How to redirect using HTTP
 ++++++++++++++++++++++++++
@@ -485,7 +482,7 @@ In this example we'll redirect our users to Google:
 How to Execute Two Processes in Parallel
 ++++++++++++++++++++++++++++++++++++++++
 
-We want to :samp:`ping` two machines parallel. *Kapow!* gets IPs from query
+We want to :samp:`ping` two machines parallel.  *Kapow!* can get IPs from query
 params:
 
 .. code-block:: console
@@ -505,6 +502,7 @@ Calling with ``curl``:
 
     $ curl -v http://localhost:8080/parallel/10.0.0.1/10.10.10.1
 
+
 Manage Cookies
 ++++++++++++++
 
@@ -521,7 +519,7 @@ In the next example we'll set a cookie:
    	CURRENT_STATUS=$(kapow get /request/cookies/kapow-status)
 
    	if [ -z "$CURRENT_STATUS" ]; then
-   	        kapow set /response/cookies/Kapow-Status 'Kapow Cookie Set'
+   		kapow set /response/cookies/Kapow-Status 'Kapow Cookie Set'
    	fi
 
    	echo -n OK | kapow set /response/body
