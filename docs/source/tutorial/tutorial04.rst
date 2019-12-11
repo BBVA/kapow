@@ -144,14 +144,14 @@ I Need my Report!
      EOF
 
   The shell will put the data between the first ``EOF`` and the second
-  ``EOF`` as the ``stdin`` of the :command:`cat` process.
+  ``EOF`` as the :tech:`stdin` of the :command:`cat` process.
 
 **Junior**
 
   OK, I understand. That's cool, by the way.
 
   So, if I want to use this with *Kapow!*, I have to make it read the script
-  from ``stdin``.  To do this I know that I have to put a :nref-option:`-` at the end.
+  from :tech:`stdin`.  To do this I know that I have to put a :nref-option:`-` at the end.
 
   Let me try:
 

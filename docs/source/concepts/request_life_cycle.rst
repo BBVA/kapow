@@ -46,7 +46,7 @@ available via these commands:
 
 These commands use the aforementioned environment variables to read data
 from the user request and to write the response.  They accept data either as
-arguments or from ``stdin``.
+arguments or from :tech:`stdin`.
 
 
 4. exit

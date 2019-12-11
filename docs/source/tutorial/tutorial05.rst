@@ -200,7 +200,7 @@ Sharing the Stats
      because the body can be so big that *Kapow!* is forced to start sending it
      out.
   2. In cases where you want to set a small piece of data (like the header), it
-     is better not to use ``stdin``.  *Kapow!* provides a secondary syntax
+     is better not to use :tech:`stdin`.  *Kapow!* provides a secondary syntax
      for these cases:
 
      .. code-block:: console
