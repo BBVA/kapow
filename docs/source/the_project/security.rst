@@ -64,8 +64,8 @@ The command that will eventually be executed by ``bash`` is:
 This will *silently delete all the files below the current directory*, no
 questions asked.  Probably not what you expected.
 
-This happens because ``find`` has the last word on how to interpret its arguments.
-For ``find``, the argument `-delete` is not a path.
+This happens because :command:`find` has the last word on how to interpret its
+arguments.  For :command:`find`, the argument :option:`-delete` is not a path.
 
 Let's see how we can handle this particular case:
 
