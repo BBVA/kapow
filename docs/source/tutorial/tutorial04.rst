@@ -151,7 +151,7 @@ I Need my Report!
   OK, I understand. That's cool, by the way.
 
   So, if I want to use this with *Kapow!*, I have to make it read the script
-  from ``stdin``.  To do this I know that I have to put a ``-`` at the end.
+  from ``stdin``.  To do this I know that I have to put a :nref-option:`-` at the end.
 
   Let me try:
 
