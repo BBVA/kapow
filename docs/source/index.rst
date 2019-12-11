@@ -25,30 +25,27 @@ What's *Kapow!*
      :align: center
 
   Want to know more?
-  Check the :doc:`the_project/quickstart` section for a longer explanation of
-  what *Kapow!* does.
+  Check the :ref:`Quick Start Guide <quickstart>` section for a longer
+  explanation of what *Kapow!* does.
 
 
 Authors
 =======
 
-  *Kapow!* is being developed by the
-  `BBVA-Labs Security team <https://github.com/BBVA/kapow/blob/master/AUTHORS.rst>`_.
+  *Kapow!* is being developed by the `BBVA-Labs Security team`_.
 
 
 License
 =======
 
-  *Kapow!* is Open Source Software and available under the
-  `Apache 2 license <https://raw.githubusercontent.com/BBVA/kapow/master/LICENSE>`_.
+  *Kapow!* is Open Source Software and available under the `Apache 2 license`_.
 
 
 Contributions
 =============
 
-  Contributions are of course welcome.  See
-  `CONTRIBUTING <https://github.com/BBVA/kapow/blob/master/CONTRIBUTING.rst>`_
-  or skim existing tickets to see where you could help out.
+  Contributions are of course welcome.  See `CONTRIBUTING`_ or skim `existing
+  tickets`_ to see where you could help out.
 
 
 Table of Contents
@@ -97,3 +94,8 @@ Indices and Tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+.. _BBVA-Labs Security team: https://github.com/BBVA/kapow/blob/master/AUTHORS.rst
+.. _Apache 2 license: https://raw.githubusercontent.com/BBVA/kapow/master/LICENSE
+.. _CONTRIBUTING: https://github.com/BBVA/kapow/blob/master/CONTRIBUTING.rst
+.. _existing tickets: https://github.com/BBVA/kapow/labels/good%20first%20issue

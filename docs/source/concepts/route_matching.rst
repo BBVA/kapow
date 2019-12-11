@@ -1,7 +1,7 @@
 Route Matching
 ==============
 
-*Kapow!* maintains a route table with a list of routes as provided by the user,
+*Kapow!* maintains a :ref:`route <routes>` table with a list of routes as provided by the user,
 and uses it to determine which handler should an incoming request be dispatched
 to.
 
