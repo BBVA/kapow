@@ -44,9 +44,9 @@ The Desired Solution
 --------------------
 
 After analyzing the problem and with our goal in mind, we conclude that it
-is enough to use a simple :program:`ping` to **Internal Host**.
+is enough to use a simple :command:`ping` to **Internal Host**.
 
-So, the next step is to analyze how to perform the :program:`ping`.
+So, the next step is to analyze how to perform the :command:`ping`.
 
 
 Accessing via SSH to External Host
@@ -63,7 +63,7 @@ grant them `ssh` access.
    #. We'd need to manage users (violates a constraint).
    #. We'd need to grant users access to a host (violates a constraint).
    #. We would not be able to control what options the user could provide to
-      :program:`ping` (violates a constraint).
+      :command:`ping` (violates a constraint).
 
 
 Develop and Deploy a Custom Solution
@@ -140,7 +140,7 @@ Let's dissect this beast piece by piece:
    will run each time the endpoint is invoked.
 #. ``ping -c 1 10.10.10.100`` - sends one `ICMP ping packet` to the **Internal
    Host**.
-#. ``| kapow set /response/body`` - writes the output of :program:`ping` to the
+#. ``| kapow set /response/body`` - writes the output of :command:`ping` to the
    body of the response, so you can see it.
 
 

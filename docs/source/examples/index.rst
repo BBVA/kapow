@@ -483,7 +483,7 @@ In this example we'll redirect our users to Google:
 How to Execute Two Processes in Parallel
 ++++++++++++++++++++++++++++++++++++++++
 
-We want to :program:`ping` two machines parallel.  *Kapow!* can get IPs from query
+We want to :command:`ping` two machines parallel.  *Kapow!* can get IPs from query
 params:
 
 .. code-block:: console
