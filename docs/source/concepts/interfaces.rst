@@ -1,7 +1,7 @@
 *Kapow!* HTTP Interfaces
 ========================
 
-`kapow server` sets up three HTTP server interfaces, each with a distinct and
+``kapow server`` sets up three HTTP server interfaces, each with a distinct and
 clear purpose.
 
 
