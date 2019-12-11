@@ -14,14 +14,14 @@ The user makes a request to the `User HTTP Interface`.
 
 - The request is matched against the route table.
 
-- ``kapow`` provides a `HANDLER_ID` to identify this request and don't mix it
+- :program:`kapow` provides a `HANDLER_ID` to identify this request and don't mix it
   with other requests that could be running concurrently.
 
 
 2. spawn
 --------
 
-``kapow`` spawns the executable specified as entrypoint in the matching
+:program:`kapow` spawns the executable specified as entrypoint in the matching
 route.
 
 The default entrypoint is ``/bin/sh``; let's focus on this workflow.
@@ -58,7 +58,7 @@ The shell dies.  Long live the shell!
 5. response
 -----------
 
-``kapow`` finalizes the original request.  Enjoy your banana now.
+:program:`kapow` finalizes the original request.  Enjoy your banana now.
 
 
 .. todo::

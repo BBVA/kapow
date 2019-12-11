@@ -139,7 +139,7 @@ Explanation:
 Launch the Service
 ++++++++++++++++++
 
-At this point we only need to launch ``kapow`` with our ``ping.pow``:
+At this point we only need to launch :program:`kapow` with our ``ping.pow``:
 
 .. code-block:: console
 
