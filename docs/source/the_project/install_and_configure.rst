@@ -74,8 +74,8 @@ Note that *Kapow!* leverages *Go modules*, so you can target specific releases:
 Include *Kapow!* in your Container Image
 ----------------------------------------
 
-If you want to include *Kapow!* in a ``Docker`` image, you can add the binary
-directly from the releases section.  Below is an example ``Dockerfile`` that
+If you want to include *Kapow!* in a :any:`Docker` image, you can add the binary
+directly from the releases section.  Below is an example :file:`Dockerfile` that
 includes *Kapow!*.
 
 .. code-block:: dockerfile

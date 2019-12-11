@@ -7,7 +7,7 @@ Single Static Binary
 
 - Deployment is then as simple as it gets.
 
-- ``Docker``-friendly.
+- :any:`Docker`-friendly.
 
 
 Shell Agnostic
