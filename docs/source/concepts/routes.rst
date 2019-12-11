@@ -98,7 +98,7 @@ incantation to be executed:
 
    link to entrypoint above
 
-.. code-block::
+.. code-block:: bash
 
    /bin/bash -c 'touch /var/lib/mydb/"$(kapow get /request/matches/username)"'
 
