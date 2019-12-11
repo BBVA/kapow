@@ -114,7 +114,7 @@ incantation to be executed:
 Matching Algorithm
 ------------------
 
-`*Kapow!*` leverages Gorilla Mux for this task. You can see the gory details in
+*Kapow!* leverages Gorilla Mux for this task. You can see the gory details in
 their documentation.
 
 
