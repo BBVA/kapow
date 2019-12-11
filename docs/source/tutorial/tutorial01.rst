@@ -11,7 +11,8 @@ Backup that Database!
   project team ask us for a backup every time a project is finished.
 
   I've already prepared a script to do the task.  Before executing it in
-  production download it and test it in your own machine.
+  production, :download:`download it <./materials/backup_db.sh>` and test it in
+  your own machine.
 
   .. code-block:: console
 
