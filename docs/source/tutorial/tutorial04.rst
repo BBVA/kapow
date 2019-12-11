@@ -70,7 +70,7 @@ I Need my Report
 
   I started to write it already:
 
-  .. code-block:: console
+  .. code-block:: bash
 
      kapow route add /capacityreport -c 'hostname | kapow set /response/body; date | kapow set /response/body; free -m | kapow set /response/body; uptime | kapow set /response/body; df -h | kapow set /response/body'
 
@@ -114,7 +114,7 @@ I Need my Report
 
   All right, what about this?
 
-  .. code-block:: console
+  .. code-block:: bash
 
      kapow route add /capacityreport -c 'hostname | kapow set /response/body; echo ================================================================================ | kapow set /response/body; ...'
 
