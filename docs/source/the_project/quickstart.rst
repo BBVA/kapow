@@ -111,8 +111,8 @@ Install Kapow!
 Follow the :doc:`Installing Kapow! <install_and_configure>` instructions.
 
 
-Write a ``ping.pow`` File
-+++++++++++++++++++++++++
+Write a :file:`ping.pow` File
++++++++++++++++++++++++++++++
 
 *Kapow!* uses plain text files (called ``pow`` files) so you can define the
 endpoints you want to expose the system command with.  For our example we need a
@@ -139,7 +139,7 @@ Explanation:
 Launch the Service
 ++++++++++++++++++
 
-At this point we only need to launch :program:`kapow` with our ``ping.pow``:
+At this point we only need to launch :program:`kapow` with our :file:`ping.pow`:
 
 .. code-block:: console
 
