@@ -610,10 +610,10 @@ Commands:
 
 This command runs the Kapow! server, which is the core of Kapow!.  If
 run without parameters, it will run an unconfigured server.  It can accept a path
-to a `.pow` file, which is a shell script that contains commands to configure
+to a `pow` file, which is a shell script that contains commands to configure
 the Kapow! server.
 
-The `.pow` can leverage the `kapow route` command, which is used to define a route.
+The `pow` can leverage the `kapow route` command, which is used to define a route.
 The `kapow route` command needs a way to reach the Kapow! server, and for that,
 `kapow` provides the `KAPOW_URL` variable in the environment of the
 aforementioned shell script.
