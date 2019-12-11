@@ -1,9 +1,10 @@
 Installing Kapow!
 =================
+===================
 
-*Kapow!* has a reference implementation in *Go* that is under active development
-right now.  If you want to start using *Kapow!* you can choose from several
-options.
+*Kapow!* has a reference implementation in :any:`Go` that is under active
+development right now.  If you want to start using *Kapow!* you can choose from
+several options.
 
 
 Download and Install a Binary
