@@ -1,0 +1,30 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - v*.*.*
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-go@v1
+      with:
+        go-version: 1.13.5
+
+    - name: Select custom release notes
+      id: release-notes
+      run: |
+        RELNOTES="docs/release-notes/RELEASE-${GITHUB_REF#refs/tags/}.md"
+        [[ -f "$RELNOTES" ]] && echo ::set-output name=ARGS::--release-notes $RELNOTES || true
+
+    - uses: goreleaser/goreleaser-action@v1
+      with:
+        args: release --rm-dist ${{ steps.release-notes.outputs.ARGS }}
+        key: ${{ secrets.KEY }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
