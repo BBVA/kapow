@@ -94,10 +94,6 @@ This is an optional last argument to be passed to the
 In the route shown above, it completes the ``entrypoint`` to form the final
 incantation to be executed:
 
-.. todo::
-
-   link to entrypoint above
-
 .. code-block:: bash
 
    /bin/bash -c 'touch /var/lib/mydb/"$(kapow get /request/matches/username)"'
