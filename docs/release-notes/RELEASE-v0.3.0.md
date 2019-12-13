@@ -5,7 +5,7 @@ Kapow! v0.3.0
 * Feature parity with the original PoC (written in Python), with some exceptions
   explained in the next section.
 
-* Built and tested against Go 1.13.4.
+* Built and tested against Go 1.13.5.
 
 * (Almost) no bytes were harmed during the development of this release.
 
