@@ -5,10 +5,6 @@ Route Matching
 and uses it to determine which handler an incoming request should be dispatched
 to.
 
-.. todo::
-
-   link routes to its section
-
 Each incoming request is matched against the routes in the route table in
 strict order.  For each route in the route table, the criteria are checked.
 If the request does not match, the next route in the route list is examined.
