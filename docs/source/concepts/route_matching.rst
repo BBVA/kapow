@@ -2,7 +2,7 @@ Route Matching
 ==============
 
 *Kapow!* maintains a :ref:`route <routes>` table with a list of routes as provided by the user,
-and uses it to determine which handler should an incoming request be dispatched
+and uses it to determine which handler an incoming request should be dispatched
 to.
 
 .. todo::
