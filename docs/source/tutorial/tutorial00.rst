@@ -21,9 +21,9 @@ Your First Day at Work
 
   We have two Linux boxen that provide services to our employees.
 
-  1. The Corporate Server:  Provides email, database and web services.
+  #. The Corporate Server:  Provides email, database and web services.
 
-  2. The Backup Server:  It is used to store backup of the important
+  #. The Backup Server:  It is used to store backup of the important
      company data.
 
 **Junior**
