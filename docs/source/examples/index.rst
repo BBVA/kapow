@@ -255,7 +255,8 @@ Modify JSON by Using Shell Commands
     `jq <https://stedolan.github.io/jq/>`_.
 
 
-**Example #1**
+Example #1
+----------
 
 In this example our *Kapow!* service will receive a `JSON` value with an incorrect
 date, then our ``pow`` file will fix it and return the correct value to the user.
@@ -280,7 +281,8 @@ Call the service with :program:`curl`:
    }
 
 
-**Example #2**
+Example #2
+----------
 
 In this example we extract the ``name`` field from the incoming `JSON` document in
 order to generate a two-attribute `JSON` response.
@@ -313,7 +315,8 @@ Call the service with :program:`curl`:
 Upload Files
 ++++++++++++
 
-**Example #1**
+Example #1
+----------
 
 Uploading a file using *Kapow!* is very simple:
 
@@ -334,7 +337,8 @@ Uploading a file using *Kapow!* is very simple:
    {"hello": "world"}
 
 
-**Example #2**
+Example #2
+----------
 
 In this example we reply the line count of the file received in the request:
 
@@ -416,7 +420,7 @@ request:
 Sending HTTP error codes
 ++++++++++++++++++++++++
 
-You can specify custom status code for HTTP response:
+You can specify custom status code for `HTTP` response:
 
 .. code-block:: console
    :linenos:
@@ -453,7 +457,7 @@ Testing with :program:`curl`:
 How to redirect using HTTP
 ++++++++++++++++++++++++++
 
-In this example we'll redirect our users to Google:
+In this example we'll redirect our users to `Google`:
 
 .. code-block:: console
    :linenos:
@@ -488,8 +492,8 @@ In this example we'll redirect our users to Google:
 How to Execute Two Processes in Parallel
 ++++++++++++++++++++++++++++++++++++++++
 
-We want to :command:`ping` two machines parallel.  *Kapow!* can get IPs from query
-params:
+We want to :command:`ping` two machines parallel.  *Kapow!* can get IP addresses
+from query params:
 
 .. code-block:: console
    :linenos:
