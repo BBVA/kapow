@@ -55,7 +55,8 @@ Resources
 
 The HTTP method of the incoming request.
 
-**Sample Usage**
+Sample Usage
+^^^^^^^^^^^^
 
 If the user runs:
 
@@ -76,7 +77,8 @@ then, when handling the request:
 
 The ``Host`` header as defined in the HTTP/1.1 spec of the incoming request.
 
-**Sample Usage**
+Sample Usage
+^^^^^^^^^^^^
 
 If the user runs:
 
@@ -97,7 +99,8 @@ then, when handling the request:
 
 Contains the path substring of the URL.
 
-**Sample Usage**
+Sample Usage
+^^^^^^^^^^^^
 
 If the user runs:
 
@@ -118,7 +121,8 @@ then, when handling the request:
 
 Contains the part of the URL captured by the pattern ``name``.
 
-**Sample Usage**
+Sample Usage
+^^^^^^^^^^^^
 
 For a route defined like this:
 
@@ -145,7 +149,8 @@ then, when handling the request:
 
 Contains the value of the URL parameter ``name``
 
-**Sample Usage**
+Sample Usage
+^^^^^^^^^^^^
 
 If the user runs:
 
@@ -166,7 +171,8 @@ then, when handling the request:
 
 Contains the value of the HTTP header ``name`` of the incoming request.
 
-**Sample Usage**
+Sample Usage
+^^^^^^^^^^^^
 
 If the user runs:
 
@@ -187,7 +193,8 @@ then, when handling the request:
 
 Contains the value of the HTTP cookie ``name`` of the incoming request.
 
-**Sample Usage**
+Sample Usage
+^^^^^^^^^^^^
 
 If the user runs:
 
@@ -208,7 +215,8 @@ then, when handling the request:
 
 Contains the value of the field ``name`` of the incoming request.
 
-**Sample Usage**
+Sample Usage
+^^^^^^^^^^^^
 
 If the user runs:
 
@@ -229,7 +237,8 @@ then, when handling the request:
 
 Contains the name of the file uploaded through the incoming request.
 
-**Sample Usage**
+Sample Usage
+^^^^^^^^^^^^
 
 If the user runs:
 
@@ -250,7 +259,8 @@ then, when handling the request:
 
 Contents of the file that is being uploaded in the incoming request.
 
-**Sample Usage**
+Sample Usage
+^^^^^^^^^^^^
 
 If the user runs:
 
@@ -271,7 +281,8 @@ then, when handling the request:
 
 Raw contents of the incoming request HTTP body.
 
-**Sample Usage**
+Sample Usage
+^^^^^^^^^^^^
 
 If the user runs:
 
@@ -292,7 +303,8 @@ then, when handling the request:
 
 Contains the status code given in the user response.
 
-**Sample Usage**
+Sample Usage
+^^^^^^^^^^^^
 
 If during the request handling:
 
@@ -308,7 +320,8 @@ then the response will have the status code ``418 I am a Teapot``.
 
 Contains the value of the header ``name`` in the user response.
 
-**Sample Usage**
+Sample Usage
+^^^^^^^^^^^^
 
 If during the request handling:
 
@@ -326,7 +339,8 @@ value ``Foo``.
 Contains the value of the cookie ``name`` that will be set to the user
 response.
 
-**Sample Usage**
+Sample Usage
+^^^^^^^^^^^^
 
 If during the request handling:
 
@@ -343,7 +357,8 @@ following requests.
 
 Contains the value of the response HTTP body.
 
-**Sample Usage**
+Sample Usage
+^^^^^^^^^^^^
 
 If during the request handling:
 
