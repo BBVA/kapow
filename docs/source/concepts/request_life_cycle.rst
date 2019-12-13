@@ -37,8 +37,8 @@ environment:
 3. ``kapow set /response/body banana``
 --------------------------------------
 
-During the lifetime of the shell, the request and response resources are
-available via these commands:
+During the lifetime of the shell, the :ref:`request and response resources
+<resource-tree>` are available via these commands:
 
 - ``kapow get /request/...``
 
@@ -59,8 +59,3 @@ The shell dies.  Long live the shell!
 -----------
 
 :program:`kapow` finalizes the original request.  Enjoy your banana now.
-
-
-.. todo::
-
-   link to resource tree

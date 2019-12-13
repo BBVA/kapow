@@ -1,3 +1,5 @@
+.. _resource-tree:
+
 The *Kapow!* Resource Tree
 ==========================
 
