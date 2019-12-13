@@ -4,7 +4,7 @@ Routes
 ======
 
 A *Kapow!* route specifies the matching criteria for an incoming request on
-the `HTTP User Interface`, and the details to handle it.
+the :ref:`http-user-interface`, and the details to handle it.
 
 *Kapow!* implements a *route table* where all routes reside.
 
@@ -66,34 +66,32 @@ assigning `joe` to the placeholder ``username``.
 https://github.com/gorilla/mux#examples
 
 
+.. _entrypoint-route-element:
+
 ``entrypoint`` Route Element
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This sets the executable to be spawned, along with any arguments required.
 
 In the route shown above, the entrypoint that will be run is ``/bin/bash -c``,
-which is an incomplete recipe.  It is then completed by the `command` element.
-
-.. todo::
-
-   link to command below
-
+which is an incomplete recipe.  It is then completed by the :ref:`command
+element <command-route-element>`.
 
 .. note::
 
-   The semantics of this element closely match `Docker`'s ``ENTRYPOINT`` directive.
+   The semantics of this element closely match the `Dockerfile`'s `ENTRYPOINT`_
+   directive.
 
-.. todo::
 
-   link to Docker docu
-
+.. _command-route-element:
 
 ``command`` Route Element
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This is an optional last argument to be passed to the ``entrypoint``.
+This is an optional last argument to be passed to the
+:ref:`entrypoint <entrypoint-route-element>`.
 
-In the route shown above, it completes the `entrypoint` to form the final
+In the route shown above, it completes the ``entrypoint`` to form the final
 incantation to be executed:
 
 .. todo::
@@ -106,20 +104,17 @@ incantation to be executed:
 
 .. note::
 
-   The semantics of this element closely match `Docker`'s ``COMMAND`` directive.
-
-.. todo::
-
-   link to Docker docu
+   The semantics of this element closely match the `Dockerfile`'s `CMD`_
+   directive.
 
 
 Matching Algorithm
 ------------------
 
-*Kapow!* leverages Gorilla Mux for this task. You can see the gory details in
-their documentation.
+*Kapow!* leverages `Gorilla Mux`_ for this task.  Check their documentation for
+the gory details.
 
 
-.. todo::
-
-   link to Gorilla Mux docu
+.. _ENTRYPOINT: https://docs.docker.com/engine/reference/builder/#entrypoint
+.. _CMD: https://docs.docker.com/engine/reference/builder/#cmd
+.. _Gorilla Mux: https://www.gorillatoolkit.org/pkg/mux
