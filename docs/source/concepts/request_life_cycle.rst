@@ -2,7 +2,7 @@ Request Life Cycle
 ==================
 
 This section describes the sequence of events happening for each request
-answered by the `HTTP User Interface`.
+answered by the :ref:`http-user-interface`.
 
 .. image:: ../_static/request_life_cycle.png
 
@@ -10,7 +10,7 @@ answered by the `HTTP User Interface`.
 1. request
 ----------
 
-The user makes a request to the `HTTP User Interface`.
+The user makes a request to the :ref:`http-user-interface`.
 
 - The request is matched against the route table.
 
@@ -24,14 +24,14 @@ The user makes a request to the `HTTP User Interface`.
 :program:`kapow` spawns the executable specified as entrypoint in the matching
 route.
 
-The default entrypoint is ``/bin/sh``; let's focus on this workflow.
+The default entrypoint is :command:`/bin/sh`; let's focus on this workflow.
 
 The spawned entrypoint is run with the following variables added to its
 environment:
 
 - :envvar:`KAPOW_HANDLER_ID`: Containing the `HANDLER_ID`
-- :envvar:`KAPOW_DATAAPI_URL`: With the URL of the `HTTP Data Interface`
-- :envvar:`KAPOW_CONTROLAPI_URL`: With the URL of the `HTTP Control Interface`
+- :envvar:`KAPOW_DATAAPI_URL`: With the URL of the :ref:`http-data-interface`
+- :envvar:`KAPOW_CONTROLAPI_URL`: With the URL of the :ref:`http-control-interface`
 
 
 3. ``kapow set /response/body banana``
