@@ -31,20 +31,21 @@ Windows
 ^^^^^^^
 
 Copy the downloaded binary to a directory of your choice and update the system
-``PATH`` variable to include that directory.
+:envvar:`PATH` variable to include that directory.
 
 
 Install the package with ``go get``
 -----------------------------------
 
 If you already have `installed and configured <https://golang.org/cmd/go/>`_
-the ``go`` runtime in the host where you want to run *Kapow!*, simply run:
+the :program:`go` runtime in the host where you want to run *Kapow!*, simply
+run:
 
 .. code-block:: console
 
   $ go get -v github.com/BBVA/kapow
 
-Note that *Kapow!* leverages *Go modules*, so you can target specific releases:
+Note that *Kapow!* leverages `Go modules`_, so you can target specific releases:
 
 .. code-block:: console
 
@@ -105,3 +106,5 @@ After building the image you can run the container with:
 
 With the ``-v`` parameter we map a local file into the container's filesystem so
 we can use it to configure our *Kapow!* server on startup.
+
+.. _Go modules: https://blog.golang.org/using-go-modules
