@@ -62,7 +62,7 @@ It can contain regex placeholders for easily capturing fragments of the path.
 In the route shown above, a request with a URL ``/register/joe`` would match,
 assigning `joe` to the placeholder ``username``.
 
-*Kapow!* leverages Gorilla Mux for managing routes.  For the full story, see
+*Kapow!* leverages `Gorilla Mux`_ for managing routes.  For the full story, see
 https://github.com/gorilla/mux#examples
 
 
