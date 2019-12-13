@@ -181,7 +181,7 @@ If you need to write more complex actions, you can leverage multiline commands:
 .. warning::
 
     Be aware of the **"-"** at the end of the ``kapow route add`` command.
-    It tells ``kapow route add`` to read commands from :tech:`stdin`.
+    It tells ``kapow route add`` to read commands from `stdin`.
 
 .. warning::
 
