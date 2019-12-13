@@ -64,7 +64,7 @@ Sharing the Stats
 
 **Senior**
 
-  See it for yourself.
+  See for yourself.
 
   .. code-block:: console
 
@@ -170,7 +170,7 @@ Sharing the Stats
 
 **Senior**
 
-  You are right, but you are not using ``HTTP`` correctly.  You have to set the
+  You are right, but you are not using `HTTP` correctly.  You have to set the
   ``Content-Type`` header to let your client know the format of the data you are
   outputting.
 
@@ -227,5 +227,5 @@ Sharing the Stats
 
 **Senior**
 
-  That's perfect!  Now, let's upload this to the *Corporate Server* and tell the
+  That's perfect!  Now, let's upload this to the **Corporate Server** and tell the
   frontend developer about it.

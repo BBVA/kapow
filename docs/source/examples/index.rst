@@ -1,18 +1,19 @@
 Using a pow File
 ++++++++++++++++
 
-A ``pow`` file is just a ``bash`` script, where you make calls to the ``kapow route``
-command.
+A :file:`pow` file is just a :command:`bash` script, where you make calls to the
+``kapow route`` command.
 
 
-**Starting** *Kapow!* **using a** ``pow`` **file**
+Starting *Kapow!* using a pow file
+----------------------------------
 
 .. code-block:: console
    :linenos:
 
    $ kapow server example.pow
 
-With the ``example.pow``:
+With the :file:`example.pow`:
 
 .. code-block:: console
    :linenos:
@@ -29,14 +30,14 @@ With the ``example.pow``:
 
 .. note::
 
-   *Kapow!* can be fully configured using just ``pow`` files
+   *Kapow!* can be fully configured using just :file:`pow` files
 
 
 Load More Than One pow File
 +++++++++++++++++++++++++++
 
-You can load more than one ``pow`` file at time.  This can help you keep your
-``pow`` files tidy.
+You can load more than one :file:`pow` file at time.  This can help you keep
+your :file:`pow` files tidy.
 
 .. code-block:: console
    :linenos:
@@ -54,7 +55,8 @@ Add a New Route
     Be aware that if you register more than one route with exactly the
     same path, only the first route added will be used.
 
-**GET route**
+GET route
+---------
 
 Defining a route:
 
@@ -72,9 +74,10 @@ Calling route:
    $ curl http://localhost:8080/my/route
    hello world
 
-**POST route**
+POST route
+----------
 
-Defining route:
+Defining a route:
 
 .. code-block:: console
    :linenos:
@@ -82,7 +85,7 @@ Defining route:
    $ kapow route add -X POST /echo -c 'kapow get /request/body | kapow set /response/body'
 
 
-Calling route:
+Calling a route:
 
 .. code-block:: console
    :linenos:
@@ -91,9 +94,10 @@ Calling route:
    hello world
 
 
-**Adding URL params**
+Adding URL params
+-----------------
 
-Defining route:
+Defining a route:
 
 .. code-block:: console
    :linenos:
@@ -101,7 +105,7 @@ Defining route:
    $ kapow route add '/echo/{message}' -c 'kapow get /request/matches/message | kapow set /response/body'
 
 
-Calling route:
+Calling a route:
 
 .. code-block:: console
    :linenos:
@@ -115,7 +119,7 @@ Listing Routes
 
 You can list the active routes in the *Kapow!* server.
 
-.. _examples_listing_routes:
+.. _listing-routes-example:
 
 .. code-block:: console
    :linenos:
@@ -142,16 +146,17 @@ Or, if you want human-readable output, you can use :program:`jq`:
 
 .. note::
 
-   *Kapow!* has a `Control HTTP Interface`, bound by default to
-   ``localhost:8081``
+   *Kapow!* has a :ref:`http-control-interface`, bound by default to
+   ``localhost:8081``.
 
 
 Deleting Routes
 +++++++++++++++
 
 You need the ID of a route to delete it.
-Using the :ref:`listing routes example <examples_listing_routes>`, you can
-obtain the ID of the route, and then delete it by typing:
+Running the command used in the :ref:`listing routes example
+<listing-routes-example>`, you can obtain the ID of the route, and then delete
+it by typing:
 
 .. code-block:: console
    :linenos:

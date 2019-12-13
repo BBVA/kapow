@@ -3,16 +3,16 @@ What have we done?
 
 **Senior**
 
-  Ey, I come from seeing our project team mates.  They're delighted with their
+  Hey, I come from seeing our project team mates.  They're delighted with their
   new toy, but they miss something.
 
   I forgot to tell you that after the backup is run they need to review the log
-  file to check that all went OK.
+  file to check that everything went OK.
 
 **Junior**
 
   Makes sense.  Do you think that *Kapow!* can help with this?  I have the
-  feeling that this is the right way to do it...
+  feeling that this is the right way to go about it...
 
 **Senior**
 
@@ -27,7 +27,7 @@ What have we done?
 
 **Senior**
 
-  Yeah, the team is used to :command:`cat`` the log file contents to see what
+  Yeah, the team is used to :command:`cat` the log file contents to see what
   happened in the last execution:
 
   .. code-block:: console
@@ -38,7 +38,7 @@ What have we done?
 
 **Junior**
 
-  Let me try add this to our ``pow`` file:
+  Let me try add this to our :file:`pow` file:
 
   .. code-block:: console
 
@@ -47,7 +47,7 @@ What have we done?
 **Senior**
 
   Looks good to me, clean and simple, and it is a very good idea to use ``GET``
-  here as it wont change anything in the server.  Restart *Kapow!* and try it.
+  here as it wont change anything in the server.  Let's restart *Kapow!* and try it.
 
 **Junior**
 
@@ -56,4 +56,4 @@ What have we done?
 
 **Senior**
 
-  Agree.  We are done for the day with this...
+  Agreed.  And with this, I think we are done for the day...

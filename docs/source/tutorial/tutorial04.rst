@@ -16,7 +16,7 @@ I Need my Report!
 
 **Junior**
 
-  Oh. That sounds... fun.  OK, tell me about this report.
+  Oh.  That sounds... fun.  OK, tell me about this report.
 
 **Senior**
 
@@ -184,11 +184,11 @@ I Need my Report!
 
 **Senior**
 
-  There is a better way.  You can make use of another neat ``bash`` feature:
-  **group commands**.
+  There is a better way.  You can make use of another neat :command:`bash`
+  feature:  `command grouping`_.
 
-  Group commands allows you to execute several commands treating the
-  group as one single command.
+  Command grouping allows you to execute several commands treating the group as
+  one single command.
 
   You can use this way:
 
@@ -226,3 +226,5 @@ I Need my Report!
   You know me.  Whatever it takes to avoid writing reports ;-)
 
   (both chuckle).
+
+.. _command grouping: https://www.gnu.org/software/bash/manual/html_node/Command-Grouping.html

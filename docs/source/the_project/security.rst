@@ -55,7 +55,7 @@ makes this request:
 
 Let's see what happens:
 
-The command that will eventually be executed by ``bash`` is:
+The command that will eventually be executed by :command:`bash` is:
 
 .. code-block:: bash
 

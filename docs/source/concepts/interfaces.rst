@@ -5,29 +5,35 @@
 clear purpose.
 
 
-User Interface
---------------
+.. _http-user-interface:
 
-The `User HTTP Interface` is used to serve final user requests.
+HTTP User Interface
+-------------------
+
+The `HTTP User Interface` is used to serve final user requests.
 
 By default it binds to address ``0.0.0.0`` and port ``8080``, but that can be
 changed via the ``--bind`` flag.
 
 
-Control Interface
------------------
+.. _http-control-interface:
 
-The `Control HTTP Interface` is used by the command ``kapow route`` to
+HTTP Control Interface
+----------------------
+
+The `HTTP Control Interface` is used by the command ``kapow route`` to
 administer the list of system routes.
 
 By default it binds to address ``127.0.0.1`` and port ``8081``, but that can be
 changed via the ``--control-bind`` flag.
 
 
-Data Interface
---------------
+.. _http-data-interface:
 
-The `Data HTTP Interface` is used by the commands ``kapow get`` and ``kapow
+HTTP Data Interface
+-------------------
+
+The `HTTP Data Interface` is used by the commands ``kapow get`` and ``kapow
 set`` to exchange the data for a particular request.
 
 By default it binds to address ``127.0.0.1`` and port ``8082``, but that can be

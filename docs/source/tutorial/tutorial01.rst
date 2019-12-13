@@ -1,9 +1,9 @@
-Backup that Database!
-=====================
+Let's Backup that Database!
+===========================
 
 **Junior**
 
-  A Backup? Don't you have this kind of things already automated?
+  A Backup?  Don't you have this kind of things already automated?
 
 **Senior**
 
@@ -11,8 +11,8 @@ Backup that Database!
   project team ask us for a backup every time a project is finished.
 
   I've already prepared a script to do the task.  Before executing it in
-  production, :download:`download it <./materials/backup_db.sh>` and test it in
-  your own machine.
+  production, why don't you :download:`download it <./materials/backup_db.sh>`
+  and test it in your laptop?
 
   .. code-block:: console
 
@@ -23,7 +23,7 @@ Backup that Database!
 
   (after a few minutes)
 
-  OK, done!  When I executed it the output says:
+  OK, done!  I just run it and I got this output:
 
   .. code-block:: console
 
@@ -35,9 +35,9 @@ Backup that Database!
 
   That's right.  That script performed the backup and stored it into the
   **Backup Server** and appended some information into the backup log file at
-  ``/tmp/backup_db.log``.
+  :file:`/tmp/backup_db.log`.
 
-  Now you can ``ssh`` into the **Corporate Server** and make the real
+  Now you can :program:`ssh` into the **Corporate Server** and make the real
   backup.
 
 
@@ -57,22 +57,21 @@ Backup that Database!
 
 **Senior**
 
-  I am the only one allowed to ``ssh`` into the **Corporate Server**, for
+  I am the only one allowed to :program:`ssh` into the **Corporate Server**, for
   obvious reasons.
 
 **Junior**
 
-  Why do you need to ``ssh`` in the first place?  Couldn't it be done without
-  ``ssh``?
+  Why do you need to :program:`ssh` in the first place?  Couldn't it be done
+  without :program:`ssh`?
 
 **Senior**
 
   Actually, it could be done with a promising new tool I've just found...
   *Kapow!*
 
-  Is a tool that allows you to publish scripts as ``HTTP`` services.  If we
-  use it here we can give them the ability to do the backup whenever
-  they want.
+  Is a tool that allows you to publish scripts as `HTTP` services.  If we use it
+  here we can give them the ability to do the backup whenever they want.
 
 **Junior**
 
@@ -92,10 +91,10 @@ Backup that Database!
 
 **Senior**
 
-  Don't worry, it is pretty easy.  Basically we will provide an ``HTTP``
-  endpoint managed by *Kapow!* at the **Corporate Server**; when the project
-  team wants to perform a backup they only need to call the endpoint and
-  *Kapow!* will call the backup script.
+  Don't worry, it is pretty easy.  Basically we will provide an `HTTP` endpoint
+  managed by *Kapow!* at the **Corporate Server**; when the project team wants
+  to perform a backup they only need to call the endpoint and *Kapow!* will call
+  the backup script.
 
 **Junior**
 
@@ -116,11 +115,11 @@ Backup that Database!
 
 **Junior**
 
-  Done! But it doesn't do anything.
+  Done!  But it doesn't seem to do anything...
 
 **Senior**
 
-  Now you have the port ``8080`` open but don't have any endpoints defined.
+  Now you have the port ``8080`` open, but no endpoints have been defined yet.
   To define our endpoint you have to run this in another terminal:
 
   .. code-block:: console
@@ -140,7 +139,8 @@ Backup that Database!
 
   Not at all.  The creators of *Kapow!* have thought of everything.  You can put
   all your route definitions in a special script file and pass it to the server
-  on startup.  They call those files `pow` files and they have ``.pow`` extension.
+  on startup.  They call those files :file:`pow` files and they have
+  :file:`.pow` extension.
 
   It should look something like:
 
@@ -180,11 +180,11 @@ Backup that Database!
 
 **Junior**
 
-  Yay!  I can see the log file at ``/tmp/backup_db.log``
+  Yay!  I can see the log file at :file:`/tmp/backup_db.log`
 
 **Senior**
 
-  That's great.  I am going to install all this in the *Corporate Server* and
+  That's great.  I am going to install all this in the **Corporate Server** and
   forget about the old procedure.
 
   That enough for your first day!  Go home now and get some rest.

@@ -53,7 +53,7 @@ We need to filter
        | kapow set /response/body'
 
   It looks a bit weird, but we'll have time to revise the style later.  Please
-  make some tests on your laptop before we publish it on the *Corporate Server*.
+  make some tests on your laptop before we publish it on the **Corporate Server**.
   Remember to send them an example URL with the parameters they can use to
   filter and limit the amount of lines they get.
 

@@ -4,7 +4,7 @@ Routes
 ======
 
 A *Kapow!* route specifies the matching criteria for an incoming request on
-the `User HTTP Interface`, and the details to handle it.
+the `HTTP User Interface`, and the details to handle it.
 
 *Kapow!* implements a *route table* where all routes reside.
 
