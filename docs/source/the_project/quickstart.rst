@@ -87,7 +87,7 @@ OK, this approach could be the best choice for our organization, but:
 Using *Kapow!* (spoiler: it's the winner!)
 ++++++++++++++++++++++++++++++++++++++++++
 
-Ok, let's analyze *Kapow!* and check if it is compatible with our constraints:
+OK, let's analyze *Kapow!* and check if it is compatible with our constraints:
 
 #. *Kapow!* is Open Source, so it's also **free as in beer**.
 #. By using *Kapow!* we don't need to code our own solution, so **we don't have

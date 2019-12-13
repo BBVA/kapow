@@ -547,5 +547,5 @@ Calling with :program:`curl`:
    < Content-Length: 3
    < Content-Type: text/plain; charset=utf-8
    <
-   Ok
+   OK
    * Connection #0 to host localhost left intact
