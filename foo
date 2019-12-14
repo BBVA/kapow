@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# https://www.gnupg.org/documentation/manuals/gnupg/Unattended-GPG-key-generation.html
+
+export GNUPGHOME=$(mktemp -d)
+
+gpg --batch --generate-key <<-'EOF'
+	%echo Generating a signing OpenPGP key
+	%no-protection
+	%transient-key
+	Key-Type: RSA
+	Key-Length: 4096
+	Key-Usage: sign
+	Name-Real: Kapow! Release Bot
+	Name-Comment: v0.3.0-rc6
+	Name-Email: release-bot@kapow
+	Expire-Date: 1d
+	Revoker: 1:6AEB3D108D5A257CD9803BF6679F65C4563CF5BA
+	# Do a commit here, so that we can later print "done" :-)
+	# %commit
+	# %echo done
+EOF
