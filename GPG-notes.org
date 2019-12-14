@@ -1,0 +1,229 @@
+#+title: GPG notes
+
+* Signing Commits
+
+** Generate key
+
+*** Choose defaults with 4096 bits key sizes
+
+    #+BEGIN_SRC bash
+      gpg --full-generate-key
+    #+END_SRC
+
+    or
+
+    #+BEGIN_SRC bash
+      gpg --expert --full-generate-key
+    #+END_SRC
+
+*** Fetch the Key ID
+
+    #+BEGIN_SRC bash
+      gpg --list-keys
+    #+END_SRC
+
+*** Export the Public Key
+
+    #+BEGIN_SRC bash
+      gpg --armor --export 6AEB3D108D5A257CD9803BF6679F65C4563CF5BA | xclip
+    #+END_SRC
+
+*** Load the Public Key into GitHub
+
+    https://github.com/settings/keys
+
+*** Tell Git to use it
+
+    #+BEGIN_SRC bash
+      git config user.signingkey 6AEB3D108D5A257CD9803BF6679F65C4563CF5BA
+    #+END_SRC
+
+*** Create a signed tag
+
+    #+BEGIN_SRC bash
+      git tag -s v0.3.0-rc5
+    #+END_SRC
+
+
+* Signing Releases
+
+** Create an Unprotected (i.e., without passphrase) GPG Key
+
+   Identity: Kapow! (v0.3.0-rc5) Release Bot <release-bot@kapow>
+
+   #+BEGIN_EXAMPLE
+    $ gpg --full-generate-key
+    gpg (GnuPG) 2.2.19; Copyright (C) 2019 Free Software Foundation, Inc.
+    This is free software: you are free to change and redistribute it.
+    There is NO WARRANTY, to the extent permitted by law.
+
+    Please select what kind of key you want:
+       (1) RSA and RSA (default)
+       (2) DSA and Elgamal
+       (3) DSA (sign only)
+       (4) RSA (sign only)
+      (14) Existing key from card
+    Your selection? 4
+    RSA keys may be between 1024 and 4096 bits long.
+    What keysize do you want? (2048) 4096
+    Requested keysize is 4096 bits
+    Please specify how long the key should be valid.
+             0 = key does not expire
+          <n>  = key expires in n days
+          <n>w = key expires in n weeks
+          <n>m = key expires in n months
+          <n>y = key expires in n years
+    Key is valid for? (0) 1w
+    Key expires at Fri 20 Dec 2019 10:31:18 PM CET
+    Is this correct? (y/N) y
+
+    GnuPG needs to construct a user ID to identify your key.
+
+    Real name: Kapow! Release Bot
+    Email address: release-bot@kapow
+    Comment: v0.3.0-rc5
+    You selected this USER-ID:
+        "Kapow! Release Bot (v0.3.0-rc5) <release-bot@kapow>"
+
+    Change (N)ame, (C)omment, (E)mail or (O)kay/(Q)uit? O
+    We need to generate a lot of random bytes. It is a good idea to perform
+    some other action (type on the keyboard, move the mouse, utilize the
+    disks) during the prime generation; this gives the random number
+    generator a better chance to gain enough entropy.
+    gpg: key 25A70814A7DF0655 marked as ultimately trusted
+    gpg: revocation certificate stored as '/home/user/.gnupg/openpgp-revocs.d/DD034FC1D06AEDDB3436CBBC25A70814A7DF0655.rev'
+    public and secret key created and signed.
+
+    Note that this key cannot be used for encryption.  You may want to use
+    the command "--edit-key" to generate a subkey for this purpose.
+    pub   rsa4096 2019-12-13 [SC] [expires: 2019-12-20]
+          DD034FC1D06AEDDB3436CBBC25A70814A7DF0655
+    uid                      Kapow! Release Bot (v0.3.0-rc5) <release-bot@kapow>
+
+   #+END_EXAMPLE
+** TODO Create an Unprotected (i.e., without passphrase) GPG Key Programmatically
+
+   Identity: Kapow! (v0.3.0-rc6) Release Bot <release-bot@kapow>
+
+   https://www.gnupg.org/documentation/manuals/gnupg/Unattended-GPG-key-generation.html
+
+   #+BEGIN_SRC bash
+
+export GNUPGHOME=$(mktemp -d)
+
+gpg --batch --generate-key <<-'EOF'
+	%echo Generating a signing OpenPGP key
+	%no-protection
+	%transient-key
+	Key-Type: RSA
+	Key-Length: 4096
+	Key-Usage: sign
+	Name-Real: Kapow! Release Bot
+	Name-Comment: v0.3.0-rc6
+	Name-Email: release-bot@kapow
+	Expire-Date: 1d
+	# Do a commit here, so that we can later print "done" :-)
+	%commit
+	%echo done
+EOF
+   #+END_SRC
+
+** TODO Preparing for Revocation
+
+   We have two ways to pursue:
+
+*** Use the Revocation Certificate
+
+   A revocation certificate is a certificate that possesses the information
+   necessary to mark another certificate as unusable.  This is called ‘revoking’
+   the certificate.
+
+   We recommended you create a revocation certificate immediately after
+   generating a new GnuPG certificate.  Store it somewhere safe.  Consult the
+   FAQ instructions on how to do this.
+
+   https://www.gnupg.org/faq/gnupg-faq.html#define_rev_cert
+
+   https://www.gnupg.org/faq/gnupg-faq.html#generate_revocation_certificate
+
+*** Use a Designated Revoker
+
+   A designated revoker is a person, identified by a certificate, that has the
+   authority to revoke another certificate held by a different person.  For
+   instance, if you were using GnuPG in a corporate environment the IT staff
+   might be listed as a designated revoker for your certificate, so that when
+   you left the company the IT staff could revoke your certificate.
+
+   https://www.gnupg.org/faq/gnupg-faq.html#define_desig_revkr
+
+*** Appoint a Designated Revoker
+
+    To add a revoker, use the following command line:
+
+    #+BEGIN_SRC bash
+      gpg --edit-key [your key ID here] addrevoker
+    #+END_SRC
+
+    https://www.gnupg.org/faq/gnupg-faq.html#appoint_revoker
+
+*** Generate Designated Revocation
+
+   gpg --generate-designated-revocation name
+
+   https://lists.gnupg.org/pipermail/gnupg-users/2005-March/025217.html
+
+** Identify the Private Key
+
+   #+BEGIN_SRC bash
+     gpg --list-secret-keys --keyid-format LONG
+   #+END_SRC
+
+** Export the Private Key:
+
+   #+BEGIN_SRC bash
+     gpg --armor --export-secret-keys DD034FC1D06AEDDB3436CBBC25A70814A7DF0655 | xclip
+   #+END_SRC
+
+** Add your Private Key to Your GitHub Repo Secrets as KEY
+
+  https://github.com/<username|organization>/<repo>/settings/secrets
+
+** Add your Public Key to Your GitHup Repo
+
+   #+BEGIN_SRC bash
+     gpg --armor --export DD034FC1D06AEDDB3436CBBC25A70814A7DF0655 > release-key.gpg
+   #+END_SRC
+
+** Send your Public Key to a Key Server
+
+   #+BEGIN_SRC bash
+     gpg --send-keys DD034FC1D06AEDDB3436CBBC25A70814A7DF0655
+   #+END_SRC
+
+** TODO Sign the Release
+
+   #+BEGIN_SRC bash
+   gpg --sign --armor CHECSUMS
+   gpg --clear-sign --armor CHECKSUMS
+   gpg --detach-sign --output kapow1.0.0-rc1_linux_amd64-CHECKSUM kapow1.0.0-rc1_linux_amd64
+   #+END_SRC
+
+* Verifying Releases
+
+** Download Current GPG Key
+
+   #+BEGIN_SRC bash
+     curl https://raw.githubusercontent.com/<username|organization>/<repo>/master/release-key.gpg | gpg --import
+   #+END_SRC
+
+** Verify the SHA512SUMS.GPG
+
+   #+BEGIN_SRC bash
+     gpg --verify-files *-SHA512SUMS.GPG
+   #+END_SRC
+
+** Verify the Binaries you Downloaded
+
+   #+BEGIN_SRC bash
+     sha512sum --check --ignore-missing *-SHA512SUMS.GPG
+   #+END_SRC
