@@ -1,0 +1,13 @@
+#!/usr/bin/expect -f
+
+set REVOKER 6AEB3D108D5A257CD9803BF6679F65C4563CF5BA
+set KEY [lindex $argv 0]
+spawn gpg --command-fd 0 --status-fd 1 --edit-key $KEY addrevoker
+
+expect {
+	"GET_LINE keyedit.add_revoker"		{ send "$REVOKER\n"; exp_continue }
+	"GET_BOOL keyedit.add_revoker.okay"	{ send "y\n"; exp_continue }
+	"GET_LINE keyedit.prompt"		{ send "save\n"; exp_continue }
+	"ALREADY_SIGNED"			exit
+	eof					{ puts done }
+}

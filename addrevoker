@@ -1,0 +1,38 @@
+#!/bin/sh
+
+set -e
+set -x
+
+REVOKER=6AEB3D108D5A257CD9803BF6679F65C4563CF5BA
+
+gpg --recv-key $REVOKER
+
+rm -f EXP.*
+
+#gpg --armor --export-options export-sensitive-revkeys --export $1 > EXP.with-sensitive-revkeys.before
+#gpg --armor --export $1 > EXP.without-sensitive-revkeys.before
+#ls -l EXP.with*
+
+# hardcoded control flow; works ok
+#{
+#	echo $REVOKER
+#	echo y
+#	echo save
+#} | gpg --command-fd 0 --status-fd 1 --edit-key $1 addrevoker
+
+# dynamic control flow; WIP
+expect -f - -- $1 <<-'EOF'
+	set REVOKER 6AEB3D108D5A257CD9803BF6679F65C4563CF5BA
+	set KEY [lindex $argv 0]
+	spawn gpg --command-fd 0 --status-fd 1 --edit-key $KEY addrevoker
+	expect -exact "[GNUPG:] GET_LINE keyedit.add_revoker\r"
+	send -- "$REVOKER\r"
+	expect -exact "[GNUPG:] GET_BOOL keyedit.add_revoker.okay\r"
+	send -- "y\r"
+	expect -exact "[GNUPG:] GET_LINE keyedit.prompt\r"
+	send -- "save\r"
+EOF
+
+gpg --armor --export-options export-sensitive-revkeys --export $1 > EXP.with-sensitive-revkeys.after
+gpg --armor --export $1 > EXP.without-sensitive-revkeys.after
+ls -l EXP.with*
