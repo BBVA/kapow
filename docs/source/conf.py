@@ -28,6 +28,7 @@ author = 'BBVA Innovation Labs'
 # ones.
 extensions = [
     'sphinx.ext.todo',
+    'sphinx.ext.imgconverter'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -46,6 +47,7 @@ rst_prolog = """
    :class: xref
 
 .. default-role:: tech
+
 """
 
 # -- Options for HTML output -------------------------------------------------
@@ -58,7 +60,7 @@ html_logo = "_static/logo-200px.png"
 html_theme_options = {
     'logo_only': True,
     'collapse_navigation': False,
-    'navigation_depth': 4,
+    'navigation_depth': 3,
     'includehidden': True,
     'titles_only': False
 
@@ -71,3 +73,26 @@ html_static_path = ['_static']
 
 # https://stackoverflow.com/a/56448499
 master_doc = 'index'
+
+latex_logo = '_static/logo.png'
+latex_documents = [
+    ('latextoc',
+     'kapow.tex',
+     'Kapow! Documentation',
+     'BBVA Innovation Labs',
+     'manual',
+     True)
+]
+
+man_pages = [
+    ('concepts/resource_tree',
+     'kapow-resources',
+     'Kapow! Resource Tree Reference',
+     'BBVA Innovation Labs',
+     1),
+    ('examples/examples',
+     'kapow-examples',
+     'Kapow! Usage Examples',
+     'BBVA Innovation Labs',
+     1),
+]

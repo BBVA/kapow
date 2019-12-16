@@ -1,12 +1,12 @@
 Using a pow File
-++++++++++++++++
+----------------
 
 A :file:`pow` file is just a :command:`bash` script, where you make calls to the
 ``kapow route`` command.
 
 
 Starting *Kapow!* using a pow file
-----------------------------------
+++++++++++++++++++++++++++++++++++
 
 .. code-block:: console
    :linenos:
@@ -34,7 +34,7 @@ With the :file:`example.pow`:
 
 
 Load More Than One pow File
-+++++++++++++++++++++++++++
+---------------------------
 
 You can load more than one :file:`pow` file at time.  This can help you keep
 your :file:`pow` files tidy.
@@ -48,7 +48,7 @@ your :file:`pow` files tidy.
 
 
 Add a New Route
-+++++++++++++++
+---------------
 
 .. warning::
 
@@ -56,7 +56,7 @@ Add a New Route
     same path, only the first route added will be used.
 
 GET route
----------
++++++++++
 
 Defining a route:
 
@@ -75,7 +75,7 @@ Calling route:
    hello world
 
 POST route
-----------
+++++++++++
 
 Defining a route:
 
@@ -95,7 +95,7 @@ Calling a route:
 
 
 Adding URL params
------------------
++++++++++++++++++
 
 Defining a route:
 
@@ -115,7 +115,7 @@ Calling a route:
 
 
 Listing Routes
-++++++++++++++
+--------------
 
 You can list the active routes in the *Kapow!* server.
 
@@ -151,7 +151,7 @@ Or, if you want human-readable output, you can use :program:`jq`:
 
 
 Deleting Routes
-+++++++++++++++
+---------------
 
 You need the ID of a route to delete it.
 Running the command used in the :ref:`listing routes example
@@ -165,7 +165,7 @@ it by typing:
 
 
 Writing Multiline pow Files
-+++++++++++++++++++++++++++
+---------------------------
 
 If you need to write more complex actions, you can leverage multiline commands:
 
@@ -190,7 +190,7 @@ If you need to write more complex actions, you can leverage multiline commands:
 
 
 Add or Modify an HTTP Header
-++++++++++++++++++++++++++++
+----------------------------
 
 You may want to add some extra HTTP header to the response.
 
@@ -245,7 +245,7 @@ Testing with :program:`curl`:
 
 
 Modify JSON by Using Shell Commands
-+++++++++++++++++++++++++++++++++++
+-----------------------------------
 
 .. note::
 
@@ -256,7 +256,7 @@ Modify JSON by Using Shell Commands
 
 
 Example #1
-----------
+++++++++++
 
 In this example our *Kapow!* service will receive a `JSON` value with an incorrect
 date, then our ``pow`` file will fix it and return the correct value to the user.
@@ -282,7 +282,7 @@ Call the service with :program:`curl`:
 
 
 Example #2
-----------
+++++++++++
 
 In this example we extract the ``name`` field from the incoming `JSON` document in
 order to generate a two-attribute `JSON` response.
@@ -313,10 +313,10 @@ Call the service with :program:`curl`:
 
 
 Upload Files
-++++++++++++
+------------
 
 Example #1
-----------
+++++++++++
 
 Uploading a file using *Kapow!* is very simple:
 
@@ -338,7 +338,7 @@ Uploading a file using *Kapow!* is very simple:
 
 
 Example #2
-----------
+++++++++++
 
 In this example we reply the line count of the file received in the request:
 
@@ -370,7 +370,7 @@ In this example we reply the line count of the file received in the request:
 
 
 Protecting Against Parameter Injection Attacks
-++++++++++++++++++++++++++++++++++++++++++++++
+----------------------------------------------
 
 When you resolve variable values be careful to tokenize correctly by using
 double quotes.  Otherwise you could be vulnerable to **parameter injection
@@ -418,7 +418,7 @@ request:
 
 
 Sending HTTP error codes
-++++++++++++++++++++++++
+------------------------
 
 You can specify custom status code for `HTTP` response:
 
@@ -455,7 +455,7 @@ Testing with :program:`curl`:
 
 
 How to redirect using HTTP
-++++++++++++++++++++++++++
+--------------------------
 
 In this example we'll redirect our users to `Google`:
 
@@ -490,7 +490,7 @@ In this example we'll redirect our users to `Google`:
 
 
 How to Execute Two Processes in Parallel
-++++++++++++++++++++++++++++++++++++++++
+----------------------------------------
 
 We want to :command:`ping` two machines parallel.  *Kapow!* can get IP addresses
 from query params:
@@ -514,7 +514,7 @@ Calling with :program:`curl`:
 
 
 Manage Cookies
-++++++++++++++
+--------------
 
 If you track down some user state, *Kapow!* allows you manage Request/Response
 Cookies.

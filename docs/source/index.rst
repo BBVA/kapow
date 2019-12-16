@@ -14,41 +14,41 @@ Welcome to *Kapow!*
 
 
 What's *Kapow!*
-===============
+---------------
 
-  Think of that software that you need but **only runs in the command
-  line**.  *Kapow!* lets you wrap it into an `HTTP API` **real easy**.
+Think of that software that you need but **only runs in the command
+line**.  *Kapow!* lets you wrap it into an `HTTP API` **real easy**.
 
-  .. image::  _static/kapow-quick-overview.png
-     :width: 80%
-     :align: center
+.. image::  _static/kapow-quick-overview.png
+   :width: 80%
+   :align: center
 
-  Want to know more?
-  Check the :ref:`Quick Start Guide <quickstart>` section for a longer
-  explanation of what *Kapow!* does.
+Want to know more?
+Check the :ref:`Quick Start Guide <quickstart>` section for a longer
+explanation of what *Kapow!* does.
 
 
 Authors
-=======
+-------
 
-  *Kapow!* is being developed by the `BBVA-Labs Security team`_.
+*Kapow!* is being developed by the `BBVA-Labs Security team`_.
 
 
 License
-=======
+-------
 
-  *Kapow!* is Open Source Software and available under the `Apache 2 license`_.
+*Kapow!* is Open Source Software and available under the `Apache 2 license`_.
 
 
 Contributions
-=============
+-------------
 
-  Contributions are of course welcome.  See `CONTRIBUTING`_ or skim `existing
-  tickets`_ to see where you could help out.
+Contributions are of course welcome.  See `CONTRIBUTING`_ or skim
+`existing tickets`_ to see where you could help out.
 
 
-Table of Contents
-=================
+Contents
+========
 
 .. toctree::
    :maxdepth: 2
@@ -62,7 +62,6 @@ Table of Contents
    :maxdepth: 2
    :caption: Tutorial
 
-   tutorial/index
    tutorial/tutorial00
    tutorial/tutorial01
    tutorial/tutorial02
@@ -74,7 +73,7 @@ Table of Contents
    :maxdepth: 2
    :caption: Usage Examples
 
-   examples/index
+   examples/examples
 
 .. toctree::
    :maxdepth: 2
