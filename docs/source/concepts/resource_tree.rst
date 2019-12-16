@@ -151,6 +151,12 @@ then, when handling the request:
 
 Contains the value of the URL parameter ``name``
 
+
+.. note::
+
+   In the reference implementation only the first parameter's value can be accessed in the case of multiple values coming in the request.
+
+
 Sample Usage
 ^^^^^^^^^^^^
 
@@ -172,6 +178,12 @@ then, when handling the request:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Contains the value of the HTTP header ``name`` of the incoming request.
+
+
+.. note::
+
+   In the reference implementation only the first header's value can be accessed in the case of multiple values coming in the request.
+
 
 Sample Usage
 ^^^^^^^^^^^^
@@ -217,6 +229,15 @@ then, when handling the request:
 
 Contains the value of the field ``name`` of the incoming request.
 
+
+.. note::
+
+   In the reference implementation there are some caveats:
+
+   * Only the first form field's value can be accessed in the case of multiple values coming in the request.
+   * In order to get access to the form data a correct 'Content-Type' header must be present in the request ('application/x-www-form-urlencoded' or 'multipart/form-data')
+
+
 Sample Usage
 ^^^^^^^^^^^^
 
@@ -239,6 +260,12 @@ then, when handling the request:
 
 Contains the name of the file uploaded through the incoming request.
 
+
+.. note::
+
+   In the reference implementation to get access to the multipart data a correct Content-Type header must be present in the request (multipart/form-data or multipart/mixed).
+
+
 Sample Usage
 ^^^^^^^^^^^^
 
@@ -260,6 +287,12 @@ then, when handling the request:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Contents of the file that is being uploaded in the incoming request.
+
+
+.. note::
+
+   In the reference implementation to get access to the multipart data a correct Content-Type header must be present in the request (multipart/form-data or multipart/mixed).
+
 
 Sample Usage
 ^^^^^^^^^^^^
@@ -305,6 +338,15 @@ then, when handling the request:
 
 Contains the status code given in the user response.
 
+
+.. note::
+
+  In the reference implementation there are some caveats:
+
+  * The status code value must be between 100 and 999.
+  * There is no way of writing reason phrase in the status line of the response.
+
+
 Sample Usage
 ^^^^^^^^^^^^
 
@@ -321,6 +363,12 @@ then the response will have the status code ``418 I am a Teapot``.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Contains the value of the header ``name`` in the user response.
+
+
+.. note::
+
+   At this moment header values are only appended, there is no way of reset the values once set.
+
 
 Sample Usage
 ^^^^^^^^^^^^
