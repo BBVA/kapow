@@ -82,13 +82,13 @@ If you want to include *Kapow!* in a `Docker` image, you can add the binary
 directly from the releases section.  Below is an example :file:`Dockerfile` that
 includes *Kapow!*.
 
-.. code-block:: dockerfile
+.. parsed-literal::
 
   FROM debian:stretch-slim
 
   RUN apt-get update
 
-  ADD https://github.com/BBVA/kapow/releases/download/<VERSION>/kapow_linux_amd64 /usr/bin/kapow
+  ADD https://github.com/BBVA/kapow/releases/download/v\ |version|\ /kapow\_\ |version|\ _linux_amd64 /usr/bin/kapow
 
   RUN chmod 755 /usr/bin/kapow
 
