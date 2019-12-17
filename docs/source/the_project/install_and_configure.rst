@@ -17,8 +17,8 @@ release page and download the binary corresponding to the platfom and
 architecture you want to install *Kapow!* in.
 
 
-Linux
-+++++
+Linux & Mac OS
+++++++++++++++
 
 Install the downloaded binary using the following command as a privileged user.
 
@@ -31,7 +31,7 @@ Install the downloaded binary using the following command as a privileged user.
 Windows
 +++++++
 
-Copy the downloaded binary to a directory of your choice and update the system
+Copy the downloaded binary to a directory of your choice, rename it to `kapow` and update the system
 :envvar:`PATH` variable to include that directory.
 
 
@@ -50,7 +50,7 @@ Note that *Kapow!* leverages `Go modules`_, so you can target specific releases:
 
 .. parsed-literal::
 
-  $ GO111MODULE=on go get -v github.com/BBVA/kapow@v\ |version| 
+  $ GO111MODULE=on go get -v github.com/BBVA/kapow@v\ |version|
   go: finding github.com v\ |version|
   go: finding github.com/BBVA v\ |version|
   go: finding github.com/BBVA/kapow v\ |version|
