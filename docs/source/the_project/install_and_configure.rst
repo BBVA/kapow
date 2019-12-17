@@ -18,17 +18,17 @@ architecture you want to install *Kapow!* in.
 
 
 Linux
-^^^^^
++++++
 
 Install the downloaded binary using the following command as a privileged user.
 
 .. code-block:: console
 
-  $ install -t /usr/local/bin/kapow path_to_downloaded_binary
+  # install kapow_?.?.?-linux_amd64 /usr/local/bin/kapow
 
 
 Windows
-^^^^^^^
++++++++
 
 Copy the downloaded binary to a directory of your choice and update the system
 :envvar:`PATH` variable to include that directory.
