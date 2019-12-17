@@ -42,6 +42,7 @@ Windows®
 
 Unzip the downloaded zipfile and move `kapow.exe` to a directory of your choice;
 then update the system :envvar:`PATH` variable to include that directory.
+Note that the zipfile also includes the LICENSE.
 
 
 Install the package with ``go get``
