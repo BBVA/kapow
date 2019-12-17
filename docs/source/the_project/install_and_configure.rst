@@ -17,8 +17,8 @@ release page and download the binary corresponding to the platfom and
 architecture you want to install *Kapow!* in.
 
 
-Linux & Mac OS
-++++++++++++++
+GNU/Linux
++++++++++
 
 Install the downloaded binary using the following command as a privileged user.
 
@@ -27,12 +27,21 @@ Install the downloaded binary using the following command as a privileged user.
    # install kapow\_\ |version|\ _linux_amd64 /usr/local/bin/kapow
 
 
+macOS
++++++
 
-Windows
-+++++++
+Install the downloaded binary using the following command as a privileged user.
 
-Copy the downloaded binary to a directory of your choice, rename it to `kapow` and update the system
-:envvar:`PATH` variable to include that directory.
+.. parsed-literal::
+
+   # install kapow\_\ |version|\ _darwin_amd64 /usr/local/bin/kapow
+
+
+Windows®
+++++++++
+
+Unzip the downloaded zipfile and move `kapow.exe` to a directory of your choice;
+then update the system :envvar:`PATH` variable to include that directory.
 
 
 Install the package with ``go get``
