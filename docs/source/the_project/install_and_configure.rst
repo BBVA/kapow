@@ -22,9 +22,10 @@ Linux
 
 Install the downloaded binary using the following command as a privileged user.
 
-.. code-block:: console
+.. parsed-literal::
 
-  # install kapow_?.?.?-linux_amd64 /usr/local/bin/kapow
+   # install kapow\_\ |version|\ _linux_amd64 /usr/local/bin/kapow
+
 
 
 Windows
@@ -47,14 +48,14 @@ run:
 
 Note that *Kapow!* leverages `Go modules`_, so you can target specific releases:
 
-.. code-block:: console
+.. parsed-literal::
 
-  $ GO111MODULE=on go get -v github.com/BBVA/kapow@v0.3.0-rc4
-  go: finding github.com v0.3.0-rc4
-  go: finding github.com/BBVA v0.3.0-rc4
-  go: finding github.com/BBVA/kapow v0.3.0-rc4
-  go: downloading github.com/BBVA/kapow v0.3.0-rc4
-  go: extracting github.com/BBVA/kapow v0.3.0-rc4
+  $ GO111MODULE=on go get -v github.com/BBVA/kapow@v\ |version| 
+  go: finding github.com v\ |version|
+  go: finding github.com/BBVA v\ |version|
+  go: finding github.com/BBVA/kapow v\ |version|
+  go: downloading github.com/BBVA/kapow v\ |version|
+  go: extracting github.com/BBVA/kapow v\ |version|
   github.com/google/shlex
   github.com/google/uuid
   github.com/spf13/pflag

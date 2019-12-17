@@ -13,12 +13,26 @@
 # import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
+import os
+import re
 
 # -- Project information -----------------------------------------------------
 
 project = 'Kapow!'
 copyright = '2019, BBVA Innovation Labs'
 author = 'BBVA Innovation Labs'
+
+# The full version, including alpha/beta/rc tags.
+try:
+    release = re.sub('^v', '', os.popen('git describe').read().strip())
+except:
+    release = 'unknown'
+
+try:
+    # The short X.Y.Z-rcN version.
+    version = re.search('^(\d+\.\d+\.\d+(:?-rc\d+)?)', release).group(0)
+except:
+    version = release
 
 
 # -- General configuration ---------------------------------------------------
