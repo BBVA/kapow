@@ -12,7 +12,7 @@
 
 ---
 
-## What's Kapow!
+## What's *Kapow!*
 
 Say we have a nice cozy **shell command** that solves our problem. *Kapow!* lets
 us easily **turn that into an HTTP API**.
@@ -30,7 +30,7 @@ kapow route add /apache-errors - <<-'EOF'
 EOF
 ```
 
-and then, run it using Kapow!
+and then, run it using *Kapow!*
 
 ```bash
 [apache-host]$ kapow server --bind 0.0.0.0:8080 search-apache-errors.pow
@@ -46,7 +46,7 @@ finally, we can read from the just-defined endpoint:
 ...
 ```
 
-### Why Kapow! shines in these cases
+### Why *Kapow!* shines in these cases
 
 - We can share information **without having to grant SSH access** to anybody.
 - We can share information easily **over HTTP**.
