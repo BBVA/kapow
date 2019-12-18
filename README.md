@@ -1,15 +1,16 @@
-# Kapow!
+<p align="center">
+  <img alt="Kapow! Logo" src="https://raw.githubusercontent.com/BBVA/kapow/master/docs/source/_static/logo-200px.png" />
+  <h2 align="center">If you can script it, you can HTTP it.</h2>
+  <p align="center">
+    <a href="https://circleci.com/gh/BBVA/kapow/tree/master"><img alt="Test status" src="https://circleci.com/gh/BBVA/kapow/tree/master.svg?style=svg" /></a>
+    <a href="https://goreportcard.com/badge/github.com/bbva/kapow"><img alt="Go Report" src="https://goreportcard.com/badge/github.com/bbva/kapow" /></a>
+    <a href="https://github.com/BBVA/kapow/issues/"><img alt="Open Issues" src="https://img.shields.io/github/issues/BBVA/kapow" /></a>
+    <a href="https://kapow.readthedocs.io"><img alt="Documentation" src="https://img.shields.io/readthedocs/kapow" /></a>
+    <a href="https://github.com/BBVA/kapow/releases"><img alt="Current Version" src="https://img.shields.io/github/v/release/BBVA/kapow?include_prereleases" /></a>
+  </p>
+</p>
 
-If you can script it, you can HTTP it.
-
-![Kapow! Logo](https://raw.githubusercontent.com/BBVA/kapow/master/docs/source/_static/logo-200px.png)
-
-[![Test status](https://circleci.com/gh/BBVA/kapow/tree/master.svg?style=svg)](https://circleci.com/gh/BBVA/kapow/tree/master)
-[![Go Report](https://goreportcard.com/badge/github.com/bbva/kapow)](https://goreportcard.com/report/github.com/bbva/kapow)
-[![Open Issues](https://img.shields.io/github/issues/BBVA/kapow)](https://github.com/BBVA/kapow/issues/)
-[![Documentation](https://img.shields.io/readthedocs/kapow)](https://kapow.readthedocs.io)
-[![Current Version](https://img.shields.io/github/v/release/BBVA/kapow?include_prereleases)](https://github.com/BBVA/kapow/releases)
-
+---
 
 ## What's Kapow!
 
