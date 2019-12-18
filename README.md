@@ -1,5 +1,5 @@
 <p align="center">
-  <img alt="Kapow! Logo" src="https://raw.githubusercontent.com/BBVA/kapow/master/docs/source/_static/logo-200px.png" />
+  <img alt="Kapow! Logo" src="https://raw.githubusercontent.com/BBVA/kapow/master/docs/source/_static/logo.png" width=300 />
   <h2 align="center">If you can script it, you can HTTP it.</h2>
   <p align="center">
     <a href="https://circleci.com/gh/BBVA/kapow/tree/master"><img alt="Test status" src="https://circleci.com/gh/BBVA/kapow/tree/master.svg?style=svg" /></a>
