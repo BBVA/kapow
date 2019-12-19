@@ -74,7 +74,11 @@ Contents
    :maxdepth: 2
    :caption: Usage Examples
 
-   examples/examples
+   examples/working_with_pow_files
+   examples/managing_routes
+   examples/handling_http_requests
+   examples/using_json
+   examples/shell_tricks
 
 .. toctree::
    :maxdepth: 2
