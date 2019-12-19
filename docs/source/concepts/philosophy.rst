@@ -29,3 +29,14 @@ If you try to encode business logic in a shell script, you will **deeply**
 regret it soon enough.
 
 *Kapow!* is designed for automating simple stuff.
+
+
+Interoperability over Performance
+----------------------------
+
+We want *Kapow!* to be as performant as possible, but not at the cost of
+flexibility.  This is the reason why our *Data API* leverages HTTP
+instead of a lighter protocol for example.
+
+When we have to choose between making things faster or more
+interoperable the latter usually wins.
