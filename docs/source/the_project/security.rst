@@ -14,8 +14,56 @@ as well as the way the command itself interprets them, in order to get it right.
    going feed it as a parameter to a command line program.
 
 
-Example of Unsafe Parameter Handling
-------------------------------------
+Parameter Injection Attacks
+---------------------------
+
+When you resolve variable values be careful to tokenize correctly by using
+double quotes.  Otherwise you could be vulnerable to **parameter injection
+attacks**.
+
+**This example is VULNERABLE to parameter injection**
+
+In this example, an attacker can inject arbitrary parameters to :command:`ls`.
+
+.. code-block:: console
+   :linenos:
+
+   $ cat command-injection.pow
+   kapow route add '/vulnerable/{value}' - <<-'EOF'
+   	ls $(kapow get /request/matches/value) | kapow set /response/body
+   EOF
+
+Exploiting using :program:`curl`:
+
+.. code-block:: console
+   :linenos:
+
+   $ curl http://localhost:8080/vulnerable/-lai%20hello
+
+**This example is NOT VULNERABLE to parameter injection**
+
+Note how we add double quotes when we recover *value* data from the
+request:
+
+.. code-block:: console
+   :linenos:
+
+   $ cat command-injection.pow
+   kapow route add '/not-vulnerable/{value}' - <<-'EOF'
+   	ls -- "$(kapow get /request/matches/value)" | kapow set /response/body
+   EOF
+
+
+.. warning::
+
+   Quotes around parameters only protect against the injection of additional
+   arguments, but not against turning a non-option into option or vice-versa.
+   Note that for many commands we can leverage double-dash to signal the end of
+   the options.  See the "Security Concern" section on the docs.
+
+
+Parameter Mangling Attacks
+--------------------------
 
 Let's consider the following route:
 
@@ -83,3 +131,5 @@ Let's see how we can handle this particular case:
    Since this is critical for keeping your *Kapow!* services secure, we are working
    on a way to make this more transparent and safe, while at the same time keeping
    it *Kapowy*.
+
+
