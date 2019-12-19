@@ -32,10 +32,11 @@ regret it soon enough.
 
 
 Interoperability over Performance
-----------------------------
+---------------------------------
 
 We want *Kapow!* to be as performant as possible, but not at the cost of
-flexibility.  This is the reason why our *Data API* leverages HTTP
+flexibility.  This is the reason why our :ref:`Data API
+<http-data-interface>` leverages HTTP
 instead of a lighter protocol for example.
 
 When we have to choose between making things faster or more
