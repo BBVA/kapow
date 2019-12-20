@@ -65,7 +65,8 @@ request:
 Parameter Mangling Attacks
 --------------------------
 
-Let's consider the following route:
+In order to understand what we mean by parameter mangling let's
+consider the following route:
 
 .. code-block:: bash
 
