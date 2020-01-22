@@ -36,14 +36,15 @@ var ServerCmd = &cobra.Command{
 	and admin interface`,
 	PreRunE: validateServerCommandArguments,
 	Run: func(cmd *cobra.Command, args []string) {
-		// cert, _ := cmd.Flags().GetString("certfile")
-		// key, _ := cmd.Flags().GetString("keyfile")
+		var sConf server.ServerConfig = server.ServerConfig{}
+		sConf.UserBindAddr, _ = cmd.Flags().GetString("bind")
+		sConf.ControlBindAddr, _ = cmd.Flags().GetString("control-bind")
+		sConf.DataBindAddr, _ = cmd.Flags().GetString("data-bind")
 
-		userBind, _ := cmd.Flags().GetString("bind")
-		controlBind, _ := cmd.Flags().GetString("control-bind")
-		dataBind, _ := cmd.Flags().GetString("data-bind")
+		sConf.CertFile, _ = cmd.Flags().GetString("certfile")
+		sConf.KeyFile, _ = cmd.Flags().GetString("keyfile")
 
-		go server.StartServer(controlBind, dataBind, userBind)
+		go server.StartServer(sConf)
 
 		// start sub shell + ENV(KAPOW_CONTROL_URL)
 		if len(args) > 0 {
@@ -56,7 +57,7 @@ var ServerCmd = &cobra.Command{
 			kapowCMD := exec.Command("bash", powfile)
 			kapowCMD.Stdout = os.Stdout
 			kapowCMD.Stderr = os.Stderr
-			kapowCMD.Env = append(os.Environ(), "KAPOW_CONTROL_URL=http://"+controlBind)
+			kapowCMD.Env = append(os.Environ(), "KAPOW_CONTROL_URL=http://"+sConf.ControlBindAddr)
 
 			err = kapowCMD.Run()
 			if err != nil {
@@ -71,12 +72,12 @@ var ServerCmd = &cobra.Command{
 }
 
 func init() {
-	ServerCmd.Flags().String("certfile", "", "Cert file to serve thru https")
-	ServerCmd.Flags().String("keyfile", "", "Key file to serve thru https")
-
 	ServerCmd.Flags().String("bind", "0.0.0.0:8080", "IP address and port to bind the user interface to")
 	ServerCmd.Flags().String("control-bind", "localhost:8081", "IP address and port to bind the control interface to")
 	ServerCmd.Flags().String("data-bind", "localhost:8082", "IP address and port to bind the data interface to")
+
+	ServerCmd.Flags().String("certfile", "", "Cert file to serve thru https")
+	ServerCmd.Flags().String("keyfile", "", "Key file to serve thru https")
 }
 
 func validateServerCommandArguments(cmd *cobra.Command, args []string) error {

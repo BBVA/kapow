@@ -29,12 +29,19 @@ var Server = http.Server{
 }
 
 // Run finishes configuring Server and runs ListenAndServe on it
-func Run(bindAddr string) {
+func Run(bindAddr, certFile, keyFile string) {
 	Server = http.Server{
 		Addr:    bindAddr,
 		Handler: mux.New(),
 	}
-	if err := Server.ListenAndServe(); err != http.ErrServerClosed {
-		log.Fatalf("UserServer failed: %s", err)
+
+	if (certFile != "") && (keyFile != "") {
+		if err := Server.ListenAndServeTLS(certFile, keyFile); err != http.ErrServerClosed {
+			log.Fatalf("UserServer failed: %s", err)
+		}
+	} else {
+		if err := Server.ListenAndServe(); err != http.ErrServerClosed {
+			log.Fatalf("UserServer failed: %s", err)
+		}
 	}
 }
