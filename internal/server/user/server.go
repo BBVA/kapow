@@ -17,6 +17,9 @@
 package user
 
 import (
+	"crypto/tls"
+	"crypto/x509"
+	"io/ioutil"
 	"log"
 	"net/http"
 
@@ -29,13 +32,32 @@ var Server = http.Server{
 }
 
 // Run finishes configuring Server and runs ListenAndServe on it
-func Run(bindAddr, certFile, keyFile string) {
+func Run(bindAddr, certFile, keyFile, cliCaFile string, cliAuth bool) {
 	Server = http.Server{
 		Addr:    bindAddr,
 		Handler: mux.New(),
 	}
 
 	if (certFile != "") && (keyFile != "") {
+		if cliAuth {
+			if Server.TLSConfig == nil {
+				Server.TLSConfig = &tls.Config{}
+			}
+
+			var err error
+			Server.TLSConfig.ClientCAs, err = loadCertificatesFromFile(cliCaFile)
+			if err != nil {
+				log.Printf("UserServer failed to load CA certs: %s\nDefault to system CA store.", err)
+			} else {
+				CAStore := "System store"
+				if Server.TLSConfig.ClientCAs != nil {
+					CAStore = cliCaFile
+				}
+				log.Printf("UserServer using CA certs from %s\n", CAStore)
+				Server.TLSConfig.ClientAuth = tls.RequireAndVerifyClientCert
+			}
+		}
+
 		if err := Server.ListenAndServeTLS(certFile, keyFile); err != http.ErrServerClosed {
 			log.Fatalf("UserServer failed: %s", err)
 		}
@@ -44,4 +66,16 @@ func Run(bindAddr, certFile, keyFile string) {
 			log.Fatalf("UserServer failed: %s", err)
 		}
 	}
+}
+
+func loadCertificatesFromFile(certFile string) (pool *x509.CertPool, err error) {
+	if certFile != "" {
+		caCerts, err := ioutil.ReadFile(certFile)
+		if err == nil {
+			pool = x509.NewCertPool()
+			pool.AppendCertsFromPEM(caCerts)
+		}
+	}
+
+	return
 }

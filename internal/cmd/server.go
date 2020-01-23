@@ -32,8 +32,8 @@ import (
 var ServerCmd = &cobra.Command{
 	Use:   "server [optional flags] [optional pow file(s)]",
 	Short: "Start a kapow server",
-	Long: `Start a Kapow server with, by default with client interface, data interface
-	and admin interface`,
+	Long: `Start a Kapow server with a client interface, a data interface	and an
+	admin interface`,
 	PreRunE: validateServerCommandArguments,
 	Run: func(cmd *cobra.Command, args []string) {
 		var sConf server.ServerConfig = server.ServerConfig{}
@@ -43,6 +43,9 @@ var ServerCmd = &cobra.Command{
 
 		sConf.CertFile, _ = cmd.Flags().GetString("certfile")
 		sConf.KeyFile, _ = cmd.Flags().GetString("keyfile")
+
+		sConf.ClientAuth, _ = cmd.Flags().GetBool("clientauth")
+		sConf.ClientCaFile, _ = cmd.Flags().GetString("clientcafile")
 
 		go server.StartServer(sConf)
 
@@ -78,13 +81,26 @@ func init() {
 
 	ServerCmd.Flags().String("certfile", "", "Cert file to serve thru https")
 	ServerCmd.Flags().String("keyfile", "", "Key file to serve thru https")
+
+	ServerCmd.Flags().Bool("clientauth", false, "Activate client mutual tls authentication")
+	ServerCmd.Flags().String("clientcafile", "", "Cert file to validate client certificates")
 }
 
 func validateServerCommandArguments(cmd *cobra.Command, args []string) error {
 	cert, _ := cmd.Flags().GetString("certfile")
 	key, _ := cmd.Flags().GetString("keyfile")
+	cliAuth, _ := cmd.Flags().GetBool("clientauth")
+
 	if (cert == "") != (key == "") {
 		return errors.New("expected both or neither (certfile and keyfile)")
 	}
+
+	if cert == "" {
+		// If we don't serve thru https client authentication can't be enabled
+		if cliAuth {
+			return errors.New("Client authentication can't be active in a non https server")
+		}
+	}
+
 	return nil
 }
