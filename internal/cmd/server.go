@@ -26,6 +26,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/BBVA/kapow/internal/server"
+	"github.com/BBVA/kapow/internal/server/config"
 )
 
 // ServerCmd is the command line interface for kapow server
@@ -36,7 +37,7 @@ var ServerCmd = &cobra.Command{
 	admin interface`,
 	PreRunE: validateServerCommandArguments,
 	Run: func(cmd *cobra.Command, args []string) {
-		var sConf server.ServerConfig = server.ServerConfig{}
+		var sConf config.ServerConfig = config.ServerConfig{}
 		sConf.UserBindAddr, _ = cmd.Flags().GetString("bind")
 		sConf.ControlBindAddr, _ = cmd.Flags().GetString("control-bind")
 		sConf.DataBindAddr, _ = cmd.Flags().GetString("data-bind")

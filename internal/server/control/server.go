@@ -17,11 +17,12 @@
 package control
 
 import (
-	"log"
 	"net/http"
+
+	"github.com/BBVA/kapow/internal/server/config"
 )
 
 // Run Starts the control server listening in bindAddr
-func Run(bindAddr string) {
-	log.Fatal(http.ListenAndServe(bindAddr, configRouter()))
+func Run(cfg config.ServerConfig) error {
+	return http.ListenAndServe(cfg.ControlBindAddr, configRouter())
 }

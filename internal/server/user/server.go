@@ -24,6 +24,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/BBVA/kapow/internal/server/config"
 	"github.com/BBVA/kapow/internal/server/user/mux"
 )
 
@@ -33,39 +34,35 @@ var Server = http.Server{
 }
 
 // Run finishes configuring Server and runs ListenAndServe on it
-func Run(bindAddr, certFile, keyFile, cliCaFile string, cliAuth bool) {
+func Run(cfg config.ServerConfig) error {
 	Server = http.Server{
-		Addr:    bindAddr,
+		Addr:    cfg.UserBindAddr,
 		Handler: mux.New(),
 	}
 
-	if (certFile != "") && (keyFile != "") {
-		if cliAuth {
+	if (cfg.CertFile != "") && (cfg.KeyFile != "") {
+		if cfg.ClientAuth {
 			if Server.TLSConfig == nil {
 				Server.TLSConfig = &tls.Config{}
 			}
 
 			var err error
-			Server.TLSConfig.ClientCAs, err = loadCertificatesFromFile(cliCaFile)
+			Server.TLSConfig.ClientCAs, err = loadCertificatesFromFile(cfg.ClientCaFile)
 			if err != nil {
 				log.Fatalf("UserServer failed to load CA certs: %s\n", err)
 			} else {
 				CAStore := "System store"
 				if Server.TLSConfig.ClientCAs != nil {
-					CAStore = cliCaFile
+					CAStore = cfg.ClientCaFile
 				}
 				log.Printf("UserServer using CA certs from %s\n", CAStore)
 				Server.TLSConfig.ClientAuth = tls.RequireAndVerifyClientCert
 			}
 		}
 
-		if err := Server.ListenAndServeTLS(certFile, keyFile); err != http.ErrServerClosed {
-			log.Fatalf("UserServer failed: %s", err)
-		}
+		return Server.ListenAndServeTLS(cfg.CertFile, cfg.KeyFile)
 	} else {
-		if err := Server.ListenAndServe(); err != http.ErrServerClosed {
-			log.Fatalf("UserServer failed: %s", err)
-		}
+		return Server.ListenAndServe()
 	}
 }
 

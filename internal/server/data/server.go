@@ -17,9 +17,9 @@
 package data
 
 import (
-	"log"
 	"net/http"
 
+	"github.com/BBVA/kapow/internal/server/config"
 	"github.com/BBVA/kapow/internal/server/httperror"
 	"github.com/gorilla/mux"
 )
@@ -43,7 +43,7 @@ func configRouter(rs []routeSpec) (r *mux.Router) {
 	return r
 }
 
-func Run(bindAddr string) {
+func Run(cfg config.ServerConfig) error {
 	rs := []routeSpec{
 		// request
 		{"/handlers/{handlerID}/request/method", "GET", getRequestMethod},
@@ -65,5 +65,5 @@ func Run(bindAddr string) {
 		{"/handlers/{handlerID}/response/body", "PUT", lockResponseWriter(setResponseBody)},
 		{"/handlers/{handlerID}/response/stream", "PUT", lockResponseWriter(setResponseBody)},
 	}
-	log.Fatal(http.ListenAndServe(bindAddr, configRouter(rs)))
+	return http.ListenAndServe(cfg.DataBindAddr, configRouter(rs))
 }
