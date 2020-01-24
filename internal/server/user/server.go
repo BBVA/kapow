@@ -19,6 +19,7 @@ package user
 import (
 	"crypto/tls"
 	"crypto/x509"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -47,7 +48,7 @@ func Run(bindAddr, certFile, keyFile, cliCaFile string, cliAuth bool) {
 			var err error
 			Server.TLSConfig.ClientCAs, err = loadCertificatesFromFile(cliCaFile)
 			if err != nil {
-				log.Printf("UserServer failed to load CA certs: %s\nDefault to system CA store.", err)
+				log.Fatalf("UserServer failed to load CA certs: %s\n", err)
 			} else {
 				CAStore := "System store"
 				if Server.TLSConfig.ClientCAs != nil {
@@ -70,10 +71,13 @@ func Run(bindAddr, certFile, keyFile, cliCaFile string, cliAuth bool) {
 
 func loadCertificatesFromFile(certFile string) (pool *x509.CertPool, err error) {
 	if certFile != "" {
-		caCerts, err := ioutil.ReadFile(certFile)
+		var caCerts []byte
+		caCerts, err = ioutil.ReadFile(certFile)
 		if err == nil {
 			pool = x509.NewCertPool()
-			pool.AppendCertsFromPEM(caCerts)
+			if !pool.AppendCertsFromPEM(caCerts) {
+				err = fmt.Errorf("Invalid certificate file %s", certFile)
+			}
 		}
 	}
 
