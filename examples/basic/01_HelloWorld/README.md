@@ -1,4 +1,4 @@
-# Hello World! Example
+# Hello World!
 
 A simple "Hello World!" type example.
 
