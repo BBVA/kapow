@@ -1,0 +1,55 @@
+<html>
+<head>
+<script>
+  function populateCombo(combo, url, message) {
+    let dropdown = document.getElementById(combo);
+    dropdown.length = 0;
+
+    let defaultOption = document.createElement('option');
+    defaultOption.text = message;
+    defaultOption.name = combo;
+
+    dropdown.add(defaultOption);
+    dropdown.selectedIndex = 0;
+
+    fetch(url)
+      .then(
+        function(response) {
+          if (response.status !== 200) {
+            console.warn('Looks like there was a problem. Status Code: ' +
+              response.status);
+            return;
+                }
+
+                // Examine the text in the response
+                response.json().then(function(data) {
+            let option;
+           
+            for (let i = 0; i < data.length; i++) {
+              option = document.createElement('option');
+              option.text = data[i];
+              option.value = data[i];
+              dropdown.add(option);
+            }
+          });
+        }
+      )
+      .catch(function(err) {
+        console.error('Fetch Error -', err);
+      });
+  }
+  function loadFormats() {
+    populateCombo('from', 'format/input', 'Select an Input Format');
+    populateCombo('to', 'format/output', 'Select an Output Format');
+  }
+</script>
+</head>
+<body onload="loadFormats();">
+  <form action="/convert" method="POST" enctype="multipart/form-data">
+    <select id="from" name="from"></select>
+    <select id="to" name="to"></select>
+    <input type="file" name="inputfile"></input>
+    <input type="submit" value="Convert!"></input>
+  </form>
+</body>
+</html>
