@@ -19,6 +19,7 @@ kapow route add /kernel/messages - <<-'EOF'
 EOF
 
 kapow route add /systemd/journal - <<-'EOF'
+	kapow set /response/headers/X-Content-Type-Options nosniff
 	kapow set /response/headers/Content-Type text/plain
 	journalctl -n1000 | kapow set /response/body
 EOF
