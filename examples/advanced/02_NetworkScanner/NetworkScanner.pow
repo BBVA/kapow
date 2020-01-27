@@ -1,0 +1,27 @@
+kapow route add -X POST '/scan' - <<-'EOF'
+	PORTS=$(kapow get /request/form/ports)
+	IP=$(kapow get /request/form/ip)
+	WEBHOOK=$(kapow get /request/form/webhook)
+	JOBID=$(uuidgen | tr -d '\n')
+
+	(nmap -Pn -n -p "${PORTS:-8080}" -oX "${JOBID}.running.xml" -- "${IP:-127.0.0.1}";
+	 mv "${JOBID}.running.xml" "${JOBID}.done.xml";
+	 [ ! -z "$WEBHOOK" ] && curl -s -F "data=@${JOBID}.done.xml" -F "jobid=${JOBID}" "$WEBHOOK";
+	 ) &
+
+	kapow set /response/headers/Content-Type application/json
+	jq -n --arg jobid "$JOBID" '{"job": $jobid}' | kapow set /response/body
+EOF
+
+kapow route add -X GET '/scan/{jobid}' - <<-'EOF'
+	JOBID=$(kapow get /request/matches/jobid)
+	[ -f "${JOBID}.running.xml" ] && kapow set /response/status 202 && exit 0
+	if [ -f "${JOBID}.done.xml" ]; then
+		kapow set /response/headers/Content-Type application/xml
+		kapow set /response/body < "${JOBID}.done.xml"
+	else
+		kapow set /response/status 404
+		kapow set /response/body "Scan $JOBID not found" 
+	fi
+EOF
+
