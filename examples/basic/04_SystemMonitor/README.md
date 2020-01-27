@@ -13,6 +13,8 @@ $ kapow server SystemMonitor.pow
 
 <details><summary>List files and directories</summary>
 
+You can see if a file exists or the contents of a directory adding the path after _/file/_.
+
 ```
 $ curl -s http://localhost:8080/file/var/log/cups
 total 60
