@@ -11,4 +11,9 @@ $ kapow server DocumentConverter.pow
 
 ## How to consume it
 
-Visit http://localhost:8080/ from your web browser.
+1. Visit http://localhost:8080/ from your web browser.
+1. Select and input format.  E.g. Markdown
+1. Select and output format.  E.g. HTML
+1. Select a file from your disk.  E.g. README.md
+1. Press "Convert!"
+1. Enjoy!
