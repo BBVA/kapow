@@ -1,0 +1,24 @@
+kapow route add '/file/{path:.*}' -c 'ls -la -- "/$(kapow get /request/matches/path)" | kapow set /response/body'
+
+kapow route add /process -c 'ps -aux | kapow set /response/body'
+
+kapow route add /cpu -c 'kapow set /response/body < /proc/cpuinfo'
+
+kapow route add /memory -c 'free -m | kapow set /response/body'
+
+kapow route add /disk/usage -c 'df -h | kapow set /response/body'
+
+kapow route add /disk/mounts -c 'mount | kapow set /response/body'
+
+kapow route add /socket -c 'ss -pluton | kapow set /response/body'
+
+kapow route add /kernel/messages - <<-'EOF'
+	kapow set /response/headers/X-Content-Type-Options nosniff
+	kapow set /response/headers/Content-Type text/plain
+	dmesg | kapow set /response/body
+EOF
+
+kapow route add /systemd/journal - <<-'EOF'
+	kapow set /response/headers/Content-Type text/plain
+	journalctl -n1000 | kapow set /response/body
+EOF
