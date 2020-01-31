@@ -1,3 +1,5 @@
+#!/bin/sh
+
 kapow route add '/file/{path:.*}' -c 'ls -la -- "/$(kapow get /request/matches/path)" | kapow set /response/body'
 
 kapow route add /process -c 'ps -aux | kapow set /response/body'

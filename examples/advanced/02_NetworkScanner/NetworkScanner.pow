@@ -1,3 +1,5 @@
+#!/bin/sh
+
 kapow route add -X POST '/scan' - <<-'EOF'
 	PORTS=$(kapow get /request/form/ports)
 	IP=$(kapow get /request/form/ip)

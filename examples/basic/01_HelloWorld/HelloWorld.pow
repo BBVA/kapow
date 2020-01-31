@@ -1,1 +1,3 @@
+#!/bin/sh
+
 kapow route add /helloworld -c "echo 'Hello World!' | kapow set /response/body"

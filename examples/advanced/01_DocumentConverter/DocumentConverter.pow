@@ -1,3 +1,5 @@
+#!/bin/sh
+
 kapow route add '/format/input' - <<-'EOF'
 	kapow set /response/headers/Content-Type application/json
 	pandoc --list-input-formats \

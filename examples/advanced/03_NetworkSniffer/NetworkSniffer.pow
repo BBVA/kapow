@@ -1,1 +1,3 @@
+#!/bin/sh
+
 kapow route add /sniff -c 'tcpdump -i any -U -s0 -w - "not portrange 8080-8082" | kapow set /response/body'
