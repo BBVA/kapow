@@ -1,4 +1,4 @@
-Sorted by `awk '{ print length(), $0 | "sort -n" }'`:
+Sorted by ``awk '{ print length(), $0 | "sort -n" }'``:
 
 - Luis Saiz
 - Emilio Belmar
