@@ -273,7 +273,7 @@ If the user runs:
 
 .. code-block:: console
 
-   $ curl -F -d myfile=@filename.txt http://kapow.example:8080/
+   $ curl -F 'myfile=@filename.txt' http://kapow.example:8080/
 
 then, when handling the request:
 
@@ -301,7 +301,7 @@ If the user runs:
 
 .. code-block:: console
 
-   $ curl -F -d myfile=@filename.txt http://kapow.example:8080/
+   $ curl -F 'myfile=@filename.txt' http://kapow.example:8080/
 
 then, when handling the request:
 
