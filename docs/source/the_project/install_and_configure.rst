@@ -94,9 +94,7 @@ includes *Kapow!*.
 
 .. parsed-literal::
 
-  FROM debian:stretch-slim
-
-  RUN apt-get update
+  FROM debian:stable-slim
 
   ADD https://github.com/BBVA/kapow/releases/download/v\ |version|\ /kapow\_\ |version|\ _linux_amd64 /usr/bin/kapow
 
