@@ -14,7 +14,7 @@ jobs:
     - uses: actions/checkout@v1
     - uses: actions/setup-go@v1
       with:
-        go-version: 1.13.5
+        go-version: 1.14
 
     - name: Select custom release notes
       id: release-notes
