@@ -175,11 +175,7 @@ func setResponseHeaders(w http.ResponseWriter, r *http.Request, h *model.Handler
 	}
 
 	hds := h.Writer.Header()
-	if _, ok := hds[name]; ok {
-		hds[name] = append(hds[name], string(vb))
-	} else {
-		hds[name] = []string{string(vb)}
-	}
+	hds[name] = append(hds[name], string(vb))
 }
 
 func setResponseCookies(w http.ResponseWriter, r *http.Request, h *model.Handler) {

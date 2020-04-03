@@ -47,6 +47,14 @@ var ServerCmd = &cobra.Command{
 		sConf.ClientAuth, _ = cmd.Flags().GetBool("clientauth")
 		sConf.ClientCaFile, _ = cmd.Flags().GetString("clientcafile")
 
+		// Set environment variables KAPOW_DATA_URL and KAPOW_CONTROL_URL only if they aren't set so we don't overwrite user's preferences
+		if _, exist := os.LookupEnv("KAPOW_DATA_URL"); !exist {
+			os.Setenv("KAPOW_DATA_URL", "http://"+sConf.DataBindAddr)
+		}
+		if _, exist := os.LookupEnv("KAPOW_CONTROL_URL"); !exist {
+			os.Setenv("KAPOW_CONTROL_URL", "http://"+sConf.DataBindAddr)
+		}
+
 		go server.StartServer(sConf)
 
 		// start sub shell + ENV(KAPOW_CONTROL_URL)
@@ -60,7 +68,7 @@ var ServerCmd = &cobra.Command{
 			kapowCMD := exec.Command("bash", powfile)
 			kapowCMD.Stdout = os.Stdout
 			kapowCMD.Stderr = os.Stderr
-			kapowCMD.Env = append(os.Environ(), "KAPOW_CONTROL_URL=http://"+sConf.ControlBindAddr)
+			kapowCMD.Env = os.Environ()
 
 			err = kapowCMD.Run()
 			if err != nil {

@@ -94,6 +94,8 @@ func TestSpawnWritesToStdout(t *testing.T) {
 }
 
 func TestSpawnSetsKapowURLEnvVar(t *testing.T) {
+	t.Skip("Not neccessary as this variable is now set by server at start up")
+
 	h := &model.Handler{
 		Route: model.Route{
 			Entrypoint: locateJailLover(),

@@ -44,7 +44,7 @@ func Spawn(h *model.Handler, out io.Writer) error {
 	if out != nil {
 		cmd.Stdout = out
 	}
-	cmd.Env = append(os.Environ(), "KAPOW_DATA_URL=http://localhost:8082")
+	cmd.Env = os.Environ()
 	cmd.Env = append(cmd.Env, "KAPOW_HANDLER_ID="+h.ID)
 
 	err = cmd.Run()
