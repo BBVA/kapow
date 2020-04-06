@@ -55,9 +55,8 @@ var ServerCmd = &cobra.Command{
 			os.Setenv("KAPOW_CONTROL_URL", "http://"+sConf.DataBindAddr)
 		}
 
-		go server.StartServer(sConf)
+		server.StartServer(sConf)
 
-		// start sub shell + ENV(KAPOW_CONTROL_URL)
 		if len(args) > 0 {
 			powfile := args[0]
 			_, err := os.Stat(powfile)

@@ -22,7 +22,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net"
 	"net/http"
+	"sync"
 
 	"github.com/BBVA/kapow/internal/server/user/mux"
 )
@@ -33,10 +35,15 @@ var Server = http.Server{
 }
 
 // Run finishes configuring Server and runs ListenAndServe on it
-func Run(bindAddr, certFile, keyFile, cliCaFile string, cliAuth bool) {
+func Run(bindAddr string, wg *sync.WaitGroup, certFile, keyFile, cliCaFile string, cliAuth bool) {
 	Server = http.Server{
 		Addr:    bindAddr,
 		Handler: mux.New(),
+	}
+
+	listener, err := net.Listen("tcp", bindAddr)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	if (certFile != "") && (keyFile != "") {
@@ -59,13 +66,17 @@ func Run(bindAddr, certFile, keyFile, cliCaFile string, cliAuth bool) {
 			}
 		}
 
-		if err := Server.ListenAndServeTLS(certFile, keyFile); err != http.ErrServerClosed {
-			log.Fatalf("UserServer failed: %s", err)
-		}
+		// Signal startup
+		log.Printf("UserServer listening at %s\n", bindAddr)
+		wg.Done()
+
+		log.Fatal(Server.ServeTLS(listener, certFile, keyFile))
 	} else {
-		if err := Server.ListenAndServe(); err != http.ErrServerClosed {
-			log.Fatalf("UserServer failed: %s", err)
-		}
+		// Signal startup
+		log.Printf("UserServer listening at %s\n", bindAddr)
+		wg.Done()
+
+		log.Fatal(Server.Serve(listener))
 	}
 }
 

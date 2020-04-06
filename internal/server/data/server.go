@@ -18,7 +18,9 @@ package data
 
 import (
 	"log"
+	"net"
 	"net/http"
+	"sync"
 
 	"github.com/BBVA/kapow/internal/server/httperror"
 	"github.com/gorilla/mux"
@@ -43,7 +45,7 @@ func configRouter(rs []routeSpec) (r *mux.Router) {
 	return r
 }
 
-func Run(bindAddr string) {
+func Run(bindAddr string, wg *sync.WaitGroup) {
 	rs := []routeSpec{
 		// request
 		{"/handlers/{handlerID}/request/method", "GET", getRequestMethod},
@@ -65,5 +67,15 @@ func Run(bindAddr string) {
 		{"/handlers/{handlerID}/response/body", "PUT", lockResponseWriter(setResponseBody)},
 		{"/handlers/{handlerID}/response/stream", "PUT", lockResponseWriter(setResponseBody)},
 	}
-	log.Fatal(http.ListenAndServe(bindAddr, configRouter(rs)))
+
+	listener, err := net.Listen("tcp", bindAddr)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Signal startup
+	log.Printf("DataServer listening at %s\n", bindAddr)
+	wg.Done()
+
+	log.Fatal(http.Serve(listener, configRouter(rs)))
 }
