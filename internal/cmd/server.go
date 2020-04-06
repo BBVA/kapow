@@ -52,7 +52,7 @@ var ServerCmd = &cobra.Command{
 			os.Setenv("KAPOW_DATA_URL", "http://"+sConf.DataBindAddr)
 		}
 		if _, exist := os.LookupEnv("KAPOW_CONTROL_URL"); !exist {
-			os.Setenv("KAPOW_CONTROL_URL", "http://"+sConf.DataBindAddr)
+			os.Setenv("KAPOW_CONTROL_URL", "http://"+sConf.ControlBindAddr)
 		}
 
 		server.StartServer(sConf)
