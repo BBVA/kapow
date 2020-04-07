@@ -66,13 +66,21 @@ func TestConfigRouterHasRoutesWellConfigured(t *testing.T) {
 		vars            []string
 	}{
 		{"/routes/FOO", http.MethodGet, reflect.ValueOf(getRoute).Pointer(), true, []string{"id"}},
-		{"/routes/FOO", http.MethodPut, 0, false, []string{}},
-		{"/routes/FOO", http.MethodPost, 0, false, []string{}},
+		{"/routes/FOO", http.MethodPut, reflect.ValueOf(defMethodNotAllowedHandler).Pointer(), true, []string{}},
+		{"/routes/FOO", http.MethodPost, reflect.ValueOf(defMethodNotAllowedHandler).Pointer(), true, []string{}},
 		{"/routes/FOO", http.MethodDelete, reflect.ValueOf(removeRoute).Pointer(), true, []string{"id"}},
 		{"/routes", http.MethodGet, reflect.ValueOf(listRoutes).Pointer(), true, []string{}},
-		{"/routes", http.MethodPut, 0, false, []string{}},
+		{"/routes", http.MethodPut, reflect.ValueOf(defMethodNotAllowedHandler).Pointer(), true, []string{}},
 		{"/routes", http.MethodPost, reflect.ValueOf(addRoute).Pointer(), true, []string{}},
-		{"/routes", http.MethodDelete, 0, false, []string{}},
+		{"/routes", http.MethodDelete, reflect.ValueOf(defMethodNotAllowedHandler).Pointer(), true, []string{}},
+		{"/", http.MethodGet, reflect.ValueOf(defNotFoundHandler).Pointer(), true, []string{}},
+		{"/", http.MethodPut, reflect.ValueOf(defNotFoundHandler).Pointer(), true, []string{}},
+		{"/", http.MethodPost, reflect.ValueOf(defNotFoundHandler).Pointer(), true, []string{}},
+		{"/", http.MethodDelete, reflect.ValueOf(defNotFoundHandler).Pointer(), true, []string{}},
+		{"/FOO", http.MethodGet, reflect.ValueOf(defNotFoundHandler).Pointer(), true, []string{}},
+		{"/FOO", http.MethodPut, reflect.ValueOf(defNotFoundHandler).Pointer(), true, []string{}},
+		{"/FOO", http.MethodPost, reflect.ValueOf(defNotFoundHandler).Pointer(), true, []string{}},
+		{"/FOO", http.MethodDelete, reflect.ValueOf(defNotFoundHandler).Pointer(), true, []string{}},
 	}
 	r := configRouter()
 

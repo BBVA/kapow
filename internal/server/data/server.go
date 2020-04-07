@@ -42,6 +42,15 @@ func configRouter(rs []routeSpec) (r *mux.Router) {
 		func(w http.ResponseWriter, r *http.Request) {
 			httperror.ErrorJSON(w, "Invalid Resource Path", http.StatusBadRequest)
 		})
+
+	r.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, h *http.Request) {
+		httperror.ErrorJSON(w, "Data server: Not found", http.StatusNotFound)
+	})
+
+	r.MethodNotAllowedHandler = http.HandlerFunc(func(w http.ResponseWriter, h *http.Request) {
+		httperror.ErrorJSON(w, "Data server: Method not allowed", http.StatusMethodNotAllowed)
+	})
+
 	return r
 }
 

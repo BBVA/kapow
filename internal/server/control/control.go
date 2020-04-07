@@ -33,6 +33,7 @@ import (
 // server exposes list, get, delete and add route endpoints.
 func configRouter() *mux.Router {
 	r := mux.NewRouter()
+
 	r.HandleFunc("/routes/{id}", removeRoute).
 		Methods(http.MethodDelete)
 	r.HandleFunc("/routes/{id}", getRoute).
@@ -41,7 +42,18 @@ func configRouter() *mux.Router {
 		Methods(http.MethodGet)
 	r.HandleFunc("/routes", addRoute).
 		Methods(http.MethodPost)
+	r.NotFoundHandler = http.HandlerFunc(defNotFoundHandler)
+	r.MethodNotAllowedHandler = http.HandlerFunc(defMethodNotAllowedHandler)
+
 	return r
+}
+
+func defNotFoundHandler(w http.ResponseWriter, h *http.Request) {
+	httperror.ErrorJSON(w, "Data server: Not found", http.StatusNotFound)
+}
+
+func defMethodNotAllowedHandler(w http.ResponseWriter, h *http.Request) {
+	httperror.ErrorJSON(w, "Data server: Method not allowed", http.StatusMethodNotAllowed)
 }
 
 // funcRemove Method used to ask the route model module to delete a route
