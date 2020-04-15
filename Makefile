@@ -1,4 +1,4 @@
-.PHONY: lint build test jaillover race coverage install acceptance deps docker
+.PHONY: lint build test jaillover race coverage install acceptance deps docker clean
 
 GOCMD=go
 GOBUILD=$(GOCMD) build -trimpath
@@ -53,3 +53,6 @@ docker: build
 	cp $(DOCS_DIR)/*.pow $(DOCKER_DIR)/
 	cd $(DOCKER_DIR) && docker build -t kapow .
 	cd ..
+
+clean:
+	rm -rf	 $(BUILD_DIR) $(OUTPUT_DIR) $(DOCKER_DIR)/*
