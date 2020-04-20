@@ -17,11 +17,13 @@
 package mux
 
 import (
+	"bytes"
 	"errors"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/google/uuid"
@@ -35,7 +37,7 @@ func TestHandlerBuilderCallsSpawner(t *testing.T) {
 	route := model.Route{}
 	idGenerator = uuid.NewUUID
 	called := false
-	spawner = func(h *model.Handler, out io.Writer) error {
+	spawner = func(h *model.Handler, out io.Writer, er io.Writer) error {
 		called = true
 		return nil
 	}
@@ -50,7 +52,7 @@ func TestHandlerBuilderCallsSpawner(t *testing.T) {
 func TestHandlerBuilderStoresHandlerInDataHandlers(t *testing.T) {
 	route := model.Route{}
 	added := false
-	spawner = func(h *model.Handler, out io.Writer) error {
+	spawner = func(h *model.Handler, out io.Writer, er io.Writer) error {
 		added = len(data.Handlers.ListIDs()) != 0
 
 		return nil
@@ -71,7 +73,7 @@ func TestHandlerBuilderStoresTheProperRoute(t *testing.T) {
 		ID: "foo",
 	}
 	var got model.Route
-	spawner = func(h *model.Handler, out io.Writer) error {
+	spawner = func(h *model.Handler, out io.Writer, er io.Writer) error {
 		hid := data.Handlers.ListIDs()[0]
 		handler, _ := data.Handlers.Get(hid)
 		got = handler.Route
@@ -90,7 +92,7 @@ func TestHandlerBuilderStoresTheProperRequest(t *testing.T) {
 	data.Handlers = data.New()
 	route := model.Route{}
 	var got *http.Request
-	spawner = func(h *model.Handler, out io.Writer) error {
+	spawner = func(h *model.Handler, out io.Writer, er io.Writer) error {
 		hid := data.Handlers.ListIDs()[0]
 		handler, _ := data.Handlers.Get(hid)
 		got = handler.Request
@@ -110,7 +112,7 @@ func TestHandlerBuilderStoresTheProperResponseWriter(t *testing.T) {
 	data.Handlers = data.New()
 	route := model.Route{}
 	var got http.ResponseWriter
-	spawner = func(h *model.Handler, out io.Writer) error {
+	spawner = func(h *model.Handler, out io.Writer, er io.Writer) error {
 		hid := data.Handlers.ListIDs()[0]
 		handler, _ := data.Handlers.Get(hid)
 		got = handler.Writer
@@ -131,7 +133,7 @@ func TestHandlerBuilderGeneratesAProperID(t *testing.T) {
 	data.Handlers = data.New()
 	route := model.Route{}
 	var got string
-	spawner = func(h *model.Handler, out io.Writer) error {
+	spawner = func(h *model.Handler, out io.Writer, er io.Writer) error {
 		hid := data.Handlers.ListIDs()[0]
 		handler, _ := data.Handlers.Get(hid)
 		got = handler.ID
@@ -151,7 +153,7 @@ func TestHandlerBuilderCallsSpawnerWithTheStoredHandler(t *testing.T) {
 	route := model.Route{}
 	var gotStored *model.Handler
 	var gotPassed *model.Handler
-	spawner = func(h *model.Handler, out io.Writer) error {
+	spawner = func(h *model.Handler, out io.Writer, er io.Writer) error {
 		gotPassed = h
 		hid := data.Handlers.ListIDs()[0]
 		gotStored, _ = data.Handlers.Get(hid)
@@ -194,5 +196,53 @@ func TestHandlerBuilderRemovesHandlerWhenDone(t *testing.T) {
 
 	if len(data.Handlers.ListIDs()) != 0 {
 		t.Error("Handler not removed upon completion")
+	}
+}
+
+func TestCreateLogMsgAdsPrefixInfo(t *testing.T) {
+	expected := "FOO"
+
+	msg := createLogMsg(expected, bytes.Buffer{}, bytes.Buffer{})
+
+	if msg.Prefix != expected {
+		t.Errorf("LogMsg doesn't contain expected Prefix. Expected: %s, got: %s", expected, msg.Prefix)
+	}
+}
+
+func TestCreateLogMsgAdsStdOutInfo(t *testing.T) {
+	expected := "FOO\nBAR"
+	out := bytes.Buffer{}
+	out.WriteString(expected)
+
+	msg := createLogMsg("", out, bytes.Buffer{})
+
+	if strings.Join(msg.Messages, "\n") != expected {
+		t.Errorf("LogMsg doesn't contain expected payload. Expected: %s, got: %s", expected, msg.Prefix)
+	}
+}
+
+func TestCreateLogMsgAdsStdErrInfo(t *testing.T) {
+	expected := "FOO\nBAR"
+	err := bytes.Buffer{}
+	err.WriteString(expected)
+
+	msg := createLogMsg("", bytes.Buffer{}, err)
+
+	if strings.Join(msg.Messages, "\n") != expected {
+		t.Errorf("LogMsg doesn't contain expected payload. Expected: %s, got: %s", expected, msg.Prefix)
+	}
+}
+
+func TestCreateLogMsgAdsStdOutAndStdErrInfo(t *testing.T) {
+	expected := "FOO\nBAR\nFOO BAZ"
+	out := bytes.Buffer{}
+	out.WriteString("FOO\nBAR\n")
+	err := bytes.Buffer{}
+	err.WriteString("FOO BAZ")
+
+	msg := createLogMsg("", out, err)
+
+	if strings.Join(msg.Messages, "\n") != expected {
+		t.Errorf("LogMsg doesn't contain expected payload. Expected: %s, got: %s", expected, msg.Prefix)
 	}
 }

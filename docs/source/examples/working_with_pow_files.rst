@@ -95,3 +95,16 @@ whole thing documented in one html file, served with *Kapow!*.
 
 As you can see, the `pow` files can be imported into another `pow` file using
 source.  In fact, a `pow` file is just a regular shell script.
+
+Debugging scripts
+-----------------
+
+Kapow! redirect standard output and standard error of the pow file given on server
+startup to its own standard output and error, so you can use ``set -x`` at the beginning
+of the script in order to be able to see all the commands expanded and usethat information
+for debugging.
+
+In order to be able to debug user request executions, the server subcommand has
+a ``--debug`` option flag that redirects the script standard output and standard error
+to Kapow! standard output, so you can use ``set -x`` at the beginning of the script
+the same way thai in pow files.

@@ -34,4 +34,8 @@ func main() {
 		log.Fatalf("JSON marshal failed %+v", err)
 	}
 	fmt.Println(string(res))
+	if len(os.Args) > 1 && os.Args[1] == "--miserably-fail" {
+		fmt.Fprintln(os.Stderr, "jailover miserably failed")
+		os.Exit(1)
+	}
 }
