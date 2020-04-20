@@ -24,3 +24,11 @@ Calling with :program:`curl`:
 
     $ curl -v http://localhost:8080/parallel/10.0.0.1/10.10.10.1
 
+Script debugging
+----------------
+
+Bash provides the ``set -x`` builtin command that "After expanding each simple command,
+for command, case command, select command, or arithmetic for command, display the
+expanded value of PS4, followed by the command and its expanded arguments or associated
+word list". This feature can be used to help debugging the `.pow` scripts and, together
+the ``--debug`` option in the server sub-command, the scripts executed in user requests.
