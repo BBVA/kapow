@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"log"
+	"os"
 	"os/exec"
 	"reflect"
 	"strings"
@@ -36,7 +37,7 @@ type Output struct {
 func decodeJailLover(out []byte) (jldata Output) {
 	err := json.Unmarshal(out, &jldata)
 	if err != nil {
-		log.Fatal("jaillover output is malformed", err)
+		log.Fatal("jaillover output is malformed: ", err)
 	}
 	return
 }
@@ -56,7 +57,7 @@ func TestSpawnRetursErrorWhenEntrypointIsBad(t *testing.T) {
 		},
 	}
 
-	err := Spawn(h, nil)
+	err := Spawn(h, nil, nil)
 
 	if err == nil {
 		t.Error("Bad executable not reported")
@@ -70,7 +71,7 @@ func TestSpawnReturnsNilWhenEntrypointIsGood(t *testing.T) {
 		},
 	}
 
-	err := Spawn(h, nil)
+	err := Spawn(h, nil, nil)
 
 	if err != nil {
 		t.Error("Good executable reported")
@@ -85,7 +86,7 @@ func TestSpawnWritesToStdout(t *testing.T) {
 	}
 	out := &bytes.Buffer{}
 
-	_ = Spawn(h, out)
+	_ = Spawn(h, out, nil)
 
 	jldata := decodeJailLover(out.Bytes())
 	if jldata.Cmdline[0] != locateJailLover() {
@@ -93,9 +94,24 @@ func TestSpawnWritesToStdout(t *testing.T) {
 	}
 }
 
-func TestSpawnSetsKapowURLEnvVar(t *testing.T) {
-	t.Skip("Not neccessary as this variable is now set by server at start up")
+func TestSpawnWritesToStderr(t *testing.T) {
+	expected := "jailover miserably failed\n"
+	h := &model.Handler{
+		Route: model.Route{
+			Entrypoint: locateJailLover() + " --miserably-fail",
+		},
+	}
+	stderr := &bytes.Buffer{}
 
+	_ = Spawn(h, nil, stderr)
+
+	jldata := stderr.String()
+	if jldata != expected {
+		t.Errorf("Error does not match jaillover's. Expected: #%s#, got: #%s#", expected, jldata)
+	}
+}
+
+func TestSpawnSetsKapowURLEnvVar(t *testing.T) {
 	h := &model.Handler{
 		Route: model.Route{
 			Entrypoint: locateJailLover(),
@@ -103,7 +119,11 @@ func TestSpawnSetsKapowURLEnvVar(t *testing.T) {
 	}
 	out := &bytes.Buffer{}
 
-	_ = Spawn(h, out)
+	os.Setenv("KAPOW_DATA_URL", "http://localhost:8082")
+
+	_ = Spawn(h, out, nil)
+
+	os.Unsetenv("KAPOW_DATA_URL")
 
 	jldata := decodeJailLover(out.Bytes())
 	if v, ok := jldata.Env["KAPOW_DATA_URL"]; !ok || v != "http://localhost:8082" {
@@ -120,7 +140,7 @@ func TestSpawnSetsKapowHandlerIDEnvVar(t *testing.T) {
 	}
 	out := &bytes.Buffer{}
 
-	_ = Spawn(h, out)
+	_ = Spawn(h, out, nil)
 
 	jldata := decodeJailLover(out.Bytes())
 	if v, ok := jldata.Env["KAPOW_HANDLER_ID"]; !ok || v != "HANDLER_ID_FOO" {
@@ -136,7 +156,7 @@ func TestSpawnRunsOKEntrypointsWithAParam(t *testing.T) {
 	}
 	out := &bytes.Buffer{}
 
-	_ = Spawn(h, out)
+	_ = Spawn(h, out, nil)
 
 	jldata := decodeJailLover(out.Bytes())
 	if !reflect.DeepEqual(jldata.Cmdline, []string{locateJailLover(), "-foo"}) {
@@ -152,7 +172,7 @@ func TestSpawnRunsOKEntrypointWithArgWithSpace(t *testing.T) {
 	}
 	out := &bytes.Buffer{}
 
-	_ = Spawn(h, out)
+	_ = Spawn(h, out, nil)
 
 	jldata := decodeJailLover(out.Bytes())
 	if !reflect.DeepEqual(jldata.Cmdline, []string{locateJailLover(), "foo bar"}) {
@@ -168,7 +188,7 @@ func TestSpawnErrorsWhenEntrypointIsInvalidShell(t *testing.T) {
 	}
 	out := &bytes.Buffer{}
 
-	err := Spawn(h, out)
+	err := Spawn(h, out, nil)
 
 	if err == nil {
 		t.Error("Invalid args not reported")
@@ -183,7 +203,7 @@ func TestSpawnRunsOKEntrypointWithMultipleArgs(t *testing.T) {
 	}
 	out := &bytes.Buffer{}
 
-	_ = Spawn(h, out)
+	_ = Spawn(h, out, nil)
 
 	jldata := decodeJailLover(out.Bytes())
 	if !reflect.DeepEqual(jldata.Cmdline, []string{locateJailLover(), "foo", "bar"}) {
@@ -200,7 +220,7 @@ func TestSpawnRunsOKEntrypointAndCommand(t *testing.T) {
 	}
 	out := &bytes.Buffer{}
 
-	_ = Spawn(h, out)
+	_ = Spawn(h, out, nil)
 
 	jldata := decodeJailLover(out.Bytes())
 	if !reflect.DeepEqual(jldata.Cmdline, []string{locateJailLover(), "foo", "bar", "baz qux"}) {
@@ -213,7 +233,7 @@ func TestSpawnReturnsErrorIfEntrypointNotSet(t *testing.T) {
 		Route: model.Route{},
 	}
 
-	err := Spawn(h, nil)
+	err := Spawn(h, nil, nil)
 
 	if err == nil {
 		t.Error("Spawn() did not report entrypoint not set")

@@ -17,11 +17,14 @@
 package mux
 
 import (
+	"bufio"
+	"bytes"
 	"log"
 	"net/http"
 
 	"github.com/google/uuid"
 
+	"github.com/BBVA/kapow/internal/logger"
 	"github.com/BBVA/kapow/internal/server/data"
 	"github.com/BBVA/kapow/internal/server/model"
 	"github.com/BBVA/kapow/internal/server/user/spawn"
@@ -48,9 +51,29 @@ func handlerBuilder(route model.Route) http.Handler {
 		data.Handlers.Add(h)
 		defer data.Handlers.Remove(h.ID)
 
-		err = spawner(h, nil)
+		stdOut := &bytes.Buffer{}
+		stdErr := &bytes.Buffer{}
+		err = spawner(h, stdOut, stdErr)
+		//err = spawner(h, nil)
+
 		if err != nil {
 			log.Println(err)
 		}
+
+		logger.SendMsg(logger.SCRIPTS, createLogMsg(h.ID, *stdOut, *stdErr))
 	})
+}
+
+func createLogMsg(handlerId string, stdout, stderr bytes.Buffer) logger.LogMsg {
+	var messages []string
+	scanner := bufio.NewScanner(bytes.NewBuffer(stdout.Bytes()))
+	for scanner.Scan() {
+		messages = append(messages, scanner.Text())
+	}
+	scanner = bufio.NewScanner(bytes.NewBuffer(stderr.Bytes()))
+	for scanner.Scan() {
+		messages = append(messages, scanner.Text())
+	}
+
+	return logger.LogMsg{Prefix: handlerId, Messages: messages}
 }

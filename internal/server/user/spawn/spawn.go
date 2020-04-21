@@ -27,7 +27,7 @@ import (
 	"github.com/BBVA/kapow/internal/server/model"
 )
 
-func Spawn(h *model.Handler, out io.Writer) error {
+func Spawn(h *model.Handler, stdout io.Writer, stderr io.Writer) error {
 	if h.Route.Entrypoint == "" {
 		return errors.New("Entrypoint cannot be empty")
 	}
@@ -41,8 +41,11 @@ func Spawn(h *model.Handler, out io.Writer) error {
 	}
 
 	cmd := exec.Command(args[0], args[1:]...)
-	if out != nil {
-		cmd.Stdout = out
+	if stdout != nil {
+		cmd.Stdout = stdout
+	}
+	if stderr != nil {
+		cmd.Stderr = stderr
 	}
 	cmd.Env = os.Environ()
 	cmd.Env = append(cmd.Env, "KAPOW_HANDLER_ID="+h.ID)
