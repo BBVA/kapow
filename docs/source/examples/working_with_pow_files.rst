@@ -107,4 +107,4 @@ for debugging.
 In order to be able to debug user request executions, the server subcommand has
 a ``--debug`` option flag that redirects the script standard output and standard error
 to Kapow! standard output, so you can use ``set -x`` at the beginning of the script
-the same way thai in pow files.
+the same way as in pow files.
