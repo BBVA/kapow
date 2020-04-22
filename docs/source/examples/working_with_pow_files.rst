@@ -108,3 +108,17 @@ In order to be able to debug user request executions, the server subcommand has
 a ``--debug`` option flag that redirects the script standard output and standard error
 to Kapow! standard output, so you can use ``set -x`` at the beginning of the script
 the same way as in pow files.
+
+
+.. code-block:: console
+
+    $ cat withdebug.pow
+    #!/usr/bin/env bash
+
+    kapow route add / - <<-'EOF'
+        set -x
+        echo "This will be seen in the log"
+    	echo "Hi HTTP" | kapow set /response/body
+    EOF
+
+    $ kapow server --debug withdebug.pow
