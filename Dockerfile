@@ -1,4 +1,4 @@
-FROM golang:1.13 as build
+FROM golang:1.14 as build
 
 RUN go get github.com/BBVA/kapow
 RUN CGO_ENABLED=0 GOOS=linux go install github.com/BBVA/kapow
