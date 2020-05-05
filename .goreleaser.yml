@@ -1,8 +1,12 @@
 before:
   hooks:
     - go mod tidy
+
+project_name: kapow
+
 builds:
-- flags:
+- id: kapow
+  flags:
     - -trimpath
   env:
     - CGO_ENABLED=0
@@ -38,3 +42,20 @@ signs:
   - artifacts: checksum
     signature: "${artifact}.GPG"
     args: ["--batch", "--local-user", "release-bot@kapow", "--output", "${signature}", "--armor", "--clear-sign", "${artifact}"]
+
+dockers:
+  - goos: linux
+    goarch: amd64
+    goarm: ''
+
+    binaries:
+      - kapow
+
+    builds:
+      - kapow
+
+    image_templates:
+      - "bbvalabsci/kapow:latest"
+      - "bbvalabsci/kapow:{{ .Tag }}"
+      - "bbvalabsci/kapow:{{ .Tag }}-{{ .Env.GO_VERSION }}"
+      - "bbvalabsci/kapow:v{{ .Major }}"
