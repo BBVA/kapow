@@ -25,6 +25,11 @@ jobs:
         RELNOTES="docs/release-notes/RELEASE-${GITHUB_REF#refs/tags/}.md"
         [[ -f "$RELNOTES" ]] && echo ::set-output name=ARGS::--release-notes $RELNOTES || true
 
+    - uses: azure/docker-login@v1
+      with:
+        username: ${{ secrets.REGISTRY_USERNAME }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
+
     - uses: goreleaser/goreleaser-action@v1
       with:
         args: release --rm-dist ${{ steps.release-notes.outputs.ARGS }}
