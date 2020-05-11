@@ -42,9 +42,7 @@ func getRequestBody(w http.ResponseWriter, r *http.Request, h *model.Handler) {
 		if n == 0 {
 			httperror.ErrorJSON(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		} else {
-			// Only way to abort current connection as of go 1.13
-			// https://github.com/golang/go/issues/16542
-			panic("Truncated body")
+			panic(http.ErrAbortHandler)
 		}
 	}
 }
