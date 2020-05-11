@@ -193,7 +193,7 @@ func setResponseCookies(w http.ResponseWriter, r *http.Request, h *model.Handler
 func setResponseBody(w http.ResponseWriter, r *http.Request, h *model.Handler) {
 	if n, err := io.Copy(h.Writer, r.Body); err != nil {
 		if n > 0 {
-			panic("Truncated body")
+			panic(http.ErrAbortHandler)
 		}
 		httperror.ErrorJSON(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 	}
