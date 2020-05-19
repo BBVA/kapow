@@ -17,7 +17,7 @@ jobs:
 
     - uses: actions/setup-go@v2
       with:
-        go-version: '^1.14.2'
+        go-version: '^1.14.3'
 
     - name: Select custom release notes
       id: release-notes
@@ -36,3 +36,4 @@ jobs:
         key: ${{ secrets.KEY }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GO_VERSION: 1.14.3
