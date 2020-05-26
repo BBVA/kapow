@@ -27,8 +27,8 @@ jobs:
 
     - uses: azure/docker-login@v1
       with:
-        username: ${{ secrets.REGISTRY_USERNAME }}
-        password: ${{ secrets.REGISTRY_PASSWORD }}
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
     - uses: goreleaser/goreleaser-action@v1
       with:
