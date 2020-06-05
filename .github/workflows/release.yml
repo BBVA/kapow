@@ -30,9 +30,15 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-    - name: Import GPG key
-      id: import_gpg
-      uses: crazy-max/ghaction-import-gpg@v2
+    # - name: Import GPG key
+    #   id: import_gpg
+    #   uses: crazy-max/ghaction-import-gpg@v2
+    #   env:
+    #     GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+
+    - name: Load GPG private key
+      run: |
+        echo "$GPG_PRIVATE_KEY" | gpg --import
       env:
         GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
 
@@ -42,3 +48,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GO_VERSION: 1.14.4
+
+    - name: Clear ~/.gnupg
+      run: |
+        rm -rf ~/.gnupg
