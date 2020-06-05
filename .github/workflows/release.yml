@@ -30,10 +30,15 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-    - uses: goreleaser/goreleaser-action@v1
+    - name: Import GPG key
+      id: import_gpg
+      uses: crazy-max/ghaction-import-gpg@v2
+      env:
+        GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+
+    - uses: goreleaser/goreleaser-action@v2
       with:
         args: release --rm-dist ${{ steps.release-notes.outputs.ARGS }}
-        key: ${{ secrets.KEY }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GO_VERSION: 1.14.3
+        GO_VERSION: 1.14.4
