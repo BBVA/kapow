@@ -5,6 +5,9 @@ on:
     tags:
       - v*.*.*
 
+env:
+  GO_VERSION: 1.14.4
+
 jobs:
   build:
 
@@ -17,7 +20,7 @@ jobs:
 
     - uses: actions/setup-go@v2
       with:
-        go-version: '^1.14.3'
+        go-version: ${{ env.GO_VERSION }}
 
     - name: Select custom release notes
       id: release-notes
@@ -43,7 +46,6 @@ jobs:
         args: release --rm-dist ${{ steps.release-notes.outputs.ARGS }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GO_VERSION: 1.14.4
 
     - name: Clear ~/.gnupg
       run: |
