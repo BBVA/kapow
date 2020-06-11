@@ -84,8 +84,6 @@ whole thing documented in one html file, served with *Kapow!*.
     :linenos:
 
     $ cat index.pow
-    #!/usr/bin/env bash
-
     kapow route add / - <<-'EOF'
     	cat howto.html | kapow set /response/body
     EOF
@@ -112,8 +110,6 @@ leverage ``set -x`` the same way as with `pow` files.
 .. code-block:: console
 
     $ cat withdebug.pow
-    #!/usr/bin/env bash
-
     kapow route add / - <<-'EOF'
         set -x
         echo "This will be seen in the log"
