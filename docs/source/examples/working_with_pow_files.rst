@@ -99,15 +99,14 @@ source.  In fact, a `pow` file is just a regular shell script.
 Debugging scripts
 -----------------
 
-Kapow! redirect standard output and standard error of the pow file given on server
-startup to its own standard output and error, so you can use ``set -x`` at the beginning
-of the script in order to be able to see all the commands expanded and usethat information
-for debugging.
+Since *Kapow!* redirects the standard output and the standard error of the `pow`
+file given on server startup to its own, you can leverage ``set -x`` to see the
+commands that are being executed, and use that for debugging.
 
-In order to be able to debug user request executions, the server subcommand has
-a ``--debug`` option flag that redirects the script standard output and standard error
-to Kapow! standard output, so you can use ``set -x`` at the beginning of the script
-the same way as in pow files.
+To support debugging user request executions, the server subcommand has a
+``--debug`` option flag that prompts `Kapow!` to redirect both the script's
+standard output and standard error to `Kapow!`'s standard output, so you can
+leverage ``set -x`` the same way as with `pow` files.
 
 
 .. code-block:: console
