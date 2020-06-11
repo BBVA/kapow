@@ -47,7 +47,7 @@ What have we done?
 **Senior**
 
   Looks good to me, clean and simple, and it is a very good idea to use ``GET``
-  here as it wont change anything in the server.  Let's restart *Kapow!* and try it.
+  here as it won't change anything in the server.  Let's restart *Kapow!* and try it.
 
 **Junior**
 
