@@ -104,8 +104,8 @@ file given on server startup to its own, you can leverage ``set -x`` to see the
 commands that are being executed, and use that for debugging.
 
 To support debugging user request executions, the server subcommand has a
-``--debug`` option flag that prompts `Kapow!` to redirect both the script's
-standard output and standard error to `Kapow!`'s standard output, so you can
+``--debug`` option flag that prompts *Kapow!* to redirect both the script's
+standard output and standard error to *Kapow!*'s standard output, so you can
 leverage ``set -x`` the same way as with `pow` files.
 
 
