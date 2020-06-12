@@ -7,11 +7,12 @@ jobs:
   build:
     runs-on: ubuntu-20.04
     steps:
+      - uses: action/checkout@v2
+
       - name: Lint
         uses: golangci/golangci-lint-action@v1
         with:
           version: v1.27
-          working-directory: kapow/kapow
 
       - name: Build
         run: |
