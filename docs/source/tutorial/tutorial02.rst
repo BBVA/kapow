@@ -21,7 +21,7 @@ What have we done?
 
 **Junior**
 
-  Got it!  There're a :ref:`lot of resources to work with <resource_tree>`.
+  Got it!  There're a :ref:`lot of resources to work with <resource-tree>`.
   I see that we can write to the response. Do you think this will work for us?
 
 **Senior**
