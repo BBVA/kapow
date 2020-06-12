@@ -1,0 +1,21 @@
+name: Test
+
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Lint
+        uses: golangci/golangci-lint-action@v1
+        with:
+          version: v1.27
+
+      - name: Build
+        run: |
+          make test race build
+
+      - name: Spec test
+        run: |
+          docker run --mount type=bind,source=$(pwd)/build/kapow,target=/usr/local/bin/kapow  bbvalabsci/kapow-spec-test-suite:latest behave --tags=~@skip
