@@ -21,9 +21,8 @@ What have we done?
 
 **Junior**
 
-  Got it!  There're a
-  `lot of resources to work with </theory/resource_tree.rst>`_, I see that we
-  can write to the response.  Do you think this will work for us?
+  Got it!  There're a :ref:`lot of resources to work with <resource_tree>`_.
+  I see that we can write to the response. Do you think this will work for us?
 
 **Senior**
 
