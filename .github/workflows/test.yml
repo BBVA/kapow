@@ -11,6 +11,7 @@ jobs:
         uses: golangci/golangci-lint-action@v1
         with:
           version: v1.27
+          working-directory: kapow
 
       - name: Build
         run: |
