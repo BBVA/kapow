@@ -21,7 +21,7 @@ Overview
     /
     │
     ├─ request
-    │  ├──── method                 Used HTTP Method (GET, POST)
+    │  ├──── method                 HTTP Method used (GET, POST)
     │  ├──── host                   Host part of the URL
     │  ├──── path                   Complete URL path (URL-unquoted)
     │  ├──── matches

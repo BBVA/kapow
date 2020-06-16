@@ -424,7 +424,7 @@ following resource paths:
 /                               The root of the resource paths tree
 │
 ├─ request                      All information related to the HTTP request.  Read-Only
-│  ├──── method                 Used HTTP Method (GET, POST)
+│  ├──── method                 HTTP Method used (GET, POST)
 │  ├──── host                   Host part of the URL
 │  ├──── path                   Complete URL path (URL-unquoted)
 │  ├──── matches                Previously matched URL path parts
