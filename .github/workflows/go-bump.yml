@@ -1,0 +1,29 @@
+name: Bump Go
+
+on:
+  schedule:
+    - cron: 00 7 * * *
+
+  push:
+    branches:
+      - master
+
+jobs:
+  go-bump:
+
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Clone current repo
+        uses: actions/checkout@v2
+
+      - name: Bump Go
+        id: go-bump
+        uses: panchoh/go-bump@master
+
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v2
+        with:
+          title: ${{ steps.go-bump.outputs.pr-title }}
+          commit-message: ${{ steps.go-bump.outputs.pr-title }}
+          branch: ${{ steps.go-bump.outputs.branch-name }}

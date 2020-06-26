@@ -5,9 +5,6 @@ on:
     tags:
       - v*.*.*
 
-env:
-  GO_VERSION: 1.14.4
-
 jobs:
   build:
 
@@ -17,6 +14,11 @@ jobs:
     - uses: actions/checkout@v2
       with:
         fetch-depth: 0
+
+    - name: Load Go version
+      id: go-version
+      run: |
+        echo "::set-env name=GO_VERSION::$(tr -d '\n' < .github/versions/go)"
 
     - uses: actions/setup-go@v2
       with:
