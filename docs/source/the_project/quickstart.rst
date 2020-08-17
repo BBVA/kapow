@@ -153,6 +153,13 @@ At this point, we only need to launch :program:`kapow` with our :file:`ping.pow`
 
     $ kapow server ping.pow
 
+*Kapow!* can expose the user interface through HTTPS, to do this provide the
+corresponding key and certificates chain paths at startup:
+
+.. code-block:: console
+
+    $ kapow server --keyfile path/to/keyfile --certfile path/to/certfile ping.pow
+
 
 Consume the Service
 +++++++++++++++++++
@@ -166,7 +173,14 @@ In this example we're using :program:`curl`:
     PING 10.10.100 (10.10.100): 56 data bytes
     64 bytes from 10.10.100: icmp_seq=0 ttl=55 time=1.425 ms
 
-*et voilà !*
+*et voilà !*, if you're using HTTPS don't forget to provide the CA certificate
+if needed:
+
+.. code-block:: console
+
+    $ curl --cacert path/to/CAfile https://external.host/ping
+    PING 10.10.100 (10.10.100): 56 data bytes
+    64 bytes from 10.10.100: icmp_seq=0 ttl=55 time=1.425 ms
 
 
 Under the Hood
