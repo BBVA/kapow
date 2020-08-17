@@ -19,7 +19,7 @@ Your First Day at Work
 
 **Senior**
 
-  We have two Linux boxen that provide services to our employees.
+  We have two Linux boxes that provide services to our employees.
 
   #. The Corporate Server:  Provides email, database and web services.
 
