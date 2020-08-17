@@ -56,7 +56,7 @@ I Need my Report!
 
 **Junior**
 
-  And why *Susan* can't ``ssh`` into the server herself to see all of this?
+  And why can't *Susan* ``ssh`` into the server herself to see all of this?
 
 **Senior**
 

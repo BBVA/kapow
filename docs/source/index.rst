@@ -1,8 +1,8 @@
 Welcome to *Kapow!*
 ===================
 
-.. image:: https://circleci.com/gh/BBVA/kapow/tree/master.svg?style=svg
-   :target: https://circleci.com/gh/BBVA/kapow/tree/master
+.. image:: https://github.com/BBVA/kapow/workflows/Test/badge.svg
+   :target: https://github.com/BBVA/kapow/actions?query=workflow%3ATest
 .. image:: https://goreportcard.com/badge/github.com/bbva/kapow
    :target: https://goreportcard.com/report/github.com/bbva/kapow
 .. image:: https://img.shields.io/github/issues/BBVA/kapow

@@ -21,9 +21,8 @@ What have we done?
 
 **Junior**
 
-  Got it!  There're a
-  `lot of resources to work with </theory/resource_tree.rst>`_, I see that we
-  can write to the response.  Do you think this will work for us?
+  Got it!  There're a :ref:`lot of resources to work with <resource-tree>`.
+  I see that we can write to the response. Do you think this will work for us?
 
 **Senior**
 
@@ -47,7 +46,7 @@ What have we done?
 **Senior**
 
   Looks good to me, clean and simple, and it is a very good idea to use ``GET``
-  here as it wont change anything in the server.  Let's restart *Kapow!* and try it.
+  here as it won't change anything in the server.  Let's restart *Kapow!* and try it.
 
 **Junior**
 
