@@ -1,5 +1,5 @@
-Security Concerns
-=================
+Security Concerns Working with Parameters
+=========================================
 
 Special care has to be taken when using parameters provided by the user when
 composing command line invocations.
@@ -132,5 +132,3 @@ Let's see how we can handle this particular case:
    Since this is critical for keeping your *Kapow!* services secure, we are working
    on a way to make this more transparent and safe, while at the same time keeping
    it *Kapowy*.
-
-
