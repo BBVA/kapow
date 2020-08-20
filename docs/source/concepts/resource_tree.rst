@@ -171,7 +171,7 @@ then, when handling the request:
 .. code-block:: console
 
    $ kapow get /request/params/myparam
-   myparam
+   bar
 
 
 ``/request/headers/<name>`` Resource
