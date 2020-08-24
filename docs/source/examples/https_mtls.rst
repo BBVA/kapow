@@ -1,7 +1,7 @@
 Using HTTPS and mTLS with *Kapow!*
 ==================================
 
-*Kapow!* can be accesed over HTTPS and use mTLS for authentication. Right
+*Kapow!* can be accesed over HTTPS and use mutual TLS for authentication. Right
 now there are two possibilities to configure HTTPS/mTLS on a running server.
 
 .. note::
@@ -121,6 +121,8 @@ Caddy
      proxy / kapow:8080
      tls /path/to/cert.pem /path/to/key.pem
 
+In order to enable mutual TLS authentication read the `Caddy documentation`_.
+
 
 HAProxy
 +++++++
@@ -149,6 +151,8 @@ certificate.
 
       $ cat /path/to/cert.pem /path/to/key.pem > /path/to/myserver.local.pem
 
+In order to enable mutual TLS authentication read the `HAProxy documentation`_.
+
 
 nginx
 +++++
@@ -169,4 +173,9 @@ certificate.
     }
    }
 
+   In order to enable mutual TLS authentication read the `Nginx documentation`_.
+
 .. _some criteria are met: https://caddyserver.com/v1/docs/automatic-https
+.. _Caddy documentation: https://caddyserver.com/docs/caddyfile/directives/tls
+.. _HAProxy documentation: https://www.haproxy.com/de/documentation/aloha/12-0/traffic-management/lb-layer7/tls/
+.. _Nginx documentation: https://smallstep.com/hello-mtls/doc/server/nginx
