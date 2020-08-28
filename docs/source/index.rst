@@ -79,7 +79,7 @@ Contents
    examples/handling_http_requests
    examples/using_json
    examples/shell_tricks
-   examples/using_reverse_proxies
+   examples/https_mtls
 
 
 .. toctree::
