@@ -206,6 +206,22 @@ func TestGetRequestHost200sOnHappyPath(t *testing.T) {
 	}
 }
 
+func TestGetRequestHostSetsOctectStreamContentType(t *testing.T) {
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "/", nil),
+		Writer:  httptest.NewRecorder(),
+	}
+	r := httptest.NewRequest("GET", "/not-important-here", nil)
+	w := httptest.NewRecorder()
+
+	getRequestHost(w, r, &h)
+
+	res := w.Result()
+	if res.Header.Get("Content-Type") != "application/octet-stream" {
+		t.Error("Content Type mismatch")
+	}
+}
+
 func TestGetRequestHostReturnsTheCorrectHostname(t *testing.T) {
 	h := model.Handler{
 		Request: httptest.NewRequest("POST", "http://www.foo.bar:8080/", nil),
@@ -222,7 +238,7 @@ func TestGetRequestHostReturnsTheCorrectHostname(t *testing.T) {
 	}
 }
 
-func TestGetRequestHostSetsOctectStreamContentType(t *testing.T) {
+func TestGetRequestVersion200sOnHappyPath(t *testing.T) {
 	h := model.Handler{
 		Request: httptest.NewRequest("POST", "/", nil),
 		Writer:  httptest.NewRecorder(),
@@ -230,13 +246,47 @@ func TestGetRequestHostSetsOctectStreamContentType(t *testing.T) {
 	r := httptest.NewRequest("GET", "/not-important-here", nil)
 	w := httptest.NewRecorder()
 
-	getRequestHost(w, r, &h)
+	getRequestVersion(w, r, &h)
 
 	res := w.Result()
-	if res.Header.Get("Content-Type") != "application/octet-stream" {
-		t.Error("Content Type mismatch")
+	if res.StatusCode != http.StatusOK {
+		t.Errorf("Status code mismatch. Expected: %d, got: %d", http.StatusOK, res.StatusCode)
 	}
 }
+
+func TestGetRequestVersionSetsOctectStreamContentType(t *testing.T) {
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "/", nil),
+		Writer:  httptest.NewRecorder(),
+	}
+	r := httptest.NewRequest("GET", "/not-important-here", nil)
+	w := httptest.NewRecorder()
+
+	getRequestVersion(w, r, &h)
+
+	res := w.Result()
+	if ct := res.Header.Get("Content-Type"); ct != "application/octet-stream" {
+		t.Errorf("Content Type mismatch. Expected: %v, got: %v", "application/octet-stream", ct)
+	}
+}
+
+func TestGetRequestVersionReturnsTheCorrectHttpVersion(t *testing.T) {
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "http://www.foo.bar:8080/", nil),
+		Writer:  httptest.NewRecorder(),
+	}
+	r := httptest.NewRequest("GET", "/not-important-here", nil)
+	w := httptest.NewRecorder()
+
+	getRequestVersion(w, r, &h)
+
+	res := w.Result()
+	if body, _ := ioutil.ReadAll(res.Body); string(body) != "HTTP/1.1" {
+		t.Errorf("Version mismatch. Expected %v, got %v", "HTTP/1.1", string(body))
+	}
+}
+
+// DOING #85: /request/remote
 
 func TestGetRequestPath200sOnHappyPath(t *testing.T) {
 	h := model.Handler{
@@ -301,6 +351,8 @@ func TestGetRequestPathDoesntReturnQueryStringParams(t *testing.T) {
 		t.Errorf("Body mismatch. Expected: /foo. Got: %v", string(body))
 	}
 }
+
+// DOING #113: /request/ssl/client/i/dn
 
 func createMuxRequest(pattern, url, method string, content io.Reader) (req *http.Request) {
 	m := mux.NewRouter()
@@ -588,6 +640,8 @@ func TestGetRequestHeadersReturnsTheFirstCorrectMatchValue(t *testing.T) {
 		t.Errorf("Body mismatch. Expected: BAZ. Got: %v", string(body))
 	}
 }
+
+// DOING #78: /request/headers/Host /request/headers/host
 
 func TestGetRequestCookies200sOnHappyPath(t *testing.T) {
 	h := model.Handler{
@@ -1004,6 +1058,8 @@ func TestGetRequestFileContent500sWhenHandlerRequestErrors(t *testing.T) {
 		t.Error(e)
 	}
 }
+
+// DOING #10: /route/id
 
 func TestSetResponseStatus200sOnHappyPath(t *testing.T) {
 	h := model.Handler{

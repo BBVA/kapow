@@ -57,6 +57,11 @@ func getRequestHost(w http.ResponseWriter, r *http.Request, h *model.Handler) {
 	_, _ = w.Write([]byte(h.Request.Host))
 }
 
+func getRequestVersion(w http.ResponseWriter, r *http.Request, h *model.Handler) {
+	w.Header().Add("Content-Type", "application/octet-stream")
+	_, _ = w.Write([]byte(r.Proto))
+}
+
 func getRequestPath(w http.ResponseWriter, r *http.Request, h *model.Handler) {
 	w.Header().Add("Content-Type", "application/octet-stream")
 	// TODO: Discuss a how to obtain URL.EscapedPath() instead
