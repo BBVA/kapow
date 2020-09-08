@@ -69,6 +69,7 @@ Contents
    tutorial/tutorial03
    tutorial/tutorial04
    tutorial/tutorial05
+   tutorial/tutorial06
 
 .. toctree::
    :maxdepth: 2
