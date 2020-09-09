@@ -101,6 +101,28 @@ then, when handling the request:
    kapow.example
 
 
+``/request/version`` Resource
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The HTTP version of the incoming request.
+
+Sample Usage
+^^^^^^^^^^^^
+
+If the user runs:
+
+.. code-block:: console
+
+  $ curl --http1.0 http://kapow.example:8080
+
+then, when handling the request:
+
+.. code-block:: console
+
+  $ kapow get /request/version
+  HTTP/1.0
+
+
 ``/request/path`` Resource
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -121,6 +143,28 @@ then, when handling the request:
 
    $ kapow get /request/path
    /foo/bar
+
+
+``/request/remote`` Resource
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The IP address of the host making the incoming request.
+
+Sample Usage
+^^^^^^^^^^^^
+
+If the user runs:
+
+.. code-block:: console
+
+ $ curl http://kapow.example:8080
+
+then, when handling the request:
+
+.. code-block:: console
+
+ $ kapow get /request/remote
+ 192.168.100.156
 
 
 ``/request/matches/<name>`` Resource

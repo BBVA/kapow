@@ -59,7 +59,9 @@ func Run(bindAddr string, wg *sync.WaitGroup) {
 		// request
 		{"/handlers/{handlerID}/request/method", "GET", getRequestMethod},
 		{"/handlers/{handlerID}/request/host", "GET", getRequestHost},
+		{"/handlers/{handlerID}/request/version", "GET", getRequestVersion},
 		{"/handlers/{handlerID}/request/path", "GET", getRequestPath},
+		{"/handlers/{handlerID}/request/remote", "GET", getRequestRemote},
 		{"/handlers/{handlerID}/request/matches/{name}", "GET", getRequestMatches},
 		{"/handlers/{handlerID}/request/params/{name}", "GET", getRequestParams},
 		{"/handlers/{handlerID}/request/headers/{name}", "GET", getRequestHeaders},
