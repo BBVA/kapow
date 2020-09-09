@@ -26,6 +26,7 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"reflect"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -286,8 +287,6 @@ func TestGetRequestVersionReturnsTheCorrectHttpVersion(t *testing.T) {
 	}
 }
 
-// DOING #85: /request/remote
-
 func TestGetRequestPath200sOnHappyPath(t *testing.T) {
 	h := model.Handler{
 		Request: httptest.NewRequest("POST", "/", nil),
@@ -349,6 +348,57 @@ func TestGetRequestPathDoesntReturnQueryStringParams(t *testing.T) {
 	res := w.Result()
 	if body, _ := ioutil.ReadAll(res.Body); string(body) != "/foo" {
 		t.Errorf("Body mismatch. Expected: /foo. Got: %v", string(body))
+	}
+}
+
+func TestGetRequestRemote200sOnHappyPath(t *testing.T) {
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "/", nil),
+		Writer:  httptest.NewRecorder(),
+	}
+	r := httptest.NewRequest("GET", "/not-important-here", nil)
+	w := httptest.NewRecorder()
+
+	getRequestRemote(w, r, &h)
+
+	res := w.Result()
+	if res.StatusCode != http.StatusOK {
+		t.Errorf("Status code mismatch. Expected: %d, got: %d", http.StatusOK, res.StatusCode)
+	}
+}
+
+func TestGetRequestRemoteSetsOctectStreamContentType(t *testing.T) {
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "/", nil),
+		Writer:  httptest.NewRecorder(),
+	}
+	r := httptest.NewRequest("GET", "/not-important-here", nil)
+	w := httptest.NewRecorder()
+
+	getRequestRemote(w, r, &h)
+
+	res := w.Result()
+	if ct := res.Header.Get("Content-Type"); ct != "application/octet-stream" {
+		t.Errorf("Content Type mismatch. Expected: %v, got: %v", "application/octet-stream", ct)
+	}
+}
+
+func TestGetRequestRemoteReturnsTheCorrectRemote(t *testing.T) {
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "http://www.foo.bar:8080/", nil),
+		Writer:  httptest.NewRecorder(),
+	}
+	r := httptest.NewRequest("GET", "/not-important-here", nil)
+	w := httptest.NewRecorder()
+
+	getRequestRemote(w, r, &h)
+
+	res := w.Result()
+	body, _ := ioutil.ReadAll(res.Body)
+	rem := body[:bytes.Index(body, []byte(":"))]
+	re, _ := regexp.Compile(`^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$`)
+	if found := re.Match(rem); !found {
+		t.Errorf("Version mismatch. Expected %v, got %v", `^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$`, string(rem))
 	}
 }
 

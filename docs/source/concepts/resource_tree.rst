@@ -12,8 +12,6 @@ to compose the response.
 We access the resource tree easily with the ``kapow set`` and ``kapow get``
 subcommands.
 
-.. // DOING #85: /request/remote
-
 .. // DOING #10: /route/id
 
 .. // DOING #113: /request/ssl/client/i/dn
@@ -30,6 +28,7 @@ Overview
     │  ├──── host                   Host part of the URL
     │  ├──── version                HTTP version of the request
     │  ├──── path                   Complete URL path (URL-unquoted)
+    │  ├──── remote                 IP address of client
     │  ├──── matches
     │  │     └──── <name>           Previously matched URL path parts
     │  ├──── params

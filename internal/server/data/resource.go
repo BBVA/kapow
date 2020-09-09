@@ -68,6 +68,11 @@ func getRequestPath(w http.ResponseWriter, r *http.Request, h *model.Handler) {
 	_, _ = w.Write([]byte(h.Request.URL.Path))
 }
 
+func getRequestRemote(w http.ResponseWriter, r *http.Request, h *model.Handler) {
+	w.Header().Add("Content-Type", "application/octet-stream")
+	_, _ = w.Write([]byte(r.RemoteAddr))
+}
+
 func getRequestMatches(w http.ResponseWriter, r *http.Request, h *model.Handler) {
 	w.Header().Add("Content-Type", "application/octet-stream")
 	name := mux.Vars(r)["name"]
