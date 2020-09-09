@@ -691,7 +691,37 @@ func TestGetRequestHeadersReturnsTheFirstCorrectMatchValue(t *testing.T) {
 	}
 }
 
-// DOING #78: /request/headers/Host /request/headers/host
+func TestGetRequestHeadersReturns200sForHostHeader(t *testing.T) {
+	h := model.Handler{
+		Request: httptest.NewRequest("GET", "http://www.foo.bar:8080/", nil),
+		Writer:  httptest.NewRecorder(),
+	}
+	r := createMuxRequest("/handlers/HANDLERID/request/headers/{name}", "/handlers/HANDLERID/request/headers/Host", "GET", nil)
+	w := httptest.NewRecorder()
+
+	getRequestHeaders(w, r, &h)
+
+	res := w.Result()
+	if res.StatusCode != http.StatusOK {
+		t.Errorf("Status code mismatch. Expected: %d, got: %d", http.StatusOK, res.StatusCode)
+	}
+}
+
+func TestGetRequestHeadersReturnsTheCorrectValueForHostHeader(t *testing.T) {
+	h := model.Handler{
+		Request: httptest.NewRequest("GET", "http://www.foo.bar:8080/", nil),
+		Writer:  httptest.NewRecorder(),
+	}
+	r := createMuxRequest("/handlers/HANDLERID/request/headers/{name}", "/handlers/HANDLERID/request/headers/Host", "GET", nil)
+	w := httptest.NewRecorder()
+
+	getRequestHeaders(w, r, &h)
+
+	res := w.Result()
+	if body, _ := ioutil.ReadAll(res.Body); string(body) != "www.foo.bar:8080" {
+		t.Errorf("Body mismatch. Expected: %q. Got: %q", "www.foo.bar:8080", string(body))
+	}
+}
 
 func TestGetRequestCookies200sOnHappyPath(t *testing.T) {
 	h := model.Handler{

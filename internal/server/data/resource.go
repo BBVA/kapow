@@ -97,10 +97,15 @@ func getRequestParams(w http.ResponseWriter, r *http.Request, h *model.Handler) 
 func getRequestHeaders(w http.ResponseWriter, r *http.Request, h *model.Handler) {
 	w.Header().Add("Content-Type", "application/octet-stream")
 	name := mux.Vars(r)["name"]
-	if values, ok := h.Request.Header[textproto.CanonicalMIMEHeaderKey(name)]; ok {
+	name = textproto.CanonicalMIMEHeaderKey(name)
+	if values, ok := h.Request.Header[name]; ok {
 		_, _ = w.Write([]byte(values[0]))
 	} else {
-		httperror.ErrorJSON(w, ResourceItemNotFound, http.StatusNotFound)
+		if name == "Host" {
+			_, _ = w.Write([]byte(h.Request.Host))
+		} else {
+			httperror.ErrorJSON(w, ResourceItemNotFound, http.StatusNotFound)
+		}
 	}
 }
 
