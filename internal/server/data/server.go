@@ -71,6 +71,9 @@ func Run(bindAddr string, wg *sync.WaitGroup) {
 		{"/handlers/{handlerID}/request/files/{name}/content", "GET", getRequestFileContent},
 		{"/handlers/{handlerID}/request/body", "GET", getRequestBody},
 
+		// route
+		//{"/handlers/{handlerID}/route/id", "GET", getRouteId},
+
 		// response
 		{"/handlers/{handlerID}/response/status", "PUT", lockResponseWriter(setResponseStatus)},
 		{"/handlers/{handlerID}/response/headers/{name}", "PUT", lockResponseWriter(setResponseHeaders)},

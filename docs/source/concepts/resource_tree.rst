@@ -12,8 +12,6 @@ to compose the response.
 We access the resource tree easily with the ``kapow set`` and ``kapow get``
 subcommands.
 
-.. // DOING #10: /route/id
-
 .. // DOING #113: /request/ssl/client/i/dn
 
 Overview
@@ -44,6 +42,9 @@ Overview
     │  │           └──── filename   Original file name of the file uploaded in the form field <name>
     │  │           └──── content    The contents of the file uploaded in the form field <name>
     │  └──── body                   HTTP request body
+    │
+    │─ route
+    │  └──── id                     Id of the route that matched this request.
     │
     └─ response
       ├──── status                  HTTP status code
@@ -380,6 +381,28 @@ then, when handling the request:
 
    $ kapow get /request/body
    foobar
+
+
+``/route/id`` Resource
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The ID of the original route that matched this request..
+
+Sample Usage
+^^^^^^^^^^^^
+
+If the user runs:
+
+.. code-block:: console
+
+   $ curl http://kapow.example:8080/
+
+then, when handling the request:
+
+.. code-block:: console
+
+   $ kapow get /route/id
+   ecd5d63f-f28b-11ea-ac55-ec21e5089c1f
 
 
 ``/response/status`` Resource

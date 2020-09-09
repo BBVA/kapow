@@ -156,6 +156,12 @@ func getRequestFileContent(w http.ResponseWriter, r *http.Request, h *model.Hand
 	}
 }
 
+func getRequestId(w http.ResponseWriter, r *http.Request, h *model.Handler) {
+	w.Header().Add("Content-Type", "application/octet-stream")
+	_, _ = w.Write([]byte(h.Route.ID))
+
+}
+
 // FIXME: Allow any  HTTP status code. Now we are limited by WriteHeader
 // capabilities
 func setResponseStatus(w http.ResponseWriter, r *http.Request, h *model.Handler) {

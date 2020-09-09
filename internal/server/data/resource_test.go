@@ -266,8 +266,8 @@ func TestGetRequestVersionSetsOctectStreamContentType(t *testing.T) {
 	getRequestVersion(w, r, &h)
 
 	res := w.Result()
-	if ct := res.Header.Get("Content-Type"); ct != "application/octet-stream" {
-		t.Errorf("Content Type mismatch. Expected: %v, got: %v", "application/octet-stream", ct)
+	if v := res.Header.Get("Content-Type"); v != "application/octet-stream" {
+		t.Errorf("Content Type mismatch. Expected: %q, got: %q", "application/octet-stream", v)
 	}
 }
 
@@ -378,8 +378,8 @@ func TestGetRequestRemoteSetsOctectStreamContentType(t *testing.T) {
 	getRequestRemote(w, r, &h)
 
 	res := w.Result()
-	if ct := res.Header.Get("Content-Type"); ct != "application/octet-stream" {
-		t.Errorf("Content Type mismatch. Expected: %v, got: %v", "application/octet-stream", ct)
+	if v := res.Header.Get("Content-Type"); v != "application/octet-stream" {
+		t.Errorf("Content Type mismatch. Expected: %q, got: %q", "application/octet-stream", v)
 	}
 }
 
@@ -586,7 +586,7 @@ func TestGetRequestHeadersSetsOctectStreamContentType(t *testing.T) {
 
 	res := w.Result()
 	if v := res.Header.Get("Content-Type"); v != "application/octet-stream" {
-		t.Errorf("Content Type mismatch. Expected: application/octet-stream. Got: %q", v)
+		t.Errorf("Content Type mismatch. Expected: %q. Got: %q", "application/octet-stream", v)
 	}
 }
 
@@ -1109,7 +1109,54 @@ func TestGetRequestFileContent500sWhenHandlerRequestErrors(t *testing.T) {
 	}
 }
 
-// DOING #10: /route/id
+func TestGetRouteId200sOnHappyPath(t *testing.T) {
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "/", nil),
+		Writer:  httptest.NewRecorder(),
+	}
+	r := httptest.NewRequest("GET", "/not-important-here", nil)
+	w := httptest.NewRecorder()
+
+	getRequestId(w, r, &h)
+
+	res := w.Result()
+	if res.StatusCode != http.StatusOK {
+		t.Error("Status code mismatch")
+	}
+}
+
+func TestGetRouteIdSetsOctectStreamContentType(t *testing.T) {
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "/", nil),
+		Writer:  httptest.NewRecorder(),
+	}
+	r := httptest.NewRequest("GET", "/not-important-here", nil)
+	w := httptest.NewRecorder()
+
+	getRequestId(w, r, &h)
+
+	res := w.Result()
+	if v := res.Header.Get("Content-Type"); v != "application/octet-stream" {
+		t.Errorf("Content Type mismatch. Expected: %q, got: %q", "application/octet-stream", v)
+	}
+}
+
+func TestGetRouteIdReturnsTheCorrectMethod(t *testing.T) {
+	h := model.Handler{
+		Request: httptest.NewRequest("FOO", "/", nil),
+		Writer:  httptest.NewRecorder(),
+		Route:   model.Route{ID: "Expected_ID"},
+	}
+	r := httptest.NewRequest("GET", "/not-important-here", nil)
+	w := httptest.NewRecorder()
+
+	getRequestId(w, r, &h)
+
+	res := w.Result()
+	if body, _ := ioutil.ReadAll(res.Body); string(body) != "Expected_ID" {
+		t.Errorf("Body mismatch. Expected: %q, got: %q", "Expected_ID", string(body))
+	}
+}
 
 func TestSetResponseStatus200sOnHappyPath(t *testing.T) {
 	h := model.Handler{
