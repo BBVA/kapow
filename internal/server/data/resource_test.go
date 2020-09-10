@@ -26,7 +26,6 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"reflect"
-	"regexp"
 	"strings"
 	"testing"
 
@@ -388,21 +387,17 @@ func TestGetRequestRemoteReturnsTheCorrectRemote(t *testing.T) {
 		Request: httptest.NewRequest("POST", "http://www.foo.bar:8080/", nil),
 		Writer:  httptest.NewRecorder(),
 	}
+	h.Request.RemoteAddr = "1.2.3.4:12345"
 	r := httptest.NewRequest("GET", "/not-important-here", nil)
 	w := httptest.NewRecorder()
 
 	getRequestRemote(w, r, &h)
 
 	res := w.Result()
-	body, _ := ioutil.ReadAll(res.Body)
-	rem := body[:bytes.Index(body, []byte(":"))]
-	re, _ := regexp.Compile(`^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$`)
-	if found := re.Match(rem); !found {
-		t.Errorf("Version mismatch. Expected %v, got %v", `^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$`, string(rem))
+	if body, _ := ioutil.ReadAll(res.Body); string(body) != h.Request.RemoteAddr {
+		t.Errorf("Version mismatch. Expected %q, got %q", h.Request.RemoteAddr, string(body))
 	}
 }
-
-// DOING #113: /request/ssl/client/i/dn
 
 func createMuxRequest(pattern, url, method string, content io.Reader) (req *http.Request) {
 	m := mux.NewRouter()
@@ -1138,6 +1133,8 @@ func TestGetRequestFileContent500sWhenHandlerRequestErrors(t *testing.T) {
 		t.Error(e)
 	}
 }
+
+// DOING #113: /request/ssl/client/i/dn
 
 func TestGetRouteId200sOnHappyPath(t *testing.T) {
 	h := model.Handler{

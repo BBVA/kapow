@@ -70,7 +70,7 @@ func getRequestPath(w http.ResponseWriter, r *http.Request, h *model.Handler) {
 
 func getRequestRemote(w http.ResponseWriter, r *http.Request, h *model.Handler) {
 	w.Header().Add("Content-Type", "application/octet-stream")
-	_, _ = w.Write([]byte(r.RemoteAddr))
+	_, _ = w.Write([]byte(h.Request.RemoteAddr))
 }
 
 func getRequestMatches(w http.ResponseWriter, r *http.Request, h *model.Handler) {
