@@ -1171,7 +1171,7 @@ func TestGetRouteIdSetsOctectStreamContentType(t *testing.T) {
 	}
 }
 
-func TestGetRouteIdReturnsTheCorrectMethod(t *testing.T) {
+func TestGetRouteIdReturnsTheCorrectRouteId(t *testing.T) {
 	h := model.Handler{
 		Request: httptest.NewRequest("FOO", "/", nil),
 		Writer:  httptest.NewRecorder(),
@@ -1183,8 +1183,8 @@ func TestGetRouteIdReturnsTheCorrectMethod(t *testing.T) {
 	getRequestId(w, r, &h)
 
 	res := w.Result()
-	if body, _ := ioutil.ReadAll(res.Body); string(body) != "Expected_ID" {
-		t.Errorf("Body mismatch. Expected: %q, got: %q", "Expected_ID", string(body))
+	if body, _ := ioutil.ReadAll(res.Body); string(body) != h.Route.ID {
+		t.Errorf("Body mismatch. Expected: %q, got: %q", h.Route.ID, string(body))
 	}
 }
 
