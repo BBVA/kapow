@@ -275,14 +275,17 @@ func TestGetRequestVersionReturnsTheCorrectHttpVersion(t *testing.T) {
 		Request: httptest.NewRequest("POST", "http://www.foo.bar:8080/", nil),
 		Writer:  httptest.NewRecorder(),
 	}
+	h.Request.Proto = "HTTP/1.0"
+	h.Request.ProtoMajor = 1
+	h.Request.ProtoMinor = 0
 	r := httptest.NewRequest("GET", "/not-important-here", nil)
 	w := httptest.NewRecorder()
 
 	getRequestVersion(w, r, &h)
 
 	res := w.Result()
-	if body, _ := ioutil.ReadAll(res.Body); string(body) != "HTTP/1.1" {
-		t.Errorf("Version mismatch. Expected %v, got %v", "HTTP/1.1", string(body))
+	if body, _ := ioutil.ReadAll(res.Body); string(body) != h.Request.Proto {
+		t.Errorf("Version mismatch. Expected %q, got %q", h.Request.Proto, string(body))
 	}
 }
 

@@ -59,7 +59,7 @@ func getRequestHost(w http.ResponseWriter, r *http.Request, h *model.Handler) {
 
 func getRequestVersion(w http.ResponseWriter, r *http.Request, h *model.Handler) {
 	w.Header().Add("Content-Type", "application/octet-stream")
-	_, _ = w.Write([]byte(r.Proto))
+	_, _ = w.Write([]byte(h.Request.Proto))
 }
 
 func getRequestPath(w http.ResponseWriter, r *http.Request, h *model.Handler) {
