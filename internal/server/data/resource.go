@@ -161,6 +161,17 @@ func getRequestFileContent(w http.ResponseWriter, r *http.Request, h *model.Hand
 	}
 }
 
+func getSSLClietnDN(w http.ResponseWriter, r *http.Request, h *model.Handler) {
+	if h.Request.TLS == nil {
+		httperror.ErrorJSON(w, ResourceItemNotFound, http.StatusNotFound)
+	} else if h.Request.TLS.VerifiedChains == nil {
+		httperror.ErrorJSON(w, ResourceItemNotFound, http.StatusNotFound)
+	} else {
+		w.Header().Add("Content-Type", "application/octet-stream")
+		_, _ = w.Write([]byte(h.Request.TLS.VerifiedChains[0][0].Subject.CommonName))
+	}
+}
+
 func getRouteId(w http.ResponseWriter, r *http.Request, h *model.Handler) {
 	w.Header().Add("Content-Type", "application/octet-stream")
 	_, _ = w.Write([]byte(h.Route.ID))

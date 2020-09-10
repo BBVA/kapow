@@ -43,6 +43,10 @@ Overview
     │  │           └──── content    The contents of the file uploaded in the form field <name>
     │  └──── body                   HTTP request body
     │
+    |─ ssl
+    │  └──── client
+    │        └──── i
+    │              └──── dn         Subject's DN common name coming ina request through SSL with mTLS
     │─ route
     │  └──── id                     Id of the route that matched this request.
     │
@@ -381,6 +385,28 @@ then, when handling the request:
 
    $ kapow get /request/body
    foobar
+
+
+``/ssl/client/i/dn`` Resource
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The IP address of the host making the incoming request.
+
+Sample Usage
+^^^^^^^^^^^^
+
+If the user runs:
+
+.. code-block:: console
+
+   $ curl --cacert path/to/CAfile --cert path/to/clientcredentials http://kapow.example:8080
+
+using a client certificate with DN=subject@example.net then, when handling the request:
+
+.. code-block:: console
+
+   $ kapow get /ssl/client/i/dn
+   subject@example.net
 
 
 ``/route/id`` Resource

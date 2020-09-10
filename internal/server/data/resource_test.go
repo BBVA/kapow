@@ -18,7 +18,11 @@ package data
 
 import (
 	"bytes"
+	"crypto/tls"
+	"crypto/x509"
+	"encoding/pem"
 	"errors"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"mime/multipart"
@@ -1137,7 +1141,106 @@ func TestGetRequestFileContent500sWhenHandlerRequestErrors(t *testing.T) {
 	}
 }
 
-// DOING #113: /request/ssl/client/i/dn
+func TestGetSSLClientDNReturns404IfNotHTTPS(t *testing.T) {
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "/", nil),
+		Writer:  httptest.NewRecorder(),
+	}
+	r := httptest.NewRequest("GET", "/not-important-here", nil)
+	w := httptest.NewRecorder()
+
+	getSSLClietnDN(w, r, &h)
+
+	if res := w.Result(); res.StatusCode != http.StatusNotFound {
+		t.Errorf("Status code mismatch. Expected: %d, got: %d", http.StatusNotFound, res.StatusCode)
+	}
+}
+
+func TestGetSSLClientDNReturns404IfHTTPSButNotmTLS(t *testing.T) {
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "https://www.foo.bar:8080/", nil),
+		Writer:  httptest.NewRecorder(),
+	}
+	r := httptest.NewRequest("GET", "/not-important-here", nil)
+	w := httptest.NewRecorder()
+
+	getSSLClietnDN(w, r, &h)
+
+	if res := w.Result(); res.StatusCode != http.StatusNotFound {
+		t.Errorf("Status code mismatch. Expected: %d, got: %d", http.StatusNotFound, res.StatusCode)
+	}
+}
+
+func TestGetSSLClientDN200sOnHappyPath(t *testing.T) {
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "https://www.foo.bar:8080/", nil),
+		Writer:  httptest.NewRecorder(),
+	}
+	h.Request.TLS.VerifiedChains = [][]*x509.Certificate{{new(x509.Certificate)}}
+	r := httptest.NewRequest("GET", "/not-important-here", nil)
+	w := httptest.NewRecorder()
+
+	getSSLClietnDN(w, r, &h)
+
+	if res := w.Result(); res.StatusCode != http.StatusOK {
+		t.Errorf("Status code mismatch. Expected: %d, got: %d", http.StatusOK, res.StatusCode)
+	}
+}
+
+func TestGetSSLClientDNSetsOctectStreamContentType(t *testing.T) {
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "https://www.foo.bar:8080/", nil),
+		Writer:  httptest.NewRecorder(),
+	}
+	h.Request.TLS.VerifiedChains = [][]*x509.Certificate{{new(x509.Certificate)}}
+	r := httptest.NewRequest("GET", "/not-important-here", nil)
+	w := httptest.NewRecorder()
+
+	getSSLClietnDN(w, r, &h)
+
+	res := w.Result()
+	if v := res.Header.Get("Content-Type"); v != "application/octet-stream" {
+		t.Errorf("Status code mismatch. Expected: %q, got: %q", "application/octet-stream", v)
+	}
+}
+
+func mockAuthenticateClient(tls *tls.ConnectionState) error {
+	fileData, err := ioutil.ReadFile("./testdata/client_chain.crt")
+	if err != nil {
+		return fmt.Errorf("Error loading certificates file: %v", err)
+	}
+
+	asn1Data, _ := pem.Decode(fileData)
+	certs, err := x509.ParseCertificates(asn1Data.Bytes)
+	if err != nil {
+		return fmt.Errorf("Error parsing certificates data: %v", err)
+	}
+
+	tls.VerifiedChains = [][]*x509.Certificate{certs}
+	tls.PeerCertificates = []*x509.Certificate{tls.VerifiedChains[0][0]}
+
+	return nil
+}
+
+func TestGetSSLClientDNReturnsCorrectDN(t *testing.T) {
+	h := model.Handler{
+		Request: httptest.NewRequest("POST", "https://www.foo.bar:8080/", nil),
+		Writer:  httptest.NewRecorder(),
+	}
+	if err := mockAuthenticateClient(h.Request.TLS); err != nil {
+		t.Error(err)
+	}
+	r := httptest.NewRequest("GET", "/not-important-here", nil)
+	w := httptest.NewRecorder()
+
+	getSSLClietnDN(w, r, &h)
+
+	res := w.Result()
+
+	if body, _ := ioutil.ReadAll(res.Body); string(body) != h.Request.TLS.VerifiedChains[0][0].Subject.CommonName {
+		t.Errorf("Body mismatch. Expected: %q, got: %q", h.Request.TLS.VerifiedChains[0][0].Subject.CommonName, string(body))
+	}
+}
 
 func TestGetRouteId200sOnHappyPath(t *testing.T) {
 	h := model.Handler{

@@ -72,7 +72,10 @@ func Run(bindAddr string, wg *sync.WaitGroup) {
 		{"/handlers/{handlerID}/request/body", "GET", getRequestBody},
 
 		// route
-		//{"/handlers/{handlerID}/route/id", "GET", getRouteId},
+		{"/handlers/{handlerID}/route/id", "GET", getRouteId},
+
+		// SSL stuff
+		{"/handlers/{handlerID}/ssl/client/i/dn", "GET", getSSLClietnDN},
 
 		// response
 		{"/handlers/{handlerID}/response/status", "PUT", lockResponseWriter(setResponseStatus)},
