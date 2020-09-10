@@ -1147,7 +1147,7 @@ func TestGetRouteId200sOnHappyPath(t *testing.T) {
 	r := httptest.NewRequest("GET", "/not-important-here", nil)
 	w := httptest.NewRecorder()
 
-	getRequestId(w, r, &h)
+	getRouteId(w, r, &h)
 
 	res := w.Result()
 	if res.StatusCode != http.StatusOK {
@@ -1163,7 +1163,7 @@ func TestGetRouteIdSetsOctectStreamContentType(t *testing.T) {
 	r := httptest.NewRequest("GET", "/not-important-here", nil)
 	w := httptest.NewRecorder()
 
-	getRequestId(w, r, &h)
+	getRouteId(w, r, &h)
 
 	res := w.Result()
 	if v := res.Header.Get("Content-Type"); v != "application/octet-stream" {
@@ -1180,7 +1180,7 @@ func TestGetRouteIdReturnsTheCorrectRouteId(t *testing.T) {
 	r := httptest.NewRequest("GET", "/not-important-here", nil)
 	w := httptest.NewRecorder()
 
-	getRequestId(w, r, &h)
+	getRouteId(w, r, &h)
 
 	res := w.Result()
 	if body, _ := ioutil.ReadAll(res.Body); string(body) != h.Route.ID {
