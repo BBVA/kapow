@@ -1237,8 +1237,8 @@ func TestGetSSLClientDNReturnsCorrectDN(t *testing.T) {
 
 	res := w.Result()
 
-	if body, _ := ioutil.ReadAll(res.Body); string(body) != h.Request.TLS.VerifiedChains[0][0].Subject.CommonName {
-		t.Errorf("Body mismatch. Expected: %q, got: %q", h.Request.TLS.VerifiedChains[0][0].Subject.CommonName, string(body))
+	if body, _ := ioutil.ReadAll(res.Body); string(body) != h.Request.TLS.VerifiedChains[0][0].Subject.String() {
+		t.Errorf("Body mismatch. Expected: %q, got: %q", h.Request.TLS.VerifiedChains[0][0].Subject.String(), string(body))
 	}
 }
 

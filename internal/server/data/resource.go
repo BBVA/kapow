@@ -168,7 +168,7 @@ func getSSLClietnDN(w http.ResponseWriter, r *http.Request, h *model.Handler) {
 		httperror.ErrorJSON(w, ResourceItemNotFound, http.StatusNotFound)
 	} else {
 		w.Header().Add("Content-Type", "application/octet-stream")
-		_, _ = w.Write([]byte(h.Request.TLS.VerifiedChains[0][0].Subject.CommonName))
+		_, _ = w.Write([]byte(h.Request.TLS.VerifiedChains[0][0].Subject.String()))
 	}
 }
 
