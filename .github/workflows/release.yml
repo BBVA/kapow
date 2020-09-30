@@ -31,17 +31,14 @@ jobs:
         [[ -f "$RELNOTES" ]] && echo ::set-output name=ARGS::--release-notes $RELNOTES || true
 
     - name: Docker Login
-      env:
-        DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-        DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
       run: |
-        echo "${DOCKER_PASSWORD}" | docker login --username "${DOCKER_USERNAME}" --password-stdin
+        username="${{ secrets.DOCKERHUB_USERNAME }}"
+        password="${{ secrets.DOCKERHUB_PASSWORD }}"
+        echo "$password" | docker login --username "$username" --password-stdin
 
     - name: Load GPG private key
       run: |
-        echo "$GPG_PRIVATE_KEY" | gpg --import
-      env:
-        GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+        echo "${{ secrets.GPG_PRIVATE_KEY" }} | gpg --import
 
     - uses: goreleaser/goreleaser-action@v2
       with:
