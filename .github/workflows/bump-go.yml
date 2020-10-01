@@ -1,5 +1,4 @@
 name: Bump Go
-
 on:
   schedule:
     - cron: 00 7 * * *
@@ -22,6 +21,8 @@ jobs:
       - name: Create pull request
         uses: peter-evans/create-pull-request@v3
         with:
-          title: Bump Go
-          commit-message: Bump Go to version '${{ steps.bump-go.outputs.go-version }}'
+          author: GitHub <noreply@github.com>
+          title: chore: bump Go version
+          commit-message: Bump Go to version ${{ steps.bump-go.outputs.go-version }}
           branch: bump-go/patch
+          delete-branch: true
