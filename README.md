@@ -57,6 +57,14 @@ finally, we can read from the just-defined endpoint:
 
 You can find the complete documentation and examples [here](https://kapow.readthedocs.io).
 
+## Security
+
+Please consider the following security caveats **before** using *Kapow!*
+
+- [Issue #119](https://github.com/BBVA/kapow/issues/119)
+- [Security Concerns](https://kapow.readthedocs.io/en/stable/the_project/security.html#security-concerns)
+
+If you are not 100% sure about what you are doing we recommend not using *Kapow!*
 
 ## Authors
 
