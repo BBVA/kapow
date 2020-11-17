@@ -255,8 +255,8 @@ def handle_route(entrypoint, command):
             shell_task = await asyncio.create_subprocess_shell(
                 args,
                 env={**os.environ,
-                     "KAPOW_DATAAPI_URL": "http://localhost:8081",
-                     "KAPOW_CONTROLAPI_URL": "http://localhost:8081",
+                     "KAPOW_DATA_URL": "http://localhost:8081",
+                     "KAPOW_CONTROL_URL": "http://localhost:8081",
                      "KAPOW_HANDLER_ID": id
                      },
                 stdin=asyncio.subprocess.DEVNULL)
@@ -426,8 +426,8 @@ async def run_init_script(app, scripts, interactive):
         cmd,
         executable="/bin/bash",
         env={**os.environ,
-             "KAPOW_DATAAPI_URL": "http://localhost:8081",
-             "KAPOW_CONTROLAPI_URL": "http://localhost:8081"
+             "KAPOW_DATA_URL": "http://localhost:8081",
+             "KAPOW_CONTROL_URL": "http://localhost:8081"
              })
 
     await shell_task.wait()
@@ -554,7 +554,7 @@ def route():
 @click.option("-c", "--command", nargs=1)
 @click.option("-e", "--entrypoint", default="/bin/sh -c")
 @click.option("-X", "--method", default="GET")
-@click.option("--url", envvar='KAPOW_CONTROLAPI_URL')
+@click.option("--url", envvar='KAPOW_CONTROL_URL')
 @click.argument("url_pattern", nargs=1)
 @click.argument("command_file", required=False)
 def route_add(url_pattern, entrypoint, command, method, url, command_file):
@@ -582,7 +582,7 @@ def route_add(url_pattern, entrypoint, command, method, url, command_file):
 
 
 @route.command("remove")
-@click.option("--url", envvar='KAPOW_CONTROLAPI_URL')
+@click.option("--url", envvar='KAPOW_CONTROL_URL')
 @click.argument("route-id")
 def route_remove(route_id, url):
     response = requests.delete(f"{url}/routes/{route_id}")
@@ -590,7 +590,7 @@ def route_remove(route_id, url):
 
 
 @route.command("list")
-@click.option("--url", envvar='KAPOW_CONTROLAPI_URL')
+@click.option("--url", envvar='KAPOW_CONTROL_URL')
 @click.argument("route-id", nargs=1, required=False, default=None)
 def route_list(route_id, url):
     if route_id is None:
@@ -602,7 +602,7 @@ def route_list(route_id, url):
 
 
 @kapow.command("set", help="Set data from the current context")
-@click.option("--url", envvar='KAPOW_DATAAPI_URL')
+@click.option("--url", envvar='KAPOW_DATA_URL')
 @click.option("--handler-id", envvar='KAPOW_HANDLER_ID')
 @click.argument("path", nargs=1)
 @click.argument("value", required=False)
@@ -622,7 +622,7 @@ def kapow_set(url, handler_id, path, value):
 
 
 @kapow.command("get", help="Get data from the current context")
-@click.option("--url", envvar='KAPOW_DATAAPI_URL')
+@click.option("--url", envvar='KAPOW_DATA_URL')
 @click.option("--handler-id", envvar='KAPOW_HANDLER_ID')
 @click.argument("path", nargs=1)
 def kapow_get(url, handler_id, path):

@@ -59,8 +59,8 @@ environment variables:
 * ``KAPOW_BOOT_TIMEOUT``: Timeout in ms for the server to be ready
 * ``KAPOW_SERVER_CMD``: The full command line to start a non-interactive
    listening kapow server. By default: ``kapow server``
-* ``KAPOW_CONTROLAPI_URL``: URL of the Control API. By default: ``http://localhost:8081``
-* ``KAPOW_DATAAPI_URL``: URL of the Data API. By default: ``http://localhost:8082``
+* ``KAPOW_CONTROL_URL``: URL of the Control API. By default: ``http://localhost:8081``
+* ``KAPOW_DATA_URL``: URL of the Data API. By default: ``http://localhost:8082``
 * ``KAPOW_USER_URL``: URL of the User Server. By default: ``http://localhost:8080``
 
 
