@@ -17,13 +17,11 @@
 package mux
 
 import (
-	"bytes"
 	"errors"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
-	"strings"
 	"testing"
 
 	"github.com/google/uuid"
@@ -199,50 +197,50 @@ func TestHandlerBuilderRemovesHandlerWhenDone(t *testing.T) {
 	}
 }
 
-func TestCreateLogMsgAdsPrefixInfo(t *testing.T) {
-	expected := "FOO"
+// func TestCreateLogMsgAdsPrefixInfo(t *testing.T) {
+// 	expected := "FOO"
 
-	msg := createLogMsg(expected, bytes.Buffer{}, bytes.Buffer{})
+// 	msg := createLogMsg(expected, bytes.Buffer{}, bytes.Buffer{})
 
-	if msg.Prefix != expected {
-		t.Errorf("LogMsg doesn't contain expected Prefix. Expected: %s, got: %s", expected, msg.Prefix)
-	}
-}
+// 	if msg.Prefix != expected {
+// 		t.Errorf("LogMsg doesn't contain expected Prefix. Expected: %s, got: %s", expected, msg.Prefix)
+// 	}
+// }
 
-func TestCreateLogMsgAdsStdOutInfo(t *testing.T) {
-	expected := "FOO\nBAR"
-	out := bytes.Buffer{}
-	out.WriteString(expected)
+// func TestCreateLogMsgAdsStdOutInfo(t *testing.T) {
+// 	expected := "FOO\nBAR"
+// 	out := bytes.Buffer{}
+// 	out.WriteString(expected)
 
-	msg := createLogMsg("", out, bytes.Buffer{})
+// 	msg := createLogMsg("", out, bytes.Buffer{})
 
-	if strings.Join(msg.Messages, "\n") != expected {
-		t.Errorf("LogMsg doesn't contain expected payload. Expected: %s, got: %s", expected, msg.Prefix)
-	}
-}
+// 	if strings.Join(msg.Messages, "\n") != expected {
+// 		t.Errorf("LogMsg doesn't contain expected payload. Expected: %s, got: %s", expected, msg.Prefix)
+// 	}
+// }
 
-func TestCreateLogMsgAdsStdErrInfo(t *testing.T) {
-	expected := "FOO\nBAR"
-	err := bytes.Buffer{}
-	err.WriteString(expected)
+// func TestCreateLogMsgAdsStdErrInfo(t *testing.T) {
+// 	expected := "FOO\nBAR"
+// 	err := bytes.Buffer{}
+// 	err.WriteString(expected)
 
-	msg := createLogMsg("", bytes.Buffer{}, err)
+// 	msg := createLogMsg("", bytes.Buffer{}, err)
 
-	if strings.Join(msg.Messages, "\n") != expected {
-		t.Errorf("LogMsg doesn't contain expected payload. Expected: %s, got: %s", expected, msg.Prefix)
-	}
-}
+// 	if strings.Join(msg.Messages, "\n") != expected {
+// 		t.Errorf("LogMsg doesn't contain expected payload. Expected: %s, got: %s", expected, msg.Prefix)
+// 	}
+// }
 
-func TestCreateLogMsgAdsStdOutAndStdErrInfo(t *testing.T) {
-	expected := "FOO\nBAR\nFOO BAZ"
-	out := bytes.Buffer{}
-	out.WriteString("FOO\nBAR\n")
-	err := bytes.Buffer{}
-	err.WriteString("FOO BAZ")
+// func TestCreateLogMsgAdsStdOutAndStdErrInfo(t *testing.T) {
+// 	expected := "FOO\nBAR\nFOO BAZ"
+// 	out := bytes.Buffer{}
+// 	out.WriteString("FOO\nBAR\n")
+// 	err := bytes.Buffer{}
+// 	err.WriteString("FOO BAZ")
 
-	msg := createLogMsg("", out, err)
+// 	msg := createLogMsg("", out, err)
 
-	if strings.Join(msg.Messages, "\n") != expected {
-		t.Errorf("LogMsg doesn't contain expected payload. Expected: %s, got: %s", expected, msg.Prefix)
-	}
-}
+// 	if strings.Join(msg.Messages, "\n") != expected {
+// 		t.Errorf("LogMsg doesn't contain expected payload. Expected: %s, got: %s", expected, msg.Prefix)
+// 	}
+// }

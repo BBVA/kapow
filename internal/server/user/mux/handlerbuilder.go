@@ -18,13 +18,12 @@ package mux
 
 import (
 	"bufio"
-	"bytes"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/google/uuid"
 
-	"github.com/BBVA/kapow/internal/logger"
 	"github.com/BBVA/kapow/internal/server/data"
 	"github.com/BBVA/kapow/internal/server/model"
 	"github.com/BBVA/kapow/internal/server/user/spawn"
@@ -51,29 +50,36 @@ func handlerBuilder(route model.Route) http.Handler {
 		data.Handlers.Add(h)
 		defer data.Handlers.Remove(h.ID)
 
-		stdOut := &bytes.Buffer{}
-		stdErr := &bytes.Buffer{}
-		err = spawner(h, stdOut, stdErr)
-		//err = spawner(h, nil)
+		stdOutR, stdOutW, err := os.Pipe()
+		defer stdOutW.Close()
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		stdErrR, stdErrW, err := os.Pipe()
+		defer stdErrW.Close()
+		if err != nil {
+			log.Println(err)
+			return
+		}
+
+		go logStream(h.ID, "stdout", stdOutR)
+		go logStream(h.ID, "stderr", stdErrR)
+
+		err = spawner(h, stdOutW, stdErrW)
 
 		if err != nil {
 			log.Println(err)
 		}
 
-		logger.SendMsg(logger.SCRIPTS, createLogMsg(h.ID, *stdOut, *stdErr))
 	})
 }
 
-func createLogMsg(handlerId string, stdout, stderr bytes.Buffer) logger.LogMsg {
-	var messages []string
-	scanner := bufio.NewScanner(bytes.NewBuffer(stdout.Bytes()))
+func logStream(handlerId string, streamName string, stream *os.File) {
+	defer stream.Close()
+	execLog := log.New(os.Stdout, "", log.Ldate|log.Ltime|log.LUTC|log.Lmicroseconds)
+	scanner := bufio.NewScanner(stream)
 	for scanner.Scan() {
-		messages = append(messages, scanner.Text())
+		execLog.Printf("%s %s: %s", handlerId, streamName, scanner.Text())
 	}
-	scanner = bufio.NewScanner(bytes.NewBuffer(stderr.Bytes()))
-	for scanner.Scan() {
-		messages = append(messages, scanner.Text())
-	}
-
-	return logger.LogMsg{Prefix: handlerId, Messages: messages}
 }
