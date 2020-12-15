@@ -1,3 +1,5 @@
+// +build !race
+
 /*
  * Copyright 2019 Banco Bilbao Vizcaya Argentaria, S.A.
  *
@@ -25,6 +27,7 @@ import (
 	"reflect"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
 
@@ -199,50 +202,63 @@ func TestHandlerBuilderRemovesHandlerWhenDone(t *testing.T) {
 	}
 }
 
-func TestCreateLogMsgAdsPrefixInfo(t *testing.T) {
-	expected := "FOO"
+func TestHandlerBuilderLogToLogHandlerWhenDebugIsEnabled(t *testing.T) {
+	data.Handlers = data.New()
+	route := model.Route{Debug: true}
+	var got string
 
-	msg := createLogMsg(expected, bytes.Buffer{}, bytes.Buffer{})
+	logHandler = new(bytes.Buffer)
 
-	if msg.Prefix != expected {
-		t.Errorf("LogMsg doesn't contain expected Prefix. Expected: %s, got: %s", expected, msg.Prefix)
+	spawner = func(h *model.Handler, out io.Writer, er io.Writer) error {
+		_, _ = out.Write([]byte("this is stdout"))
+		_, _ = er.Write([]byte("this is stderr"))
+
+		return nil
+	}
+
+	handlerBuilder(route).ServeHTTP(nil, nil)
+
+	// NOTE: logStream will write stdout and stderr contents eventually.
+	// We do not have any control the goroutines running logStream, thus we
+	// cannot use a synchronization primitive to wait for them.  Sorry.
+	time.Sleep(1 * time.Second)
+
+	got = logHandler.(*bytes.Buffer).String()
+	if ! strings.Contains(got, "this is stdout") {
+		t.Errorf("Stdout not preserved. Actual: %+q", got)
+	}
+	if ! strings.Contains(got, "this is stderr") {
+		t.Errorf("Stderr not preserved. Actual: %+q", got)
 	}
 }
 
-func TestCreateLogMsgAdsStdOutInfo(t *testing.T) {
-	expected := "FOO\nBAR"
-	out := bytes.Buffer{}
-	out.WriteString(expected)
 
-	msg := createLogMsg("", out, bytes.Buffer{})
+func TestHandlerBuilderDoesNotLogToLogHandlerWhenDebugIsDisabled(t *testing.T) {
+	data.Handlers = data.New()
+	route := model.Route{Debug: false}
 
-	if strings.Join(msg.Messages, "\n") != expected {
-		t.Errorf("LogMsg doesn't contain expected payload. Expected: %s, got: %s", expected, msg.Prefix)
+	logHandler = new(bytes.Buffer)
+
+	spawner = func(h *model.Handler, out io.Writer, er io.Writer) error {
+		if out != nil {
+			_, _ = out.Write([]byte("this is stdout"))
+		}
+		if er != nil {
+			_, _ = er.Write([]byte("this is stderr"))
+		}
+
+		return nil
 	}
-}
 
-func TestCreateLogMsgAdsStdErrInfo(t *testing.T) {
-	expected := "FOO\nBAR"
-	err := bytes.Buffer{}
-	err.WriteString(expected)
+	handlerBuilder(route).ServeHTTP(nil, nil)
 
-	msg := createLogMsg("", bytes.Buffer{}, err)
+	// NOTE: logStream will write stdout and stderr contents eventually.
+	// We do not have any control the goroutines running logStream, thus we
+	// cannot use a synchronization primitive to wait for them.  Sorry.
+	time.Sleep(1 * time.Second)
 
-	if strings.Join(msg.Messages, "\n") != expected {
-		t.Errorf("LogMsg doesn't contain expected payload. Expected: %s, got: %s", expected, msg.Prefix)
-	}
-}
-
-func TestCreateLogMsgAdsStdOutAndStdErrInfo(t *testing.T) {
-	expected := "FOO\nBAR\nFOO BAZ"
-	out := bytes.Buffer{}
-	out.WriteString("FOO\nBAR\n")
-	err := bytes.Buffer{}
-	err.WriteString("FOO BAZ")
-
-	msg := createLogMsg("", out, err)
-
-	if strings.Join(msg.Messages, "\n") != expected {
-		t.Errorf("LogMsg doesn't contain expected payload. Expected: %s, got: %s", expected, msg.Prefix)
+	size := logHandler.(*bytes.Buffer).Len()
+	if size != 0 {
+		t.Error("Something was logged to stderr with debug=false")
 	}
 }

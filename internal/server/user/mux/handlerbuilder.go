@@ -18,13 +18,13 @@ package mux
 
 import (
 	"bufio"
-	"bytes"
 	"log"
 	"net/http"
+	"io"
+	"os"
 
 	"github.com/google/uuid"
 
-	"github.com/BBVA/kapow/internal/logger"
 	"github.com/BBVA/kapow/internal/server/data"
 	"github.com/BBVA/kapow/internal/server/model"
 	"github.com/BBVA/kapow/internal/server/user/spawn"
@@ -32,6 +32,7 @@ import (
 
 var spawner = spawn.Spawn
 var idGenerator = uuid.NewUUID
+var logHandler io.Writer = os.Stdout
 
 func handlerBuilder(route model.Route) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -51,29 +52,43 @@ func handlerBuilder(route model.Route) http.Handler {
 		data.Handlers.Add(h)
 		defer data.Handlers.Remove(h.ID)
 
-		stdOut := &bytes.Buffer{}
-		stdErr := &bytes.Buffer{}
-		err = spawner(h, stdOut, stdErr)
-		//err = spawner(h, nil)
+		if route.Debug {
+			var stdOutR, stdOutW *os.File
+			stdOutR, stdOutW, err = os.Pipe()
+			defer stdOutW.Close()
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			var stdErrR, stdErrW *os.File
+			stdErrR, stdErrW, err = os.Pipe()
+			defer stdErrW.Close()
+			if err != nil {
+				log.Println(err)
+				return
+			}
+
+			go logStream(h.ID, "stdout", stdOutR)
+			go logStream(h.ID, "stderr", stdErrR)
+
+			err = spawner(h, stdOutW, stdErrW)
+		} else {
+			err = spawner(h, nil, nil)
+		}
+
 
 		if err != nil {
 			log.Println(err)
 		}
 
-		logger.SendMsg(logger.SCRIPTS, createLogMsg(h.ID, *stdOut, *stdErr))
 	})
 }
 
-func createLogMsg(handlerId string, stdout, stderr bytes.Buffer) logger.LogMsg {
-	var messages []string
-	scanner := bufio.NewScanner(bytes.NewBuffer(stdout.Bytes()))
+func logStream(handlerId string, streamName string, stream *os.File) {
+	defer stream.Close()
+	execLog := log.New(logHandler, "", log.Ldate|log.Ltime|log.LUTC|log.Lmicroseconds)
+	scanner := bufio.NewScanner(stream)
 	for scanner.Scan() {
-		messages = append(messages, scanner.Text())
+		execLog.Printf("%s %s: %s", handlerId, streamName, scanner.Text())
 	}
-	scanner = bufio.NewScanner(bytes.NewBuffer(stderr.Bytes()))
-	for scanner.Scan() {
-		messages = append(messages, scanner.Text())
-	}
-
-	return logger.LogMsg{Prefix: handlerId, Messages: messages}
 }

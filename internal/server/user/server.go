@@ -34,11 +34,18 @@ var Server = http.Server{
 	Handler: mux.New(),
 }
 
+var DebugEndpoints bool
+
 // Run finishes configuring Server and runs ListenAndServe on it
-func Run(bindAddr string, wg *sync.WaitGroup, certFile, keyFile, cliCaFile string, cliAuth bool) {
+func Run(bindAddr string, wg *sync.WaitGroup, certFile, keyFile, cliCaFile string, cliAuth, debug bool) {
+
 	Server = http.Server{
 		Addr:    bindAddr,
 		Handler: mux.New(),
+	}
+
+	if debug {
+		Routes.SetDebug()
 	}
 
 	listener, err := net.Listen("tcp", bindAddr)

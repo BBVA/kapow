@@ -25,7 +25,6 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/BBVA/kapow/internal/logger"
 	"github.com/BBVA/kapow/internal/server"
 )
 
@@ -47,7 +46,7 @@ var ServerCmd = &cobra.Command{
 
 		sConf.ClientAuth, _ = cmd.Flags().GetBool("clientauth")
 		sConf.ClientCaFile, _ = cmd.Flags().GetString("clientcafile")
-		debug, _ := cmd.Flags().GetBool("debug")
+		sConf.Debug, _ = cmd.Flags().GetBool("debug")
 
 		// Set environment variables KAPOW_DATA_URL and KAPOW_CONTROL_URL only if they aren't set so we don't overwrite user's preferences
 		if _, exist := os.LookupEnv("KAPOW_DATA_URL"); !exist {
@@ -55,10 +54,6 @@ var ServerCmd = &cobra.Command{
 		}
 		if _, exist := os.LookupEnv("KAPOW_CONTROL_URL"); !exist {
 			os.Setenv("KAPOW_CONTROL_URL", "http://"+sConf.ControlBindAddr)
-		}
-
-		if debug {
-			logger.RegisterLogger(logger.SCRIPTS, nil)
 		}
 
 		server.StartServer(sConf)
@@ -83,11 +78,7 @@ var ServerCmd = &cobra.Command{
 			log.Printf("Done running powfile: %q\n", powfile)
 		}
 
-		if debug {
-			processLogs()
-		} else {
-			select {}
-		}
+		select {}
 	},
 }
 
@@ -122,13 +113,4 @@ func validateServerCommandArguments(cmd *cobra.Command, args []string) error {
 	}
 
 	return nil
-}
-
-func processLogs() {
-
-	for {
-		if !logger.ProcessMsg(logger.SCRIPTS) {
-			break
-		}
-	}
 }
