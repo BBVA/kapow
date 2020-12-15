@@ -27,6 +27,7 @@ import (
 	"time"
 
 	"github.com/BBVA/kapow/internal/server/model"
+	"github.com/BBVA/kapow/internal/server/user/spawn"
 	"github.com/gorilla/mux"
 )
 
@@ -227,6 +228,7 @@ func TestServeHTTPCallsInnerMuxAfterAcquiringLock(t *testing.T) {
 }
 
 func TestUpdateUpdatesMuxWithProvideRouteList(t *testing.T) {
+	spawner = spawn.Spawn
 	sm := New()
 	rs := []model.Route{
 		{
