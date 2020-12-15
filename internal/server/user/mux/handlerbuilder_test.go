@@ -1,3 +1,5 @@
+// +build !race
+
 /*
  * Copyright 2019 Banco Bilbao Vizcaya Argentaria, S.A.
  *
@@ -200,16 +202,16 @@ func TestHandlerBuilderRemovesHandlerWhenDone(t *testing.T) {
 	}
 }
 
-func TestHandlerBuilderLogToLogHandler(t *testing.T) {
+func TestHandlerBuilderLogToLogHandlerWhenDebugIsEnabled(t *testing.T) {
 	data.Handlers = data.New()
-	route := model.Route{}
+	route := model.Route{Debug: true}
 	var got string
 
 	logHandler = new(bytes.Buffer)
 
 	spawner = func(h *model.Handler, out io.Writer, er io.Writer) error {
-		out.Write([]byte("this is stdout"))
-		er.Write([]byte("this is stderr"))
+		_, _ = out.Write([]byte("this is stdout"))
+		_, _ = er.Write([]byte("this is stderr"))
 
 		return nil
 	}
@@ -227,5 +229,36 @@ func TestHandlerBuilderLogToLogHandler(t *testing.T) {
 	}
 	if ! strings.Contains(got, "this is stderr") {
 		t.Errorf("Stderr not preserved. Actual: %+q", got)
+	}
+}
+
+
+func TestHandlerBuilderDoesNotLogToLogHandlerWhenDebugIsDisabled(t *testing.T) {
+	data.Handlers = data.New()
+	route := model.Route{Debug: false}
+
+	logHandler = new(bytes.Buffer)
+
+	spawner = func(h *model.Handler, out io.Writer, er io.Writer) error {
+		if out != nil {
+			_, _ = out.Write([]byte("this is stdout"))
+		}
+		if er != nil {
+			_, _ = er.Write([]byte("this is stderr"))
+		}
+
+		return nil
+	}
+
+	handlerBuilder(route).ServeHTTP(nil, nil)
+
+	// NOTE: logStream will write stdout and stderr contents eventually.
+	// We do not have any control the goroutines running logStream, thus we
+	// cannot use a synchronization primitive to wait for them.  Sorry.
+	time.Sleep(1 * time.Second)
+
+	size := logHandler.(*bytes.Buffer).Len()
+	if size != 0 {
+		t.Error("Something was logged to stderr with debug=false")
 	}
 }

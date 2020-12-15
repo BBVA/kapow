@@ -27,6 +27,7 @@ import (
 type safeRouteList struct {
 	rs []model.Route
 	m  *sync.RWMutex
+	globalDebug bool
 }
 
 var Routes safeRouteList = New()
@@ -38,9 +39,14 @@ func New() safeRouteList {
 	}
 }
 
+func (srl *safeRouteList) SetDebug() {
+	srl.globalDebug = true
+}
+
 func (srl *safeRouteList) Append(r model.Route) model.Route {
 	srl.m.Lock()
 	r.Index = len(srl.rs)
+	r.Debug = srl.globalDebug || r.Debug
 	srl.rs = append(srl.rs, r)
 	srl.m.Unlock()
 

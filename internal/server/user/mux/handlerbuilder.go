@@ -52,23 +52,30 @@ func handlerBuilder(route model.Route) http.Handler {
 		data.Handlers.Add(h)
 		defer data.Handlers.Remove(h.ID)
 
-		stdOutR, stdOutW, err := os.Pipe()
-		defer stdOutW.Close()
-		if err != nil {
-			log.Println(err)
-			return
-		}
-		stdErrR, stdErrW, err := os.Pipe()
-		defer stdErrW.Close()
-		if err != nil {
-			log.Println(err)
-			return
+		if route.Debug {
+			var stdOutR, stdOutW *os.File
+			stdOutR, stdOutW, err = os.Pipe()
+			defer stdOutW.Close()
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			var stdErrR, stdErrW *os.File
+			stdErrR, stdErrW, err = os.Pipe()
+			defer stdErrW.Close()
+			if err != nil {
+				log.Println(err)
+				return
+			}
+
+			go logStream(h.ID, "stdout", stdOutR)
+			go logStream(h.ID, "stderr", stdErrR)
+
+			err = spawner(h, stdOutW, stdErrW)
+		} else {
+			err = spawner(h, nil, nil)
 		}
 
-		go logStream(h.ID, "stdout", stdOutR)
-		go logStream(h.ID, "stderr", stdErrR)
-
-		err = spawner(h, stdOutW, stdErrW)
 
 		if err != nil {
 			log.Println(err)

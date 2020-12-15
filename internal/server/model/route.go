@@ -42,4 +42,6 @@ type Route struct {
 	// Index is this route position in the server's routes list.
 	// It is an output field, its value is ignored as input.
 	Index int `json:"index"`
+
+	Debug bool `json:"debug"`
 }
