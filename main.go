@@ -17,12 +17,10 @@
 package main
 
 import (
-	"fmt"
-	"os"
-
 	"github.com/spf13/cobra"
 
 	"github.com/BBVA/kapow/internal/cmd"
+	"github.com/BBVA/kapow/internal/logger"
 )
 
 func main() {
@@ -35,7 +33,6 @@ func main() {
 
 	err := kapowCmd.Execute()
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		logger.L.Fatalln(err)
 	}
 }

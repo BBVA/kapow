@@ -18,13 +18,12 @@ package cmd
 
 import (
 	"errors"
-	"fmt"
-	"log"
 	"os"
 	"os/exec"
 
 	"github.com/spf13/cobra"
 
+	"github.com/BBVA/kapow/internal/logger"
 	"github.com/BBVA/kapow/internal/server"
 )
 
@@ -62,9 +61,9 @@ var ServerCmd = &cobra.Command{
 			powfile := args[0]
 			_, err := os.Stat(powfile)
 			if os.IsNotExist(err) {
-				log.Fatalf("%s does not exist", powfile)
+				logger.L.Fatalf("%s does not exist", powfile)
 			}
-			log.Printf("Running powfile: %q\n", powfile)
+			logger.L.Printf("Running powfile: %q\n", powfile)
 			kapowCMD := exec.Command("bash", powfile)
 			kapowCMD.Stdout = os.Stdout
 			kapowCMD.Stderr = os.Stderr
@@ -72,10 +71,9 @@ var ServerCmd = &cobra.Command{
 
 			err = kapowCMD.Run()
 			if err != nil {
-				log.Fatal(err)
+				logger.L.Fatal(err)
 			}
-			fmt.Println()
-			log.Printf("Done running powfile: %q\n", powfile)
+			logger.L.Printf("Done running powfile: %q\n", powfile)
 		}
 
 		select {}

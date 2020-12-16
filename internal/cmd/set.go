@@ -18,11 +18,11 @@ package cmd
 
 import (
 	"io"
-	"log"
 	"os"
 	"strings"
 
 	"github.com/BBVA/kapow/internal/client"
+	"github.com/BBVA/kapow/internal/logger"
 
 	"github.com/spf13/cobra"
 )
@@ -47,7 +47,7 @@ var SetCmd = &cobra.Command{
 		}
 
 		if err := client.SetData(dataURL, handler, path, r); err != nil {
-			log.Fatal(err)
+			logger.L.Fatal(err)
 		}
 	},
 }

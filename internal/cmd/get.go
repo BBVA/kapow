@@ -17,12 +17,12 @@
 package cmd
 
 import (
-	"log"
 	"os"
 
 	"github.com/spf13/cobra"
 
 	"github.com/BBVA/kapow/internal/client"
+	"github.com/BBVA/kapow/internal/logger"
 )
 
 // GetCmd is the command line interface for get kapow data operation
@@ -38,7 +38,7 @@ var GetCmd = &cobra.Command{
 
 		err := client.GetData(dataURL, handler, args[0], os.Stdout)
 		if err != nil {
-			log.Fatal(err)
+			logger.L.Fatal(err)
 		}
 	},
 }

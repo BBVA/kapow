@@ -17,11 +17,11 @@
 package data
 
 import (
-	"log"
 	"net"
 	"net/http"
 	"sync"
 
+	"github.com/BBVA/kapow/internal/logger"
 	"github.com/BBVA/kapow/internal/server/httperror"
 	"github.com/gorilla/mux"
 )
@@ -87,12 +87,12 @@ func Run(bindAddr string, wg *sync.WaitGroup) {
 
 	listener, err := net.Listen("tcp", bindAddr)
 	if err != nil {
-		log.Fatal(err)
+		logger.L.Fatal(err)
 	}
 
 	// Signal startup
-	log.Printf("DataServer listening at %s\n", bindAddr)
+	logger.L.Printf("DataServer listening at %s\n", bindAddr)
 	wg.Done()
 
-	log.Fatal(http.Serve(listener, configRouter(rs)))
+	logger.L.Fatal(http.Serve(listener, configRouter(rs)))
 }

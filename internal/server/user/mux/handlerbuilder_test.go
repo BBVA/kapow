@@ -22,6 +22,7 @@ import (
 	"bytes"
 	"errors"
 	"io"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -31,6 +32,7 @@ import (
 
 	"github.com/google/uuid"
 
+	"github.com/BBVA/kapow/internal/logger"
 	"github.com/BBVA/kapow/internal/server/data"
 	"github.com/BBVA/kapow/internal/server/model"
 	"github.com/BBVA/kapow/internal/server/user/spawn"
@@ -207,7 +209,8 @@ func TestHandlerBuilderLogToLogHandlerWhenDebugIsEnabled(t *testing.T) {
 	route := model.Route{Debug: true}
 	var got string
 
-	logHandler = new(bytes.Buffer)
+	logHandler := new(bytes.Buffer)
+	logger.L = log.New(logHandler, "", log.LstdFlags)
 
 	spawner = func(h *model.Handler, out io.Writer, er io.Writer) error {
 		_, _ = out.Write([]byte("this is stdout"))
@@ -223,21 +226,21 @@ func TestHandlerBuilderLogToLogHandlerWhenDebugIsEnabled(t *testing.T) {
 	// cannot use a synchronization primitive to wait for them.  Sorry.
 	time.Sleep(1 * time.Second)
 
-	got = logHandler.(*bytes.Buffer).String()
-	if ! strings.Contains(got, "this is stdout") {
+	got = logHandler.String()
+	if !strings.Contains(got, "this is stdout") {
 		t.Errorf("Stdout not preserved. Actual: %+q", got)
 	}
-	if ! strings.Contains(got, "this is stderr") {
+	if !strings.Contains(got, "this is stderr") {
 		t.Errorf("Stderr not preserved. Actual: %+q", got)
 	}
 }
-
 
 func TestHandlerBuilderDoesNotLogToLogHandlerWhenDebugIsDisabled(t *testing.T) {
 	data.Handlers = data.New()
 	route := model.Route{Debug: false}
 
-	logHandler = new(bytes.Buffer)
+	logHandler := new(bytes.Buffer)
+	logger.L = log.New(logHandler, "", log.LstdFlags)
 
 	spawner = func(h *model.Handler, out io.Writer, er io.Writer) error {
 		if out != nil {
@@ -257,7 +260,7 @@ func TestHandlerBuilderDoesNotLogToLogHandlerWhenDebugIsDisabled(t *testing.T) {
 	// cannot use a synchronization primitive to wait for them.  Sorry.
 	time.Sleep(1 * time.Second)
 
-	size := logHandler.(*bytes.Buffer).Len()
+	size := logHandler.Len()
 	if size != 0 {
 		t.Error("Something was logged to stderr with debug=false")
 	}

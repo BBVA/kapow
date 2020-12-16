@@ -17,10 +17,11 @@
 package control
 
 import (
-	"log"
 	"net"
 	"net/http"
 	"sync"
+
+	"github.com/BBVA/kapow/internal/logger"
 )
 
 // Run Starts the control server listening in bindAddr
@@ -28,12 +29,12 @@ func Run(bindAddr string, wg *sync.WaitGroup) {
 
 	listener, err := net.Listen("tcp", bindAddr)
 	if err != nil {
-		log.Fatal(err)
+		logger.L.Fatal(err)
 	}
 
 	// Signal startup
-	log.Printf("ControlServer listening at %s\n", bindAddr)
+	logger.L.Printf("ControlServer listening at %s\n", bindAddr)
 	wg.Done()
 
-	log.Fatal(http.Serve(listener, configRouter()))
+	logger.L.Fatal(http.Serve(listener, configRouter()))
 }

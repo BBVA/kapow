@@ -18,10 +18,10 @@ package cmd
 
 import (
 	"io/ioutil"
-	"log"
 	"os"
 
 	"github.com/BBVA/kapow/internal/client"
+	"github.com/BBVA/kapow/internal/logger"
 
 	"github.com/spf13/cobra"
 )
@@ -39,7 +39,7 @@ func init() {
 			controlURL, _ := cmd.Flags().GetString("control-url")
 
 			if err := client.ListRoutes(controlURL, os.Stdout); err != nil {
-				log.Fatal(err)
+				logger.L.Fatal(err)
 			}
 		},
 	}
@@ -67,13 +67,13 @@ func init() {
 					buf, err = ioutil.ReadFile(commandFile)
 				}
 				if err != nil {
-					log.Fatal(err)
+					logger.L.Fatal(err)
 				}
 				command = string(buf)
 			}
 
 			if err := client.AddRoute(controlURL, urlPattern, method, entrypoint, command, os.Stdout); err != nil {
-				log.Fatal(err)
+				logger.L.Fatal(err)
 			}
 		},
 	}
@@ -91,7 +91,7 @@ func init() {
 			controlURL, _ := cmd.Flags().GetString("control-url")
 
 			if err := client.RemoveRoute(controlURL, args[0]); err != nil {
-				log.Fatal(err)
+				logger.L.Fatal(err)
 			}
 		},
 	}

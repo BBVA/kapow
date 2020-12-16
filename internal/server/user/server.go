@@ -21,11 +21,11 @@ import (
 	"crypto/x509"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net"
 	"net/http"
 	"sync"
 
+	"github.com/BBVA/kapow/internal/logger"
 	"github.com/BBVA/kapow/internal/server/user/mux"
 )
 
@@ -50,7 +50,7 @@ func Run(bindAddr string, wg *sync.WaitGroup, certFile, keyFile, cliCaFile strin
 
 	listener, err := net.Listen("tcp", bindAddr)
 	if err != nil {
-		log.Fatal(err)
+		logger.L.Fatal(err)
 	}
 
 	if (certFile != "") && (keyFile != "") {
@@ -62,28 +62,28 @@ func Run(bindAddr string, wg *sync.WaitGroup, certFile, keyFile, cliCaFile strin
 			var err error
 			Server.TLSConfig.ClientCAs, err = loadCertificatesFromFile(cliCaFile)
 			if err != nil {
-				log.Fatalf("UserServer failed to load CA certs: %s\n", err)
+				logger.L.Fatalf("UserServer failed to load CA certs: %s\n", err)
 			} else {
 				CAStore := "System store"
 				if Server.TLSConfig.ClientCAs != nil {
 					CAStore = cliCaFile
 				}
-				log.Printf("UserServer using CA certs from %s\n", CAStore)
+				logger.L.Printf("UserServer using CA certs from %s\n", CAStore)
 				Server.TLSConfig.ClientAuth = tls.RequireAndVerifyClientCert
 			}
 		}
 
 		// Signal startup
-		log.Printf("UserServer listening at %s\n", bindAddr)
+		logger.L.Printf("UserServer listening at %s\n", bindAddr)
 		wg.Done()
 
-		log.Fatal(Server.ServeTLS(listener, certFile, keyFile))
+		logger.L.Fatal(Server.ServeTLS(listener, certFile, keyFile))
 	} else {
 		// Signal startup
-		log.Printf("UserServer listening at %s\n", bindAddr)
+		logger.L.Printf("UserServer listening at %s\n", bindAddr)
 		wg.Done()
 
-		log.Fatal(Server.Serve(listener))
+		logger.L.Fatal(Server.Serve(listener))
 	}
 }
 
