@@ -21,6 +21,7 @@ import (
 
 	"github.com/gorilla/mux"
 
+	"github.com/BBVA/kapow/internal/logger"
 	"github.com/BBVA/kapow/internal/server/model"
 )
 
@@ -30,6 +31,35 @@ func gorillize(rs []model.Route, buildHandler func(model.Route) http.Handler) *m
 	for _, r := range rs {
 		m.Handle(r.Pattern, buildHandler(r)).Methods(r.Method)
 	}
-
+	m.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusNotFound)
+		logger.LogAccess(
+			r.RemoteAddr,
+			"-",
+			"-",
+			r.Method,
+			r.RequestURI,
+			r.Proto,
+			http.StatusNotFound,
+			0,
+			r.Header.Get("Referer"),
+			r.Header.Get("User-Agent"),
+		)
+	})
+	m.MethodNotAllowedHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		logger.LogAccess(
+			r.RemoteAddr,
+			"-",
+			"-",
+			r.Method,
+			r.RequestURI,
+			r.Proto,
+			http.StatusMethodNotAllowed,
+			0,
+			r.Header.Get("Referer"),
+			r.Header.Get("User-Agent"),
+		)
+	})
 	return m
 }

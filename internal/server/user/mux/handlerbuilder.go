@@ -45,6 +45,7 @@ func handlerBuilder(route model.Route) http.Handler {
 			Route:   route,
 			Request: r,
 			Writer:  w,
+			Status:  200,
 		}
 
 		data.Handlers.Add(h)
@@ -78,6 +79,20 @@ func handlerBuilder(route model.Route) http.Handler {
 			logger.L.Println(err)
 		}
 
+		if r != nil {
+			logger.LogAccess(
+				r.RemoteAddr,
+				h.ID,
+				"-",
+				r.Method,
+				r.RequestURI,
+				r.Proto,
+				h.Status,
+				h.SentBytes,
+				r.Header.Get("Referer"),
+				r.Header.Get("User-Agent"),
+			)
+		}
 	})
 }
 

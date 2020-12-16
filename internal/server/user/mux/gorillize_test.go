@@ -42,6 +42,8 @@ func handleRouteIDToBody(route model.Route) http.Handler {
 
 func TestGorillizeReturnsAnEmptyMuxWhenAnEmptyRouteList(t *testing.T) {
 	m := gorillize([]model.Route{}, handlerStatusOK)
+	m.NotFoundHandler = nil
+	m.MethodNotAllowedHandler = nil
 
 	if !reflect.DeepEqual(*m, *mux.NewRouter()) {
 		t.Error("Returned mux not empty")

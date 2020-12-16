@@ -192,7 +192,8 @@ func setResponseStatus(w http.ResponseWriter, r *http.Request, h *model.Handler)
 	} else if http.StatusText(si) == "" {
 		httperror.ErrorJSON(w, InvalidStatusCode, http.StatusBadRequest)
 	} else {
-		h.Writer.WriteHeader(int(si))
+		h.Status = si
+		h.Writer.WriteHeader(si)
 	}
 }
 
@@ -221,10 +222,12 @@ func setResponseCookies(w http.ResponseWriter, r *http.Request, h *model.Handler
 }
 
 func setResponseBody(w http.ResponseWriter, r *http.Request, h *model.Handler) {
-	if n, err := io.Copy(h.Writer, r.Body); err != nil {
+	n, err := io.Copy(h.Writer, r.Body)
+	if err != nil {
 		if n > 0 {
 			panic(http.ErrAbortHandler)
 		}
 		httperror.ErrorJSON(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 	}
+	h.SentBytes += n
 }

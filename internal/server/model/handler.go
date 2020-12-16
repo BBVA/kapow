@@ -41,4 +41,10 @@ type Handler struct {
 
 	// Writer is the original http.ResponseWriter of the request.
 	Writer http.ResponseWriter
+
+	// Status is the returned status code
+	Status int
+
+	// SentBytes is the number of sent bytes
+	SentBytes int64
 }

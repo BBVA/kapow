@@ -32,7 +32,7 @@ type SwappableMux struct {
 
 func New() *SwappableMux {
 	return &SwappableMux{
-		root: mux.NewRouter(),
+		root: gorillize([]model.Route{}, handlerBuilder),
 	}
 }
 
