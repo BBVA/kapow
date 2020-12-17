@@ -38,10 +38,6 @@ changelog:
     exclude:
       - '^docs:'
       - '^test:'
-signs:
-  - artifacts: checksum
-    signature: "${artifact}.GPG"
-    args: ["--batch", "--local-user", "release-bot@kapow", "--output", "${signature}", "--armor", "--clear-sign", "${artifact}"]
 
 dockers:
   - goos: linux
