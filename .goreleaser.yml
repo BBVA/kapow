@@ -34,10 +34,9 @@ checksum:
 snapshot:
   name_template: "{{ .Tag }}-next"
 changelog:
-  sort: asc
   filters:
     exclude:
-      - ^(chore|docs?|fix|feat|typo|refactor)(\([^)]+\))?:
+      - '^(chore|docs?|feat|fix|refactor|test|typo|wip)(\([^)]+\))?:'
 
 dockers:
   - goos: linux
