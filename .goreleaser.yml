@@ -54,7 +54,6 @@ dockers:
     image_templates:
       - "bbvalabsci/kapow:latest"
       - "bbvalabsci/kapow:{{ .Tag }}"
-      - "bbvalabsci/kapow:{{ .Tag }}-{{ .Env.GO_VERSION }}"
       - "bbvalabsci/kapow:v{{ .Major }}"
 
 release:
