@@ -37,8 +37,7 @@ changelog:
   sort: asc
   filters:
     exclude:
-      - '^docs:'
-      - '^test:'
+      - ^(chore|docs?|fix|feat|typo|refactor)(\([^)]+\))?:
 
 dockers:
   - goos: linux
