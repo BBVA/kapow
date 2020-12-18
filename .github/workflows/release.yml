@@ -36,16 +36,8 @@ jobs:
         password="${{ secrets.DOCKERHUB_PASSWORD }}"
         echo "$password" | docker login --username "$username" --password-stdin
 
-    - name: Load GPG private key
-      run: |
-        echo "${{ secrets.GPG_PRIVATE_KEY" }} | gpg --import
-
     - uses: goreleaser/goreleaser-action@v2
       with:
         args: release --rm-dist ${{ steps.release-notes.outputs.ARGS }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Clear ~/.gnupg
-      run: |
-        rm -rf ~/.gnupg
