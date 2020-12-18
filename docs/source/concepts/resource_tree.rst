@@ -50,6 +50,10 @@ Overview
     │─ route
     │  └──── id                     Id of the route that matched this request.
     │
+    |─ server
+    │  └──── log                    Log to server stderr
+    │        └──── <prefix>         Optional prefix to the message
+    │
     └─ response
       ├──── status                  HTTP status code
       ├──── headers
@@ -429,6 +433,25 @@ then, when handling the request:
 
    $ kapow get /route/id
    ecd5d63f-f28b-11ea-ac55-ec21e5089c1f
+
+
+``/server/log/<prefix>``
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Allows logging to Kapow!'s server stderr:
+
+.. code-block:: console
+
+   $ kapow set /server/log/my_banana_peeler 'banana too slippery!'
+
+... meanwhile, in the server...
+
+.. code-block:: console
+
+   2020/12/18 11:15:49.437642 620846c6-4122-11eb-abeb-002b671b12f9 my_banana_peeler: banana too slippery!
+
+Note that the '/my_banana_peeler' part is an optional arbitrary prefix,
+and can be omitted.
 
 
 ``/response/status`` Resource
