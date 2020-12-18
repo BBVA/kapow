@@ -83,6 +83,10 @@ func Run(bindAddr string, wg *sync.WaitGroup) {
 		{"/handlers/{handlerID}/response/cookies/{name}", "PUT", lockResponseWriter(setResponseCookies)},
 		{"/handlers/{handlerID}/response/body", "PUT", lockResponseWriter(setResponseBody)},
 		{"/handlers/{handlerID}/response/stream", "PUT", lockResponseWriter(setResponseBody)},
+
+		// logging
+		{"/handlers/{handlerID}/server/log/{prefix}", "PUT", setServerLog},
+		{"/handlers/{handlerID}/server/log", "PUT", setServerLog},
 	}
 
 	listener, err := net.Listen("tcp", bindAddr)

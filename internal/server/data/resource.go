@@ -23,6 +23,7 @@ import (
 	"net/textproto"
 	"strconv"
 
+	"github.com/BBVA/kapow/internal/logger"
 	"github.com/BBVA/kapow/internal/server/httperror"
 	"github.com/BBVA/kapow/internal/server/model"
 	"github.com/gorilla/mux"
@@ -230,4 +231,18 @@ func setResponseBody(w http.ResponseWriter, r *http.Request, h *model.Handler) {
 		httperror.ErrorJSON(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 	}
 	h.SentBytes += n
+}
+
+func setServerLog(w http.ResponseWriter, r *http.Request, h *model.Handler) {
+	msg, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		httperror.ErrorJSON(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+	handlerId := mux.Vars(r)["handlerID"]
+	if prefix := mux.Vars(r)["prefix"]; prefix == "" {
+		logger.L.Printf("%s %s\n", handlerId, msg)
+	} else {
+		logger.L.Printf("%s %s: %s\n", handlerId, prefix, msg)
+	}
 }
