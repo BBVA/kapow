@@ -36,7 +36,7 @@ snapshot:
 changelog:
   filters:
     exclude:
-      - '^(chore|docs?|feat|fix|refactor|test|typo|wip)(\([^)]+\))?:'
+      - '^(chore|docs?|fix|refactor|style|test|typo|wip)(\([^)]+\))?:'
 
 dockers:
   - goos: linux
