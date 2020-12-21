@@ -1,0 +1,19 @@
+#!/usr/bin/env sh
+
+set -e
+
+user=$(kapow get /ssl/client/i/dn)
+
+#sed '/^#.*/d' | while read -r dn
+while read -r dn
+do
+    [ -z "$dn" ] && continue
+    if [ "$user" = "$dn" ]; then
+        kapow set /server/log/validsslclient "Found valid user: '$user'"
+        exit 0
+    fi
+done
+
+kapow set /response/status 403 # Forbidden
+kapow set /server/log/validsslclient "Invalid user: '$user'"
+exit 127
