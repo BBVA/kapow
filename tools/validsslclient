@@ -4,7 +4,6 @@ set -e
 
 user=$(kapow get /ssl/client/i/dn)
 
-#sed '/^#.*/d' | while read -r dn
 while read -r dn
 do
     [ -z "$dn" ] && continue
