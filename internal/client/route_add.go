@@ -27,10 +27,14 @@ import (
 // AddRoute will add a new route in kapow
 func AddRoute(host, path, method, entrypoint, command string, w io.Writer) error {
 	url := host + "/routes"
-	body, _ := json.Marshal(map[string]string{
+	payload := map[string]string{
 		"method":      method,
 		"url_pattern": path,
-		"entrypoint":  entrypoint,
-		"command":     command})
+		"command":     command,
+	}
+	if entrypoint != "" {
+		payload["entrypoint"] = entrypoint
+	}
+	body, _ := json.Marshal(payload)
 	return http.Post(url, "application/json", bytes.NewReader(body), w)
 }

@@ -132,6 +132,10 @@ func addRoute(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	if route.Entrypoint == "" {
+		route.Entrypoint = defaultEntrypoint
+	}
+
 	route.ID = id.String()
 
 	created := funcAdd(route)
