@@ -17,9 +17,11 @@
 package cmd
 
 import (
+	"bufio"
 	"errors"
+	"io"
 	"os"
-	"os/exec"
+	"sync"
 
 	"github.com/spf13/cobra"
 
@@ -29,7 +31,7 @@ import (
 
 // ServerCmd is the command line interface for kapow server
 var ServerCmd = &cobra.Command{
-	Use:   "server [optional flags] [optional pow file(s)]",
+	Use:   "server [optional flags] [optional init program(s)]",
 	Short: "Start a kapow server",
 	Long: `Start a Kapow server with a client interface, a data interface	and an
 	admin interface`,
@@ -57,23 +59,8 @@ var ServerCmd = &cobra.Command{
 
 		server.StartServer(sConf)
 
-		if len(args) > 0 {
-			powfile := args[0]
-			_, err := os.Stat(powfile)
-			if os.IsNotExist(err) {
-				logger.L.Fatalf("%s does not exist", powfile)
-			}
-			logger.L.Printf("Running powfile: %q\n", powfile)
-			kapowCMD := exec.Command("bash", powfile)
-			kapowCMD.Stdout = os.Stdout
-			kapowCMD.Stderr = os.Stderr
-			kapowCMD.Env = os.Environ()
-
-			err = kapowCMD.Run()
-			if err != nil {
-				logger.L.Fatal(err)
-			}
-			logger.L.Printf("Done running powfile: %q\n", powfile)
+		for _, path := range args {
+			go Run(path, sConf.Debug)
 		}
 
 		select {}
@@ -111,4 +98,46 @@ func validateServerCommandArguments(cmd *cobra.Command, args []string) error {
 	}
 
 	return nil
+}
+
+func Run(path string, debug bool) {
+	logger.L.Printf("Running init program %+q", path)
+	cmd := BuildCmd(path)
+	cmd.Env = os.Environ()
+
+	var wg sync.WaitGroup
+	if debug {
+		if stdout, err := cmd.StdoutPipe(); err == nil {
+			wg.Add(1)
+			go logPipe(path, "stdout", stdout, &wg)
+		}
+		if stderr, err := cmd.StderrPipe(); err == nil {
+			wg.Add(1)
+			go logPipe(path, "stderr", stderr, &wg)
+		}
+	}
+	err := cmd.Start()
+	if err != nil {
+		logger.L.Fatalf("Unable to run init program %+q: %s", path, err)
+	}
+
+	wg.Wait()
+	err = cmd.Wait()
+	if err != nil {
+		logger.L.Printf("Init program exited with error: %s", err)
+	} else {
+		logger.L.Printf("Init program %+q finished OK", path)
+	}
+}
+
+func logPipe(path, name string, pipe io.ReadCloser, wg *sync.WaitGroup) {
+	defer wg.Done()
+	in := bufio.NewScanner(pipe)
+
+	for in.Scan() {
+		logger.L.Printf("%+q (%s): %s", path, name, in.Text())
+	}
+	if err := in.Err(); err != nil {
+		logger.L.Printf("Error reading from %+q’s %s: %s", path, name, err)
+	}
 }

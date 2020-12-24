@@ -10,7 +10,7 @@ Run a long network scan in background with support for webhook on completion.
 ## How to run it
 
 ```
-$ kapow server NetworkScanner.pow
+$ kapow server NetworkScanner
 ```
 
 

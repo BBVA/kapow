@@ -8,7 +8,7 @@ Provides an HTTP service that allows the user to sniff the network in real time.
 For the sake of simplicity, run:
 
 ```
-$ sudo -E kapow server NetworkSniffer.pow
+$ sudo -E kapow server NetworkSniffer
 ```
 
 In a production environment, tcpdump should be run with the appropiate

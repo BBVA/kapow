@@ -6,7 +6,7 @@ A simple "Hello World!" type example.
 ## How to run it
 
 ```
-$ kapow server HelloWorld.pow
+$ kapow server HelloWorld
 ```
 
 

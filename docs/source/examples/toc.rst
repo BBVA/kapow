@@ -3,7 +3,7 @@ Examples
 
 .. toctree::
 
-   working_with_pow_files
+   working_with_init_programs
    managing_routes
    handling_http_requests
    using_json

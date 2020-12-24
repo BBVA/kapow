@@ -80,7 +80,7 @@ func init() {
 	// TODO: Add default values for flags and remove path flag
 	routeAddCmd.Flags().String("control-url", getEnv("KAPOW_CONTROL_URL", "http://localhost:8081"), "Kapow! control interface URL")
 	routeAddCmd.Flags().StringP("method", "X", "GET", "HTTP method to accept")
-	routeAddCmd.Flags().StringP("entrypoint", "e", "/bin/sh -c", "Command to execute")
+	routeAddCmd.Flags().StringP("entrypoint", "e", "", "Command to execute")
 	routeAddCmd.Flags().StringP("command", "c", "", "Command to pass to the shell")
 
 	var routeRemoveCmd = &cobra.Command{

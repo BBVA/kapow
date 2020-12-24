@@ -48,11 +48,5 @@ acceptance: install
 deps:
 	@echo "deps here"
 
-docker: build
-	cp $(BUILD_DIR)/$(BINARY_NAME) $(DOCKER_DIR)/
-	cp $(DOCS_DIR)/*.pow $(DOCKER_DIR)/
-	cd $(DOCKER_DIR) && docker build -t kapow .
-	cd ..
-
 clean:
 	rm -rf	 $(BUILD_DIR) $(OUTPUT_DIR) $(DOCKER_DIR)/*

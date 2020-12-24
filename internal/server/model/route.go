@@ -19,7 +19,7 @@ package model
 // Route contains the data needed to represent a Kapow! user route.
 type Route struct {
 	// ID is the unique identifier of the Route.
-	ID string `json:"id"`
+	ID string `json:"id,omitempty"`
 
 	// Method is the HTTP method that will match this Route.
 	Method string `json:"method"`
@@ -33,7 +33,7 @@ type Route struct {
 	//
 	// This string will be split according to the shell parsing rules to
 	// be passed as a list to exec.Command.
-	Entrypoint string `json:"entrypoint"`
+	Entrypoint string `json:"entrypoint,omitempty"`
 
 	// Command is the last argument to be passed to exec.Command when
 	// executing the Entrypoint
@@ -43,5 +43,5 @@ type Route struct {
 	// It is an output field, its value is ignored as input.
 	Index int `json:"index"`
 
-	Debug bool `json:"debug"`
+	Debug bool `json:"debug,omitempty"`
 }

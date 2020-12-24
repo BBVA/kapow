@@ -5,7 +5,7 @@ A small web gui for [pandoc](https://pandoc.org) that allows to convert between 
 ## How to run it
 
 ```
-$ kapow server DocumentConverter.pow
+$ kapow server DocumentConverter
 ```
 
 

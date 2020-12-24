@@ -31,7 +31,6 @@ func TestSuccessOnCorrectRoute(t *testing.T) {
 		JSON(map[string]string{
 			"method":      "GET",
 			"url_pattern": "/hello",
-			"entrypoint":  "",
 			"command":     "echo Hello World | kapow set /response/body",
 		}).
 		Reply(http.StatusCreated).
