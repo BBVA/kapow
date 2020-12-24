@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 
 kapow route add /apache-errors - <<-'EOF'
 	cat /var/log/apache2/access.log | grep 'File does not exist' | kapow set /response/body

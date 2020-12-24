@@ -33,7 +33,7 @@ command line:
 
 .. code-block:: console
 
-  $ kapow server --keyfile path/to/keyfile --certfile path/to/certfile foobar.pow
+  $ kapow server --keyfile path/to/keyfile --certfile path/to/certfile foobar-route
 
 Now *Kapow!* is listening on its default port (8080) accepting requests over
 HTTPS. You can test it with the following command:
@@ -60,7 +60,7 @@ CA certificate issuing the client certificates we want to accept with the
 
 .. code-block:: console
 
-  $ kapow server --keyfile path/to/keyfile --certfile path/to/certfile --clientauth=true --clientcafile path/to/clientCAfile foobar.pow
+  $ kapow server --keyfile path/to/keyfile --certfile path/to/certfile --clientauth=true --clientcafile path/to/clientCAfile foobar-route
 
 With this configuration *Kapow!* will reject connections that do not present a
 client certificate or one certificate not issued by the specified CA. You can

@@ -11,7 +11,8 @@ In this example we'll be adding the header ``X-Content-Type-Options`` to the res
 .. code-block:: console
    :linenos:
 
-   $ cat sniff.pow
+   $ cat sniff-route
+   #!/usr/bin/env sh
    kapow route add /sec-hello-world - <<-'EOF'
    	kapow set /response/headers/X-Content-Type-Options nosniff
    	kapow set /response/headers/Content-Type text/plain
@@ -19,7 +20,7 @@ In this example we'll be adding the header ``X-Content-Type-Options`` to the res
    	echo this will be interpreted as plain text | kapow set /response/body
    EOF
 
-   $ kapow server nosniff.pow
+   $ kapow server nosniff-route
 
 Testing with :program:`curl`:
 
@@ -67,7 +68,8 @@ Uploading a file using *Kapow!* is very simple:
 .. code-block:: console
    :linenos:
 
-   $ cat upload.pow
+   $ cat upload-route
+   #!/usr/bin/env sh
    kapow route add -X POST /upload-file - <<-'EOF'
    	kapow get /request/files/data/content | kapow set /response/body
    EOF
@@ -89,7 +91,8 @@ In this example we reply the line count of the file received in the request:
 .. code-block:: console
    :linenos:
 
-   $ cat count-file-lines.pow
+   $ cat count-file-lines
+   #!/usr/bin/env sh
    kapow route add -X POST /count-file-lines - <<-'EOF'
 
    	# Get sent file
@@ -121,7 +124,8 @@ You can specify custom status code for `HTTP` response:
 .. code-block:: console
    :linenos:
 
-   $ cat error.pow
+   $ cat error-route
+   #!/usr/bin/env sh
    kapow route add /error - <<-'EOF'
    	kapow set /response/status 401
    	echo -n '401 error' | kapow set /response/body
@@ -158,7 +162,8 @@ In this example we'll redirect our users to `Google`:
 .. code-block:: console
    :linenos:
 
-   $ cat redirect.pow
+   $ cat redirect
+   #!/usr/bin/env sh
    kapow route add /redirect - <<-'EOF'
    	kapow set /response/headers/Location https://google.com
    	kapow set /response/status 301
@@ -196,7 +201,8 @@ In the next example we'll set a cookie:
 .. code-block:: console
    :linenos:
 
-   $ cat cookie.pow
+   $ cat cookie
+   #!/usr/bin/env sh
    kapow route add /setcookie - <<-'EOF'
    	CURRENT_STATUS=$(kapow get /request/cookies/kapow-status)
 

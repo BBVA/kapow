@@ -116,10 +116,10 @@ Install *Kapow!*
 Follow the :ref:`installation instructions <installation>`.
 
 
-Write a :file:`ping.pow` File
-+++++++++++++++++++++++++++++
+Write an Init Program :file:`ping-route`
++++++++++++++++++++++++++++++++++++++++
 
-*Kapow!* uses plain text files (called `pow` files) where the endpoints you want
+*Kapow!* uses init programs/scripts where the endpoints you want
 to expose are defined.
 
 For each endpoint, you can decide which commands get executed.
@@ -128,11 +128,15 @@ For our example we need a file like this:
 
 .. code-block:: console
 
-    $ cat ping.pow
+    $ chmod +x ping-route
+    $ cat ping-route
+    #!/usr/bin/env sh
     kapow route add /ping -c 'ping -c 1 10.10.10.100 | kapow set /response/body'
 
 Let's dissect this beast piece by piece:
 
+#. ``#!/usr/bin/env sh`` - shebang line so that the kernel knows which
+   interpreter to use
 #. ``kapow route add /ping`` - adds a new `HTTP API` endpoint at ``/ping``
    path in the *Kapow!* server.  You have to use the ``GET`` method to invoke
    the endpoint.
@@ -147,18 +151,19 @@ Let's dissect this beast piece by piece:
 Launch the Service
 ++++++++++++++++++
 
-At this point, we only need to launch :program:`kapow` with our :file:`ping.pow`:
+At this point, we only need to launch :program:`kapow` with our
+:file:`ping-route`:
 
 .. code-block:: console
 
-    $ kapow server ping.pow
+    $ kapow server ping-route
 
 *Kapow!* can expose the user interface through HTTPS, to do this provide the
 corresponding key and certificates chain paths at startup:
 
 .. code-block:: console
 
-    $ kapow server --keyfile path/to/keyfile --certfile path/to/certfile ping.pow
+    $ kapow server --keyfile path/to/keyfile --certfile path/to/certfile ping-route
 
 
 Consume the Service

@@ -21,19 +21,22 @@ us easily **turn that into an HTTP API**.
 ### Let's see this with an example
 
 We want to expose **log entries** for files not found on our **Apache Web
-Server**, as an HTTP API.  With *Kapow!* we just need to write this file:
+Server**, as an HTTP API.  With *Kapow!* we just need to write this
+*executable* script:
 
-```bash
-[apache-host]$ cat search-apache-errors.pow
+``` console
+[apache-host]$ cat search-apache-errors
+#!/usr/bin/env sh
 kapow route add /apache-errors - <<-'EOF'
-    cat /var/log/apache2/access.log | grep 'File does not exist' | kapow set /response/body
+	cat /var/log/apache2/access.log | grep 'File does not exist' | kapow set /response/body
 EOF
+[apache-host]$ chmod +x search-apache-errors
 ```
 
 and then, run it using *Kapow!*
 
 ```bash
-[apache-host]$ kapow server --bind 0.0.0.0:8080 search-apache-errors.pow
+[apache-host]$ kapow server --bind 0.0.0.0:8080 search-apache-errors
 ```
 
 finally, we can read from the just-defined endpoint:

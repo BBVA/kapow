@@ -37,10 +37,11 @@ What have we done?
 
 **Junior**
 
-  Let me try add this to our :file:`pow` file:
+  Let me try add this to our init program:
 
   .. code-block:: console
 
+     #!/usr/bin/env sh
      kapow route add /db/backup_logs -c 'cat /tmp/backup_db.log | kapow set /response/body'
 
 **Senior**

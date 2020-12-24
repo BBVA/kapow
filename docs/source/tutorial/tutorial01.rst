@@ -138,22 +138,22 @@ Let's Backup that Database!
 **Senior**
 
   Not at all.  The creators of *Kapow!* have thought of everything.  You can put
-  all your route definitions in a special script file and pass it to the server
-  on startup.  They call those files :file:`pow` files and they have
-  :file:`.pow` extension.
+  all your route definitions on init programs, which can be shell scripts, and
+  pass them to the server on startup.
 
   It should look something like:
 
   .. code-block:: console
 
-     $ cat backup.pow
+     $ cat backup-route
+     #!/usr/bin/env sh
      kapow route add -X PUT /db/backup -e ./backup_db.sh
 
   And then you can start *Kapow!* with it:
 
   .. code-block:: console
 
-     $ kapow server backup.pow
+     $ kapow server backup-route
 
 **Junior**
 
@@ -161,10 +161,10 @@ Let's Backup that Database!
 
   .. code-block:: console
 
-     $ kapow server backup.pow
-     2019/11/26 11:40:01 Running powfile: "backup.pow"
+     $ kapow server backup-route
+     2019/11/26 11:40:01 Running init program: "backup-route"
      {"id":"19bb4ac7-1039-11ea-aa00-106530610c4d","method":"PUT","url_pattern":"/db/backup","entrypoint":"./backup_db.sh","command":"","index":0}
-     2019/11/26 11:40:01 Done running powfile: "backup.pow"
+     2019/11/26 11:40:01 Done running init program: "backup-route"
 
   I understand that this is proof that we have the endpoint available.
 

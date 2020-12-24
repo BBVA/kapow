@@ -5,7 +5,7 @@ A simple service that exposes log entries for files not found on our Apache Web 
 ## How to run it
 
 ```
-$ kapow server FixLogGrep.pow
+$ kapow server FixLogGrep
 ```
 
 

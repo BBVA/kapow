@@ -219,7 +219,7 @@ field must be an escaped JSON string.
       }
     ]
     ```
-* **Sample Call**: `$ curl $KAPOW_URL/routes`
+* **Sample Call**: `$ curl $KAPOW_DATA_URL/routes`
 * **Notes**: Currently all routes are returned; in the future, a filter may be
   accepted.
 
@@ -260,7 +260,7 @@ A new id is created for the appended route so it can be referenced later.
   * **Code**: `422`; **Reason**: `Invalid Route`
 * **Sample Call**:<br />
     ```sh
-    $ curl -X POST --data-binary @- $KAPOW_URL/routes <<EOF
+    $ curl -X POST --data-binary @- $KAPOW_DATA_URL/routes <<EOF
     {
       "method": "GET",
       "url_pattern": "/hello",
@@ -313,7 +313,7 @@ A new id is created for the appended route so it can be referenced later.
   * **Code**: `422`; Reason: `Invalid Route`
 * **Sample Call**:<br />
     ```sh
-    $ curl -X PUT --data-binary @- $KAPOW_URL/routes <<EOF`
+    $ curl -X PUT --data-binary @- $KAPOW_DATA_URL/routes <<EOF`
     {
       "method": "GET",
       "url_pattern": "/hello",
@@ -346,7 +346,7 @@ Removes the route identified by `{id}`.
   * **Code**: `404`; Reason: `Route Not Found`
 * **Sample Call**:<br />
   ```sh
-  $ curl -X DELETE $KAPOW_URL/routes/ROUTE_1f186c92_f906_4506_9788_a1f541b11d0f
+  $ curl -X DELETE $KAPOW_DATA_URL/routes/ROUTE_1f186c92_f906_4506_9788_a1f541b11d0f
   ```
 * **Notes**:
 
@@ -374,7 +374,7 @@ Retrieves the information about the route identified by `{id}`.
   * **Code**: `404`; Reason: `Route Not Found`
 * **Sample Call**:<br />
   ```sh
-  $ curl -X GET $KAPOW_URL/routes/ROUTE_1f186c92_f906_4506_9788_a1f541b11d0f
+  $ curl -X GET $KAPOW_DATA_URL/routes/ROUTE_1f186c92_f906_4506_9788_a1f541b11d0f
   ```
 * **Notes**:
 
@@ -610,29 +610,30 @@ Commands:
 
 This command runs the Kapow! server, which is the core of Kapow!.  If
 run without parameters, it will run an unconfigured server.  It can accept a path
-to a `pow` file, which is a shell script that contains commands to configure
-the Kapow! server.
+to an executable file, the init program, which can be a shell script that
+contains commands to configure the *Kapow!* server.
 
-The `pow` can leverage the `kapow route` command, which is used to define a route.
-The `kapow route` command needs a way to reach the Kapow! server, and for that,
-`kapow` provides the `KAPOW_URL` variable in the environment of the
-aforementioned shell script.
+The init program can leverage the `kapow route` command, which is used to define
+a route.  The `kapow route` command needs a way to reach the *Kapow!* server,
+and for that, `kapow` provides the `KAPOW_DATA_URL` variable in the environment
+of the aforementioned init program.
 
-Every time the kapow server receives a request, it will spawn a process to
-handle it, according to the specified entrypoint, `/bin/sh -c` by default, and then
-execute the specified command.  This command is tasked with processing the
-incoming request, and can leverage the `request` and `response` commands to
-easily access the `HTTP Request` and `HTTP Response`, respectively.
+Every time the *Kapow!* server receives a request, it will spawn a process to
+handle it, according to the specified entrypoint, `/bin/sh -c` by default in
+unices, and `cmd.exe /c` in Windows®, and then execute the specified command.
+This command is tasked with processing the incoming request, and can leverage
+the `get` and `set` commands to easily access the `HTTP Request` and `HTTP
+Response`, respectively.
 
-In order for `request` and `response` to do their job, they require a way to
-reach the Kapow! server, as well as a way to identify the current request being
-served.  Thus, the Kapow! server adds the `KAPOW_URL` and `KAPOW_HANDLER_ID` to the
+In order for `get` and `set` to do their job, they require a way to reach the
+*Kapow!* server, as well as a way to identify the current request being served.
+Thus, the *Kapow!* server adds the `KAPOW_DATA_URL` and `KAPOW_HANDLER_ID` to the
 process' environment.
 
 
 #### Example
-```sh
-$ kapow server /path/to/service.pow
+``` console
+$ kapow server /path/to/service
 ```
 
 
@@ -654,11 +655,11 @@ To deregister a route you must provide a *route_id*.
 
 
 #### **Environment**
-- `KAPOW_URL`
+- `KAPOW_DATA_URL`
 
 
 #### **Help**
-```sh
+``` console
 $ kapow route --help
 Usage: kapow route [OPTIONS] COMMAND [ARGS]...
 
@@ -669,7 +670,7 @@ Commands:
   add
   remove
 ```
-```sh
+``` console
 $ kapow route add --help
 Usage: kapow route add [OPTIONS] URL_PATTERN [COMMAND_FILE]
 
@@ -680,7 +681,7 @@ Options:
   --url TEXT
   --help                 Show this message and exit.
 ```
-```sh
+``` console
 $ kapow route remove --help
 Usage: kapow route remove [OPTIONS] ROUTE_ID
 
@@ -691,8 +692,8 @@ Options:
 
 
 #### Example
-```sh
-kapow route add -X GET '/list/{ip}' -c 'nmap -sL $(kapow get /request/matches/ip) | kapow set /response/body'
+``` console
+$ kapow route add -X GET '/list/{ip}' -c 'nmap -sL $(kapow get /request/matches/ip) | kapow set /response/body'
 ```
 
 ### `request`
@@ -701,14 +702,14 @@ Exposes the requests' resources.
 
 
 #### **Environment**
-- `KAPOW_URL`
+- `KAPOW_DATA_URL`
 - `KAPOW_HANDLER_ID`
 
 
 #### Example
-```sh
-# Access the body of the request
-kapow get /request/body
+``` console
+$ # Access the body of the request
+$ kapow get /request/body
 ```
 
 
@@ -718,27 +719,28 @@ Exposes the response's resources.
 
 
 #### **Environment**
-- `KAPOW_URL`
+- `KAPOW_DATA_URL`
 - `KAPOW_HANDLER_ID`
 
 
 #### Example
-```sh
-# Write to the body of the response
-echo 'Hello, World!' | kapow set /response/body
+``` console
+$ # Write to the body of the response
+$ echo 'Hello, World!' | kapow set /response/body
 ```
 
 
 ## An End-to-End Example
-```sh
-$ cat nmap.kpow
+``` console
+$ cat nmap-route
+#!/usr/bin/env sh
 kapow route add -X GET '/list/{ip}' -c 'nmap -sL $(kapow get /request/matches/ip) | kapow set /response/body'
 ```
-```sh
-$ kapow ./nmap.kapow
+``` console
+$ kapow server ./nmap-route
 ```
-```sh
-$ curl $KAPOW_URL/list/127.0.0.1
+``` console
+$ curl $KAPOW_DATA_URL/list/127.0.0.1
 Starting Nmap 7.70 ( https://nmap.org ) at 2019-05-30 14:45 CEST
 Nmap scan report for localhost (127.0.0.1)
 Host is up (0.00011s latency).

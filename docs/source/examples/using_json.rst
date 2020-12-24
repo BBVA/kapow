@@ -16,12 +16,13 @@ Example #1
 ++++++++++
 
 In this example our *Kapow!* service will receive a `JSON` value with an incorrect
-date, then our ``pow`` file will fix it and return the correct value to the user.
+date, then our init program will fix it and return the correct value to the user.
 
 .. code-block:: console
    :linenos:
 
-   $ cat fix_date.pow
+   $ cat fix_date
+   #!/usr/bin/env sh
    kapow route add -X POST /fix-date - <<-'EOF'
    	kapow set /response/headers/Content-Type application/json
    	kapow get /request/body | jq --arg newdate "$(date +'%Y-%m-%d_%H-%M-%S')" '.incorrectDate=$newdate' | kapow set /response/body
@@ -46,7 +47,8 @@ order to generate a two-attribute `JSON` response.
 
 .. code-block:: console
 
-   $ cat echo-attribute.pow
+   $ cat echo-attribute
+   #!/usr/bin/env sh
    kapow route add -X POST /echo-attribute - <<-'EOF'
    	JSON_WHO=$(kapow get /request/body | jq -r .name)
 

@@ -31,7 +31,7 @@ import (
 
 // ServerCmd is the command line interface for kapow server
 var ServerCmd = &cobra.Command{
-	Use:   "server [optional flags] [optional pow file(s)]",
+	Use:   "server [optional flags] [optional init program(s)]",
 	Short: "Start a kapow server",
 	Long: `Start a Kapow server with a client interface, a data interface	and an
 	admin interface`,

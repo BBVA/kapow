@@ -28,7 +28,8 @@ In this example, an attacker can inject arbitrary parameters to :command:`ls`.
 .. code-block:: console
    :linenos:
 
-   $ cat command-injection.pow
+   $ cat command-injection
+   #!/usr/bin/env sh
    kapow route add '/vulnerable/{value}' - <<-'EOF'
    	ls $(kapow get /request/matches/value) | kapow set /response/body
    EOF
@@ -48,7 +49,8 @@ request:
 .. code-block:: console
    :linenos:
 
-   $ cat command-injection.pow
+   $ cat command-injection
+   #!/usr/bin/env sh
    kapow route add '/not-vulnerable/{value}' - <<-'EOF'
    	ls -- "$(kapow get /request/matches/value)" | kapow set /response/body
    EOF

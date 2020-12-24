@@ -5,7 +5,7 @@ Expose several system properties and logs.
 ## How to run it
 
 ```
-$ kapow server SystemMonitor.pow
+$ kapow server SystemMonitor
 ```
 
 
@@ -39,7 +39,7 @@ drwxr-xr-x 15 root root  4096 Jan 27 07:34 ..
 
 ```
 $ curl -s http://localhost:8080/process
-nil        46717  0.0  0.0 111224  8196 pts/2    Sl   16:48   0:00 kapow server SystemMonitor.pow
+nil        46717  0.0  0.0 111224  8196 pts/2    Sl   16:48   0:00 kapow server SystemMonitor
 root       47405  0.0  0.0      0     0 ?        I    16:50   0:00 [kworker/3:1-mm_percpu_wq]
 root       47406  0.0  0.0      0     0 ?        I    16:50   0:00 [kworker/0:1]
 root       47819  0.0  0.0      0     0 ?        I    16:52   0:00 [kworker/7:2-mm_percpu_wq]

@@ -75,7 +75,7 @@ Contents
    :maxdepth: 2
    :caption: Usage Examples
 
-   examples/working_with_pow_files
+   examples/working_with_init_programs
    examples/managing_routes
    examples/handling_http_requests
    examples/using_json

@@ -5,7 +5,7 @@ A simple service that exposes log entries that matches **with a given text** on 
 ## How to run it
 
 ```
-$ kapow server DynamicLogGrep.pow
+$ kapow server DynamicLogGrep
 ```
 
 

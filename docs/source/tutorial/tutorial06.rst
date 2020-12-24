@@ -44,7 +44,9 @@ Securing the server
 
   .. code-block:: console
 
-     $ kapow server --keyfile /etc/kapow/tls/keyfile --certfile /etc/kapow/tls/certfile /etc/kapow/awesome.pow
+     $ kapow server --keyfile /etc/kapow/tls/keyfile    \
+                    --certfile /etc/kapow/tls/certfile  \
+                    /etc/kapow/awesome-route
 
   It's easy, please copy the private key file and certificate chain to `/etc/kapow/tls` and we can restart.
 
@@ -70,7 +72,11 @@ Securing the server
 
   .. code-block:: console
 
-     $ kapow server --keyfile /etc/kapow/tls/keyfile --certfile /etc/kapow/tls/certfile --clientauth=true --clientcafile /etc/kapow/tls/clientCAfile /etc/kapow/awesome.pow
+     $ kapow server --keyfile /etc/kapow/tls/keyfile            \
+                    --certfile /etc/kapow/tls/certfile          \
+                    --clientauth true                           \
+                    --clientcafile /etc/kapow/tls/clientCAfile  \
+                    /etc/kapow/awesome-route
 
   Done!
 
