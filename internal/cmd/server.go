@@ -60,7 +60,7 @@ var ServerCmd = &cobra.Command{
 		server.StartServer(sConf)
 
 		for _, path := range args {
-			go Run(path)
+			go Run(path, sConf.Debug)
 		}
 
 		select {}
@@ -100,19 +100,21 @@ func validateServerCommandArguments(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func Run(path string) {
+func Run(path string, debug bool) {
 	logger.L.Printf("Running init program %+q", path)
 	cmd := BuildCmd(path)
 	cmd.Env = os.Environ()
 
 	var wg sync.WaitGroup
-	if stdout, err := cmd.StdoutPipe(); err == nil {
-		wg.Add(1)
-		go logPipe(path, "stdout", stdout, &wg)
-	}
-	if stderr, err := cmd.StderrPipe(); err == nil {
-		wg.Add(1)
-		go logPipe(path, "stderr", stderr, &wg)
+	if debug {
+		if stdout, err := cmd.StdoutPipe(); err == nil {
+			wg.Add(1)
+			go logPipe(path, "stdout", stdout, &wg)
+		}
+		if stderr, err := cmd.StderrPipe(); err == nil {
+			wg.Add(1)
+			go logPipe(path, "stderr", stderr, &wg)
+		}
 	}
 	err := cmd.Start()
 	if err != nil {
