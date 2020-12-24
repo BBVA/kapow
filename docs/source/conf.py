@@ -24,7 +24,7 @@ author = 'BBVA Innovation Labs'
 
 # The full version, including alpha/beta/rc tags.
 try:
-    release = re.sub('^v', '', os.popen('git describe').read().strip())
+    release = re.sub('^v', '', os.popen('git describe --tags').read().strip())
 except:
     release = 'unknown'
 
