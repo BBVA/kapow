@@ -41,3 +41,62 @@ jobs:
         args: release --rm-dist ${{ steps.release-notes.outputs.ARGS }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Archive binaries as artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: binaries
+        path: |
+          dist/*
+
+  wininstaller:
+    runs-on: ubuntu-20.04
+    needs: build
+    strategy:
+      matrix:
+        binary: ["kapow_windows_386", "kapow_windows_amd64"]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Download a single artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: binaries
+    - name: Install NSIS
+      run: |
+        sudo apt-get update -y
+        DEBIAN_FRONTEND=noninteractive sudo -E apt-get install --no-install-recommends -y nsis nsis-doc nsis-pluginapi
+    - name: Prepare NSIS files
+      run: |
+        mkdir .github/NSIS/install_dir
+        cp -p ${{ matrix.binary }}/kapow.exe .github/NSIS/install_dir/
+        wget https://github.com/awaescher/PathEd/releases/download/1.0/PathEd.zip
+        unzip PathEd.zip -d .github/NSIS/install_dir/
+    - name: Set variables for the build
+      id: set-vars
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        release="${GITHUB_REF#refs/tags/}"
+        upload_url=$(curl -s -u "$GITHUB_TOKEN" https://api.github.com/repos/nilp0inter/kapow/releases \
+                   | jq -r '.[] | if .tag_name == "'$release'" then . else empty end | .upload_url' \
+                   | tail -n1)
+        echo ::set-output name=upload_url::$upload_url
+        echo ::set-output name=nsis_version::${release#v}
+        unversioned_binary=${{ matrix.binary }}_setup.exe
+        echo ::set-output name=nsis_installer_name::${unversioned_binary//kapow_/kapow_${release#v}_}
+    - name: Create Windows installer (x64)
+      uses: joncloud/makensis-action@v3.4
+      env:
+        NSIS_VERSION: ${{ steps.set-vars.outputs.nsis_version }}
+        NSIS_INSTALLER_NAME: ${{ steps.set-vars.outputs.nsis_installer_name }}
+      with:
+        script-file: .github/NSIS/windows.nsi
+    - name: Upload Release Asset
+      id: upload-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.set-vars.outputs.upload_url }}
+        asset_path: .github/NSIS/${{ steps.set-vars.outputs.nsis_installer_name }}
+        asset_name: ${{ steps.set-vars.outputs.nsis_installer_name }}
+        asset_content_type: application/octet-stream

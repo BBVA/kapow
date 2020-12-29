@@ -55,5 +55,5 @@ dockers:
       - "bbvalabsci/kapow:v{{ .Major }}"
 
 release:
-  draft: true
+  draft: false
   prerelease: auto

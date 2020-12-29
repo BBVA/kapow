@@ -40,9 +40,12 @@ Install the downloaded binary using the following command as a privileged user.
 Windows®
 ++++++++
 
-Unzip the downloaded zipfile and move `kapow.exe` to a directory of your choice;
-then update the system :envvar:`PATH` variable to include that directory.
-Note that the zipfile also includes the LICENSE.
+Native windows installers are provided for both 32 and 64 bit versions.
+
+Alternatively, you can download the provided zipfile, expand it, and move
+`kapow.exe` to a directory of your choice; then update the system :envvar:`PATH`
+variable to include that directory.  Note that the zipfile also includes the
+LICENSE.
 
 
 Install the package with ``go get``
