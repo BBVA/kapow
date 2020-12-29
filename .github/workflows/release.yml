@@ -83,7 +83,7 @@ jobs:
         echo ::set-output name=nsis_version::${release#v}
         unversioned_binary=${{ matrix.binary }}_setup.exe
         echo ::set-output name=nsis_installer_name::${unversioned_binary//kapow_/kapow_${release#v}_}
-    - name: Create Windows installer (x64)
+    - name: Create Windows installer
       uses: joncloud/makensis-action@v3.4
       env:
         NSIS_VERSION: ${{ steps.set-vars.outputs.nsis_version }}
