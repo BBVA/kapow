@@ -46,6 +46,8 @@ Where `path/to/CAfile` is the path to the file containing the CA certificate
 that issued *Kapow!*'s certificate.
 
 
+.. _https_mtls:
+
 Enabling mTLS
 ++++++++++++++
 
@@ -175,7 +177,7 @@ certificate.
 
    In order to enable mutual TLS authentication read the `Nginx documentation`_.
 
-.. _some criteria are met: https://caddyserver.com/v1/docs/automatic-https
+.. _some criteria are met: https://caddyserver.com/docs/automatic-https
 .. _Caddy documentation: https://caddyserver.com/docs/caddyfile/directives/tls
 .. _HAProxy documentation: https://www.haproxy.com/de/documentation/aloha/12-0/traffic-management/lb-layer7/tls/
 .. _Nginx documentation: https://smallstep.com/hello-mtls/doc/server/nginx

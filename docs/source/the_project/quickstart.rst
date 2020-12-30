@@ -117,7 +117,7 @@ Follow the :ref:`installation instructions <installation>`.
 
 
 Write an Init Program :file:`ping-route`
-+++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++
 
 *Kapow!* uses init programs/scripts where the endpoints you want
 to expose are defined.

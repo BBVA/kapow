@@ -37,10 +37,23 @@ jobs:
     - name: Spec test
       run: |
         docker run --mount type=bind,source=$(pwd)/build/kapow,target=/usr/local/bin/kapow  bbvalabsci/kapow-spec-test-suite:latest behave --tags=~@skip
+  doc-test:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Prepare Python env
+      run: |
+        sudo apt-get install -y pipenv
+        cd docs
+        pipenv sync
+    - name: Check for warnings & broken links
+      run: |
+        cd docs
+        SPHINXOPTS="-qW --keep-going" pipenv run make linkcheck html
   release:
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
     runs-on: ubuntu-20.04
-    needs: [ unit-test, spec-test ]
+    needs: [ unit-test, spec-test, doc-test ]
     steps:
     - uses: actions/checkout@v2
       with:

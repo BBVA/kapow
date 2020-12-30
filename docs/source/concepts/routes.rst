@@ -63,7 +63,7 @@ In the route shown above, a request with a URL ``/register/joe`` would match,
 assigning `joe` to the placeholder ``username``.
 
 *Kapow!* leverages `Gorilla Mux`_ for managing routes.  For the full story, see
-https://github.com/gorilla/mux#examples
+https://github.com/gorilla/mux
 
 
 .. _entrypoint-route-element:
