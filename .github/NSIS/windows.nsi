@@ -7,7 +7,6 @@
 !define INSTALLER_NAME "$%NSIS_INSTALLER_NAME%"
 !define MAIN_APP_EXE "kapow.exe"
 !define ICON "kapow.ico"
-!define BANNER "kapow.bmp"
 !define LICENSE_TXT "../../LICENSE"
 
 !define INSTALL_DIR "$PROGRAMFILES64\${APP_NAME}"
@@ -42,8 +41,6 @@ InstallDir "${INSTALL_DIR}"
 
 !define MUI_ICON "${ICON}"
 !define MUI_UNICON "${ICON}"
-!define MUI_WELCOMEFINISHPAGE_BITMAP "${BANNER}"
-!define MUI_UNWELCOMEFINISHPAGE_BITMAP "${BANNER}"
 
 ######################################################################
 
