@@ -1,23 +1,136 @@
-name: Test
-
+name: Test and Release
 on:
   push:
-
 jobs:
-  build:
+  unit-test:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
-
-      - name: Lint
-        uses: golangci/golangci-lint-action@v2.3.0
-        with:
-          version: v1.31
-
-      - name: Build
-        run: |
-          make test race build
-
-      - name: Spec test
-        run: |
-          docker run --mount type=bind,source=$(pwd)/build/kapow,target=/usr/local/bin/kapow  bbvalabsci/kapow-spec-test-suite:latest behave --tags=~@skip
+    - uses: actions/checkout@v2
+    - name: Load Go version
+      id: go-version
+      run: |
+        echo ::set-output name=go-version::$(sed 's/^.*://' .github/go/Dockerfile)
+    - uses: actions/setup-go@v2
+      with:
+        go-version: ${{ steps.go-version.outputs.go-version }}
+    - name: Lint
+      uses: golangci/golangci-lint-action@v2.3.0
+      with:
+        version: v1.31
+    - name: Unit tests
+      run: |
+          make test race
+  spec-test:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Load Go version
+      id: go-version
+      run: |
+        echo ::set-output name=go-version::$(sed 's/^.*://' .github/go/Dockerfile)
+    - uses: actions/setup-go@v2
+      with:
+        go-version: ${{ steps.go-version.outputs.go-version }}
+    - name: Unit tests
+      run: |
+          make build
+    - name: Spec test
+      run: |
+        docker run --mount type=bind,source=$(pwd)/build/kapow,target=/usr/local/bin/kapow  bbvalabsci/kapow-spec-test-suite:latest behave --tags=~@skip
+  release:
+    if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
+    runs-on: ubuntu-20.04
+    needs: [ unit-test, spec-test ]
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - name: Load Go version
+      id: go-version
+      run: |
+        echo ::set-output name=go-version::$(sed 's/^.*://' .github/go/Dockerfile)
+    - uses: actions/setup-go@v2
+      with:
+        go-version: ${{ steps.go-version.outputs.go-version }}
+    - name: Select custom release notes
+      id: release-notes
+      run: |
+        RELNOTES="docs/release-notes/RELEASE-${GITHUB_REF#refs/tags/}.md"
+        [[ -f "$RELNOTES" ]] && echo ::set-output name=ARGS::--release-notes $RELNOTES || true
+    - name: Check credentials
+      id: docker-credentials
+      run: |
+        echo ::set-output name=defined::$(test -n "${{ secrets.DOCKERHUB_USERNAME }}" && echo true || echo false)
+    - name: Docker Login
+      if: steps.docker-credentials.outputs.defined == 'true'
+      run: |
+        username="${{ secrets.DOCKERHUB_USERNAME }}"
+        password="${{ secrets.DOCKERHUB_PASSWORD }}"
+        echo "$password" | docker login --username "$username" --password-stdin
+    - uses: goreleaser/goreleaser-action@v2
+      with:
+        args: release --rm-dist ${{ steps.release-notes.outputs.ARGS }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Archive binaries as artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: binaries
+        path: |
+          dist/*
+    - name: Upload Docker images
+      if: steps.docker-credentials.outputs.defined == 'true'
+      run: docker image push --all-tags bbvalabsci/kapow
+  wininstaller:
+    runs-on: ubuntu-20.04
+    needs: release
+    strategy:
+      matrix:
+        binary: ["kapow_windows_386", "kapow_windows_amd64"]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Download a single artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: binaries
+    - name: Install NSIS
+      run: |
+        sudo apt-get update -y
+        DEBIAN_FRONTEND=noninteractive sudo -E apt-get install --no-install-recommends -y nsis nsis-doc nsis-pluginapi
+    - name: Prepare NSIS files
+      run: |
+        mkdir .github/NSIS/install_dir
+        cp -p ${{ matrix.binary }}/kapow.exe .github/NSIS/install_dir/
+        wget https://github.com/awaescher/PathEd/releases/download/1.0/PathEd.zip
+        unzip PathEd.zip -d .github/NSIS/install_dir/
+    - name: Set variables for the build
+      id: set-vars
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        release="${GITHUB_REF#refs/tags/}"
+        upload_url=$(curl -s -u "$GITHUB_TOKEN" https://api.github.com/repos/nilp0inter/kapow/releases \
+                   | jq -r '.[] | if .tag_name == "'$release'" then . else empty end | .upload_url' \
+                   | tail -n1)
+        echo ::set-output name=upload_url::$upload_url
+        no_rc_release=${release%%-RC*}
+        echo ::set-output name=nsis_version::${no_rc_release#v}  # NSIS version only accepts \d+.\d+.\d+
+        unversioned_binary=${{ matrix.binary }}_setup.exe
+        echo ::set-output name=nsis_installer_name::${unversioned_binary//kapow_/kapow_${release#v}_}
+    - name: Create Windows installer
+      uses: joncloud/makensis-action@v3.4
+      env:
+        NSIS_VERSION: ${{ steps.set-vars.outputs.nsis_version }}
+        NSIS_INSTALLER_NAME: ${{ steps.set-vars.outputs.nsis_installer_name }}
+      with:
+        script-file: .github/NSIS/windows.nsi
+    - name: Upload Release Asset
+      id: upload-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.set-vars.outputs.upload_url }}
+        asset_path: .github/NSIS/${{ steps.set-vars.outputs.nsis_installer_name }}
+        asset_name: ${{ steps.set-vars.outputs.nsis_installer_name }}
+        asset_content_type: application/octet-stream
