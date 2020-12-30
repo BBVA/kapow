@@ -82,7 +82,7 @@ Let's Backup that Database!
   OK then, let's it try on your laptop first.
 
   First of all, you have to follow the
-  `installation instructions <installation>`.
+  :ref:`installation instructions <installation>`.
 
 **Junior**
 
