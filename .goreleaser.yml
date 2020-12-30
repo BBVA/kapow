@@ -25,9 +25,6 @@ builds:
       goarch: 386
 archives:
 - format: binary
-  format_overrides:
-    - goos: windows
-      format: zip
 checksum:
   name_template: '{{ .ProjectName }}-{{ .Version }}-SHA512SUMS'
   algorithm: sha512
