@@ -30,7 +30,13 @@ jobs:
         RELNOTES="docs/release-notes/RELEASE-${GITHUB_REF#refs/tags/}.md"
         [[ -f "$RELNOTES" ]] && echo ::set-output name=ARGS::--release-notes $RELNOTES || true
 
+    - name: Check credentials
+      id: docker-credentials
+      run: |
+        echo ::set-output name=defined::$(test -n "${{ secrets.DOCKERHUB_USERNAME }}" && echo true || echo false)
+
     - name: Docker Login
+      if: steps.docker-credentials.outputs.defined == 'true'
       run: |
         username="${{ secrets.DOCKERHUB_USERNAME }}"
         password="${{ secrets.DOCKERHUB_PASSWORD }}"
@@ -41,12 +47,17 @@ jobs:
         args: release --rm-dist ${{ steps.release-notes.outputs.ARGS }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     - name: Archive binaries as artifacts
       uses: actions/upload-artifact@v2
       with:
         name: binaries
         path: |
           dist/*
+
+    - name: Upload Docker images
+      if: steps.docker-credentials.outputs.defined == 'true'
+      run: docker image push --all-tags bbvalabsci/kapow
 
   wininstaller:
     runs-on: ubuntu-20.04

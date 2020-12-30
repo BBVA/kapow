@@ -54,6 +54,8 @@ dockers:
       - "bbvalabsci/kapow:{{ .Tag }}"
       - "bbvalabsci/kapow:v{{ .Major }}"
 
+    skip_push: true
+
 release:
   draft: false
   prerelease: auto
