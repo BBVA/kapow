@@ -31,7 +31,7 @@ jobs:
     - uses: actions/setup-go@v2
       with:
         go-version: ${{ steps.go-version.outputs.go-version }}
-    - name: Unit tests
+    - name: Build executable
       run: |
           make build
     - name: Spec test
