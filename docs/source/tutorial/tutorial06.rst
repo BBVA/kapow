@@ -24,7 +24,7 @@ Securing the server
 **Senior**
 
   Yes, I'm pretty sure that those smart guys have thought on that when building
-  Kapow! Have a look at the `documentation </examples/https_mtls>`_.
+  Kapow! Have a look at the `documentation <https_mtls>`.
 
 **Junior**
 

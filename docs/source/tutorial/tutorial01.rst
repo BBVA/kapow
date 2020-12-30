@@ -82,7 +82,7 @@ Let's Backup that Database!
   OK then, let's it try on your laptop first.
 
   First of all, you have to follow the
-  `installation instructions </the_project/install_and_configure>`_.
+  `installation instructions <installation>`.
 
 **Junior**
 
