@@ -36,7 +36,7 @@ EOF
 and then, run it using *Kapow!*
 
 ```bash
-[apache-host]$ kapow server --bind 0.0.0.0:8080 search-apache-errors
+[apache-host]$ kapow server search-apache-errors
 ```
 
 finally, we can read from the just-defined endpoint:
