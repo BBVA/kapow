@@ -82,3 +82,7 @@ license](https://raw.githubusercontent.com/BBVA/kapow/master/LICENSE).
 Contributions are of course welcome.  See
 [CONTRIBUTING](https://raw.githubusercontent.com/BBVA/kapow/blob/master/CONTRIBUTING.rst)
 or skim existing tickets to see where you could help out.
+
+---
+
+* [Did you spot the UUoC?](https://github.com/BBVA/kapow/issues/118) Congrats! We are hoping [to win](http://porkmail.org/era/unix/award.html) this year :)
