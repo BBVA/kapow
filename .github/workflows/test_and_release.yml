@@ -93,7 +93,7 @@ jobs:
           dist/*
     - name: Upload Docker images
       if: steps.docker-credentials.outputs.defined == 'true'
-      run: docker image push --all-tags bbvalabsci/kapow
+      run: docker image push bbvalabsci/kapow  # /!\ Remember to use the option --all-tags whenever we update from ubuntu-20.04
   wininstaller:
     runs-on: ubuntu-20.04
     needs: release
