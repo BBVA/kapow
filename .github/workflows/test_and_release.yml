@@ -126,8 +126,8 @@ jobs:
                    | jq -r '.[] | if .tag_name == "'$release'" then . else empty end | .upload_url' \
                    | tail -n1)
         echo ::set-output name=upload_url::$upload_url
-        no_rc_release=${release%%-RC*}
-        echo ::set-output name=nsis_version::${no_rc_release#v}  # NSIS version only accepts \d+.\d+.\d+
+        no_rc_release=${release%%-[Rr][Cc]*}
+        echo ::set-output name=nsis_version::${no_rc_release#[Vv]}  # NSIS version only accepts \d+.\d+.\d+
         unversioned_binary=${{ matrix.binary }}_setup.exe
         echo ::set-output name=nsis_installer_name::${unversioned_binary//kapow_/kapow_${release#v}_}
     - name: Create Windows installer
