@@ -129,7 +129,6 @@ func TestHandlerBuilderStoresTheProperResponseWriter(t *testing.T) {
 		return nil
 	}
 	w := httptest.NewRecorder()
-	w.Flushed = !w.Flushed
 
 	handlerBuilder(route).ServeHTTP(w, nil)
 
