@@ -194,7 +194,6 @@ func setResponseStatus(w http.ResponseWriter, r *http.Request, h *model.Handler)
 		httperror.ErrorJSON(w, InvalidStatusCode, http.StatusBadRequest)
 	} else {
 		h.Status = si
-		h.Writer.WriteHeader(si)
 	}
 }
 
@@ -223,6 +222,12 @@ func setResponseCookies(w http.ResponseWriter, r *http.Request, h *model.Handler
 }
 
 func setResponseBody(w http.ResponseWriter, r *http.Request, h *model.Handler) {
+
+	if !h.BodyOut {
+		h.Writer.WriteHeader(h.Status)
+		h.BodyOut = true
+	}
+
 	n, err := io.Copy(h.Writer, r.Body)
 	if err != nil {
 		if n > 0 {

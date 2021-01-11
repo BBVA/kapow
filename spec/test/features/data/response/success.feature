@@ -51,7 +51,6 @@ Feature: Setting values for handler response resources in Kapow! server.
       | /response/body          | bodyValue1 | body      | -           |
       | /response/stream        | bodyValue2 | body      | -           |
 
-  @skip
   Scenario: Overwrite a resource for the current response.
     Write twice a on a resource, such as a gzip middleware would require:
     kapow get /response/body | gzip -c | kapow set /response/body

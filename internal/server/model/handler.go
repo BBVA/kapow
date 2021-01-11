@@ -47,4 +47,7 @@ type Handler struct {
 
 	// SentBytes is the number of sent bytes
 	SentBytes int64
+
+	// The transfer of the body has started
+	BodyOut bool
 }

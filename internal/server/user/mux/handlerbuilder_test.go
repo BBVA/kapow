@@ -46,8 +46,9 @@ func TestHandlerBuilderCallsSpawner(t *testing.T) {
 		called = true
 		return nil
 	}
+	w := httptest.NewRecorder()
 
-	handlerBuilder(route).ServeHTTP(nil, nil)
+	handlerBuilder(route).ServeHTTP(w, nil)
 
 	if !called {
 		t.Error("Didn't call spawner")
@@ -64,8 +65,9 @@ func TestHandlerBuilderStoresHandlerInDataHandlers(t *testing.T) {
 	}
 	h := handlerBuilder(route)
 	data.Handlers = data.New()
+	w := httptest.NewRecorder()
 
-	h.ServeHTTP(nil, nil)
+	h.ServeHTTP(w, nil)
 
 	if !added {
 		t.Error("handler not added to data.Handlers")
@@ -85,8 +87,9 @@ func TestHandlerBuilderStoresTheProperRoute(t *testing.T) {
 
 		return nil
 	}
+	w := httptest.NewRecorder()
 
-	handlerBuilder(route).ServeHTTP(nil, nil)
+	handlerBuilder(route).ServeHTTP(w, nil)
 
 	if !reflect.DeepEqual(got, route) {
 		t.Error("Route not stored properly in the handler")
@@ -105,8 +108,9 @@ func TestHandlerBuilderStoresTheProperRequest(t *testing.T) {
 		return nil
 	}
 	r := &http.Request{}
+	w := httptest.NewRecorder()
 
-	handlerBuilder(route).ServeHTTP(nil, r)
+	handlerBuilder(route).ServeHTTP(w, r)
 
 	if got != r {
 		t.Error("Request not stored properly in the handler")
@@ -145,8 +149,9 @@ func TestHandlerBuilderGeneratesAProperID(t *testing.T) {
 
 		return nil
 	}
+	w := httptest.NewRecorder()
 
-	handlerBuilder(route).ServeHTTP(nil, nil)
+	handlerBuilder(route).ServeHTTP(w, nil)
 
 	if _, err := uuid.Parse(got); err != nil {
 		t.Error("ID not generated properly")
@@ -165,8 +170,9 @@ func TestHandlerBuilderCallsSpawnerWithTheStoredHandler(t *testing.T) {
 
 		return nil
 	}
+	w := httptest.NewRecorder()
 
-	handlerBuilder(route).ServeHTTP(nil, nil)
+	handlerBuilder(route).ServeHTTP(w, nil)
 
 	if gotStored != gotPassed {
 		t.Error("Proper handler not passed to spawner()")
@@ -196,8 +202,9 @@ func TestHandlerBuilderRemovesHandlerWhenDone(t *testing.T) {
 	spawner = spawn.Spawn
 	idGenerator = uuid.NewUUID
 	route := model.Route{}
+	w := httptest.NewRecorder()
 
-	handlerBuilder(route).ServeHTTP(nil, nil)
+	handlerBuilder(route).ServeHTTP(w, nil)
 
 	if len(data.Handlers.ListIDs()) != 0 {
 		t.Error("Handler not removed upon completion")
@@ -218,8 +225,9 @@ func TestHandlerBuilderLogToLogHandlerWhenDebugIsEnabled(t *testing.T) {
 
 		return nil
 	}
+	w := httptest.NewRecorder()
 
-	handlerBuilder(route).ServeHTTP(nil, nil)
+	handlerBuilder(route).ServeHTTP(w, nil)
 
 	// NOTE: logStream will write stdout and stderr contents eventually.
 	// We do not have any control the goroutines running logStream, thus we
@@ -252,8 +260,9 @@ func TestHandlerBuilderDoesNotLogToLogHandlerWhenDebugIsDisabled(t *testing.T) {
 
 		return nil
 	}
+	w := httptest.NewRecorder()
 
-	handlerBuilder(route).ServeHTTP(nil, nil)
+	handlerBuilder(route).ServeHTTP(w, nil)
 
 	// NOTE: logStream will write stdout and stderr contents eventually.
 	// We do not have any control the goroutines running logStream, thus we

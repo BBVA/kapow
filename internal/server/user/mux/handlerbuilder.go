@@ -75,6 +75,12 @@ func handlerBuilder(route model.Route) http.Handler {
 			err = spawner(h, nil, nil)
 		}
 
+		// In case of the user not setting /request/body
+		if !h.BodyOut {
+			h.Writer.WriteHeader(h.Status)
+			h.BodyOut = true
+		}
+
 		if err != nil {
 			logger.L.Println(err)
 		}

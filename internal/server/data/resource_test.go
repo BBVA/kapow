@@ -1319,7 +1319,7 @@ func TestSetResponseStatusSetsGivenStatus(t *testing.T) {
 	setResponseStatus(w, r, &h)
 
 	res := hw.Result()
-	if res.StatusCode != http.StatusTeapot {
+	if h.Status != http.StatusTeapot {
 		t.Errorf("Status code mismatch. Expected: 418, Got: %d", res.StatusCode)
 	}
 }
