@@ -34,6 +34,10 @@ jobs:
     - name: Build executable
       run: |
           make build
+    - name: Build spec test suite docker image
+      run: |
+        cd spec/test
+        docker build . -t bbvalabsci/kapow-spec-test-suite:latest
     - name: Spec test
       run: |
         docker run --mount type=bind,source=$(pwd)/build/kapow,target=/usr/local/bin/kapow  bbvalabsci/kapow-spec-test-suite:latest behave --tags=~@skip
