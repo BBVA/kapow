@@ -406,35 +406,14 @@ async def run_init_script(app, scripts, interactive):
     Run the init script if given, then wait for the shell to finish.
 
     """
-    if not scripts:
-        # No script given
-        if not interactive:
-            return
-        else:
-            cmd = "/bin/bash"
-    else:
-        def build_filenames():
-            for filename in scripts:
-                yield shlex.quote(filename)
-                yield "<(echo)"
-        filenames = " ".join(build_filenames())
-        if interactive:
-            cmd = f"/bin/bash --init-file <(cat {filenames})"
-        else:
-            cmd = f"/bin/bash <(cat {filenames})"
+    for script in scripts:
+        await asyncio.create_subprocess_exec(
+            script,
+            env={**os.environ,
+                 "KAPOW_DATA_URL": "http://localhost:8081",
+                 "KAPOW_CONTROL_URL": "http://localhost:8081"
+                 })
 
-    shell_task = await asyncio.create_subprocess_shell(
-        cmd,
-        executable="/bin/bash",
-        env={**os.environ,
-             "KAPOW_DATA_URL": "http://localhost:8081",
-             "KAPOW_CONTROL_URL": "http://localhost:8081"
-             })
-
-    await shell_task.wait()
-    if interactive:
-        await app.cleanup()
-        os._exit(shell_task.returncode)
 
 
 class InvalidRouteError(Exception):
