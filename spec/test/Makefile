@@ -19,5 +19,4 @@ clean:
 checkbin:
 	@which kapow >/dev/null || (echo "ERROR: Your kapow binary is not present in PATH" && exit 1)
 testpoc: sync
-	pipenv run pip install -r ../../testutils/poc/requirements.txt
 	PATH=../../testutils/poc:$$PATH KAPOW_CONTROL_URL=http://localhost:8081 KAPOW_DATA_URL=http://localhost:8081 pipenv run behave --no-capture --tags=~@skip

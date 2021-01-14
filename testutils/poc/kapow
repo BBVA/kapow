@@ -1,4 +1,5 @@
-#!/usr/bin/env python
+#! /usr/bin/env nix-shell
+#! nix-shell -i python3.7 -p python37 python37Packages.aiohttp python37Packages.requests python37Packages.click
 
 #
 # Copyright 2019 Banco Bilbao Vizcaya Argentaria, S.A.
