@@ -40,7 +40,7 @@ jobs:
         docker build . -t bbvalabsci/kapow-spec-test-suite:latest
     - name: Spec test
       run: |
-        docker run --mount type=bind,source=$(pwd)/build/kapow,target=/usr/local/bin/kapow  bbvalabsci/kapow-spec-test-suite:latest behave --tags=~@skip
+        docker run --mount type=bind,source=$(pwd)/build/kapow,target=/usr/bin/kapow  bbvalabsci/kapow-spec-test-suite:latest "behave --tags=~@skip"
   doc-test:
     runs-on: ubuntu-20.04
     steps:

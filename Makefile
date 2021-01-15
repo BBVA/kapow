@@ -43,7 +43,7 @@ install: build
 	CGO_ENABLED=0 $(GOINSTALL) ./...
 
 acceptance: install
-	make -C ./spec/test
+	cd ./spec/test && nix-shell --command make
 
 deps:
 	@echo "deps here"
