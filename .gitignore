@@ -6,3 +6,5 @@ build
 
 docs/build
 docs/Pipfile.lock
+
+node_modules
