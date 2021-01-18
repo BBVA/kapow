@@ -15,4 +15,4 @@ catalog:
 checkbin:
 	@which kapow >/dev/null || (echo "ERROR: Your kapow binary is not present in PATH" && exit 1)
 testpoc:
-	PATH=../../testutils/poc:$$PATH KAPOW_CONTROL_URL=http://localhost:8081 KAPOW_DATA_URL=http://localhost:8081 behave --no-capture --tags=~@skip
+	PATH=../../testutils/poc:$$PATH behave --no-capture --tags=~@skip
