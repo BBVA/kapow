@@ -177,6 +177,18 @@ Content-Length: 25
 {"reason": "Not Found"}
 ```
 
+## Security
+
+### Access Token
+
+To access every endpoint of this interface a token is required.
+
+The Access Token will be provided to the server via the `X-Kapow-Token` custom
+header.
+
+If no valid Access Token is provided via the aforementioned `X-Kapow-Token`
+header, the server will return a `401 Unauthorized` status code.
+
 
 ## API Elements
 
@@ -629,6 +641,13 @@ In order for `get` and `set` to do their job, they require a way to reach the
 *Kapow!* server, as well as a way to identify the current request being served.
 Thus, the *Kapow!* server adds the `KAPOW_DATA_URL` and `KAPOW_HANDLER_ID` to the
 process' environment.
+
+Also, `kapow server` will add the variable KAPOW_CONTROL_TOKEN to the environment
+of the init scripts, which will allow them to connect to the control API.
+
+The KAPOW_CONTROL_TOKEN can be passed to the `kapow server` via the environment.
+If empty or undefined, `kapow server` will generate a random one upon startup,
+and print it via `stderr`.
 
 
 #### Example
