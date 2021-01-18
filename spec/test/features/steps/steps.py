@@ -113,6 +113,13 @@ def step_impl(context):
     context.response = requests.get(f"{Env.KAPOW_CONTROL_URL}/routes")
 
 
+@when(u'I request a route listing providing a bad Access Token')
+def step_impl(context):
+    context.response = requests.get(
+        f"{Env.KAPOW_CONTROL_URL}/routes",
+        headers={"X-Kapow-Token": Env.KAPOW_CONTROL_TOKEN + "42"})
+
+
 @when('I request a routes listing')
 def step_impl(context):
     context.response = requests.get(

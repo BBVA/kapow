@@ -23,3 +23,10 @@ Feature: Fail to access the control API.
     When I request a route listing without providing an Access Token
     Then I get 401 as response code
       And I get "Unauthorized" as response reason phrase
+
+  Scenario: Try to get routes with bad Access Token
+
+    Given I have a just started Kapow! server
+    When I request a route listing providing a bad Access Token
+    Then I get 401 as response code
+      And I get "Unauthorized" as response reason phrase
