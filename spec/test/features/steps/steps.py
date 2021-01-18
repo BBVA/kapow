@@ -52,6 +52,8 @@ class Env(EnvironConfig):
     #: Where the User Interface is
     KAPOW_USER_URL = StringVar(default="http://localhost:8080")
 
+    KAPOW_CONTROL_TOKEN = StringVar(default="TEST-SPEC-CONTROL-TOKEN")
+
     KAPOW_BOOT_TIMEOUT = IntVar(default=1000)
 
     KAPOW_DEBUG_TESTS = BooleanVar(default=False)
@@ -82,6 +84,7 @@ def run_kapow_server(context):
         shlex.split(Env.KAPOW_SERVER_CMD),
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
+        env={'KAPOW_CONTROL_TOKEN': Env.KAPOW_CONTROL_TOKEN, **os.environ},
         shell=False)
 
     # Check process is running with reachable APIs
@@ -107,7 +110,9 @@ def step_impl(context):
 
 @when('I request a routes listing')
 def step_impl(context):
-    context.response = requests.get(f"{Env.KAPOW_CONTROL_URL}/routes")
+    context.response = requests.get(
+        f"{Env.KAPOW_CONTROL_URL}/routes",
+        headers={"X-Kapow-Token": Env.KAPOW_CONTROL_TOKEN})
 
 
 @given('I have a Kapow! server with the following routes')
@@ -118,8 +123,10 @@ def step_impl(context):
         raise RuntimeError("A table must be set for this step.")
 
     for row in context.table:
-        response = requests.post(f"{Env.KAPOW_CONTROL_URL}/routes",
-                                 json={h: row[h] for h in row.headings})
+        response = requests.post(
+            f"{Env.KAPOW_CONTROL_URL}/routes",
+            json={h: row[h] for h in row.headings},
+            headers={"X-Kapow-Token": Env.KAPOW_CONTROL_TOKEN})
         response.raise_for_status()
 
 
@@ -137,7 +144,8 @@ def step_impl(context):
                       [sys.executable,
                        shlex.quote(os.path.join(HERE, "testinghandler.py")),
                        shlex.quote(context.handler_fifo_path)]),  # Created in before_scenario
-                  **{h: row[h] for h in row.headings}})
+                  **{h: row[h] for h in row.headings}},
+            headers={"X-Kapow-Token": Env.KAPOW_CONTROL_TOKEN})
         response.raise_for_status()
 
 def testing_request(context, request_fn):
@@ -170,10 +178,11 @@ def step_impl(context):
 
 @when('I append the route')
 def step_impl(context):
-    context.response = requests.post(f"{Env.KAPOW_CONTROL_URL}/routes",
-                                     data=context.text,
-                                     headers={"Content-Type": "application/json"})
-
+    context.response = requests.post(
+        f"{Env.KAPOW_CONTROL_URL}/routes",
+        data=context.text,
+        headers={"Content-Type": "application/json",
+                 "X-Kapow-Token": Env.KAPOW_CONTROL_TOKEN})
 
 @then('I get {code} as response code')
 def step_impl(context, code):
@@ -212,50 +221,64 @@ def step_impl(context):
 
 @when('I delete the route with id "{id}"')
 def step_impl(context, id):
-    context.response = requests.delete(f"{Env.KAPOW_CONTROL_URL}/routes/{id}")
+    context.response = requests.delete(
+        f"{Env.KAPOW_CONTROL_URL}/routes/{id}",
+        headers={"X-Kapow-Token": Env.KAPOW_CONTROL_TOKEN})
 
 
 @when('I insert the route')
 def step_impl(context):
-    context.response = requests.put(f"{Env.KAPOW_CONTROL_URL}/routes",
-                                    headers={"Content-Type": "application/json"},
-                                    data=context.text)
+    context.response = requests.put(
+        f"{Env.KAPOW_CONTROL_URL}/routes",
+        headers={"Content-Type": "application/json",
+                 "X-Kapow-Token": Env.KAPOW_CONTROL_TOKEN},
+        data=context.text)
 
 
 @when('I try to append with this malformed JSON document')
 def step_impl(context):
     context.response = requests.post(
         f"{Env.KAPOW_CONTROL_URL}/routes",
-        headers={"Content-Type": "application/json"},
+        headers={"Content-Type": "application/json",
+                 "X-Kapow-Token": Env.KAPOW_CONTROL_TOKEN},
         data=context.text)
 
 
 @when('I delete the {order} route')
 def step_impl(context, order):
     idx = WORD2POS.get(order)
-    routes = requests.get(f"{Env.KAPOW_CONTROL_URL}/routes")
+    routes = requests.get(f"{Env.KAPOW_CONTROL_URL}/routes",
+                          headers={"X-Kapow-Token": Env.KAPOW_CONTROL_TOKEN})
     id = routes.json()[idx]["id"]
-    context.response = requests.delete(f"{Env.KAPOW_CONTROL_URL}/routes/{id}")
+    context.response = requests.delete(
+        f"{Env.KAPOW_CONTROL_URL}/routes/{id}",
+        headers={"X-Kapow-Token": Env.KAPOW_CONTROL_TOKEN})
 
 
 @when('I try to insert with this JSON document')
 def step_impl(context):
     context.response = requests.put(
         f"{Env.KAPOW_CONTROL_URL}/routes",
-        headers={"Content-Type": "application/json"},
+        headers={"Content-Type": "application/json",
+                 "X-Kapow-Token": Env.KAPOW_CONTROL_TOKEN},
         data=context.text)
 
 @when('I get the route with id "{id}"')
 def step_impl(context, id):
-    context.response = requests.get(f"{Env.KAPOW_CONTROL_URL}/routes/{id}")
+    context.response = requests.get(
+        f"{Env.KAPOW_CONTROL_URL}/routes/{id}",
+        headers={"X-Kapow-Token": Env.KAPOW_CONTROL_TOKEN})
 
 
 @when('I get the {order} route')
 def step_impl(context, order):
     idx = WORD2POS.get(order)
-    routes = requests.get(f"{Env.KAPOW_CONTROL_URL}/routes")
+    routes = requests.get(f"{Env.KAPOW_CONTROL_URL}/routes",
+                          headers={"X-Kapow-Token": Env.KAPOW_CONTROL_TOKEN})
     id = routes.json()[idx]["id"]
-    context.response = requests.get(f"{Env.KAPOW_CONTROL_URL}/routes/{id}")
+    context.response = requests.get(
+        f"{Env.KAPOW_CONTROL_URL}/routes/{id}",
+        headers={"X-Kapow-Token": Env.KAPOW_CONTROL_TOKEN})
 
 
 @when('I get the resource "{resource}"')
