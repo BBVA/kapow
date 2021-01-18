@@ -108,6 +108,11 @@ def step_impl(context):
     run_kapow_server(context)
 
 
+@when('I request a route listing without providing an Access Token')
+def step_impl(context):
+    context.response = requests.get(f"{Env.KAPOW_CONTROL_URL}/routes")
+
+
 @when('I request a routes listing')
 def step_impl(context):
     context.response = requests.get(
