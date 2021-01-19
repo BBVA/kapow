@@ -80,6 +80,12 @@ if Env.KAPOW_DEBUG_TESTS:
     requests_log.propagate = True
 
 def run_kapow_server(context):
+    with suppress(requests.exceptions.ConnectionError):
+        open_ports = (
+            requests.head(Env.KAPOW_CONTROL_URL, timeout=1).status_code
+            and requests.head(Env.KAPOW_DATA_URL, timeout=1).status_code)
+        assert (not open_ports), "Another process is already bound"
+
     context.server = subprocess.Popen(
         shlex.split(Env.KAPOW_SERVER_CMD),
         stdout=subprocess.DEVNULL,
