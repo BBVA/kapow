@@ -26,6 +26,7 @@ import tempfile
 import threading
 from multiprocessing.pool import ThreadPool
 import time
+import http.server
 
 import requests
 from environconfig import EnvironConfig, StringVar, IntVar, BooleanVar
@@ -357,3 +358,76 @@ def step_impl(context, value, fieldType, elementName):
         raise ValueError("Unknown fieldtype {fieldType!r}")
 
     assert actual == value, f"Expecting {fieldType} {elementName!r} to be {value!r}, got {actual!r} insted"
+
+
+@given('a test HTTP server on the control port')
+def step_impl(context):
+    context.request_ready = threading.Event()
+    context.request_ready.clear()
+    context.response_ready = threading.Event()
+    context.response_ready.clear()
+
+    class SaveResponseHandler(http.server.BaseHTTPRequestHandler):
+        def do_GET(self):
+            context.request_response = self
+            context.request_ready.set()
+            context.response_ready.wait()
+
+    context.httpserver = http.server.HTTPServer(('127.0.0.1', 8081),
+                                                SaveResponseHandler)
+    context.httpserver_thread = threading.Thread(
+        target=context.httpserver.serve_forever,
+        daemon=True)
+    context.httpserver_thread.start()
+
+
+@when('I run the following command')
+def step_impl(context):
+    _, command = context.text.split('$')
+    command = command.lstrip()
+
+    def exec_in_thread():
+        context.command = subprocess.run(command, shell=True, check=False)
+
+    context.command_thread = threading.Thread(target=exec_in_thread, daemon=True)
+    context.command_thread.start()
+
+
+@then('the HTTP server received a "{method}" request to "{path}"')
+def step_impl(context, method, path):
+    context.request_ready.wait()
+    assert context.request_response.command == method, f"Method {context.request_response.command} is not {method}"
+    assert context.request_response.path == path, f"Method {context.request_response.path} is not {path}"
+
+
+
+@then('the received request has the header "{name}" set to "{value}"')
+def step_impl(context, name, value):
+    context.request_ready.wait()
+    matching = context.request_response.headers[name]
+    assert matching, f"Header {name} not found"
+    assert matching == value, f"Value of header doesn't match. {matching} != {value}"
+
+
+@when('the server responds with')
+def step_impl(context):
+    # TODO: set the fields given in the table
+    for row in context.table:
+        if row['field'] == 'status':
+            context.request_response.send_response(int(row['value']))
+        elif row['field'].startswith('headers.'):
+            _, header = row['field'].split('.')
+            context.request_response.send_header(header, row['value'])
+        elif row['field'] == 'body':
+            payload = row['value'].encode('utf-8')
+            context.request_response.send_header('Content-Length', str(len(payload)))
+            context.request_response.end_headers()
+            context.request_response.wfile.write(payload)
+
+    context.response_ready.set()
+
+
+@then('the command exits with "{returncode}"')
+def step_impl(context, returncode):
+    context.command_thread.join()
+    assert context.command.returncode == int(returncode), f"Command returned {context.command.returncode} instead of {returncode}"

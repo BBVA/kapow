@@ -32,8 +32,15 @@ def before_scenario(context, scenario):
 
 
 def after_scenario(context, scenario):
+    # Real Kapow! server being tested
     if hasattr(context, 'server'):
         context.server.terminate()
         context.server.wait()
 
     os.unlink(context.handler_fifo_path)
+
+    # Mock HTTP server for testing
+    if hasattr(context, 'httpserver'):
+        context.response_ready.set()
+        context.httpserver.shutdown()
+        context.httpserver_thread.join()
