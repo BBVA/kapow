@@ -20,6 +20,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"os"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -28,6 +29,18 @@ import (
 	"github.com/BBVA/kapow/internal/server/model"
 	"github.com/BBVA/kapow/internal/server/user"
 )
+
+func denyMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		good := os.Getenv("KAPOW_CONTROL_TOKEN")
+		candidate := r.Header.Get("X-Kapow-Token")
+		if candidate == good {
+			next.ServeHTTP(w, r)
+		} else {
+			httperror.ErrorJSON(w, "Unauthorized", http.StatusUnauthorized)
+		}
+	})
+}
 
 // configRouter Populates the server mux with all the supported routes. The
 // server exposes list, get, delete and add route endpoints.
@@ -44,6 +57,7 @@ func configRouter() *mux.Router {
 		Methods(http.MethodPost)
 	r.NotFoundHandler = http.HandlerFunc(defNotFoundHandler)
 	r.MethodNotAllowedHandler = http.HandlerFunc(defMethodNotAllowedHandler)
+	r.Use(denyMiddleware)
 
 	return r
 }
