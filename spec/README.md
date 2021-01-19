@@ -618,8 +618,6 @@ Commands:
 ```
 
 
-### `kapow server`
-
 This command runs the Kapow! server, which is the core of Kapow!.  If
 run without parameters, it will run an unconfigured server.  It can accept a path
 to an executable file, the init program, which can be a shell script that
@@ -627,7 +625,7 @@ contains commands to configure the *Kapow!* server.
 
 The init program can leverage the `kapow route` command, which is used to define
 a route.  The `kapow route` command needs a way to reach the *Kapow!* server,
-and for that, `kapow` provides the `KAPOW_DATA_URL` variable in the environment
+and for that, `kapow` provides the `KAPOW_CONTROL_URL` variable in the environment
 of the aforementioned init program.
 
 Every time the *Kapow!* server receives a request, it will spawn a process to
@@ -642,10 +640,10 @@ In order for `get` and `set` to do their job, they require a way to reach the
 Thus, the *Kapow!* server adds the `KAPOW_DATA_URL` and `KAPOW_HANDLER_ID` to the
 process' environment.
 
-Also, `kapow server` will add the variable KAPOW_CONTROL_TOKEN to the environment
+Also, `kapow server` will add the variable `KAPOW_CONTROL_TOKEN` to the environment
 of the init scripts, which will allow them to connect to the control API.
 
-The KAPOW_CONTROL_TOKEN can be passed to the `kapow server` via the environment.
+The `KAPOW_CONTROL_TOKEN` can be passed to the `kapow server` via the environment.
 If empty or undefined, `kapow server` will generate a random one upon startup,
 and print it via `stderr`.
 
@@ -674,7 +672,10 @@ To deregister a route you must provide a *route_id*.
 
 
 #### **Environment**
-- `KAPOW_DATA_URL`
+- `KAPOW_CONTROL_URL`
+- `KAPOW_CONTROL_TOKEN`: This will authenticate the client; the client must
+  send the header `X-Kapow-Token` with the contents of this variable, whenever
+  it tries to communicate with the control server.
 
 
 #### **Help**
@@ -715,9 +716,9 @@ Options:
 $ kapow route add -X GET '/list/{ip}' -c 'nmap -sL $(kapow get /request/matches/ip) | kapow set /response/body'
 ```
 
-### `request`
+### `kapow get`
 
-Exposes the requests' resources.
+Read data from the current request's resource tree.
 
 
 #### **Environment**
@@ -732,9 +733,9 @@ $ kapow get /request/body
 ```
 
 
-### `response`
+### `kapow set`
 
-Exposes the response's resources.
+Write data to the current request's resource tree.
 
 
 #### **Environment**
