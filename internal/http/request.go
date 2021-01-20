@@ -24,14 +24,18 @@ import (
 	"os"
 )
 
+func AddXKapowTokenHeader(req *http.Request) {
+	req.Header.Add("X-Kapow-Token", os.Getenv("KAPOW_CONTROL_TOKEN"))
+}
+
 // Get perform a request using Request with the GET method
-func Get(url string, contentType string, r io.Reader, w io.Writer) error {
-	return Request("GET", url, contentType, r, w)
+func Get(url string, contentType string, r io.Reader, w io.Writer, reqTuner ...func(*http.Request)) error {
+	return Request("GET", url, contentType, r, w, reqTuner...)
 }
 
 // Post perform a request using Request with the POST method
-func Post(url string, contentType string, r io.Reader, w io.Writer) error {
-	return Request("POST", url, contentType, r, w)
+func Post(url string, contentType string, r io.Reader, w io.Writer, reqTuner ...func(*http.Request)) error {
+	return Request("POST", url, contentType, r, w, reqTuner...)
 }
 
 // Put perform a request using Request with the PUT method
@@ -40,8 +44,8 @@ func Put(url string, contentType string, r io.Reader, w io.Writer) error {
 }
 
 // Delete perform a request using Request with the DELETE method
-func Delete(url string, contentType string, r io.Reader, w io.Writer) error {
-	return Request("DELETE", url, contentType, r, w)
+func Delete(url string, contentType string, r io.Reader, w io.Writer, reqTuner ...func(*http.Request)) error {
+	return Request("DELETE", url, contentType, r, w, reqTuner...)
 }
 
 var devnull = ioutil.Discard
@@ -50,16 +54,18 @@ var devnull = ioutil.Discard
 // content of the given reader as the body and writing all the contents
 // of the response to the given writer. The reader and writer are
 // optional.
-func Request(method string, url string, contentType string, r io.Reader, w io.Writer) error {
+func Request(method string, url string, contentType string, r io.Reader, w io.Writer, reqTuners ...func(*http.Request)) error {
 	req, err := http.NewRequest(method, url, r)
 	if err != nil {
 		return err
 	}
 
-	req.Header.Add("X-Kapow-Token", os.Getenv("KAPOW_CONTROL_TOKEN"))
-
 	if contentType != "" {
 		req.Header.Add("Content-Type", contentType)
+	}
+
+	for _, reqTuner := range reqTuners {
+		reqTuner(req)
 	}
 
 	res, err := new(http.Client).Do(req)
