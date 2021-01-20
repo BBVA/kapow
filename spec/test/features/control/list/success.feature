@@ -13,12 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+@server
 Feature: Listing routes in a Kapow! server.
   Listing routes allows users to know what URLs are
   available on a Kapow! server. The List endpoint returns
   a list of the routes the server has configured.
 
-  @server
   Scenario: List routes on a fresh started server.
     A just started or with all routes removed Kapow! server,
     will show an empty list of routes.
@@ -32,7 +32,6 @@ Feature: Listing routes in a Kapow! server.
         []
         """
 
-  @server
   Scenario: List routes on a server with routes loaded.
     After some route creation/insertion operations the server
     must return an ordered list of routes stored.
@@ -65,24 +64,3 @@ Feature: Listing routes in a Kapow! server.
           }
         ]
         """
-
-  @cli
-  @client
-  Scenario: Use cli to obtain routes
-    The provided kapow subcommand can be used to perform the
-    aforementioned request.
-
-    Given a test HTTP server on the control port
-    When I run the following command
-       """
-       $ KAPOW_CONTROL_TOKEN=testing kapow route list
-
-       """
-    Then the HTTP server received a "GET" request to "/routes"
-      And the received request has the header "X-Kapow-Token" set to "testing"
-    When the server responds with:
-      | field                | value            |
-      | status               | 200              |
-      | headers.Content-Type | application/json |
-      | body                 | []               |
-    Then the command exits with "0"

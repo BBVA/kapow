@@ -360,20 +360,32 @@ def step_impl(context, value, fieldType, elementName):
     assert actual == value, f"Expecting {fieldType} {elementName!r} to be {value!r}, got {actual!r} insted"
 
 
-@given('a test HTTP server on the control port')
-def step_impl(context):
+@given('a test HTTP server on the {port} port')
+def step_impl(context, port):
     context.request_ready = threading.Event()
     context.request_ready.clear()
     context.response_ready = threading.Event()
     context.response_ready.clear()
 
     class SaveResponseHandler(http.server.BaseHTTPRequestHandler):
-        def do_GET(self):
+        def do_verb(self):
             context.request_response = self
             context.request_ready.set()
             context.response_ready.wait()
+        do_GET=do_verb
+        do_POST=do_verb
+        do_PUT=do_verb
+        do_DELETE=do_verb
+        do_HEAD=do_verb
 
-    context.httpserver = http.server.HTTPServer(('127.0.0.1', 8081),
+    if port == "control":
+        port = 8081
+    elif port == "data":
+        port = 8082
+    else:
+        raise ValueError(f"Unknown port {port}")
+
+    context.httpserver = http.server.HTTPServer(('127.0.0.1', port),
                                                 SaveResponseHandler)
     context.httpserver_thread = threading.Thread(
         target=context.httpserver.serve_forever,
@@ -431,3 +443,9 @@ def step_impl(context):
 def step_impl(context, returncode):
     context.command_thread.join()
     assert context.command.returncode == int(returncode), f"Command returned {context.command.returncode} instead of {returncode}"
+
+
+@then('the received request doesn\'t have the header "{name}" set')
+def step_impl(context, name):
+    context.request_ready.wait()
+    assert name not in context.request_response.headers, f"Header {name} found"
