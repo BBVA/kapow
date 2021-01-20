@@ -26,7 +26,7 @@ Feature: Don't leak the control token to the data server
     Given a test HTTP server on the data port
     When I run the following command
        """
-       $ KAPOW_HANDLER_ID=myhandlerid KAPOW_CONTROL_TOKEN=testing kapow <subcommand> /
+       $ KAPOW_HANDLER_ID=myhandlerid KAPOW_CONTROL_TOKEN=testing kapow <arguments>
 
        """
     Then the HTTP server received a "<method>" request to "/handlers/myhandlerid/"
@@ -34,11 +34,9 @@ Feature: Don't leak the control token to the data server
     When the server responds with:
       | field                | value            |
       | status               | 200              |
-      | headers.Content-Type | application/json |
-      | body                 | null             |
     Then the command exits with "0"
 
     Examples:
-      | subcommand | method |
-      | get        | GET    |
-      | set        | PUT    |
+      | arguments | method |
+      | get /     | GET    |
+      | set / foo | PUT    |

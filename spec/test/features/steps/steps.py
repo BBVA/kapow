@@ -192,7 +192,7 @@ def step_impl(context, path):
 @when('I release the testing request')
 def step_impl(context):
     os.kill(int(context.testing_handler_pid), signal.SIGTERM)
-    context.testing_response_pid = None
+    context.testing_handler_pid = None
     context.testing_response = context.testing_request.get()
 
 
@@ -425,6 +425,7 @@ def step_impl(context, name, value):
 @when('the server responds with')
 def step_impl(context):
     # TODO: set the fields given in the table
+    has_body = False
     for row in context.table:
         if row['field'] == 'status':
             context.request_response.send_response(int(row['value']))
@@ -432,10 +433,15 @@ def step_impl(context):
             _, header = row['field'].split('.')
             context.request_response.send_header(header, row['value'])
         elif row['field'] == 'body':
+            has_body = True
             payload = row['value'].encode('utf-8')
             context.request_response.send_header('Content-Length', str(len(payload)))
             context.request_response.end_headers()
             context.request_response.wfile.write(payload)
+
+    if not has_body:
+        context.request_response.send_header('Content-Length', '0')
+        context.request_response.end_headers()
 
     context.response_ready.set()
 
