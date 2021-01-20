@@ -192,6 +192,7 @@ def step_impl(context, path):
 @when('I release the testing request')
 def step_impl(context):
     os.kill(int(context.testing_handler_pid), signal.SIGTERM)
+    context.testing_response_pid = None
     context.testing_response = context.testing_request.get()
 
 

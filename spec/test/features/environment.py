@@ -15,6 +15,8 @@
 #
 import tempfile
 import os
+import signal
+from contextlib import suppress
 
 
 def before_scenario(context, scenario):
@@ -44,3 +46,7 @@ def after_scenario(context, scenario):
         context.response_ready.set()
         context.httpserver.shutdown()
         context.httpserver_thread.join()
+
+    if getattr(context, 'testing_handler_pid', None) is not None:
+        with suppress(ProcessLookupError):
+            os.kill(int(context.testing_handler_pid), signal.SIGTERM)
