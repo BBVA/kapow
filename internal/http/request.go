@@ -21,6 +21,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"os"
 )
 
 // Get perform a request using Request with the GET method
@@ -54,6 +55,8 @@ func Request(method string, url string, contentType string, r io.Reader, w io.Wr
 	if err != nil {
 		return err
 	}
+
+	req.Header.Add("X-Kapow-Token", os.Getenv("KAPOW_CONTROL_TOKEN"))
 
 	if contentType != "" {
 		req.Header.Add("Content-Type", contentType)
