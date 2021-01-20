@@ -29,7 +29,7 @@ func TestReturnErrorOnInvalidURL(t *testing.T) {
 	defer gock.Off()
 	gock.New("").Reply(200)
 
-	err := Request("GET", "://", "", nil, nil)
+	err := Request("GET", "://", nil, nil)
 	if err == nil {
 		t.Errorf("Expected error not returned")
 	}
@@ -45,7 +45,7 @@ func TestRequestGivenMethod(t *testing.T) {
 	mock.Method = "FOO"
 	mock.Reply(200)
 
-	err := Request("FOO", "http://localhost", "", nil, nil)
+	err := Request("FOO", "http://localhost", nil, nil)
 	if err != nil {
 		t.Errorf("Unexpected error on request")
 	}
@@ -60,7 +60,7 @@ func TestReturnHTTPErrorAsIs(t *testing.T) {
 	customError := errors.New("FOO")
 	gock.New("http://localhost").ReplyError(customError)
 
-	err := Request("GET", "http://localhost", "", nil, nil)
+	err := Request("GET", "http://localhost", nil, nil)
 	if errors.Unwrap(err) != customError {
 		t.Errorf("Returned error is not the expected error: '%v'", err)
 	}
@@ -76,7 +76,7 @@ func TestReturnHTTPReasonAsErrorWhenUnsuccessful(t *testing.T) {
 		Reply(http.StatusTeapot).
 		BodyString(`{"reason": "I'm a teapot"}`)
 
-	err := Request("GET", "http://localhost", "", nil, nil)
+	err := Request("GET", "http://localhost", nil, nil)
 	if err == nil || err.Error() != http.StatusText(http.StatusTeapot) {
 		t.Errorf("Reason should be returned as an error")
 	}
@@ -93,7 +93,7 @@ func TestCopyResponseBodyToWriter(t *testing.T) {
 
 	rw := new(bytes.Buffer)
 
-	err := Request("GET", "http://localhost", "", nil, rw)
+	err := Request("GET", "http://localhost", nil, rw)
 	if err != nil {
 		t.Errorf("Unexpected error %v", err)
 	}
@@ -119,7 +119,7 @@ func TestWriteToDevNullWhenNoWriter(t *testing.T) {
 
 	defer func() { devnull = original }()
 
-	err := Request("GET", "http://localhost", "", nil, nil)
+	err := Request("GET", "http://localhost", nil, nil)
 	if err != nil {
 		t.Errorf("Unexpected error %v", err)
 	}
@@ -135,14 +135,14 @@ func TestWriteToDevNullWhenNoWriter(t *testing.T) {
 	}
 }
 
-func TestSendContentType(t *testing.T) {
+func TestSendContentTypeJSON(t *testing.T) {
 	defer gock.Off()
 	gock.New("http://localhost").
-		MatchHeader("Content-Type", "foo/bar").
+		MatchHeader("Content-Type", "application/json").
 		HeaderPresent("Content-Type").
 		Reply(http.StatusOK)
 
-	err := Request("GET", "http://localhost", "foo/bar", nil, nil)
+	err := Request("GET", "http://localhost", nil, nil, AsJSON)
 	if err != nil {
 		t.Errorf("Unexpected error '%v'", err.Error())
 	}
@@ -158,7 +158,7 @@ func TestGetRequestsWithMethodGet(t *testing.T) {
 		Get("/").
 		Reply(http.StatusOK)
 
-	err := Get("http://localhost/", "", nil, nil)
+	err := Get("http://localhost/", nil, nil)
 
 	if err != nil {
 		t.Errorf("Unexpected error %q", err)
@@ -175,7 +175,7 @@ func TestPostRequestsWithMethodPost(t *testing.T) {
 		Post("/").
 		Reply(http.StatusOK)
 
-	err := Post("http://localhost/", "", nil, nil)
+	err := Post("http://localhost/", nil, nil)
 
 	if err != nil {
 		t.Errorf("Unexpected error %q", err)
@@ -192,7 +192,7 @@ func TestPutRequestsWithMethodPut(t *testing.T) {
 		Put("/").
 		Reply(http.StatusOK)
 
-	err := Put("http://localhost/", "", nil, nil)
+	err := Put("http://localhost/", nil, nil)
 
 	if err != nil {
 		t.Errorf("Unexpected error %q", err)
@@ -209,7 +209,7 @@ func TestDeleteRequestsWithMethodDelete(t *testing.T) {
 		Delete("/").
 		Reply(http.StatusOK)
 
-	err := Delete("http://localhost/", "", nil, nil)
+	err := Delete("http://localhost/", nil, nil)
 
 	if err != nil {
 		t.Errorf("Unexpected error %q", err)
