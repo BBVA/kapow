@@ -139,7 +139,6 @@ func TestSendContentTypeJSON(t *testing.T) {
 	defer gock.Off()
 	gock.New("http://localhost").
 		MatchHeader("Content-Type", "application/json").
-		HeaderPresent("Content-Type").
 		Reply(http.StatusOK)
 
 	err := Request("GET", "http://localhost", nil, nil, AsJSON)
