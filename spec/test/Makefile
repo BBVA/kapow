@@ -16,3 +16,5 @@ checkbin:
 	@which kapow >/dev/null || (echo "ERROR: Your kapow binary is not present in PATH" && exit 1)
 testpoc:
 	PATH=../../testutils/poc:$$PATH behave --no-capture --tags=~@skip
+wippoc:
+	PATH=../../testutils/poc:$$PATH behave --no-capture --tags=@wip
