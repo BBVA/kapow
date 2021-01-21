@@ -644,8 +644,9 @@ Also, `kapow server` will add the variable `KAPOW_CONTROL_TOKEN` to the environm
 of the init scripts, which will allow them to connect to the control API.
 
 The `KAPOW_CONTROL_TOKEN` can be passed to the `kapow server` via the environment.
-If empty or undefined, `kapow server` will generate a random one upon startup,
-and print it via `stderr`.
+If undefined, `kapow server` will generate a random one upon startup,
+and print it via `stderr`.  If empty, `kapow server` will refuse to start with
+an error.
 
 
 #### Example

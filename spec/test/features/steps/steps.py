@@ -406,13 +406,14 @@ def step_impl(context, port):
     context.httpserver_thread.start()
 
 
-@when('I run the following command')
+@step('I run the following command')
 def step_impl(context):
     _, command = context.text.split('$')
     command = command.lstrip()
 
     def exec_in_thread():
-        context.command = subprocess.run(command, shell=True, check=False)
+        context.command = subprocess.Popen(command, shell=True)
+        context.command.wait()
 
     context.command_thread = threading.Thread(target=exec_in_thread, daemon=True)
     context.command_thread.start()
@@ -457,11 +458,20 @@ def step_impl(context):
 
     context.response_ready.set()
 
-
+@then('the command exits {immediately} with "{returncode}"')
 @then('the command exits with "{returncode}"')
-def step_impl(context, returncode):
-    context.command_thread.join()
-    assert context.command.returncode == int(returncode), f"Command returned {context.command.returncode} instead of {returncode}"
+def step_impl(context, returncode, immediately=False):
+    context.command_thread.join(timeout=3.0 if immediately else None)
+    if context.command_thread.is_alive():
+        try:
+            print("killing in the name of")
+            context.command.kill()
+        finally:
+            assert False, "The command is still alive"
+
+    else:
+        context.command.wait()
+        assert context.command.returncode == int(returncode), f"Command returned {context.command.returncode} instead of {returncode}"
 
 
 @then('the received request doesn\'t have the header "{name}" set')

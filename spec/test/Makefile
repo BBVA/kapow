@@ -5,7 +5,7 @@ all: checkbin test
 lint:
 	gherkin-lint
 wip:
-	KAPOW_DEBUG_TESTS=1 behave --stop --wip
+	KAPOW_DEBUG_TESTS=1 behave --stop --wip -k
 test: lint
 	behave --no-capture --tags=~@skip
 fix: lint
@@ -17,4 +17,4 @@ checkbin:
 testpoc:
 	PATH=../../testutils/poc:$$PATH behave --no-capture --tags=~@skip
 wippoc:
-	PATH=../../testutils/poc:$$PATH behave --no-capture --tags=@wip
+	PATH=../../testutils/poc:$$PATH behave --no-capture --tags=@wip -k

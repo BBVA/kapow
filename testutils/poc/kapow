@@ -497,6 +497,10 @@ async def start_kapow_server(bind, scripts, certfile=None, interactive=False, ke
     # CONTROL
     #
     control_token = os.environ.get('KAPOW_CONTROL_TOKEN', str(uuid4()))
+    if not control_token:
+        print("KAPOW_CONTROL_TOKEN cannot be empty")
+        sys.exit(1)
+
     print(f'Use KAPOW_CONTROL_TOKEN="{control_token}" to connect')
     control_app = web.Application(client_max_size=1024**3, middlewares=[check_control_token(control_token)])
     control_app.add_routes([

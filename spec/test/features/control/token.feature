@@ -37,7 +37,7 @@ Feature: Authenticate with server via token
       And I get "Unauthorized" as response reason phrase
 
   @server
-  Scenario: Auto-generated Access Token
+  Scenario: Auto-generate Access Token if KAPOW_CONTROL_TOKEN is undefined
     At startup and if undefined, a new random control token must be
     generated.  Any communication attempt from a client with an empty
     Control Token must be denied.
@@ -46,6 +46,19 @@ Feature: Authenticate with server via token
     When I request a route listing without providing an empty Access Token
     Then I get 401 as response code
       And I get "Unauthorized" as response reason phrase
+
+  @cli
+  @server
+  Scenario: Fail to start if KAPOW_CONTROL_TOKEN is empty
+    At startup and if the provided token is an empty string the server
+    will fail to start.
+
+    Given I run the following command
+       """
+       $ KAPOW_CONTROL_TOKEN="" kapow server
+
+       """
+    Then the command exits immediately with "1"
 
   @cli
   @client
