@@ -19,15 +19,46 @@ package cmd
 import (
 	"bufio"
 	"errors"
+	"fmt"
 	"io"
 	"os"
 	"sync"
 
+	"github.com/google/uuid"
 	"github.com/spf13/cobra"
 
 	"github.com/BBVA/kapow/internal/logger"
 	"github.com/BBVA/kapow/internal/server"
 )
+
+func banner() {
+	fmt.Fprintln(os.Stderr, `
+                                                              %%  %%%%
+                                                            %%%   %%%
+                                                %%         %%%    %%%
+                                       %%%%%%% %%%    %%%  %%%    %%%
+                            *%%     %%%%%%%%%%%%%%%  %%%% %%%     %%
+                   %%   %%%%%%%%%. %%%     %%%% %%% %%%%%%%%
+                 %%%%   %%%   %%% %%%       %%% %%%%%%  %%%%
+   %%%   %%%    %%%%%%  %%% %%%%  %%%      %%%%  %%%%   %%%      %%%
+   %%%  %%%     %%  %%% %%%%%    %%%%%    %%%%   %%%
+   %%% %%%     %% %%%%%%%%%       %%%%%%%%%%
+   %%%%%%     %%%    %%%%%%         %%%
+   %%% %%%%%  %%     %%%%%%
+   %%%   %%%%%%%
+   %%%%
+    %           If you can script it, you can HTTP it.
+	`)
+
+	fmt.Fprintf(os.Stderr, `
+      To access this instance from another shell set the following
+      variables:
+
+   KAPOW_CONTROL_TOKEN=%q
+
+`, os.Getenv("KAPOW_CONTROL_TOKEN"))
+
+}
 
 // ServerCmd is the command line interface for kapow server
 var ServerCmd = &cobra.Command{
@@ -58,10 +89,11 @@ var ServerCmd = &cobra.Command{
 		}
 		// If not provided, set KAPOW_CONTROL_TOKEN
 		if controlToken, exist := os.LookupEnv("KAPOW_CONTROL_TOKEN"); !exist {
-			os.Setenv("KAPOW_CONTROL_TOKEN", "completely random token ;-P")
+			os.Setenv("KAPOW_CONTROL_TOKEN", uuid.New().String())
 		} else if controlToken == "" {
 			logger.L.Fatalf("KAPOW_CONTROL_TOKEN cannot be empty; Set it to a valid value, or unset it to enable autogeneration")
 		}
+		banner()
 
 		server.StartServer(sConf)
 
