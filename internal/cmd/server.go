@@ -56,6 +56,12 @@ var ServerCmd = &cobra.Command{
 		if _, exist := os.LookupEnv("KAPOW_CONTROL_URL"); !exist {
 			os.Setenv("KAPOW_CONTROL_URL", "http://"+sConf.ControlBindAddr)
 		}
+		// If not provided, set KAPOW_CONTROL_TOKEN
+		if controlToken, exist := os.LookupEnv("KAPOW_CONTROL_TOKEN"); !exist {
+			os.Setenv("KAPOW_CONTROL_TOKEN", "completely random token ;-P")
+		} else if controlToken == "" {
+			logger.L.Fatalf("KAPOW_CONTROL_TOKEN cannot be empty; Set it to a valid value, or unset it to enable autogeneration")
+		}
 
 		server.StartServer(sConf)
 
