@@ -80,18 +80,20 @@ if Env.KAPOW_DEBUG_TESTS:
     requests_log.setLevel(logging.DEBUG)
     requests_log.propagate = True
 
-def run_kapow_server(context):
+def run_kapow_server(context, control_token=True):
     with suppress(requests.exceptions.ConnectionError):
         open_ports = (
             requests.head(Env.KAPOW_CONTROL_URL, timeout=1).status_code
             and requests.head(Env.KAPOW_DATA_URL, timeout=1).status_code)
         assert (not open_ports), "Another process is already bound"
 
+    control_token = {'KAPOW_CONTROL_TOKEN': Env.KAPOW_CONTROL_TOKEN} if control_token else {}
+
     context.server = subprocess.Popen(
         shlex.split(Env.KAPOW_SERVER_CMD),
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
-        env={'KAPOW_CONTROL_TOKEN': Env.KAPOW_CONTROL_TOKEN, **os.environ},
+        env={**control_token, **os.environ},
         shell=False)
 
     # Check process is running with reachable APIs
@@ -109,15 +111,25 @@ def run_kapow_server(context):
 
     assert open_ports, "API is unreachable after KAPOW_BOOT_TIMEOUT"
 
+
+@given('I have a just started Kapow! server with {config}')
 @given('I have a just started Kapow! server')
 @given('I have a running Kapow! server')
-def step_impl(context):
-    run_kapow_server(context)
+def step_impl(context, config=None):
+    control_token = config != 'no control token'
+    run_kapow_server(context, control_token)
 
 
 @when('I request a route listing without providing an Access Token')
 def step_impl(context):
     context.response = requests.get(f"{Env.KAPOW_CONTROL_URL}/routes")
+
+
+@when('I request a route listing without providing an empty Access Token')
+def step_impl(context):
+    context.response = requests.get(
+        f"{Env.KAPOW_CONTROL_URL}/routes",
+        headers={"X-Kapow-Token": ""})
 
 
 @when(u'I request a route listing providing a bad Access Token')

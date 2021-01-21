@@ -13,12 +13,42 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-@cli
-@client
 Feature: Authenticate with server via token
   The control server needs to be invoked with a secret token that is
   send via the X-Kapow-Token header.
 
+  @server
+  Scenario: Try to get routes without Access Token
+    The Access Token is mandatory.
+
+    Given I have a just started Kapow! server
+    When I request a route listing without providing an Access Token
+    Then I get 401 as response code
+      And I get "Unauthorized" as response reason phrase
+
+  @server
+  Scenario: Try to get routes with bad Access Token
+    If the provided Access Token doesn't match with the one on the
+    server side, the request must be denied.
+
+    Given I have a just started Kapow! server
+    When I request a route listing providing a bad Access Token
+    Then I get 401 as response code
+      And I get "Unauthorized" as response reason phrase
+
+  @server
+  Scenario: Auto-generated Access Token
+    At startup and if undefined, a new random control token must be
+    generated.  Any communication attempt from a client with an empty
+    Control Token must be denied.
+
+    Given I have a just started Kapow! server with no control token
+    When I request a route listing without providing an empty Access Token
+    Then I get 401 as response code
+      And I get "Unauthorized" as response reason phrase
+
+  @cli
+  @client
   Scenario Outline: Use cli to communicate with control server
     The provided kapow subcommand must send the X-Kapow-Token
     header.
