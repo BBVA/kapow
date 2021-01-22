@@ -114,3 +114,17 @@ Feature: Authenticate with server via token
 
        """
     Then the command exits immediately with "1"
+
+  @e2e
+  Scenario: Control server dialog using a user-provided Control Access Token
+    If the user provides the same Control Access Token to both, kapow
+    server and kapow route subcommand, the communication should be
+    possible.
+
+    Given I have a just started Kapow! server with the Control Access Token "foo"
+    When I run the following command
+       """
+       $ KAPOW_CONTROL_TOKEN=foo kapow route list
+
+       """
+    Then the command exits with "0"

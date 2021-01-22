@@ -113,11 +113,14 @@ def run_kapow_server(context, control_token=True):
 
 
 @given('I have a just started Kapow! server with {config}')
+@given('I have a just started Kapow! server with the Control Access Token "{control_token}"')
 @given('I have a just started Kapow! server')
 @given('I have a running Kapow! server')
-def step_impl(context, config=None):
-    control_token = config != 'no control token'
-    run_kapow_server(context, control_token)
+def step_impl(context, config=None, control_token=None):
+    if control_token is not None:
+        os.environ['KAPOW_CONTROL_TOKEN'] = control_token
+    use_control_token = config != 'no control token'
+    run_kapow_server(context, use_control_token)
 
 
 @when('I request a route listing without providing a Control Access Token')
