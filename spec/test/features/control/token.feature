@@ -49,7 +49,7 @@ Feature: Authenticate with server via token
 
   @cli
   @server
-  Scenario: Fail to start if KAPOW_CONTROL_TOKEN is empty
+  Scenario: Fail to start the server if KAPOW_CONTROL_TOKEN is empty
     At startup and if the provided token is an empty string the server
     will fail to start.
 
@@ -86,3 +86,31 @@ Feature: Authenticate with server via token
       | route list           | GET    | /routes     | 200    |
       | route add / -c 'foo' | POST   | /routes     | 201    |
       | route remove bar     | DELETE | /routes/bar | 204    |
+
+  @cli
+  @client
+  Scenario: Fail to start the client if KAPOW_CONTROL_TOKEN is empty
+    At startup and if the provided token is an empty string the client
+    will fail to start.
+
+    Given a test HTTP server on the control port
+    When I run the following command
+       """
+       $ KAPOW_CONTROL_TOKEN="" kapow route list
+
+       """
+    Then the command exits immediately with "1"
+
+  @cli
+  @client
+  Scenario: Fail to start the client if KAPOW_CONTROL_TOKEN is missing
+    At startup and if the variable KAPOW_CONTROL_TOKEN is not set, the
+    client will fail to start.
+
+    Given a test HTTP server on the control port
+    When I run the following command
+       """
+       $ kapow route list
+
+       """
+    Then the command exits immediately with "1"

@@ -576,57 +576,74 @@ def route():
 @click.argument("url_pattern", nargs=1)
 @click.argument("command_file", required=False)
 def route_add(url_pattern, entrypoint, command, method, url, command_file):
-    headers = {'X-Kapow-Token': os.environ['KAPOW_CONTROL_TOKEN']} \
-              if 'KAPOW_CONTROL_TOKEN' in os.environ else {}
-
-    if command:
-        # Command is given inline
-        source = command
-    elif command_file is None:
-        # No command
-        source = ""
-    elif command_file == '-':
-        # Read commands from stdin
-        source = sys.stdin.read()
+    try:
+        control_token = os.environ['KAPOW_CONTROL_TOKEN']
+        assert control_token != ""
+    except:
+        print('KAPOW_CONTROL_TOKEN is mandatory')
+        sys.exit(1)
     else:
-        # Read commands from a file
-        with open(command_file, 'r', encoding='utf-8') as handler:
-            source = handler.read()
+        if command:
+            # Command is given inline
+            source = command
+        elif command_file is None:
+            # No command
+            source = ""
+        elif command_file == '-':
+            # Read commands from stdin
+            source = sys.stdin.read()
+        else:
+            # Read commands from a file
+            with open(command_file, 'r', encoding='utf-8') as handler:
+                source = handler.read()
 
-    response = requests.post(f"{url}/routes",
-                             json={"method": method,
-                                   "url_pattern": url_pattern,
-                                   "entrypoint": entrypoint,
-                                   "command": source},
-                             headers=headers)
-    response.raise_for_status()
-    print(json.dumps(response.json(), indent=2))
+        response = requests.post(f"{url}/routes",
+                                 json={"method": method,
+                                       "url_pattern": url_pattern,
+                                       "entrypoint": entrypoint,
+                                       "command": source},
+                                 headers={'X-Kapow-Token': control_token})
+        response.raise_for_status()
+        print(json.dumps(response.json(), indent=2))
 
 
 @route.command("remove")
 @click.option("--url", envvar='KAPOW_CONTROL_URL', default=KAPOW_CONTROL_URL)
 @click.argument("route-id")
 def route_remove(route_id, url):
-    headers = {'X-Kapow-Token': os.environ['KAPOW_CONTROL_TOKEN']} \
-              if 'KAPOW_CONTROL_TOKEN' in os.environ else {}
-
-    response = requests.delete(f"{url}/routes/{route_id}", headers=headers)
-    response.raise_for_status()
+    try:
+        control_token = os.environ['KAPOW_CONTROL_TOKEN']
+        assert control_token != ""
+    except:
+        print('KAPOW_CONTROL_TOKEN is mandatory')
+        sys.exit(1)
+    else:
+        response = requests.delete(
+            f"{url}/routes/{route_id}",
+            headers={'X-Kapow-Token': control_token})
+        response.raise_for_status()
 
 
 @route.command("list")
 @click.option("--url", envvar='KAPOW_CONTROL_URL', default=KAPOW_CONTROL_URL)
 @click.argument("route-id", nargs=1, required=False, default=None)
 def route_list(route_id, url):
-    headers = {'X-Kapow-Token': os.environ['KAPOW_CONTROL_TOKEN']} \
-              if 'KAPOW_CONTROL_TOKEN' in os.environ else {}
-
-    if route_id is None:
-        response = requests.get(f"{url}/routes", headers=headers)
+    try:
+        control_token = os.environ['KAPOW_CONTROL_TOKEN']
+        assert control_token != ""
+    except:
+        print('KAPOW_CONTROL_TOKEN is mandatory')
+        sys.exit(1)
     else:
-        response = requests.get(f"{url}/routes/{route_id}", headers=headers)
-    response.raise_for_status()
-    print(json.dumps(response.json(), indent=2))
+        if route_id is None:
+            response = requests.get(f"{url}/routes",
+	                            headers={'X-Kapow-Token': control_token})
+        else:
+            response = requests.get(
+                f"{url}/routes/{route_id}",
+                headers={'X-Kapow-Token': control_token})
+        response.raise_for_status()
+        print(json.dumps(response.json(), indent=2))
 
 
 @kapow.command("set", help="Set data from the current context")
