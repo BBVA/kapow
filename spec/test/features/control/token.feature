@@ -18,32 +18,32 @@ Feature: Authenticate with server via token
   send via the X-Kapow-Token header.
 
   @server
-  Scenario: Try to get routes without Access Token
-    The Access Token is mandatory.
+  Scenario: Try to get routes without a Control Access Token
+    The Control Access Token is mandatory.
 
     Given I have a just started Kapow! server
-    When I request a route listing without providing an Access Token
+    When I request a route listing without providing a Control Access Token
     Then I get 401 as response code
       And I get "Unauthorized" as response reason phrase
 
   @server
-  Scenario: Try to get routes with bad Access Token
-    If the provided Access Token doesn't match with the one on the
+  Scenario: Try to get routes with a bad Control Access Token
+    If the provided Control Access Token doesn't match with the one on the
     server side, the request must be denied.
 
     Given I have a just started Kapow! server
-    When I request a route listing providing a bad Access Token
+    When I request a route listing providing a bad Control Access Token
     Then I get 401 as response code
       And I get "Unauthorized" as response reason phrase
 
   @server
-  Scenario: Auto-generate Access Token if KAPOW_CONTROL_TOKEN is undefined
+  Scenario: Auto-generate a Control Access Token if KAPOW_CONTROL_TOKEN is undefined
     At startup and if undefined, a new random control token must be
     generated.  Any communication attempt from a client with an empty
     Control Token must be denied.
 
     Given I have a just started Kapow! server with no control token
-    When I request a route listing without providing an empty Access Token
+    When I request a route listing without providing an empty Control Access Token
     Then I get 401 as response code
       And I get "Unauthorized" as response reason phrase
 

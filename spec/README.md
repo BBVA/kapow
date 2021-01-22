@@ -179,14 +179,14 @@ Content-Length: 25
 
 ## Security
 
-### Access Token
+### Control Access Token
 
 To access every endpoint of this interface a token is required.
 
-The Access Token will be provided to the server via the `X-Kapow-Token` custom
+The Control Access Token will be provided to the server via the `X-Kapow-Token` custom
 header.
 
-If no valid Access Token is provided via the aforementioned `X-Kapow-Token`
+If no valid Control Access Token is provided via the aforementioned `X-Kapow-Token`
 header, the server will return a `401 Unauthorized` status code.
 
 

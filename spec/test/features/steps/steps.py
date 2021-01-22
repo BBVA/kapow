@@ -120,19 +120,19 @@ def step_impl(context, config=None):
     run_kapow_server(context, control_token)
 
 
-@when('I request a route listing without providing an Access Token')
+@when('I request a route listing without providing a Control Access Token')
 def step_impl(context):
     context.response = requests.get(f"{Env.KAPOW_CONTROL_URL}/routes")
 
 
-@when('I request a route listing without providing an empty Access Token')
+@when('I request a route listing without providing an empty Control Access Token')
 def step_impl(context):
     context.response = requests.get(
         f"{Env.KAPOW_CONTROL_URL}/routes",
         headers={"X-Kapow-Token": ""})
 
 
-@when(u'I request a route listing providing a bad Access Token')
+@when(u'I request a route listing providing a bad Control Access Token')
 def step_impl(context):
     context.response = requests.get(
         f"{Env.KAPOW_CONTROL_URL}/routes",
