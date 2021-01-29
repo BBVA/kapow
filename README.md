@@ -80,7 +80,7 @@ license](https://raw.githubusercontent.com/BBVA/kapow/master/LICENSE).
 ## Contributions
 
 Contributions are of course welcome.  See
-[CONTRIBUTING](https://raw.githubusercontent.com/BBVA/kapow/blob/master/CONTRIBUTING.rst)
+[CONTRIBUTING](https://raw.githubusercontent.com/BBVA/kapow/master/CONTRIBUTING.rst)
 or skim existing tickets to see where you could help out.
 
 ---
