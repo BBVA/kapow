@@ -29,12 +29,15 @@ import time
 import http.server
 
 import requests
+from requests import exceptions as requests_exceptions
 from environconfig import EnvironConfig, StringVar, IntVar, BooleanVar
 from comparedict import is_subset
 import jsonexample
 
 import logging
 
+requests = requests.Session()
+requests.verify = False
 
 WORD2POS = {"first": 0, "second": 1, "last": -1}
 HERE = os.path.dirname(__file__)
@@ -45,7 +48,7 @@ class Env(EnvironConfig):
     KAPOW_SERVER_CMD = StringVar(default="kapow server")
 
     #: Where the Control API is
-    KAPOW_CONTROL_URL = StringVar(default="http://localhost:8081")
+    KAPOW_CONTROL_URL = StringVar(default="https://localhost:8081")
 
     #: Where the Data API is
     KAPOW_DATA_URL = StringVar(default="http://localhost:8082")
@@ -81,7 +84,7 @@ if Env.KAPOW_DEBUG_TESTS:
     requests_log.propagate = True
 
 def run_kapow_server(context, control_token=True):
-    with suppress(requests.exceptions.ConnectionError):
+    with suppress(requests_exceptions.ConnectionError):
         open_ports = (
             requests.head(Env.KAPOW_CONTROL_URL, timeout=1).status_code
             and requests.head(Env.KAPOW_DATA_URL, timeout=1).status_code)
@@ -89,8 +92,9 @@ def run_kapow_server(context, control_token=True):
 
     control_token = {'KAPOW_CONTROL_TOKEN': Env.KAPOW_CONTROL_TOKEN} if control_token else {}
 
+    # (XXX)
     context.server = subprocess.Popen(
-        shlex.split(Env.KAPOW_SERVER_CMD),
+        shlex.split(Env.KAPOW_SERVER_CMD) + [os.path.join(HERE, "get_environment.py")],
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
         env={**control_token, **os.environ},
@@ -101,7 +105,7 @@ def run_kapow_server(context, control_token=True):
     for _ in range(Env.KAPOW_BOOT_TIMEOUT):
         is_running = context.server.poll() is None
         assert is_running, "Server is not running!"
-        with suppress(requests.exceptions.ConnectionError):
+        with suppress(requests_exceptions.ConnectionError):
             open_ports = (
                 requests.head(Env.KAPOW_CONTROL_URL, timeout=1).status_code
                 and requests.head(Env.KAPOW_DATA_URL, timeout=1).status_code)
@@ -481,3 +485,14 @@ def step_impl(context, returncode, immediately=False):
 def step_impl(context, name):
     context.request_ready.wait()
     assert name not in context.request_response.headers, f"Header {name} found"
+
+
+@when('I connect to the control server')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: When I connect to the control server')
+
+
+@then('the fingerprint of the certificate matches the value in "{envvar}"')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: Then the fingerprint of the certificate matches the value in "KAPOW_CONTROL_FINGERPRINT"')
+
