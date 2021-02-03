@@ -177,18 +177,6 @@ Content-Length: 25
 {"reason": "Not Found"}
 ```
 
-## Security
-
-### Control Access Token
-
-To access every endpoint of this interface a token is required.
-
-The Control Access Token will be provided to the server via the `X-Kapow-Token` custom
-header.
-
-If no valid Control Access Token is provided via the aforementioned `X-Kapow-Token`
-header, the server will return a `401 Unauthorized` status code.
-
 
 ## API Elements
 
@@ -640,14 +628,6 @@ In order for `get` and `set` to do their job, they require a way to reach the
 Thus, the *Kapow!* server adds the `KAPOW_DATA_URL` and `KAPOW_HANDLER_ID` to the
 process' environment.
 
-Also, `kapow server` will add the variable `KAPOW_CONTROL_TOKEN` to the environment
-of the init scripts, which will allow them to connect to the control API.
-
-The `KAPOW_CONTROL_TOKEN` can be passed to the `kapow server` via the environment.
-If undefined, `kapow server` will generate a random one upon startup,
-and print it via `stderr`.  If empty, `kapow server` will refuse to start with
-an error.
-
 
 #### Example
 ``` console
@@ -673,10 +653,7 @@ To deregister a route you must provide a *route_id*.
 
 
 #### **Environment**
-- `KAPOW_CONTROL_URL`
-- `KAPOW_CONTROL_TOKEN`: This will authenticate the client; the client must
-  send the header `X-Kapow-Token` with the contents of this variable, whenever
-  it tries to communicate with the control server.
+- `KAPOW_DATA_URL`
 
 
 #### **Help**
@@ -719,7 +696,7 @@ $ kapow route add -X GET '/list/{ip}' -c 'nmap -sL $(kapow get /request/matches/
 
 ### `kapow get`
 
-Read data from the current request's resource tree.
+Exposes the requests' resources.
 
 
 #### **Environment**
@@ -736,7 +713,7 @@ $ kapow get /request/body
 
 ### `kapow set`
 
-Write data to the current request's resource tree.
+Exposes the response's resources.
 
 
 #### **Environment**

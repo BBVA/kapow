@@ -1,5 +1,5 @@
 #! /usr/bin/env nix-shell
-#! nix-shell -i python3.7 -p python37 python37Packages.aiohttp python37Packages.requests python37Packages.click python37Packages.cryptography python37Packages.requests_toolbelt
+#! nix-shell -i python3.7 -p python37 python37Packages.aiohttp python37Packages.requests python37Packages.click
 
 #
 # Copyright 2019 Banco Bilbao Vizcaya Argentaria, S.A.
@@ -39,8 +39,6 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives import serialization
 from cryptography import x509
 from cryptography.x509.oid import NameOID
-# https://toolbelt.readthedocs.io/en/latest/adapters.html#fingerprintadapter
-from requests_toolbelt.adapters.fingerprint import FingerprintAdapter
 import click
 import requests
 
@@ -110,21 +108,6 @@ def pinned_https_session(url, fingerprint):
     return s
 
 
-def init_control_client(url):
-    try:
-        fingerprint = os.environ['KAPOW_CONTROL_FINGERPRINT']
-        control_token = os.environ['KAPOW_CONTROL_TOKEN']
-        if "" in (control_token, fingerprint):
-            raise ValueError(
-                "KAPOW_CONTROL_TOKEN and KAPOW_CONTROL_FINGERPRINT cannot be empty")
-    except KeyError:
-        print('KAPOW_CONTROL_TOKEN and KAPOW_CONTROL_FINGERPRINT are mandatory')
-        sys.exit(1)
-    else:
-        requests = pinned_https_session(url, fingerprint)
-        requests.verify = False
-        requests.headers.update({'X-Kapow-Token': control_token})
-    return requests
 
 ########################################################################
 #                         Resource Management                          #
@@ -502,9 +485,8 @@ async def run_init_script(app, scripts, interactive):
             result = await asyncio.create_subprocess_exec(
                 script,
                 env={**os.environ,
+                     "KAPOW_CONTROL_CERT": app["cert"],
                      "KAPOW_CONTROL_URL": KAPOW_CONTROL_URL,
-                     "KAPOW_CONTROL_FINGERPRINT": app["fingerprint"],
-                     "KAPOW_CONTROL_TOKEN": app["token"],
                      "KAPOW_DATA_URL": KAPOW_DATA_URL,
                      })
         except Exception as exc:
@@ -559,15 +541,6 @@ async def start_background_tasks(app):
     app["debug_tasks"] = loop.create_task(run_init_script(app, app["scripts"], app["interactive"]))
 
 
-def check_control_token(token):
-    @web.middleware
-    async def _check_control_token(request, handler):
-        if request.headers.get('X-Kapow-Token', None) != token:
-            return web.json_response(data=error_body("Invalid token"), status=401, reason="Unauthorized")
-        else:
-            return await handler(request)
-
-    return _check_control_token
 
 async def start_kapow_server(bind, scripts, certfile=None, interactive=False, keyfile=None):
     #
@@ -590,10 +563,6 @@ async def start_kapow_server(bind, scripts, certfile=None, interactive=False, ke
     #
     # CONTROL
     #
-    control_token = os.environ.get('KAPOW_CONTROL_TOKEN', str(uuid4()))
-    if not control_token:
-        print("KAPOW_CONTROL_TOKEN cannot be empty")
-        sys.exit(1)
 
     key, cert = generate_ssl_cert()
     context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
@@ -609,7 +578,7 @@ async def start_kapow_server(bind, scripts, certfile=None, interactive=False, ke
 
     fingerprint = binascii.hexlify(cert.fingerprint(hashes.SHA256())).decode('ascii')
 
-    control_app = web.Application(client_max_size=1024**3, middlewares=[check_control_token(control_token)])
+    control_app = web.Application(client_max_size=1024**3)
     control_app.add_routes([
         web.get('/routes', get_routes(user_app)),
         web.get('/routes/{id}', get_route(user_app)),
@@ -617,9 +586,8 @@ async def start_kapow_server(bind, scripts, certfile=None, interactive=False, ke
         web.put('/routes', insert_route(user_app)),
         web.delete('/routes/{id}', delete_route(user_app)),
     ])
-    control_app["token"] = control_token
-    control_app["fingerprint"] = fingerprint
     control_app["scripts"] = scripts
+    control_app["cert"] = cert_bytes
     control_app["interactive"] = interactive
     control_app.on_startup.append(start_background_tasks)
 
@@ -646,10 +614,6 @@ async def start_kapow_server(bind, scripts, certfile=None, interactive=False, ke
     await data_runner.setup()
     data_site = web.TCPSite(data_runner, '127.0.0.1', 8082)
     await data_site.start()
-
-    # TODO: Test
-    print(f"Use KAPOW_CONTROL_FINGERPRINT={fingerprint!r}")
-    print(f'Use KAPOW_CONTROL_TOKEN="{control_token}" to connect')
 
 
 ########################################################################
@@ -690,50 +654,57 @@ def route():
 @click.argument("url_pattern", nargs=1)
 @click.argument("command_file", required=False)
 def route_add(url_pattern, entrypoint, command, method, url, command_file):
-    requests = init_control_client(url)
-    if command:
-        # Command is given inline
-        source = command
-    elif command_file is None:
-        # No command
-        source = ""
-    elif command_file == '-':
-        # Read commands from stdin
-        source = sys.stdin.read()
-    else:
-        # Read commands from a file
-        with open(command_file, 'r', encoding='utf-8') as handler:
-            source = handler.read()
+    with tempfile.NamedTemporaryFile(suffix='.crt', encoding='utf-8', mode='w') as cert:
+        cert.write(os.environ["KAPOW_CONTROL_CERT"])
+        cert.file.flush()
+        if command:
+            # Command is given inline
+            source = command
+        elif command_file is None:
+            # No command
+            source = ""
+        elif command_file == '-':
+            # Read commands from stdin
+            source = sys.stdin.read()
+        else:
+            # Read commands from a file
+            with open(command_file, 'r', encoding='utf-8') as handler:
+                source = handler.read()
 
-    response = requests.post(f"{url}/routes",
-                             json={"method": method,
-                                   "url_pattern": url_pattern,
-                                   "entrypoint": entrypoint,
-                                   "command": source})
-    response.raise_for_status()
-    print(json.dumps(response.json(), indent=2))
+        response = requests.post(f"{url}/routes",
+                                 json={"method": method,
+                                       "url_pattern": url_pattern,
+                                       "entrypoint": entrypoint,
+                                       "command": source},
+                                 verify=cert.name)
+        response.raise_for_status()
+        print(json.dumps(response.json(), indent=2))
 
 
 @route.command("remove")
 @click.option("--url", envvar='KAPOW_CONTROL_URL', default=KAPOW_CONTROL_URL)
 @click.argument("route-id")
 def route_remove(route_id, url):
-    requests = init_control_client(url)
-    response = requests.delete(f"{url}/routes/{route_id}")
-    response.raise_for_status()
+    with tempfile.NamedTemporaryFile(suffix='.crt', encoding='utf-8', mode='w') as cert:
+        cert.write(os.environ["KAPOW_CONTROL_CERT"])
+        cert.file.flush()
+        response = requests.delete(f"{url}/routes/{route_id}", verify=cert.name)
+        response.raise_for_status()
 
 
 @route.command("list")
 @click.option("--url", envvar='KAPOW_CONTROL_URL', default=KAPOW_CONTROL_URL)
 @click.argument("route-id", nargs=1, required=False, default=None)
 def route_list(route_id, url):
-    requests = init_control_client(url)
-    if route_id is None:
-        response = requests.get(f"{url}/routes")
-    else:
-        response = requests.get(f"{url}/routes/{route_id}")
-    response.raise_for_status()
-    print(json.dumps(response.json(), indent=2))
+    with tempfile.NamedTemporaryFile(suffix='.crt', encoding='utf-8', mode='w') as cert:
+        cert.write(os.environ["KAPOW_CONTROL_CERT"])
+        cert.file.flush()
+        if route_id is None:
+            response = requests.get(f"{url}/routes", verify=cert.name)
+        else:
+            response = requests.get(f"{url}/routes/{route_id}", verify=cert.name)
+        response.raise_for_status()
+        print(json.dumps(response.json(), indent=2))
 
 
 @kapow.command("set", help="Set data from the current context")
