@@ -1,5 +1,7 @@
 #! /usr/bin/env nix-shell
 #! nix-shell -i python3.7 -p python37 python37Packages.aiohttp python37Packages.requests python37Packages.click
+#
+# TODO: maybe add an option (cli) to supply the external address
 
 #
 # Copyright 2019 Banco Bilbao Vizcaya Argentaria, S.A.
@@ -22,6 +24,7 @@ from urllib.parse import urlparse
 from uuid import uuid4
 import asyncio
 import binascii
+import contextlib
 import datetime
 import io
 import json
@@ -31,9 +34,11 @@ import shlex
 import ssl
 import sys
 import tempfile
+import uuid
 
 from aiohttp import web, StreamReader
 from aiohttp.web_urldispatcher import UrlDispatcher
+from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives import serialization
@@ -54,7 +59,7 @@ KAPOW_DATA_URL="http://localhost:8082"
 #                           HTTPS Management                           #
 ########################################################################
 
-def generate_ssl_cert():
+def generate_ssl_cert(name, alt=None):
     # Generate our key
     key = rsa.generate_private_key(
         public_exponent=65537,
@@ -63,12 +68,9 @@ def generate_ssl_cert():
     # Various details about who we are. For a self-signed certificate the
     # subject and issuer are always the same.
     subject = issuer = x509.Name([
-        x509.NameAttribute(NameOID.COUNTRY_NAME, u"US"),
-        x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, u"Delaware"),
-        x509.NameAttribute(NameOID.LOCALITY_NAME, u"Metropolis"),
-        x509.NameAttribute(NameOID.ORGANIZATION_NAME, u"Daily Planet"),
-        x509.NameAttribute(NameOID.COMMON_NAME, u"Kent"),
+        x509.NameAttribute(NameOID.COMMON_NAME, name),
     ])
+
     cert = x509.CertificateBuilder().subject_name(
         subject
     ).issuer_name(
@@ -80,33 +82,37 @@ def generate_ssl_cert():
     ).not_valid_before(
         datetime.datetime.utcnow()
     ).not_valid_after(
-        # Our certificate will be valid for 10 days
-        datetime.datetime.utcnow() + datetime.timedelta(days=10)
-    ).add_extension(
-        x509.SubjectAlternativeName([x509.DNSName(u"localhost")]),
-        critical=False,
-    # Sign our certificate with our private key
-    ).sign(key, hashes.SHA256())
+        datetime.datetime.utcnow() + datetime.timedelta(days=3650)
+    )
 
-    return (key, cert)
+    if alt is not None:
+        cert=cert.add_extension(
+            x509.SubjectAlternativeName([x509.DNSName(alt)]),
+            critical=True,
+        ).add_extension(
+            x509.ExtendedKeyUsage(
+                [x509.oid.ExtendedKeyUsageOID.SERVER_AUTH],
+            ),
+            critical=True
+        )
+    else:
+        cert=cert.add_extension(
+            x509.ExtendedKeyUsage(
+                [x509.oid.ExtendedKeyUsageOID.CLIENT_AUTH],
+            ),
+            critical=True
+        )
 
+    cert = cert.sign(key, hashes.SHA256())
 
-def cert_to_bytes(key, cert):
     key_bytes = key.private_bytes(
             encoding=serialization.Encoding.PEM,
             format=serialization.PrivateFormat.TraditionalOpenSSL,
             encryption_algorithm=serialization.NoEncryption()
         )
-    cert_bytes = cert.public_bytes(serialization.Encoding.PEM)
+    crt_bytes = cert.public_bytes(serialization.Encoding.PEM)
 
-    return (key_bytes, cert_bytes)
-
-
-def pinned_https_session(url, fingerprint):
-    s = requests.Session()
-    s.mount(url, FingerprintAdapter(fingerprint))
-    return s
-
+    return (key_bytes, crt_bytes)
 
 
 ########################################################################
@@ -326,7 +332,6 @@ def handle_route(entrypoint, command):
             shell_task = await asyncio.create_subprocess_shell(
                 args,
                 env={**os.environ,
-                     "KAPOW_CONTROL_URL": KAPOW_CONTROL_URL,
                      "KAPOW_DATA_URL": KAPOW_DATA_URL,
                      "KAPOW_HANDLER_ID": id
                      },
@@ -485,9 +490,10 @@ async def run_init_script(app, scripts, interactive):
             result = await asyncio.create_subprocess_exec(
                 script,
                 env={**os.environ,
-                     "KAPOW_CONTROL_CERT": app["cert"],
+                     "KAPOW_CONTROL_CLIENT_CERT": app["client_cert"],
+                     "KAPOW_CONTROL_CLIENT_KEY": app["client_key"],
+                     "KAPOW_CONTROL_SERVER_CERT": app["server_cert"],
                      "KAPOW_CONTROL_URL": KAPOW_CONTROL_URL,
-                     "KAPOW_DATA_URL": KAPOW_DATA_URL,
                      })
         except Exception as exc:
             print(exc)
@@ -563,20 +569,22 @@ async def start_kapow_server(bind, scripts, certfile=None, interactive=False, ke
     #
     # CONTROL
     #
+    srv_key_bytes, srv_crt_bytes = generate_ssl_cert("control", "localhost")
+    cli_key_bytes, cli_crt_bytes = generate_ssl_cert("control")
 
-    key, cert = generate_ssl_cert()
     context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
     with tempfile.NamedTemporaryFile(suffix=".pem", delete=True) as pem_file, \
-         tempfile.NamedTemporaryFile(suffix=".key", delete=True) as key_file:
-        key_bytes, cert_bytes = cert_to_bytes(key, cert)
-        pem_file.write(cert_bytes)
+         tempfile.NamedTemporaryFile(suffix=".key", delete=True) as key_file, \
+         tempfile.NamedTemporaryFile(suffix=".pem", delete=True) as cli_crt_file:
+        pem_file.write(srv_crt_bytes)
         pem_file.flush()
-        key_file.write(key_bytes)
+        key_file.write(srv_key_bytes)
         key_file.flush()
+        cli_crt_file.write(cli_crt_bytes)
+        cli_crt_file.flush()
 
         context.load_cert_chain(pem_file.name, key_file.name)
-
-    fingerprint = binascii.hexlify(cert.fingerprint(hashes.SHA256())).decode('ascii')
+        context.load_verify_locations(cafile=cli_crt_file.name)
 
     control_app = web.Application(client_max_size=1024**3)
     control_app.add_routes([
@@ -587,14 +595,15 @@ async def start_kapow_server(bind, scripts, certfile=None, interactive=False, ke
         web.delete('/routes/{id}', delete_route(user_app)),
     ])
     control_app["scripts"] = scripts
-    control_app["cert"] = cert_bytes
+    control_app["client_cert"] = cli_crt_bytes 
+    control_app["client_key"] = cli_key_bytes 
+    control_app["server_cert"] = srv_crt_bytes 
     control_app["interactive"] = interactive
     control_app.on_startup.append(start_background_tasks)
 
     control_runner = web.AppRunner(control_app)
 
     await control_runner.setup()
-
 
     control_site = web.TCPSite(control_runner, '127.0.0.1', 8081, ssl_context=context)
     await control_site.start()
@@ -646,6 +655,23 @@ def route():
     pass
 
 
+@contextlib.contextmanager
+def kapow_control_certs():
+    with tempfile.NamedTemporaryFile(suffix='.crt', encoding='utf-8', mode='w') as srv_cert, \
+         tempfile.NamedTemporaryFile(suffix='.crt', encoding='utf-8', mode='w') as cli_cert, \
+         tempfile.NamedTemporaryFile(suffix='.key', encoding='utf-8', mode='w') as cli_key:
+        srv_cert.write(os.environ["KAPOW_CONTROL_SERVER_CERT"])
+        srv_cert.file.flush()
+        cli_cert.write(os.environ["KAPOW_CONTROL_CLIENT_CERT"])
+        cli_cert.file.flush()
+        cli_key.write(os.environ["KAPOW_CONTROL_CLIENT_KEY"])
+        cli_key.file.flush()
+        session=requests.Session()
+        session.verify=srv_cert.name
+        session.cert=(cli_cert.name, cli_key.name)
+        yield session
+
+
 @route.command("add")
 @click.option("-c", "--command", nargs=1)
 @click.option("-e", "--entrypoint", default="/bin/sh -c")
@@ -654,9 +680,7 @@ def route():
 @click.argument("url_pattern", nargs=1)
 @click.argument("command_file", required=False)
 def route_add(url_pattern, entrypoint, command, method, url, command_file):
-    with tempfile.NamedTemporaryFile(suffix='.crt', encoding='utf-8', mode='w') as cert:
-        cert.write(os.environ["KAPOW_CONTROL_CERT"])
-        cert.file.flush()
+    with kapow_control_certs() as requests:
         if command:
             # Command is given inline
             source = command
@@ -675,8 +699,7 @@ def route_add(url_pattern, entrypoint, command, method, url, command_file):
                                  json={"method": method,
                                        "url_pattern": url_pattern,
                                        "entrypoint": entrypoint,
-                                       "command": source},
-                                 verify=cert.name)
+                                       "command": source})
         response.raise_for_status()
         print(json.dumps(response.json(), indent=2))
 
@@ -685,10 +708,8 @@ def route_add(url_pattern, entrypoint, command, method, url, command_file):
 @click.option("--url", envvar='KAPOW_CONTROL_URL', default=KAPOW_CONTROL_URL)
 @click.argument("route-id")
 def route_remove(route_id, url):
-    with tempfile.NamedTemporaryFile(suffix='.crt', encoding='utf-8', mode='w') as cert:
-        cert.write(os.environ["KAPOW_CONTROL_CERT"])
-        cert.file.flush()
-        response = requests.delete(f"{url}/routes/{route_id}", verify=cert.name)
+    with kapow_control_certs() as requests:
+        response = requests.delete(f"{url}/routes/{route_id}")
         response.raise_for_status()
 
 
@@ -696,13 +717,11 @@ def route_remove(route_id, url):
 @click.option("--url", envvar='KAPOW_CONTROL_URL', default=KAPOW_CONTROL_URL)
 @click.argument("route-id", nargs=1, required=False, default=None)
 def route_list(route_id, url):
-    with tempfile.NamedTemporaryFile(suffix='.crt', encoding='utf-8', mode='w') as cert:
-        cert.write(os.environ["KAPOW_CONTROL_CERT"])
-        cert.file.flush()
+    with kapow_control_certs() as requests:
         if route_id is None:
-            response = requests.get(f"{url}/routes", verify=cert.name)
+            response = requests.get(f"{url}/routes")
         else:
-            response = requests.get(f"{url}/routes/{route_id}", verify=cert.name)
+            response = requests.get(f"{url}/routes/{route_id}")
         response.raise_for_status()
         print(json.dumps(response.json(), indent=2))
 
