@@ -14,7 +14,7 @@ jobs:
       with:
         go-version: ${{ steps.go-version.outputs.go-version }}
     - name: Lint
-      uses: golangci/golangci-lint-action@v2.3.0
+      uses: golangci/golangci-lint-action@v2.4.0
       with:
         version: v1.31
     - name: Unit tests
