@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from contextlib import suppress
+from contextlib import suppress, contextmanager
 from time import sleep
 import json
 import os
@@ -36,9 +36,6 @@ import jsonexample
 
 import logging
 
-requests = requests.Session()
-requests.verify = False
-
 WORD2POS = {"first": 0, "second": 1, "last": -1}
 HERE = os.path.dirname(__file__)
 
@@ -49,6 +46,7 @@ class Env(EnvironConfig):
 
     #: Where the Control API is
     KAPOW_CONTROL_URL = StringVar(default="https://localhost:8081")
+    KAPOW_CONTROL_PORT = IntVar(default=8081)
 
     #: Where the Data API is
     KAPOW_DATA_URL = StringVar(default="http://localhost:8082")
@@ -83,74 +81,89 @@ if Env.KAPOW_DEBUG_TESTS:
     requests_log.setLevel(logging.DEBUG)
     requests_log.propagate = True
 
-def run_kapow_server(context, control_token=True):
-    with suppress(requests_exceptions.ConnectionError):
-        open_ports = (
-            requests.head(Env.KAPOW_CONTROL_URL, timeout=1).status_code
-            and requests.head(Env.KAPOW_DATA_URL, timeout=1).status_code)
-        assert (not open_ports), "Another process is already bound"
 
-    control_token = {'KAPOW_CONTROL_TOKEN': Env.KAPOW_CONTROL_TOKEN} if control_token else {}
+@contextmanager
+def mtls_client(context):
+    with tempfile.NamedTemporaryFile(suffix='.crt', encoding='utf-8', mode='w') as srv_cert, \
+         tempfile.NamedTemporaryFile(suffix='.crt', encoding='utf-8', mode='w') as cli_cert, \
+         tempfile.NamedTemporaryFile(suffix='.key', encoding='utf-8', mode='w') as cli_key:
+        srv_cert.write(context.init_script_environ["KAPOW_CONTROL_SERVER_CERT"])
+        srv_cert.file.flush()
+        cli_cert.write(context.init_script_environ["KAPOW_CONTROL_CLIENT_CERT"])
+        cli_cert.file.flush()
+        cli_key.write(context.init_script_environ["KAPOW_CONTROL_CLIENT_KEY"])
+        cli_key.file.flush()
+        session=requests.Session()
+        session.verify=srv_cert.name
+        session.cert=(cli_cert.name, cli_key.name)
+        yield session
 
-    # (XXX)
+
+def is_port_open(port):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        return sock.connect_ex(('127.0.0.1', port)) == 0
+
+
+def run_kapow_server(context):
+    # assert (not is_port_open(Env.KAPOW_CONTROL_PORT)), "Another process is already bound"
+
     context.server = subprocess.Popen(
         shlex.split(Env.KAPOW_SERVER_CMD) + [os.path.join(HERE, "get_environment.py")],
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
-        env={**control_token, **os.environ},
+        env={'SPECTEST_FIFO': context.init_script_fifo_path, **os.environ},
         shell=False)
+
+    # Get init_script enviroment via fifo
+    with open(context.init_script_fifo_path, 'r') as fifo:
+        context.init_script_environ = json.load(fifo)
 
     # Check process is running with reachable APIs
     open_ports = False
-    for _ in range(Env.KAPOW_BOOT_TIMEOUT):
-        is_running = context.server.poll() is None
-        assert is_running, "Server is not running!"
-        with suppress(requests_exceptions.ConnectionError):
-            open_ports = (
-                requests.head(Env.KAPOW_CONTROL_URL, timeout=1).status_code
-                and requests.head(Env.KAPOW_DATA_URL, timeout=1).status_code)
-            if open_ports:
-                break
-        sleep(.01)
+    with mtls_client(context) as requests:
+        for _ in range(Env.KAPOW_BOOT_TIMEOUT):
+            is_running = context.server.poll() is None
+            assert is_running, "Server is not running!"
+            with suppress(requests_exceptions.ConnectionError):
+                open_ports = (
+                    requests.head(Env.KAPOW_CONTROL_URL, timeout=1).status_code
+                    and requests.head(Env.KAPOW_DATA_URL, timeout=1).status_code)
+                if open_ports:
+                    break
+            sleep(.01)
 
     assert open_ports, "API is unreachable after KAPOW_BOOT_TIMEOUT"
 
 
-@given('I have a just started Kapow! server with {config}')
-@given('I have a just started Kapow! server with the Control Access Token "{control_token}"')
+# @given('I have a just started Kapow! server with {config}')
 @given('I have a just started Kapow! server')
 @given('I have a running Kapow! server')
-def step_impl(context, config=None, control_token=None):
-    if control_token is not None:
-        os.environ['KAPOW_CONTROL_TOKEN'] = control_token
-    use_control_token = config != 'no control token'
-    run_kapow_server(context, use_control_token)
+def step_impl(context):
+    run_kapow_server(context)
 
 
 @when('I request a route listing without providing a Control Access Token')
 def step_impl(context):
-    context.response = requests.get(f"{Env.KAPOW_CONTROL_URL}/routes")
+    with mtls_client(context) as requests:
+        context.response = requests.get(f"{Env.KAPOW_CONTROL_URL}/routes")
 
 
 @when('I request a route listing without providing an empty Control Access Token')
 def step_impl(context):
-    context.response = requests.get(
-        f"{Env.KAPOW_CONTROL_URL}/routes",
-        headers={"X-Kapow-Token": ""})
+    with mtls_client(context) as requests:
+        context.response = requests.get(f"{Env.KAPOW_CONTROL_URL}/routes")
 
 
 @when(u'I request a route listing providing a bad Control Access Token')
 def step_impl(context):
-    context.response = requests.get(
-        f"{Env.KAPOW_CONTROL_URL}/routes",
-        headers={"X-Kapow-Token": Env.KAPOW_CONTROL_TOKEN + "42"})
+    with mtls_client(context) as requests:
+        context.response = requests.get(f"{Env.KAPOW_CONTROL_URL}/routes")
 
 
 @when('I request a routes listing')
 def step_impl(context):
-    context.response = requests.get(
-        f"{Env.KAPOW_CONTROL_URL}/routes",
-        headers={"X-Kapow-Token": Env.KAPOW_CONTROL_TOKEN})
+    with mtls_client(context) as requests:
+        context.response = requests.get(f"{Env.KAPOW_CONTROL_URL}/routes")
 
 
 @given('I have a Kapow! server with the following routes')
@@ -160,12 +173,12 @@ def step_impl(context):
     if not hasattr(context, 'table'):
         raise RuntimeError("A table must be set for this step.")
 
-    for row in context.table:
-        response = requests.post(
-            f"{Env.KAPOW_CONTROL_URL}/routes",
-            json={h: row[h] for h in row.headings},
-            headers={"X-Kapow-Token": Env.KAPOW_CONTROL_TOKEN})
-        response.raise_for_status()
+    with mtls_client(context) as requests:
+        for row in context.table:
+            response = requests.post(
+                f"{Env.KAPOW_CONTROL_URL}/routes",
+                json={h: row[h] for h in row.headings})
+            response.raise_for_status()
 
 
 @given('I have a Kapow! server with the following testing routes')
@@ -175,16 +188,16 @@ def step_impl(context):
     if not hasattr(context, 'table'):
         raise RuntimeError("A table must be set for this step.")
 
-    for row in context.table:
-        response = requests.post(
-            f"{Env.KAPOW_CONTROL_URL}/routes",
-            json={"entrypoint": " ".join(
-                      [sys.executable,
-                       shlex.quote(os.path.join(HERE, "testinghandler.py")),
-                       shlex.quote(context.handler_fifo_path)]),  # Created in before_scenario
-                  **{h: row[h] for h in row.headings}},
-            headers={"X-Kapow-Token": Env.KAPOW_CONTROL_TOKEN})
-        response.raise_for_status()
+    with mtls_client(context) as requests:
+        for row in context.table:
+            response = requests.post(
+                f"{Env.KAPOW_CONTROL_URL}/routes",
+                json={"entrypoint": " ".join(
+                          [sys.executable,
+                           shlex.quote(os.path.join(HERE, "testinghandler.py")),
+                           shlex.quote(context.handler_fifo_path)]),  # Created in before_scenario
+                      **{h: row[h] for h in row.headings}})
+            response.raise_for_status()
 
 def testing_request(context, request_fn):
     # Run the request in background
@@ -217,11 +230,11 @@ def step_impl(context):
 
 @when('I append the route')
 def step_impl(context):
-    context.response = requests.post(
-        f"{Env.KAPOW_CONTROL_URL}/routes",
-        data=context.text,
-        headers={"Content-Type": "application/json",
-                 "X-Kapow-Token": Env.KAPOW_CONTROL_TOKEN})
+    with mtls_client(context) as requests:
+        context.response = requests.post(
+            f"{Env.KAPOW_CONTROL_URL}/routes",
+            data=context.text,
+            headers={"Content-Type": "application/json"})
 
 @then('I get {code} as response code')
 def step_impl(context, code):
@@ -260,64 +273,62 @@ def step_impl(context):
 
 @when('I delete the route with id "{id}"')
 def step_impl(context, id):
-    context.response = requests.delete(
-        f"{Env.KAPOW_CONTROL_URL}/routes/{id}",
-        headers={"X-Kapow-Token": Env.KAPOW_CONTROL_TOKEN})
+    with mtls_client(context) as requests:
+        context.response = requests.delete(
+            f"{Env.KAPOW_CONTROL_URL}/routes/{id}")
 
 
 @when('I insert the route')
 def step_impl(context):
-    context.response = requests.put(
-        f"{Env.KAPOW_CONTROL_URL}/routes",
-        headers={"Content-Type": "application/json",
-                 "X-Kapow-Token": Env.KAPOW_CONTROL_TOKEN},
-        data=context.text)
+    with mtls_client(context) as requests:
+        context.response = requests.put(
+            f"{Env.KAPOW_CONTROL_URL}/routes",
+            headers={"Content-Type": "application/json"},
+            data=context.text)
 
 
 @when('I try to append with this malformed JSON document')
 def step_impl(context):
-    context.response = requests.post(
-        f"{Env.KAPOW_CONTROL_URL}/routes",
-        headers={"Content-Type": "application/json",
-                 "X-Kapow-Token": Env.KAPOW_CONTROL_TOKEN},
-        data=context.text)
+    with mtls_client(context) as requests:
+        context.response = requests.post(
+            f"{Env.KAPOW_CONTROL_URL}/routes",
+            headers={"Content-Type": "application/json"},
+            data=context.text)
 
 
 @when('I delete the {order} route')
 def step_impl(context, order):
-    idx = WORD2POS.get(order)
-    routes = requests.get(f"{Env.KAPOW_CONTROL_URL}/routes",
-                          headers={"X-Kapow-Token": Env.KAPOW_CONTROL_TOKEN})
-    id = routes.json()[idx]["id"]
-    context.response = requests.delete(
-        f"{Env.KAPOW_CONTROL_URL}/routes/{id}",
-        headers={"X-Kapow-Token": Env.KAPOW_CONTROL_TOKEN})
+    with mtls_client(context) as requests:
+        idx = WORD2POS.get(order)
+        routes = requests.get(f"{Env.KAPOW_CONTROL_URL}/routes")
+        id = routes.json()[idx]["id"]
+        context.response = requests.delete(
+            f"{Env.KAPOW_CONTROL_URL}/routes/{id}")
 
 
 @when('I try to insert with this JSON document')
 def step_impl(context):
-    context.response = requests.put(
-        f"{Env.KAPOW_CONTROL_URL}/routes",
-        headers={"Content-Type": "application/json",
-                 "X-Kapow-Token": Env.KAPOW_CONTROL_TOKEN},
-        data=context.text)
+    with mtls_client(context) as requests:
+        context.response = requests.put(
+            f"{Env.KAPOW_CONTROL_URL}/routes",
+            headers={"Content-Type": "application/json"},
+            data=context.text)
 
 @when('I get the route with id "{id}"')
 def step_impl(context, id):
-    context.response = requests.get(
-        f"{Env.KAPOW_CONTROL_URL}/routes/{id}",
-        headers={"X-Kapow-Token": Env.KAPOW_CONTROL_TOKEN})
+    with mtls_client(context) as requests:
+        context.response = requests.get(
+            f"{Env.KAPOW_CONTROL_URL}/routes/{id}")
 
 
 @when('I get the {order} route')
 def step_impl(context, order):
-    idx = WORD2POS.get(order)
-    routes = requests.get(f"{Env.KAPOW_CONTROL_URL}/routes",
-                          headers={"X-Kapow-Token": Env.KAPOW_CONTROL_TOKEN})
-    id = routes.json()[idx]["id"]
-    context.response = requests.get(
-        f"{Env.KAPOW_CONTROL_URL}/routes/{id}",
-        headers={"X-Kapow-Token": Env.KAPOW_CONTROL_TOKEN})
+    with mtls_client(context) as requests:
+        idx = WORD2POS.get(order)
+        routes = requests.get(f"{Env.KAPOW_CONTROL_URL}/routes")
+        id = routes.json()[idx]["id"]
+        context.response = requests.get(
+            f"{Env.KAPOW_CONTROL_URL}/routes/{id}")
 
 
 @when('I get the resource "{resource}"')

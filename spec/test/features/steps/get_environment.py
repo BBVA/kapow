@@ -5,5 +5,5 @@ import os
 import sys
 
 if __name__ == '__main__':
-    with open(sys.argv[1], 'w') as fifo:
-        json.dump(os.environ, fifo)
+    with open(os.environ['SPECTEST_FIFO'], 'w') as fifo:
+        json.dump(dict(os.environ), fifo)

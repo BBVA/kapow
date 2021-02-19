@@ -572,7 +572,7 @@ async def start_kapow_server(bind, scripts, certfile=None, interactive=False, ke
     srv_key_bytes, srv_crt_bytes = generate_ssl_cert("control", "localhost")
     cli_key_bytes, cli_crt_bytes = generate_ssl_cert("control")
 
-    context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
     with tempfile.NamedTemporaryFile(suffix=".pem", delete=True) as pem_file, \
          tempfile.NamedTemporaryFile(suffix=".key", delete=True) as key_file, \
          tempfile.NamedTemporaryFile(suffix=".pem", delete=True) as cli_crt_file:
@@ -583,6 +583,7 @@ async def start_kapow_server(bind, scripts, certfile=None, interactive=False, ke
         cli_crt_file.write(cli_crt_bytes)
         cli_crt_file.flush()
 
+        context.verify_mode = ssl.CERT_REQUIRED
         context.load_cert_chain(pem_file.name, key_file.name)
         context.load_verify_locations(cafile=cli_crt_file.name)
 
