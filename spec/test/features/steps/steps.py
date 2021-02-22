@@ -14,8 +14,12 @@
 # limitations under the License.
 #
 from contextlib import suppress, contextmanager
+from multiprocessing.pool import ThreadPool
 from time import sleep
+import datetime
+import http.server
 import json
+import logging
 import os
 import shlex
 import signal
@@ -24,17 +28,20 @@ import subprocess
 import sys
 import tempfile
 import threading
-from multiprocessing.pool import ThreadPool
 import time
-import http.server
 
-import requests
-from requests import exceptions as requests_exceptions
-from environconfig import EnvironConfig, StringVar, IntVar, BooleanVar
 from comparedict import is_subset
+from cryptography import x509
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.x509.oid import NameOID
+from environconfig import EnvironConfig, StringVar, IntVar, BooleanVar
+from requests import exceptions as requests_exceptions
 import jsonexample
+import requests
 
-import logging
 
 WORD2POS = {"first": 0, "second": 1, "last": -1}
 HERE = os.path.dirname(__file__)
@@ -80,6 +87,52 @@ if Env.KAPOW_DEBUG_TESTS:
     requests_log = logging.getLogger("requests.packages.urllib3")
     requests_log.setLevel(logging.DEBUG)
     requests_log.propagate = True
+
+
+def generate_ssl_cert(subject_name, alternate_name):
+    # Generate our key
+    key = rsa.generate_private_key(
+        public_exponent=65537,
+        key_size=4096,
+    )
+    # Various details about who we are. For a self-signed certificate the
+    # subject and issuer are always the same.
+    subject = issuer = x509.Name([
+        x509.NameAttribute(NameOID.COMMON_NAME, subject_name),
+    ])
+    cert = x509.CertificateBuilder().subject_name(
+        subject
+    ).issuer_name(
+        issuer
+    ).public_key(
+        key.public_key()
+    ).serial_number(
+        x509.random_serial_number()
+    ).not_valid_before(
+        datetime.datetime.utcnow()
+    ).not_valid_after(
+        # Our certificate will be valid for 10 days
+        datetime.datetime.utcnow() + datetime.timedelta(days=10)
+    ).add_extension(
+        x509.SubjectAlternativeName([x509.DNSName(alternate_name)]),
+        critical=True,
+    ).add_extension(
+        x509.ExtendedKeyUsage(
+            [x509.oid.ExtendedKeyUsageOID.SERVER_AUTH
+             if subject_name.endswith('_server')
+             else x509.oid.ExtendedKeyUsageOID.CLIENT_AUTH]),
+        critical=True,
+    # Sign our certificate with our private key
+    ).sign(key, hashes.SHA256())
+
+    key_bytes = key.private_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.TraditionalOpenSSL,
+            encryption_algorithm=serialization.NoEncryption()
+        )
+    crt_bytes = cert.public_bytes(serialization.Encoding.PEM)
+
+    return (key_bytes, crt_bytes)
 
 
 @contextmanager
@@ -498,12 +551,33 @@ def step_impl(context, name):
     assert name not in context.request_response.headers, f"Header {name} found"
 
 
-@when('I connect to the control server')
+@when('I try to connect to the control API without providing a certificate')
 def step_impl(context):
-    raise NotImplementedError(u'STEP: When I connect to the control server')
+    try:
+        context.request_response = requests.get(f"{Env.KAPOW_CONTROL_URL}/routes", verify=False)
+    except Exception as exc:
+        context.request_response = exc
 
 
-@then('the fingerprint of the certificate matches the value in "{envvar}"')
+@then(u'I get a connection error')
 def step_impl(context):
-    raise NotImplementedError(u'STEP: Then the fingerprint of the certificate matches the value in "KAPOW_CONTROL_FINGERPRINT"')
+    assert issubclass(type(context.request_response), Exception), context.request_response
 
+
+@when(u'I try to connect to the control API providing an invalid certificate')
+def step_impl(context):
+    key, cert = generate_ssl_cert("foo", "localhost")
+    with tempfile.NamedTemporaryFile(suffix='.crt') as cert_file, \
+         tempfile.NamedTemporaryFile(suffix='.key') as key_file:
+        cert_file.write(cert)
+        cert_file.flush()
+        key_file.write(key)
+        key_file.flush()
+        with requests.Session() as session:
+            session.cert = (cert_file.name, key_file.name)
+            session.verify = False
+            try:
+                context.request_response = session.get(
+                    f"{Env.KAPOW_CONTROL_URL}/routes")
+            except Exception as exc:
+                context.request_response = exc
