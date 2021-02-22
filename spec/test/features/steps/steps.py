@@ -25,6 +25,7 @@ import shlex
 import signal
 import socket
 import subprocess
+import ssl
 import sys
 import tempfile
 import threading
@@ -444,7 +445,7 @@ def step_impl(context, value, fieldType, elementName):
     assert actual == value, f"Expecting {fieldType} {elementName!r} to be {value!r}, got {actual!r} insted"
 
 
-@given('a test HTTP server on the {port} port')
+@given('a test HTTPS server on the {port} port')
 def step_impl(context, port):
     context.request_ready = threading.Event()
     context.request_ready.clear()
@@ -471,26 +472,60 @@ def step_impl(context, port):
 
     context.httpserver = http.server.HTTPServer(('127.0.0.1', port),
                                                 SaveResponseHandler)
+
+    context.srv_key, context.srv_crt = generate_ssl_cert("control_server", "localhost")
+    context.cli_key, context.cli_crt = generate_ssl_cert("control_client", "localhost")
+    with tempfile.NamedTemporaryFile(suffix=".key") as key_file, \
+         tempfile.NamedTemporaryFile(suffix=".crt") as crt_file:
+        key_file.write(context.srv_key)
+        key_file.flush()
+        crt_file.write(context.srv_crt)
+        crt_file.flush()
+        context.httpserver.socket = ssl.wrap_socket(
+            context.httpserver.socket,
+            keyfile=key_file.name,
+            certfile=crt_file.name,
+            server_side=True)
     context.httpserver_thread = threading.Thread(
         target=context.httpserver.serve_forever,
         daemon=True)
     context.httpserver_thread.start()
 
 
-@step('I run the following command')
-def step_impl(context):
+def run_command_with_certs(context, srv_crt, cli_crt, cli_key):
     _, command = context.text.split('$')
     command = command.lstrip()
 
     def exec_in_thread():
-        context.command = subprocess.Popen(command, shell=True)
+        context.command = subprocess.Popen(
+            command,
+            shell=True,
+            env={'KAPOW_CONTROL_SERVER_CERT': srv_crt,
+                 'KAPOW_CONTROL_CLIENT_CERT': cli_crt,
+                 'KAPOW_CONTROL_CLIENT_KEY': cli_key,
+                 **os.environ})
         context.command.wait()
 
     context.command_thread = threading.Thread(target=exec_in_thread, daemon=True)
     context.command_thread.start()
 
+@step('I run the following command (with invalid certs)')
+def step_impl(context):
+    invalid_srv_crt, _ = generate_ssl_cert("invalid_control_server",
+                                           "localhost")
+    run_command_with_certs(context,
+                           invalid_srv_crt,
+                           context.cli_crt,
+                           context.cli_key)
 
-@then('the HTTP server received a "{method}" request to "{path}"')
+@step('I run the following command')
+def step_impl(context):
+    run_command_with_certs(context,
+                           context.srv_crt,
+                           context.cli_crt,
+                           context.cli_key)
+
+@step('the HTTPS server receives a "{method}" request to "{path}"')
 def step_impl(context, method, path):
     context.request_ready.wait()
     assert context.request_response.command == method, f"Method {context.request_response.command} is not {method}"
