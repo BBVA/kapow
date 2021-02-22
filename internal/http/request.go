@@ -21,12 +21,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
-	"os"
 )
-
-func WithControlToken(req *http.Request) {
-	req.Header.Add("X-Kapow-Token", os.Getenv("KAPOW_CONTROL_TOKEN"))
-}
 
 func AsJSON(req *http.Request) {
 	req.Header.Add("Content-Type", "application/json")

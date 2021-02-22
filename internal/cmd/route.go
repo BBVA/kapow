@@ -31,18 +31,11 @@ var RouteCmd = &cobra.Command{
 	Use: "route [action]",
 }
 
-func failIfEmptyToken() {
-	if os.Getenv("KAPOW_CONTROL_TOKEN") == "" {
-		logger.L.Fatal("KAPOW_CONTROL_TOKEN must be defined and cannot be empty.  Hint: you can find it in the kapow server log")
-	}
-}
-
 func init() {
 	var routeListCmd = &cobra.Command{
 		Use:   "list [flags]",
 		Short: "List the current Kapow! routes",
 		Run: func(cmd *cobra.Command, args []string) {
-			failIfEmptyToken()
 			controlURL, _ := cmd.Flags().GetString("control-url")
 
 			if err := client.ListRoutes(controlURL, os.Stdout); err != nil {
@@ -58,7 +51,6 @@ func init() {
 		Short: "Add a route",
 		Args:  cobra.RangeArgs(1, 2),
 		Run: func(cmd *cobra.Command, args []string) {
-			failIfEmptyToken()
 			controlURL, _ := cmd.Flags().GetString("control-url")
 			method, _ := cmd.Flags().GetString("method")
 			command, _ := cmd.Flags().GetString("command")
@@ -96,7 +88,6 @@ func init() {
 		Short: "Remove the given route",
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
-			failIfEmptyToken()
 			controlURL, _ := cmd.Flags().GetString("control-url")
 
 			if err := client.RemoveRoute(controlURL, args[0]); err != nil {

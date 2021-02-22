@@ -24,7 +24,6 @@ import (
 	"os"
 	"sync"
 
-	"github.com/google/uuid"
 	"github.com/spf13/cobra"
 
 	"github.com/BBVA/kapow/internal/logger"
@@ -48,16 +47,8 @@ func banner() {
    %%%   %%%%%%%
    %%%%
     %           If you can script it, you can HTTP it.
+
 	`)
-
-	fmt.Fprintf(os.Stderr, `
-      To access this instance from another shell set the following
-      variables:
-
-   KAPOW_CONTROL_TOKEN=%q
-
-`, os.Getenv("KAPOW_CONTROL_TOKEN"))
-
 }
 
 // ServerCmd is the command line interface for kapow server
@@ -80,18 +71,15 @@ var ServerCmd = &cobra.Command{
 		sConf.ClientCaFile, _ = cmd.Flags().GetString("clientcafile")
 		sConf.Debug, _ = cmd.Flags().GetBool("debug")
 
+		sConf.ControlServerCert, sConf.ControlServerKey = server.GenCert("control_server", "localhost")
+		sConf.ControlClientCert, sConf.ControlClientKey = server.GenCert("control_client", "localhost")
+
 		// Set environment variables KAPOW_DATA_URL and KAPOW_CONTROL_URL only if they aren't set so we don't overwrite user's preferences
 		if _, exist := os.LookupEnv("KAPOW_DATA_URL"); !exist {
 			os.Setenv("KAPOW_DATA_URL", "http://"+sConf.DataBindAddr)
 		}
 		if _, exist := os.LookupEnv("KAPOW_CONTROL_URL"); !exist {
 			os.Setenv("KAPOW_CONTROL_URL", "http://"+sConf.ControlBindAddr)
-		}
-		// If not provided, set KAPOW_CONTROL_TOKEN
-		if controlToken, exist := os.LookupEnv("KAPOW_CONTROL_TOKEN"); !exist {
-			os.Setenv("KAPOW_CONTROL_TOKEN", uuid.New().String())
-		} else if controlToken == "" {
-			logger.L.Fatalf("KAPOW_CONTROL_TOKEN cannot be empty; Set it to a valid value, or unset it to enable autogeneration")
 		}
 		banner()
 

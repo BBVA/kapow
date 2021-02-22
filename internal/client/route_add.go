@@ -36,5 +36,5 @@ func AddRoute(host, path, method, entrypoint, command string, w io.Writer) error
 		payload["entrypoint"] = entrypoint
 	}
 	body, _ := json.Marshal(payload)
-	return http.Post(url, bytes.NewReader(body), w, http.AsJSON, http.WithControlToken)
+	return http.Post(url, bytes.NewReader(body), w, http.AsJSON)
 }

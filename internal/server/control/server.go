@@ -25,16 +25,28 @@ import (
 )
 
 // Run Starts the control server listening in bindAddr
-func Run(bindAddr string, wg *sync.WaitGroup) {
+func Run(bindAddr string, wg *sync.WaitGroup, serverCert, serverKey, clientCert []byte) {
+	caCertPool := x509.NewCertPool()
+	caCertPool.AppendCertsFromPEM(clientCert)
 
-	listener, err := net.Listen("tcp", bindAddr)
-	if err != nil {
-		logger.L.Fatal(err)
+	// Create the TLS Config with the CA pool and enable Client certificate validation
+	tlsConfig := &tls.Config{
+		ClientCAs:  caCertPool,
+		ClientAuth: tls.RequireAndVerifyClientCert,
+	}
+	tlsConfig.BuildNameToCertificate()
+
+	// Create a Server instance to listen on bindAddr with the TLS config
+	server := &http.Server{
+		Addr:      bindAddr,
+		TLSConfig: tlsConfig,
+		Handler:   configRouter(),
 	}
 
 	// Signal startup
 	logger.L.Printf("ControlServer listening at %s\n", bindAddr)
 	wg.Done()
 
-	logger.L.Fatal(http.Serve(listener, configRouter()))
+	// Listen to HTTPS connections with the server certificate and wait
+	logger.L.Fatal(server.ListenAndServeTLS(serverCert, serverKey))
 }

@@ -20,7 +20,6 @@ import (
 	"bytes"
 	"errors"
 	"net/http"
-	"os"
 	"testing"
 
 	gock "gopkg.in/h2non/gock.v1"
@@ -143,23 +142,6 @@ func TestSendContentTypeJSON(t *testing.T) {
 		Reply(http.StatusOK)
 
 	err := Request("GET", "http://localhost", nil, nil, AsJSON)
-	if err != nil {
-		t.Errorf("Unexpected error '%v'", err.Error())
-	}
-
-	if !gock.IsDone() {
-		t.Error("No expected endpoint called")
-	}
-}
-
-func TestSendKapowControlTokenHeader(t *testing.T) {
-	os.Setenv("KAPOW_CONTROL_TOKEN", "foo")
-	defer gock.Off()
-	gock.New("http://localhost").
-		MatchHeader("X-Kapow-Token", "foo").
-		Reply(http.StatusOK)
-
-	err := Request("GET", "http://localhost", nil, nil, WithControlToken)
 	if err != nil {
 		t.Errorf("Unexpected error '%v'", err.Error())
 	}
