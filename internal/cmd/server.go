@@ -71,8 +71,8 @@ var ServerCmd = &cobra.Command{
 		sConf.ClientCaFile, _ = cmd.Flags().GetString("clientcafile")
 		sConf.Debug, _ = cmd.Flags().GetBool("debug")
 
-		sConf.ControlServerCert, sConf.ControlServerKey = server.GenCert("control_server", "localhost")
-		sConf.ControlClientCert, sConf.ControlClientKey = server.GenCert("control_client", "localhost")
+		sConf.ControlServerCert, sConf.ControlServerCertPrivKey, sConf.ControlServerCertBytes = server.GenCert("control_server", "localhost")
+		sConf.ControlClientCert, sConf.ControlClientCertPrivKey, sConf.ControlClientCertBytes = server.GenCert("control_client", "localhost")
 
 		// Set environment variables KAPOW_DATA_URL and KAPOW_CONTROL_URL only if they aren't set so we don't overwrite user's preferences
 		if _, exist := os.LookupEnv("KAPOW_DATA_URL"); !exist {
