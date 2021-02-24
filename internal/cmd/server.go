@@ -18,6 +18,10 @@ package cmd
 
 import (
 	"bufio"
+	"bytes"
+	"crypto/rsa"
+	"crypto/x509"
+	"encoding/pem"
 	"errors"
 	"fmt"
 	"io"
@@ -79,14 +83,38 @@ var ServerCmd = &cobra.Command{
 			os.Setenv("KAPOW_DATA_URL", "http://"+sConf.DataBindAddr)
 		}
 		if _, exist := os.LookupEnv("KAPOW_CONTROL_URL"); !exist {
-			os.Setenv("KAPOW_CONTROL_URL", "http://"+sConf.ControlBindAddr)
+			os.Setenv("KAPOW_CONTROL_URL", "https://"+sConf.ControlBindAddr)
 		}
 		banner()
 
 		server.StartServer(sConf)
 
+		controlServerCertPEM := new(bytes.Buffer)
+		pem.Encode(controlServerCertPEM, &pem.Block{
+			Type:  "CERTIFICATE",
+			Bytes: sConf.ControlServerCertBytes,
+		})
+
+		controlClientCertPEM := new(bytes.Buffer)
+		pem.Encode(controlClientCertPEM, &pem.Block{
+			Type:  "CERTIFICATE",
+			Bytes: sConf.ControlClientCertBytes,
+		})
+
+		controlClientCertPrivKeyPEM := new(bytes.Buffer)
+		pem.Encode(controlClientCertPrivKeyPEM, &pem.Block{
+			Type:  "RSA PRIVATE KEY",
+			Bytes: x509.MarshalPKCS1PrivateKey(sConf.ControlClientCertPrivKey.(*rsa.PrivateKey)),
+		})
+
 		for _, path := range args {
-			go Run(path, sConf.Debug)
+			go Run(
+				path,
+				sConf.Debug,
+				string(controlServerCertPEM.Bytes()),
+				string(controlClientCertPEM.Bytes()),
+				string(controlClientCertPrivKeyPEM.Bytes()),
+			)
 		}
 
 		select {}
@@ -126,10 +154,19 @@ func validateServerCommandArguments(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func Run(path string, debug bool) {
+func Run(
+	path string,
+	debug bool,
+	controlServerCertPEM,
+	controlClientCertPEM,
+	controlClientCertPrivKeyPEM string,
+) {
 	logger.L.Printf("Running init program %+q", path)
 	cmd := BuildCmd(path)
 	cmd.Env = os.Environ()
+	cmd.Env = append(cmd.Env, fmt.Sprintf("KAPOW_CONTROL_SERVER_CERT=%v", controlServerCertPEM))
+	cmd.Env = append(cmd.Env, fmt.Sprintf("KAPOW_CONTROL_CLIENT_CERT=%v", controlClientCertPEM))
+	cmd.Env = append(cmd.Env, fmt.Sprintf("KAPOW_CONTROL_CLIENT_KEY=%v", controlClientCertPrivKeyPEM))
 
 	var wg sync.WaitGroup
 	if debug {
