@@ -28,23 +28,23 @@ func AsJSON(req *http.Request) {
 }
 
 // Get perform a request using Request with the GET method
-func Get(url string, r io.Reader, w io.Writer, reqTuner ...func(*http.Request)) error {
-	return Request("GET", url, r, w, reqTuner...)
+func Get(url string, r io.Reader, w io.Writer, client *http.Client, reqTuner ...func(*http.Request)) error {
+	return Request("GET", url, r, w, client, reqTuner...)
 }
 
 // Post perform a request using Request with the POST method
-func Post(url string, r io.Reader, w io.Writer, reqTuner ...func(*http.Request)) error {
-	return Request("POST", url, r, w, reqTuner...)
+func Post(url string, r io.Reader, w io.Writer, client *http.Client, reqTuner ...func(*http.Request)) error {
+	return Request("POST", url, r, w, client, reqTuner...)
 }
 
 // Put perform a request using Request with the PUT method
-func Put(url string, r io.Reader, w io.Writer, reqTuner ...func(*http.Request)) error {
-	return Request("PUT", url, r, w, reqTuner...)
+func Put(url string, r io.Reader, w io.Writer, client *http.Client, reqTuner ...func(*http.Request)) error {
+	return Request("PUT", url, r, w, client, reqTuner...)
 }
 
 // Delete perform a request using Request with the DELETE method
-func Delete(url string, r io.Reader, w io.Writer, reqTuner ...func(*http.Request)) error {
-	return Request("DELETE", url, r, w, reqTuner...)
+func Delete(url string, r io.Reader, w io.Writer, client *http.Client, reqTuner ...func(*http.Request)) error {
+	return Request("DELETE", url, r, w, client, reqTuner...)
 }
 
 var devnull = ioutil.Discard
@@ -53,7 +53,7 @@ var devnull = ioutil.Discard
 // content of the given reader as the body and writing all the contents
 // of the response to the given writer. The reader and writer are
 // optional.
-func Request(method string, url string, r io.Reader, w io.Writer, reqTuners ...func(*http.Request)) error {
+func Request(method string, url string, r io.Reader, w io.Writer, client *http.Client, reqTuners ...func(*http.Request)) error {
 	req, err := http.NewRequest(method, url, r)
 	if err != nil {
 		return err
@@ -63,7 +63,11 @@ func Request(method string, url string, r io.Reader, w io.Writer, reqTuners ...f
 		reqTuner(req)
 	}
 
-	res, err := new(http.Client).Do(req)
+	if client == nil {
+		client = new(http.Client)
+	}
+
+	res, err := client.Do(req)
 	if err != nil {
 		return err
 	}
