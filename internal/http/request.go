@@ -17,10 +17,14 @@
 package http
 
 import (
+	"crypto/tls"
+	"crypto/x509"
 	"errors"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
+	"os"
 )
 
 func AsJSON(req *http.Request) {
@@ -88,4 +92,44 @@ func Request(method string, url string, r io.Reader, w io.Writer, client *http.C
 	}
 
 	return err
+}
+
+func GenControlHTTPSClient() *http.Client {
+
+	serverCert, exists := os.LookupEnv("KAPOW_CONTROL_SERVER_CERT")
+	if !exists {
+		log.Fatal("AARHGGG!")
+	}
+
+	clientCert, exists := os.LookupEnv("KAPOW_CONTROL_CLIENT_CERT")
+	if !exists {
+		log.Fatal("AARHGGG!")
+	}
+
+	clientKey, exists := os.LookupEnv("KAPOW_CONTROL_CLIENT_KEY")
+	if !exists {
+		log.Fatal("AARHGGG!")
+	}
+
+	// Load client cert
+	clientTLSCert, err := tls.X509KeyPair([]byte(clientCert), []byte(clientKey))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Load Server cert
+	serverCertPool := x509.NewCertPool()
+	serverCertPool.AppendCertsFromPEM([]byte(serverCert))
+
+	// Setup HTTPS client
+	tlsConfig := &tls.Config{
+		Certificates: []tls.Certificate{clientTLSCert},
+		RootCAs:      serverCertPool,
+	}
+	tlsConfig.BuildNameToCertificate()
+	transport := &http.Transport{TLSClientConfig: tlsConfig}
+	client := &http.Client{Transport: transport}
+
+	// The client is always right!
+	return client
 }
