@@ -30,6 +30,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/BBVA/kapow/internal/logger"
 	"github.com/BBVA/kapow/internal/server/control"
 	"github.com/BBVA/kapow/internal/server/data"
 	"github.com/BBVA/kapow/internal/server/user"
@@ -90,26 +91,31 @@ func GenCert(name, altName string) (*x509.Certificate, crypto.PrivateKey, []byte
 
 	certPrivKey, err := rsa.GenerateKey(rand.Reader, 4096)
 	if err != nil {
-		// TODO: logger?
-		log.Fatal(err)
+		logger.L.Fatal(err)
 	}
 
 	certBytes, err := x509.CreateCertificate(rand.Reader, cert, cert, &certPrivKey.PublicKey, certPrivKey)
 	if err != nil {
-		log.Fatal(err)
+		logger.L.Fatal(err)
 	}
 
 	certPEM := new(bytes.Buffer)
-	pem.Encode(certPEM, &pem.Block{
+	err = pem.Encode(certPEM, &pem.Block{
 		Type:  "CERTIFICATE",
 		Bytes: certBytes,
 	})
+	if err != nil {
+		logger.L.Fatal(err)
+	}
 
 	certPrivKeyPEM := new(bytes.Buffer)
-	pem.Encode(certPrivKeyPEM, &pem.Block{
+	err = pem.Encode(certPrivKeyPEM, &pem.Block{
 		Type:  "RSA PRIVATE KEY",
 		Bytes: x509.MarshalPKCS1PrivateKey(certPrivKey),
 	})
+	if err != nil {
+		logger.L.Fatal(err)
+	}
 
 	certPEMBytes := certPEM.Bytes()
 	certKeyBytes := certPrivKeyPEM.Bytes()

@@ -90,30 +90,39 @@ var ServerCmd = &cobra.Command{
 		server.StartServer(sConf)
 
 		controlServerCertPEM := new(bytes.Buffer)
-		pem.Encode(controlServerCertPEM, &pem.Block{
+		err := pem.Encode(controlServerCertPEM, &pem.Block{
 			Type:  "CERTIFICATE",
 			Bytes: sConf.ControlServerCertBytes,
 		})
+		if err != nil {
+			logger.L.Fatal(err)
+		}
 
 		controlClientCertPEM := new(bytes.Buffer)
-		pem.Encode(controlClientCertPEM, &pem.Block{
+		err = pem.Encode(controlClientCertPEM, &pem.Block{
 			Type:  "CERTIFICATE",
 			Bytes: sConf.ControlClientCertBytes,
 		})
+		if err != nil {
+			logger.L.Fatal(err)
+		}
 
 		controlClientCertPrivKeyPEM := new(bytes.Buffer)
-		pem.Encode(controlClientCertPrivKeyPEM, &pem.Block{
+		err = pem.Encode(controlClientCertPrivKeyPEM, &pem.Block{
 			Type:  "RSA PRIVATE KEY",
 			Bytes: x509.MarshalPKCS1PrivateKey(sConf.ControlClientCertPrivKey.(*rsa.PrivateKey)),
 		})
+		if err != nil {
+			logger.L.Fatal(err)
+		}
 
 		for _, path := range args {
 			go Run(
 				path,
 				sConf.Debug,
-				string(controlServerCertPEM.Bytes()),
-				string(controlClientCertPEM.Bytes()),
-				string(controlClientCertPrivKeyPEM.Bytes()),
+				controlServerCertPEM.String(),
+				controlClientCertPEM.String(),
+				controlClientCertPrivKeyPEM.String(),
 			)
 		}
 

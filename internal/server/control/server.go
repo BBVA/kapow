@@ -44,10 +44,13 @@ func Run(bindAddr string, wg *sync.WaitGroup, serverCert *x509.Certificate, serv
 	// Create a Server instance to listen on bindAddr with the TLS config
 
 	clientCertPEM := new(bytes.Buffer)
-	pem.Encode(clientCertPEM, &pem.Block{
+	err := pem.Encode(clientCertPEM, &pem.Block{
 		Type:  "CERTIFICATE",
 		Bytes: clientCertBytes,
 	})
+	if err != nil {
+		logger.L.Fatal(err)
+	}
 	caCertPool := x509.NewCertPool()
 	caCertPool.AppendCertsFromPEM(clientCertPEM.Bytes())
 

@@ -27,28 +27,30 @@ import (
 	"os"
 )
 
+var ControlClientGenerator = GenControlHTTPSClient
+
 func AsJSON(req *http.Request) {
 	req.Header.Add("Content-Type", "application/json")
 }
 
 // Get perform a request using Request with the GET method
-func Get(url string, r io.Reader, w io.Writer, client *http.Client, reqTuner ...func(*http.Request)) error {
-	return Request("GET", url, r, w, client, reqTuner...)
+func Get(url string, r io.Reader, w io.Writer, clientGenerator func() *http.Client, reqTuner ...func(*http.Request)) error {
+	return Request("GET", url, r, w, clientGenerator, reqTuner...)
 }
 
 // Post perform a request using Request with the POST method
-func Post(url string, r io.Reader, w io.Writer, client *http.Client, reqTuner ...func(*http.Request)) error {
-	return Request("POST", url, r, w, client, reqTuner...)
+func Post(url string, r io.Reader, w io.Writer, clientGenerator func() *http.Client, reqTuner ...func(*http.Request)) error {
+	return Request("POST", url, r, w, clientGenerator, reqTuner...)
 }
 
 // Put perform a request using Request with the PUT method
-func Put(url string, r io.Reader, w io.Writer, client *http.Client, reqTuner ...func(*http.Request)) error {
-	return Request("PUT", url, r, w, client, reqTuner...)
+func Put(url string, r io.Reader, w io.Writer, clientGenerator func() *http.Client, reqTuner ...func(*http.Request)) error {
+	return Request("PUT", url, r, w, clientGenerator, reqTuner...)
 }
 
 // Delete perform a request using Request with the DELETE method
-func Delete(url string, r io.Reader, w io.Writer, client *http.Client, reqTuner ...func(*http.Request)) error {
-	return Request("DELETE", url, r, w, client, reqTuner...)
+func Delete(url string, r io.Reader, w io.Writer, clientGenerator func() *http.Client, reqTuner ...func(*http.Request)) error {
+	return Request("DELETE", url, r, w, clientGenerator, reqTuner...)
 }
 
 var devnull = ioutil.Discard
@@ -57,7 +59,7 @@ var devnull = ioutil.Discard
 // content of the given reader as the body and writing all the contents
 // of the response to the given writer. The reader and writer are
 // optional.
-func Request(method string, url string, r io.Reader, w io.Writer, client *http.Client, reqTuners ...func(*http.Request)) error {
+func Request(method string, url string, r io.Reader, w io.Writer, clientGenerator func() *http.Client, reqTuners ...func(*http.Request)) error {
 	req, err := http.NewRequest(method, url, r)
 	if err != nil {
 		return err
@@ -67,8 +69,11 @@ func Request(method string, url string, r io.Reader, w io.Writer, client *http.C
 		reqTuner(req)
 	}
 
-	if client == nil {
+	var client *http.Client
+	if clientGenerator == nil {
 		client = new(http.Client)
+	} else {
+		client = clientGenerator()
 	}
 
 	res, err := client.Do(req)
