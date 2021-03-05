@@ -75,8 +75,8 @@ var ServerCmd = &cobra.Command{
 		sConf.ClientCaFile, _ = cmd.Flags().GetString("clientcafile")
 		sConf.Debug, _ = cmd.Flags().GetBool("debug")
 
-		sConf.ControlServerCert, sConf.ControlServerCertPrivKey, sConf.ControlServerCertBytes = server.GenCert("control_server", "localhost")
-		sConf.ControlClientCert, sConf.ControlClientCertPrivKey, sConf.ControlClientCertBytes = server.GenCert("control_client", "localhost")
+		sConf.ControlServerCert = server.GenCert("control_server", "localhost")
+		sConf.ControlClientCert = server.GenCert("control_client", "localhost")
 
 		// Set environment variables KAPOW_DATA_URL and KAPOW_CONTROL_URL only if they aren't set so we don't overwrite user's preferences
 		if _, exist := os.LookupEnv("KAPOW_DATA_URL"); !exist {
@@ -92,7 +92,7 @@ var ServerCmd = &cobra.Command{
 		controlServerCertPEM := new(bytes.Buffer)
 		err := pem.Encode(controlServerCertPEM, &pem.Block{
 			Type:  "CERTIFICATE",
-			Bytes: sConf.ControlServerCertBytes,
+			Bytes: sConf.ControlServerCert.SignedCert,
 		})
 		if err != nil {
 			logger.L.Fatal(err)
@@ -101,7 +101,7 @@ var ServerCmd = &cobra.Command{
 		controlClientCertPEM := new(bytes.Buffer)
 		err = pem.Encode(controlClientCertPEM, &pem.Block{
 			Type:  "CERTIFICATE",
-			Bytes: sConf.ControlClientCertBytes,
+			Bytes: sConf.ControlClientCert.SignedCert,
 		})
 		if err != nil {
 			logger.L.Fatal(err)
@@ -110,7 +110,7 @@ var ServerCmd = &cobra.Command{
 		controlClientCertPrivKeyPEM := new(bytes.Buffer)
 		err = pem.Encode(controlClientCertPrivKeyPEM, &pem.Block{
 			Type:  "RSA PRIVATE KEY",
-			Bytes: x509.MarshalPKCS1PrivateKey(sConf.ControlClientCertPrivKey.(*rsa.PrivateKey)),
+			Bytes: x509.MarshalPKCS1PrivateKey(sConf.ControlClientCert.PrivKey.(*rsa.PrivateKey)),
 		})
 		if err != nil {
 			logger.L.Fatal(err)
