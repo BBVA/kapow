@@ -35,6 +35,19 @@ func (c Cert) SignedCertPEMBytes() []byte {
 	return PEM.Bytes()
 }
 
+func (c Cert) PrivateKeyPEMBytes() []byte {
+	PEM := new(bytes.Buffer)
+	err := pem.Encode(PEM, &pem.Block{
+		Type:  "RSA PRIVATE KEY",
+		Bytes: x509.MarshalPKCS1PrivateKey(c.PrivKey.(*rsa.PrivateKey)),
+	})
+	if err != nil {
+		logger.L.Fatal(err)
+	}
+
+	return PEM.Bytes()
+}
+
 func GenCert(name, altName string) Cert {
 
 	usage := x509.ExtKeyUsageClientAuth

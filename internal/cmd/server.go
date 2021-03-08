@@ -18,10 +18,6 @@ package cmd
 
 import (
 	"bufio"
-	"bytes"
-	"crypto/rsa"
-	"crypto/x509"
-	"encoding/pem"
 	"errors"
 	"fmt"
 	"io"
@@ -90,40 +86,13 @@ var ServerCmd = &cobra.Command{
 
 		server.StartServer(sConf)
 
-		controlServerCertPEM := new(bytes.Buffer)
-		err := pem.Encode(controlServerCertPEM, &pem.Block{
-			Type:  "CERTIFICATE",
-			Bytes: sConf.ControlServerCert.SignedCert,
-		})
-		if err != nil {
-			logger.L.Fatal(err)
-		}
-
-		controlClientCertPEM := new(bytes.Buffer)
-		err = pem.Encode(controlClientCertPEM, &pem.Block{
-			Type:  "CERTIFICATE",
-			Bytes: sConf.ControlClientCert.SignedCert,
-		})
-		if err != nil {
-			logger.L.Fatal(err)
-		}
-
-		controlClientCertPrivKeyPEM := new(bytes.Buffer)
-		err = pem.Encode(controlClientCertPrivKeyPEM, &pem.Block{
-			Type:  "RSA PRIVATE KEY",
-			Bytes: x509.MarshalPKCS1PrivateKey(sConf.ControlClientCert.PrivKey.(*rsa.PrivateKey)),
-		})
-		if err != nil {
-			logger.L.Fatal(err)
-		}
-
 		for _, path := range args {
 			go Run(
 				path,
 				sConf.Debug,
-				controlServerCertPEM.String(),
-				controlClientCertPEM.String(),
-				controlClientCertPrivKeyPEM.String(),
+				sConf.ControlServerCert.SignedCertPEMBytes(),
+				sConf.ControlClientCert.SignedCertPEMBytes(),
+				sConf.ControlClientCert.PrivateKeyPEMBytes(),
 			)
 		}
 
@@ -169,14 +138,14 @@ func Run(
 	debug bool,
 	controlServerCertPEM,
 	controlClientCertPEM,
-	controlClientCertPrivKeyPEM string,
+	controlClientCertPrivKeyPEM []byte,
 ) {
 	logger.L.Printf("Running init program %+q", path)
 	cmd := BuildCmd(path)
 	cmd.Env = os.Environ()
-	cmd.Env = append(cmd.Env, fmt.Sprintf("KAPOW_CONTROL_SERVER_CERT=%v", controlServerCertPEM))
-	cmd.Env = append(cmd.Env, fmt.Sprintf("KAPOW_CONTROL_CLIENT_CERT=%v", controlClientCertPEM))
-	cmd.Env = append(cmd.Env, fmt.Sprintf("KAPOW_CONTROL_CLIENT_KEY=%v", controlClientCertPrivKeyPEM))
+	cmd.Env = append(cmd.Env, fmt.Sprintf("KAPOW_CONTROL_SERVER_CERT=%s", controlServerCertPEM))
+	cmd.Env = append(cmd.Env, fmt.Sprintf("KAPOW_CONTROL_CLIENT_CERT=%s", controlClientCertPEM))
+	cmd.Env = append(cmd.Env, fmt.Sprintf("KAPOW_CONTROL_CLIENT_KEY=%s", controlClientCertPrivKeyPEM))
 
 	var wg sync.WaitGroup
 	if debug {
