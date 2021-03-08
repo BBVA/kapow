@@ -30,6 +30,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/BBVA/kapow/internal/certs"
 	"github.com/BBVA/kapow/internal/logger"
 	"github.com/BBVA/kapow/internal/server"
 )
@@ -75,8 +76,8 @@ var ServerCmd = &cobra.Command{
 		sConf.ClientCaFile, _ = cmd.Flags().GetString("clientcafile")
 		sConf.Debug, _ = cmd.Flags().GetBool("debug")
 
-		sConf.ControlServerCert = server.GenCert("control_server", "localhost")
-		sConf.ControlClientCert = server.GenCert("control_client", "localhost")
+		sConf.ControlServerCert = certs.GenCert("control_server", "localhost")
+		sConf.ControlClientCert = certs.GenCert("control_client", "localhost")
 
 		// Set environment variables KAPOW_DATA_URL and KAPOW_CONTROL_URL only if they aren't set so we don't overwrite user's preferences
 		if _, exist := os.LookupEnv("KAPOW_DATA_URL"); !exist {

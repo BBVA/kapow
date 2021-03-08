@@ -17,17 +17,9 @@
 package server
 
 import (
-	"crypto/rand"
-	"crypto/rsa"
-	"crypto/x509"
-	"crypto/x509/pkix"
-	"math/big"
-	"strings"
 	"sync"
-	"time"
 
 	"github.com/BBVA/kapow/internal/certs"
-	"github.com/BBVA/kapow/internal/logger"
 	"github.com/BBVA/kapow/internal/server/control"
 	"github.com/BBVA/kapow/internal/server/data"
 	"github.com/BBVA/kapow/internal/server/user"
@@ -58,42 +50,4 @@ func StartServer(config ServerConfig) {
 
 	// Wait for servers signals in order to return
 	wg.Wait()
-}
-
-func GenCert(name, altName string) certs.Cert {
-
-	usage := x509.ExtKeyUsageClientAuth
-	if strings.HasSuffix(name, "_server") {
-		usage = x509.ExtKeyUsageServerAuth
-	}
-	cert := &x509.Certificate{
-		SerialNumber: big.NewInt(1),
-		DNSNames:     []string{altName},
-		Subject: pkix.Name{
-			CommonName: name,
-		},
-		NotBefore:             time.Now(),
-		NotAfter:              time.Now().AddDate(10, 0, 0),
-		IsCA:                  false,
-		BasicConstraintsValid: true,
-		ExtKeyUsage: []x509.ExtKeyUsage{
-			usage,
-		},
-	}
-
-	certPrivKey, err := rsa.GenerateKey(rand.Reader, 4096)
-	if err != nil {
-		logger.L.Fatal(err)
-	}
-
-	certBytes, err := x509.CreateCertificate(rand.Reader, cert, cert, &certPrivKey.PublicKey, certPrivKey)
-	if err != nil {
-		logger.L.Fatal(err)
-	}
-
-	return certs.Cert{
-		X509Cert:   cert,
-		PrivKey:    certPrivKey,
-		SignedCert: certBytes,
-	}
 }
