@@ -17,10 +17,8 @@
 package control
 
 import (
-	"bytes"
 	"crypto/tls"
 	"crypto/x509"
-	"encoding/pem"
 	"net"
 	"net/http"
 	"sync"
@@ -32,16 +30,8 @@ import (
 // Run Starts the control server listening in bindAddr
 func Run(bindAddr string, wg *sync.WaitGroup, serverCert, clientCert certs.Cert) {
 
-	clientCertPEM := new(bytes.Buffer)
-	err := pem.Encode(clientCertPEM, &pem.Block{
-		Type:  "CERTIFICATE",
-		Bytes: clientCert.SignedCert,
-	})
-	if err != nil {
-		logger.L.Fatal(err)
-	}
 	caCertPool := x509.NewCertPool()
-	caCertPool.AppendCertsFromPEM(clientCertPEM.Bytes())
+	caCertPool.AppendCertsFromPEM(clientCert.SignedCertPEMBytes())
 
 	ln, err := net.Listen("tcp", bindAddr)
 	if err != nil {
