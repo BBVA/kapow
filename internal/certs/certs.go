@@ -9,7 +9,6 @@ import (
 	"crypto/x509/pkix"
 	"encoding/pem"
 	"math/big"
-	"strings"
 	"time"
 
 	"github.com/BBVA/kapow/internal/logger"
@@ -48,10 +47,10 @@ func (c Cert) PrivateKeyPEMBytes() []byte {
 	return PEM.Bytes()
 }
 
-func GenCert(name, altName string) Cert {
+func GenCert(name, altName string, isServer bool) Cert {
 
 	usage := x509.ExtKeyUsageClientAuth
-	if strings.HasSuffix(name, "_server") {
+	if isServer {
 		usage = x509.ExtKeyUsageServerAuth
 	}
 	cert := &x509.Certificate{
