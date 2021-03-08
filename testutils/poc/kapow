@@ -27,6 +27,7 @@ import binascii
 import contextlib
 import datetime
 import io
+import ipaddress
 import json
 import logging
 import os
@@ -86,15 +87,25 @@ def generate_ssl_cert(name, alt=None):
     )
 
     if alt is not None:
-        cert=cert.add_extension(
-            x509.SubjectAlternativeName([x509.DNSName(alt)]),
-            critical=True,
-        ).add_extension(
-            x509.ExtendedKeyUsage(
-                [x509.oid.ExtendedKeyUsageOID.SERVER_AUTH],
-            ),
-            critical=True
-        )
+        try:
+            ip = ipaddress.ip_address(alt)
+        except:
+            cert = cert.add_extension(
+                x509.SubjectAlternativeName([x509.DNSName(alt)]),
+                critical=True,
+            )
+        else:
+            cert = cert.add_extension(
+                x509.SubjectAlternativeName([x509.IPAddress(ip)]),
+                critical=True,
+            )
+        finally:
+            cert = cert.add_extension(
+                x509.ExtendedKeyUsage(
+                    [x509.oid.ExtendedKeyUsageOID.SERVER_AUTH],
+                ),
+                critical=True
+            )
     else:
         cert=cert.add_extension(
             x509.ExtendedKeyUsage(
@@ -547,8 +558,25 @@ async def start_background_tasks(app):
     app["debug_tasks"] = loop.create_task(run_init_script(app, app["scripts"], app["interactive"]))
 
 
+def reduce_addr(addr):
+    """Drop the port part from an `addr:port` string (IPv6 aware)"""
+    addr, *_ = addr.rsplit(':', 1)
+    if addr.startswith('[') and addr.endswith(']'):
+        return addr[1:-1]
+    else:
+        return addr
 
-async def start_kapow_server(bind, scripts, certfile=None, interactive=False, keyfile=None):
+
+async def start_kapow_server(user_bind,
+                             control_bind,
+                             data_bind,
+                             scripts,
+                             certfile=None,
+                             interactive=False,
+                             keyfile=None,
+                             control_reachable_addr="localhost:8081"):
+    global KAPOW_CONTROL_URL
+    KAPOW_CONTROL_URL=f"https://{control_reachable_addr}"
     #
     # USER
     #
@@ -562,14 +590,16 @@ async def start_kapow_server(bind, scripts, certfile=None, interactive=False, ke
         ssl_context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
         ssl_context.load_cert_chain(certfile, keyfile)
 
-    ip, port = bind.split(':')
-    user_site = web.TCPSite(user_runner, ip, int(port), ssl_context=ssl_context)
+    user_ip, user_port = user_bind.rsplit(':', 2)
+    user_site = web.TCPSite(user_runner, user_ip, int(user_port),
+                            ssl_context=ssl_context)
     await user_site.start()
 
     #
     # CONTROL
     #
-    srv_key_bytes, srv_crt_bytes = generate_ssl_cert("control", "localhost")
+    alternate_name = reduce_addr(control_reachable_addr)
+    srv_key_bytes, srv_crt_bytes = generate_ssl_cert("control", alternate_name)
     cli_key_bytes, cli_crt_bytes = generate_ssl_cert("control")
 
     context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
@@ -606,7 +636,9 @@ async def start_kapow_server(bind, scripts, certfile=None, interactive=False, ke
 
     await control_runner.setup()
 
-    control_site = web.TCPSite(control_runner, '127.0.0.1', 8081, ssl_context=context)
+    control_ip, control_port = control_bind.rsplit(':', 2)
+    control_site = web.TCPSite(control_runner, control_ip,
+                               int(control_port), ssl_context=context)
     await control_site.start()
 
     #
@@ -622,7 +654,8 @@ async def start_kapow_server(bind, scripts, certfile=None, interactive=False, ke
     data_runner = web.AppRunner(data_app)
 
     await data_runner.setup()
-    data_site = web.TCPSite(data_runner, '127.0.0.1', 8082)
+    data_ip, data_port = data_bind.rsplit(':', 2)
+    data_site = web.TCPSite(data_runner, data_ip, int(data_port))
     await data_site.start()
 
 
@@ -642,13 +675,25 @@ def kapow(ctx):
 @click.option("--certfile", default=None)
 @click.option("--keyfile", default=None)
 @click.option("--bind", default="0.0.0.0:8080")
+@click.option("--control-bind", default="0.0.0.0:8081")
+@click.option("--data-bind", default="0.0.0.0:8082")
+@click.option("--control-reachable-addr", default="localhost:8081")
 @click.option("-i", "--interactive", is_flag=True)
 @click.argument("scripts", nargs=-1)
-def server(certfile, keyfile, bind, interactive, scripts):
+def server(certfile, keyfile, bind, interactive, scripts,
+           control_reachable_addr, control_bind, data_bind):
     if bool(certfile) ^ bool(keyfile):
         print("For SSL both 'certfile' and 'keyfile' should be provided.")
         sys.exit(1)
-    loop.run_until_complete(start_kapow_server(bind, scripts, certfile, interactive, keyfile))
+    loop.run_until_complete(
+        start_kapow_server(bind,
+                           control_bind,
+                           data_bind,
+                           scripts,
+                           certfile,
+                           interactive,
+                           keyfile,
+                           control_reachable_addr))
     loop.run_forever()
 
 @kapow.group(help="Manage current server HTTP routes")
