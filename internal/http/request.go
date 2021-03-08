@@ -22,9 +22,10 @@ import (
 	"errors"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
+
+	"github.com/BBVA/kapow/internal/logger"
 )
 
 var ControlClientGenerator = GenControlHTTPSClient
@@ -103,23 +104,23 @@ func GenControlHTTPSClient() *http.Client {
 
 	serverCert, exists := os.LookupEnv("KAPOW_CONTROL_SERVER_CERT")
 	if !exists {
-		log.Fatal("AARHGGG!")
+		logger.L.Fatal("KAPOW_CONTROL_SERVER_CERT not in the environment")
 	}
 
 	clientCert, exists := os.LookupEnv("KAPOW_CONTROL_CLIENT_CERT")
 	if !exists {
-		log.Fatal("AARHGGG!")
+		logger.L.Fatal("KAPOW_CONTROL_CLIENT_CERT not in the environment")
 	}
 
 	clientKey, exists := os.LookupEnv("KAPOW_CONTROL_CLIENT_KEY")
 	if !exists {
-		log.Fatal("AARHGGG!")
+		logger.L.Fatal("KAPOW_CONTROL_CLIENT_KEY not in the environment")
 	}
 
 	// Load client cert
 	clientTLSCert, err := tls.X509KeyPair([]byte(clientCert), []byte(clientKey))
 	if err != nil {
-		log.Fatal(err)
+		logger.L.Fatal(err)
 	}
 
 	// Load Server cert
