@@ -59,3 +59,23 @@ Feature: Communications with the control interface are secured with mTLS.
     $ kapow route list
     """
     Then the command exits immediately with "1"
+
+  @server
+  Scenario Outline: The control server is accessible through an alternative address
+    The automatically generated certificated contains the Alternate Name
+    provided via the `--control-reachable-addr` parameter.
+
+    Given I launch the server with the following extra arguments
+    """
+    --control-reachable-addr "<reachable_addr>"
+    """
+    When I inspect the automatically generated control server certificate
+    Then the extension "Subject Alternative Name" contains "<value>" of type "<type>"
+
+    Examples:
+      | reachable_addr | value     | type      |
+      | localhost:8081 | localhost | DNSName   |
+      | 127.0.0.1:8081 | 127.0.0.1 | IPAddress |
+      | foo.bar:8081   | foo.bar   | DNSName   |
+      | 4.2.2.4:8081   | 4.2.2.4   | IPAddress |
+      | [2600::]:8081  | 2600::    | IPAddress |

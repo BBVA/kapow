@@ -18,26 +18,27 @@ from multiprocessing.pool import ThreadPool
 from time import sleep
 import datetime
 import http.server
+import ipaddress
 import json
 import logging
 import os
 import shlex
 import signal
 import socket
-import subprocess
 import ssl
+import subprocess
 import sys
 import tempfile
 import threading
 import time
 
 from comparedict import is_subset
-from cryptography import x509
 from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.x509.oid import NameOID
+from cryptography import x509
+from cryptography.x509.oid import NameOID, ExtensionOID
 from environconfig import EnvironConfig, StringVar, IntVar, BooleanVar
 from requests import exceptions as requests_exceptions
 import jsonexample
@@ -158,42 +159,41 @@ def is_port_open(port):
         return sock.connect_ex(('127.0.0.1', port)) == 0
 
 
-def run_kapow_server(context):
-    # assert (not is_port_open(Env.KAPOW_CONTROL_PORT)), "Another process is already bound"
+def run_kapow_server(context, extra_args=""):
+    assert (not is_port_open(Env.KAPOW_CONTROL_PORT)), "Another process is already bound"
 
     context.server = subprocess.Popen(
-        shlex.split(Env.KAPOW_SERVER_CMD) + [os.path.join(HERE, "get_environment.py")],
+        shlex.split(Env.KAPOW_SERVER_CMD) + shlex.split(extra_args) + [os.path.join(HERE, "get_environment.py")],
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
         env={'SPECTEST_FIFO': context.init_script_fifo_path, **os.environ},
         shell=False)
 
+    # Check process is running with reachable APIs
+    open_ports = False
+    for _ in range(Env.KAPOW_BOOT_TIMEOUT):
+        with suppress(requests_exceptions.ConnectionError):
+            if is_port_open(Env.KAPOW_CONTROL_PORT):
+                open_ports = True
+                break
+        sleep(.01)
+
+    assert open_ports, "API is unreachable after KAPOW_BOOT_TIMEOUT"
+
     # Get init_script enviroment via fifo
     with open(context.init_script_fifo_path, 'r') as fifo:
         context.init_script_environ = json.load(fifo)
 
-    # Check process is running with reachable APIs
-    open_ports = False
-    with mtls_client(context) as requests:
-        for _ in range(Env.KAPOW_BOOT_TIMEOUT):
-            is_running = context.server.poll() is None
-            assert is_running, "Server is not running!"
-            with suppress(requests_exceptions.ConnectionError):
-                open_ports = (
-                    requests.head(Env.KAPOW_CONTROL_URL, timeout=1).status_code
-                    and requests.head(Env.KAPOW_DATA_URL, timeout=1).status_code)
-                if open_ports:
-                    break
-            sleep(.01)
 
-    assert open_ports, "API is unreachable after KAPOW_BOOT_TIMEOUT"
-
-
-# @given('I have a just started Kapow! server with {config}')
 @given('I have a just started Kapow! server')
 @given('I have a running Kapow! server')
 def step_impl(context):
     run_kapow_server(context)
+
+
+@given(u'I launch the server with the following extra arguments')
+def step_impl(context):
+    run_kapow_server(context, context.text)
 
 
 @when('I request a route listing without providing a Control Access Token')
@@ -616,3 +616,32 @@ def step_impl(context):
                     f"{Env.KAPOW_CONTROL_URL}/routes")
             except Exception as exc:
                 context.request_response = exc
+
+
+
+@when('I inspect the automatically generated control server certificate')
+def step_impl(context):
+    context.control_server_cert = x509.load_pem_x509_certificate(
+        context.init_script_environ["KAPOW_CONTROL_SERVER_CERT"].encode('ascii'))
+
+
+@then('the extension "{extension}" contains "{value}" of type "{typename}"')
+def step_impl(context, extension, value, typename):
+    if extension == 'Subject Alternative Name':
+        oid = ExtensionOID.SUBJECT_ALTERNATIVE_NAME
+    else:
+        raise NotImplementedError(f'Unknown extension {extension}')
+
+    if typename == 'DNSName':
+        type_ = x509.DNSName
+        converter = lambda x: x
+    elif typename == 'IPAddress':
+        type_ = x509.IPAddress
+        converter = ipaddress.ip_address
+    else:
+        raise NotImplementedError(f'Unknown type {typename}')
+
+    ext = context.control_server_cert.extensions.get_extension_for_oid(oid)
+    values = ext.value.get_values_for_type(type_)
+
+    assert converter(value) in values, f"Value {value} not in {values}"
