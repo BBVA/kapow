@@ -65,7 +65,7 @@ class Env(EnvironConfig):
 
     KAPOW_CONTROL_TOKEN = StringVar(default="TEST-SPEC-CONTROL-TOKEN")
 
-    KAPOW_BOOT_TIMEOUT = IntVar(default=1000)
+    KAPOW_BOOT_TIMEOUT = IntVar(default=3000)
 
     KAPOW_DEBUG_TESTS = BooleanVar(default=False)
 
