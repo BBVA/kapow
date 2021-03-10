@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 	"sync"
 
 	"github.com/spf13/cobra"
@@ -65,6 +66,8 @@ var ServerCmd = &cobra.Command{
 		sConf.ControlBindAddr, _ = cmd.Flags().GetString("control-bind")
 		sConf.DataBindAddr, _ = cmd.Flags().GetString("data-bind")
 
+		controlReachableAddr, _ := cmd.Flags().GetString("control-reachable-addr")
+
 		sConf.CertFile, _ = cmd.Flags().GetString("certfile")
 		sConf.KeyFile, _ = cmd.Flags().GetString("keyfile")
 
@@ -72,15 +75,15 @@ var ServerCmd = &cobra.Command{
 		sConf.ClientCaFile, _ = cmd.Flags().GetString("clientcafile")
 		sConf.Debug, _ = cmd.Flags().GetBool("debug")
 
-		sConf.ControlServerCert = certs.GenCert("control_server", "localhost", true)
-		sConf.ControlClientCert = certs.GenCert("control_client", "localhost", false)
+		sConf.ControlServerCert = certs.GenCert("control_server", extractHost(controlReachableAddr), true)
+		sConf.ControlClientCert = certs.GenCert("control_client", "", false)
 
 		// Set environment variables KAPOW_DATA_URL and KAPOW_CONTROL_URL only if they aren't set so we don't overwrite user's preferences
 		if _, exist := os.LookupEnv("KAPOW_DATA_URL"); !exist {
 			os.Setenv("KAPOW_DATA_URL", "http://"+sConf.DataBindAddr)
 		}
 		if _, exist := os.LookupEnv("KAPOW_CONTROL_URL"); !exist {
-			os.Setenv("KAPOW_CONTROL_URL", "https://"+sConf.ControlBindAddr)
+			os.Setenv("KAPOW_CONTROL_URL", "https://"+controlReachableAddr)
 		}
 		banner()
 
@@ -100,10 +103,22 @@ var ServerCmd = &cobra.Command{
 	},
 }
 
+func extractHost(s string) string {
+	i := strings.LastIndex(s, ":")
+	s = s[:i]
+	l := len(s) - 1
+	if s[0] == '[' && s[l] == ']' {
+		s = s[1:l]
+	}
+	return s
+}
+
 func init() {
 	ServerCmd.Flags().String("bind", "0.0.0.0:8080", "IP address and port to bind the user interface to")
 	ServerCmd.Flags().String("control-bind", "localhost:8081", "IP address and port to bind the control interface to")
 	ServerCmd.Flags().String("data-bind", "localhost:8082", "IP address and port to bind the data interface to")
+
+	ServerCmd.Flags().String("control-reachable-addr", "localhost:8081", "address (incl. port) through which the control interface can be reached (from the client's point of view)")
 
 	ServerCmd.Flags().String("certfile", "", "Cert file to serve thru https")
 	ServerCmd.Flags().String("keyfile", "", "Key file to serve thru https")

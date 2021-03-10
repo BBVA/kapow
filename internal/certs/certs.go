@@ -9,6 +9,7 @@ import (
 	"crypto/x509/pkix"
 	"encoding/pem"
 	"math/big"
+	"net"
 	"time"
 
 	"github.com/BBVA/kapow/internal/logger"
@@ -53,9 +54,21 @@ func GenCert(name, altName string, isServer bool) Cert {
 	if isServer {
 		usage = x509.ExtKeyUsageServerAuth
 	}
+
+	var dnsNames []string
+	var ipAddresses []net.IP
+	if altName != "" {
+		if ipAddr := net.ParseIP(altName); ipAddr != nil {
+			ipAddresses = []net.IP{ipAddr}
+		} else {
+			dnsNames = []string{altName}
+		}
+	}
+
 	cert := &x509.Certificate{
 		SerialNumber: big.NewInt(1),
-		DNSNames:     []string{altName},
+		DNSNames:     dnsNames,
+		IPAddresses:  ipAddresses,
 		Subject: pkix.Name{
 			CommonName: name,
 		},
