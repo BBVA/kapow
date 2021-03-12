@@ -100,7 +100,7 @@ Or, if you want human-readable output, you can use :program:`jq`:
 
 .. note::
 
-   *Kapow!* has a :ref:`http-control-interface`, bound by default to
+   *Kapow!* has a :ref:`https-control-interface`, bound by default to
    ``localhost:8081``.
 
 

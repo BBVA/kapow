@@ -58,56 +58,6 @@ func checkErrorResponse(r *http.Response, expectedErrcode int, expectedReason st
 	return errList
 }
 
-func TestConfigRouterHasRoutesWellConfigured(t *testing.T) {
-	testCases := []struct {
-		pattern, method string
-		handler         uintptr
-		mustMatch       bool
-		vars            []string
-	}{
-		{"/routes/FOO", http.MethodGet, reflect.ValueOf(getRoute).Pointer(), true, []string{"id"}},
-		{"/routes/FOO", http.MethodPut, reflect.ValueOf(defMethodNotAllowedHandler).Pointer(), true, []string{}},
-		{"/routes/FOO", http.MethodPost, reflect.ValueOf(defMethodNotAllowedHandler).Pointer(), true, []string{}},
-		{"/routes/FOO", http.MethodDelete, reflect.ValueOf(removeRoute).Pointer(), true, []string{"id"}},
-		{"/routes", http.MethodGet, reflect.ValueOf(listRoutes).Pointer(), true, []string{}},
-		{"/routes", http.MethodPut, reflect.ValueOf(defMethodNotAllowedHandler).Pointer(), true, []string{}},
-		{"/routes", http.MethodPost, reflect.ValueOf(addRoute).Pointer(), true, []string{}},
-		{"/routes", http.MethodDelete, reflect.ValueOf(defMethodNotAllowedHandler).Pointer(), true, []string{}},
-		{"/", http.MethodGet, reflect.ValueOf(defNotFoundHandler).Pointer(), true, []string{}},
-		{"/", http.MethodPut, reflect.ValueOf(defNotFoundHandler).Pointer(), true, []string{}},
-		{"/", http.MethodPost, reflect.ValueOf(defNotFoundHandler).Pointer(), true, []string{}},
-		{"/", http.MethodDelete, reflect.ValueOf(defNotFoundHandler).Pointer(), true, []string{}},
-		{"/FOO", http.MethodGet, reflect.ValueOf(defNotFoundHandler).Pointer(), true, []string{}},
-		{"/FOO", http.MethodPut, reflect.ValueOf(defNotFoundHandler).Pointer(), true, []string{}},
-		{"/FOO", http.MethodPost, reflect.ValueOf(defNotFoundHandler).Pointer(), true, []string{}},
-		{"/FOO", http.MethodDelete, reflect.ValueOf(defNotFoundHandler).Pointer(), true, []string{}},
-	}
-	r := configRouter()
-
-	for _, tc := range testCases {
-		rm := mux.RouteMatch{}
-		rq, _ := http.NewRequest(tc.method, tc.pattern, nil)
-		if matched := r.Match(rq, &rm); tc.mustMatch == matched {
-			if tc.mustMatch {
-				// Check for Handler match.
-				realHandler := reflect.ValueOf(rm.Handler).Pointer()
-				if realHandler != tc.handler {
-					t.Errorf("Handler mismatch. Expected: %X, got: %X", tc.handler, realHandler)
-				}
-
-				// Check for variables
-				for _, vn := range tc.vars {
-					if _, exists := rm.Vars[vn]; !exists {
-						t.Errorf("Variable not present: %s", vn)
-					}
-				}
-			}
-		} else {
-			t.Errorf("Route mismatch: %+v", tc)
-		}
-	}
-}
-
 func TestPathValidatorNoErrorWhenCorrectPath(t *testing.T) {
 	err := pathValidator("/routes/{routeID}")
 

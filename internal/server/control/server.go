@@ -17,24 +17,47 @@
 package control
 
 import (
+	"crypto/tls"
+	"crypto/x509"
 	"net"
 	"net/http"
 	"sync"
 
+	"github.com/BBVA/kapow/internal/certs"
 	"github.com/BBVA/kapow/internal/logger"
 )
 
 // Run Starts the control server listening in bindAddr
-func Run(bindAddr string, wg *sync.WaitGroup) {
+func Run(bindAddr string, wg *sync.WaitGroup, serverCert, clientCert certs.Cert) {
 
-	listener, err := net.Listen("tcp", bindAddr)
+	caCertPool := x509.NewCertPool()
+	caCertPool.AppendCertsFromPEM(clientCert.SignedCertPEMBytes())
+
+	ln, err := net.Listen("tcp", bindAddr)
 	if err != nil {
 		logger.L.Fatal(err)
+	}
+
+	server := &http.Server{
+		Addr: bindAddr,
+		TLSConfig: &tls.Config{
+			Certificates: []tls.Certificate{
+				tls.Certificate{
+					Certificate: [][]byte{serverCert.SignedCert},
+					PrivateKey:  serverCert.PrivKey,
+					Leaf:        serverCert.X509Cert,
+				},
+			},
+			ClientAuth: tls.RequireAndVerifyClientCert,
+			ClientCAs:  caCertPool,
+		},
+		Handler: configRouter(),
 	}
 
 	// Signal startup
 	logger.L.Printf("ControlServer listening at %s\n", bindAddr)
 	wg.Done()
 
-	logger.L.Fatal(http.Serve(listener, configRouter()))
+	// Listen to HTTPS connections with the server certificate and wait
+	logger.L.Fatal(server.ServeTLS(ln, "", ""))
 }
