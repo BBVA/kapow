@@ -79,3 +79,17 @@ Feature: Communications with the control interface are secured with mTLS.
       | foo.bar:8081   | foo.bar   | DNSName   |
       | 4.2.2.4:8081   | 4.2.2.4   | IPAddress |
       | [2600::]:8081  | 2600::    | IPAddress |
+
+
+  @e2e
+  Scenario: Control server dialog using mTLS
+    If the user provides the corresponding certificates to the
+    `kapow route` subcommand, the communication should be possible.
+
+    Given I have a just started Kapow! server
+    When I run the following command (setting the control certs environment variables)
+       """
+       $ kapow route list
+
+       """
+    Then the command exits with "0"

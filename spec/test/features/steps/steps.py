@@ -518,12 +518,23 @@ def step_impl(context):
                            context.cli_crt,
                            context.cli_key)
 
+
 @step('I run the following command')
 def step_impl(context):
     run_command_with_certs(context,
                            context.srv_crt,
                            context.cli_crt,
                            context.cli_key)
+
+
+@when('I run the following command (setting the control certs environment variables)')
+def step_impl(context):
+    run_command_with_certs(
+        context,
+        context.init_script_environ["KAPOW_CONTROL_SERVER_CERT"],
+        context.init_script_environ["KAPOW_CONTROL_CLIENT_CERT"],
+        context.init_script_environ["KAPOW_CONTROL_CLIENT_KEY"])
+
 
 @step('the HTTPS server receives a "{method}" request to "{path}"')
 def step_impl(context, method, path):
