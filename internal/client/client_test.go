@@ -17,11 +17,13 @@
 package client
 
 import (
+	"os"
+	"testing"
+
 	"github.com/BBVA/kapow/internal/http"
 )
 
-// RemoveRoute removes a registered route in Kapow! server
-func RemoveRoute(host, id string) error {
-	url := host + "/routes/" + id
-	return http.Delete(url, nil, nil, http.ControlClientGenerator)
+func TestMain(m *testing.M) {
+	http.ControlClientGenerator = nil
+	os.Exit(m.Run())
 }

@@ -1,23 +1,20 @@
-.PHONY: lint wip test fix catalog sync
+.PHONY: all lint wip test fix catalog
 
-all: checkbin sync test
+all: checkbin test
 
-sync:
-	pipenv sync
 lint:
 	gherkin-lint
 wip:
-	KAPOW_DEBUG_TESTS=1 pipenv run behave --stop --wip
+	KAPOW_DEBUG_TESTS=1 behave --stop --wip -k
 test: lint
-	pipenv run behave --no-capture --tags=~@skip
+	behave --no-capture --tags=~@skip
 fix: lint
-	KAPOW_DEBUG_TESTS=1 pipenv run behave --stop --no-capture --tags=~@skip
+	KAPOW_DEBUG_TESTS=1 behave --stop --no-capture --tags=~@skip
 catalog:
-	pipenv run behave --format steps.usage --dry-run --no-summary -q
-clean:
-	pipenv --rm
+	behave --format steps.usage --dry-run --no-summary -q
 checkbin:
 	@which kapow >/dev/null || (echo "ERROR: Your kapow binary is not present in PATH" && exit 1)
-testpoc: sync
-	pipenv run pip install -r ../../testutils/poc/requirements.txt
-	PATH=../../testutils/poc:$$PATH KAPOW_CONTROL_URL=http://localhost:8081 KAPOW_DATA_URL=http://localhost:8081 pipenv run behave --no-capture --tags=~@skip
+testpoc:
+	PATH=../../testutils/poc:$$PATH behave --no-capture --tags=~@skip
+wippoc:
+	PATH=../../testutils/poc:$$PATH behave --no-capture --tags=@wip -k

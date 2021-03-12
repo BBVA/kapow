@@ -19,15 +19,39 @@ package cmd
 import (
 	"bufio"
 	"errors"
+	"fmt"
 	"io"
 	"os"
+	"strings"
 	"sync"
 
 	"github.com/spf13/cobra"
 
+	"github.com/BBVA/kapow/internal/certs"
 	"github.com/BBVA/kapow/internal/logger"
 	"github.com/BBVA/kapow/internal/server"
 )
+
+func banner() {
+	fmt.Fprintln(os.Stderr, `
+                                                              %%  %%%%
+                                                            %%%   %%%
+                                                %%         %%%    %%%
+                                       %%%%%%% %%%    %%%  %%%    %%%
+                            *%%     %%%%%%%%%%%%%%%  %%%% %%%     %%
+                   %%   %%%%%%%%%. %%%     %%%% %%% %%%%%%%%
+                 %%%%   %%%   %%% %%%       %%% %%%%%%  %%%%
+   %%%   %%%    %%%%%%  %%% %%%%  %%%      %%%%  %%%%   %%%      %%%
+   %%%  %%%     %%  %%% %%%%%    %%%%%    %%%%   %%%
+   %%% %%%     %% %%%%%%%%%       %%%%%%%%%%
+   %%%%%%     %%%    %%%%%%         %%%
+   %%% %%%%%  %%     %%%%%%
+   %%%   %%%%%%%
+   %%%%
+    %           If you can script it, you can HTTP it.
+
+	`)
+}
 
 // ServerCmd is the command line interface for kapow server
 var ServerCmd = &cobra.Command{
@@ -42,6 +66,8 @@ var ServerCmd = &cobra.Command{
 		sConf.ControlBindAddr, _ = cmd.Flags().GetString("control-bind")
 		sConf.DataBindAddr, _ = cmd.Flags().GetString("data-bind")
 
+		controlReachableAddr, _ := cmd.Flags().GetString("control-reachable-addr")
+
 		sConf.CertFile, _ = cmd.Flags().GetString("certfile")
 		sConf.KeyFile, _ = cmd.Flags().GetString("keyfile")
 
@@ -49,28 +75,50 @@ var ServerCmd = &cobra.Command{
 		sConf.ClientCaFile, _ = cmd.Flags().GetString("clientcafile")
 		sConf.Debug, _ = cmd.Flags().GetBool("debug")
 
+		sConf.ControlServerCert = certs.GenCert("control_server", extractHost(controlReachableAddr), true)
+		sConf.ControlClientCert = certs.GenCert("control_client", "", false)
+
 		// Set environment variables KAPOW_DATA_URL and KAPOW_CONTROL_URL only if they aren't set so we don't overwrite user's preferences
 		if _, exist := os.LookupEnv("KAPOW_DATA_URL"); !exist {
 			os.Setenv("KAPOW_DATA_URL", "http://"+sConf.DataBindAddr)
 		}
 		if _, exist := os.LookupEnv("KAPOW_CONTROL_URL"); !exist {
-			os.Setenv("KAPOW_CONTROL_URL", "http://"+sConf.ControlBindAddr)
+			os.Setenv("KAPOW_CONTROL_URL", "https://"+controlReachableAddr)
 		}
+		banner()
 
 		server.StartServer(sConf)
 
 		for _, path := range args {
-			go Run(path, sConf.Debug)
+			go Run(
+				path,
+				sConf.Debug,
+				sConf.ControlServerCert.SignedCertPEMBytes(),
+				sConf.ControlClientCert.SignedCertPEMBytes(),
+				sConf.ControlClientCert.PrivateKeyPEMBytes(),
+			)
 		}
 
 		select {}
 	},
 }
 
+func extractHost(s string) string {
+	i := strings.LastIndex(s, ":")
+	s = s[:i]
+	l := len(s) - 1
+	if s[0] == '[' && s[l] == ']' {
+		s = s[1:l]
+	}
+	return s
+}
+
 func init() {
 	ServerCmd.Flags().String("bind", "0.0.0.0:8080", "IP address and port to bind the user interface to")
 	ServerCmd.Flags().String("control-bind", "localhost:8081", "IP address and port to bind the control interface to")
 	ServerCmd.Flags().String("data-bind", "localhost:8082", "IP address and port to bind the data interface to")
+
+	ServerCmd.Flags().String("control-reachable-addr", "localhost:8081", "address (incl. port) through which the control interface can be reached (from the client's point of view)")
 
 	ServerCmd.Flags().String("certfile", "", "Cert file to serve thru https")
 	ServerCmd.Flags().String("keyfile", "", "Key file to serve thru https")
@@ -100,10 +148,19 @@ func validateServerCommandArguments(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func Run(path string, debug bool) {
+func Run(
+	path string,
+	debug bool,
+	controlServerCertPEM,
+	controlClientCertPEM,
+	controlClientCertPrivKeyPEM []byte,
+) {
 	logger.L.Printf("Running init program %+q", path)
 	cmd := BuildCmd(path)
 	cmd.Env = os.Environ()
+	cmd.Env = append(cmd.Env, fmt.Sprintf("KAPOW_CONTROL_SERVER_CERT=%s", controlServerCertPEM))
+	cmd.Env = append(cmd.Env, fmt.Sprintf("KAPOW_CONTROL_CLIENT_CERT=%s", controlClientCertPEM))
+	cmd.Env = append(cmd.Env, fmt.Sprintf("KAPOW_CONTROL_CLIENT_KEY=%s", controlClientCertPrivKeyPEM))
 
 	var wg sync.WaitGroup
 	if debug {

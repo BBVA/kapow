@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+@server
 Feature: Listing routes in a Kapow! server.
   Listing routes allows users to know what URLs are
   available on a Kapow! server. The List endpoint returns

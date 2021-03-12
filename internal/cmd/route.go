@@ -43,7 +43,7 @@ func init() {
 			}
 		},
 	}
-	routeListCmd.Flags().String("control-url", getEnv("KAPOW_CONTROL_URL", "http://localhost:8081"), "Kapow! control interface URL")
+	routeListCmd.Flags().String("control-url", getEnv("KAPOW_CONTROL_URL", "https://localhost:8081"), "Kapow! control interface URL")
 
 	// TODO: Manage args for url_pattern and command_file (2 exact args)
 	var routeAddCmd = &cobra.Command{
@@ -78,7 +78,7 @@ func init() {
 		},
 	}
 	// TODO: Add default values for flags and remove path flag
-	routeAddCmd.Flags().String("control-url", getEnv("KAPOW_CONTROL_URL", "http://localhost:8081"), "Kapow! control interface URL")
+	routeAddCmd.Flags().String("control-url", getEnv("KAPOW_CONTROL_URL", "https://localhost:8081"), "Kapow! control interface URL")
 	routeAddCmd.Flags().StringP("method", "X", "GET", "HTTP method to accept")
 	routeAddCmd.Flags().StringP("entrypoint", "e", "", "Command to execute")
 	routeAddCmd.Flags().StringP("command", "c", "", "Command to pass to the shell")
@@ -95,7 +95,7 @@ func init() {
 			}
 		},
 	}
-	routeRemoveCmd.Flags().String("control-url", getEnv("KAPOW_CONTROL_URL", "http://localhost:8081"), "Kapow! control interface URL")
+	routeRemoveCmd.Flags().String("control-url", getEnv("KAPOW_CONTROL_URL", "https://localhost:8081"), "Kapow! control interface URL")
 
 	RouteCmd.AddCommand(routeListCmd)
 	RouteCmd.AddCommand(routeAddCmd)

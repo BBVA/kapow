@@ -30,8 +30,8 @@ The spawned entrypoint is run with the following variables added to its
 environment:
 
 - :envvar:`KAPOW_HANDLER_ID`: Containing the `HANDLER_ID`
-- :envvar:`KAPOW_DATAAPI_URL`: With the URL of the :ref:`http-data-interface`
-- :envvar:`KAPOW_CONTROLAPI_URL`: With the URL of the :ref:`http-control-interface`
+- :envvar:`KAPOW_DATA_URL`: With the URL of the :ref:`http-data-interface`
+- :envvar:`KAPOW_CONTROL_URL`: With the URL of the :ref:`https-control-interface`
 
 
 3. ``kapow set /response/body banana``

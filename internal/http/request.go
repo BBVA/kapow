@@ -17,30 +17,41 @@
 package http
 
 import (
+	"crypto/tls"
+	"crypto/x509"
 	"errors"
 	"io"
 	"io/ioutil"
 	"net/http"
+	"os"
+
+	"github.com/BBVA/kapow/internal/logger"
 )
 
+var ControlClientGenerator = GenControlHTTPSClient
+
+func AsJSON(req *http.Request) {
+	req.Header.Add("Content-Type", "application/json")
+}
+
 // Get perform a request using Request with the GET method
-func Get(url string, contentType string, r io.Reader, w io.Writer) error {
-	return Request("GET", url, contentType, r, w)
+func Get(url string, r io.Reader, w io.Writer, clientGenerator func() *http.Client, reqTuner ...func(*http.Request)) error {
+	return Request("GET", url, r, w, clientGenerator, reqTuner...)
 }
 
 // Post perform a request using Request with the POST method
-func Post(url string, contentType string, r io.Reader, w io.Writer) error {
-	return Request("POST", url, contentType, r, w)
+func Post(url string, r io.Reader, w io.Writer, clientGenerator func() *http.Client, reqTuner ...func(*http.Request)) error {
+	return Request("POST", url, r, w, clientGenerator, reqTuner...)
 }
 
 // Put perform a request using Request with the PUT method
-func Put(url string, contentType string, r io.Reader, w io.Writer) error {
-	return Request("PUT", url, contentType, r, w)
+func Put(url string, r io.Reader, w io.Writer, clientGenerator func() *http.Client, reqTuner ...func(*http.Request)) error {
+	return Request("PUT", url, r, w, clientGenerator, reqTuner...)
 }
 
 // Delete perform a request using Request with the DELETE method
-func Delete(url string, contentType string, r io.Reader, w io.Writer) error {
-	return Request("DELETE", url, contentType, r, w)
+func Delete(url string, r io.Reader, w io.Writer, clientGenerator func() *http.Client, reqTuner ...func(*http.Request)) error {
+	return Request("DELETE", url, r, w, clientGenerator, reqTuner...)
 }
 
 var devnull = ioutil.Discard
@@ -49,17 +60,24 @@ var devnull = ioutil.Discard
 // content of the given reader as the body and writing all the contents
 // of the response to the given writer. The reader and writer are
 // optional.
-func Request(method string, url string, contentType string, r io.Reader, w io.Writer) error {
+func Request(method string, url string, r io.Reader, w io.Writer, clientGenerator func() *http.Client, reqTuners ...func(*http.Request)) error {
 	req, err := http.NewRequest(method, url, r)
 	if err != nil {
 		return err
 	}
 
-	if contentType != "" {
-		req.Header.Add("Content-Type", contentType)
+	for _, reqTuner := range reqTuners {
+		reqTuner(req)
 	}
 
-	res, err := new(http.Client).Do(req)
+	var client *http.Client
+	if clientGenerator == nil {
+		client = new(http.Client)
+	} else {
+		client = clientGenerator()
+	}
+
+	res, err := client.Do(req)
 	if err != nil {
 		return err
 	}
@@ -80,4 +98,44 @@ func Request(method string, url string, contentType string, r io.Reader, w io.Wr
 	}
 
 	return err
+}
+
+func GenControlHTTPSClient() *http.Client {
+
+	serverCert, exists := os.LookupEnv("KAPOW_CONTROL_SERVER_CERT")
+	if !exists {
+		logger.L.Fatal("KAPOW_CONTROL_SERVER_CERT not in the environment")
+	}
+
+	clientCert, exists := os.LookupEnv("KAPOW_CONTROL_CLIENT_CERT")
+	if !exists {
+		logger.L.Fatal("KAPOW_CONTROL_CLIENT_CERT not in the environment")
+	}
+
+	clientKey, exists := os.LookupEnv("KAPOW_CONTROL_CLIENT_KEY")
+	if !exists {
+		logger.L.Fatal("KAPOW_CONTROL_CLIENT_KEY not in the environment")
+	}
+
+	// Load client cert
+	clientTLSCert, err := tls.X509KeyPair([]byte(clientCert), []byte(clientKey))
+	if err != nil {
+		logger.L.Fatal(err)
+	}
+
+	// Load Server cert
+	serverCertPool := x509.NewCertPool()
+	serverCertPool.AppendCertsFromPEM([]byte(serverCert))
+
+	// Setup HTTPS client
+	tlsConfig := &tls.Config{
+		Certificates: []tls.Certificate{clientTLSCert},
+		RootCAs:      serverCertPool,
+	}
+	tlsConfig.BuildNameToCertificate()
+	transport := &http.Transport{TLSClientConfig: tlsConfig}
+	client := &http.Client{Transport: transport}
+
+	// The client is always right!
+	return client
 }
