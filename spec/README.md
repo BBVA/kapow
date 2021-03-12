@@ -130,6 +130,7 @@ whole lifetime of the server.
 * Kapow! implementations should follow a general principle of robustness: be
   conservative in what you do, be liberal in what you accept from others.
 * We reuse conventions of well-established software projects, such as Docker.
+* Secure by default, the Control API can *only* be accessed using mTLS.
 * All requests and responses will leverage JSON as the data encoding method.
 * The API calls responses have several parts:
   * The HTTP status code (e.g., `400`, which is a bad request).  The target
@@ -176,6 +177,30 @@ Content-Length: 25
 
 {"reason": "Not Found"}
 ```
+
+
+## mTLS
+
+The Kapow! server generates a pair of keys and certificates, one for the
+server, the other for the configuring client.  The necessary elements will be
+communicated to the client (the init program) via a set of environment
+variables.
+
+The aforementioned variables are named:
+
+- `KAPOW_CONTROL_SERVER_CERT`: server certificate.
+- `KAPOW_CONTROL_CLIENT_CERT`: client certificate.
+- `KAPOW_CONTROL_CLIENT_KEY`: client private key.
+
+Note that all variables contain x509 PEM-encoded values.
+Also note that the server private key is not communicated in any way.
+
+Following the mTLS discipline, the client must ensure upon connecting to the
+server that its certificate matches the one stored in
+`KAPOW_CONTROL_SERVER_CERT`.
+
+Conversely, the server must only communicate with clients whose certificate
+matches the one stored in `KAPOW_CONTROL_CLIENT_CERT`.
 
 
 ## API Elements
@@ -606,8 +631,6 @@ Commands:
 ```
 
 
-### `kapow server`
-
 This command runs the Kapow! server, which is the core of Kapow!.  If
 run without parameters, it will run an unconfigured server.  It can accept a path
 to an executable file, the init program, which can be a shell script that
@@ -615,7 +638,7 @@ contains commands to configure the *Kapow!* server.
 
 The init program can leverage the `kapow route` command, which is used to define
 a route.  The `kapow route` command needs a way to reach the *Kapow!* server,
-and for that, `kapow` provides the `KAPOW_DATA_URL` variable in the environment
+and for that, `kapow` provides the `KAPOW_CONTROL_URL` variable in the environment
 of the aforementioned init program.
 
 Every time the *Kapow!* server receives a request, it will spawn a process to
@@ -655,7 +678,10 @@ To deregister a route you must provide a *route_id*.
 
 
 #### **Environment**
-- `KAPOW_DATA_URL`
+- `KAPOW_CONTROL_URL`
+- `KAPOW_CONTROL_SERVER_CERT`
+- `KAPOW_CONTROL_CLIENT_CERT`
+- `KAPOW_CONTROL_CLIENT_KEY`
 
 
 #### **Help**
@@ -696,7 +722,7 @@ Options:
 $ kapow route add -X GET '/list/{ip}' -c 'nmap -sL $(kapow get /request/matches/ip) | kapow set /response/body'
 ```
 
-### `request`
+### `kapow get`
 
 Exposes the requests' resources.
 
@@ -713,7 +739,7 @@ $ kapow get /request/body
 ```
 
 
-### `response`
+### `kapow set`
 
 Exposes the response's resources.
 

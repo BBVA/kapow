@@ -42,8 +42,8 @@ coverage: test race
 install: build
 	CGO_ENABLED=0 $(GOINSTALL) ./...
 
-acceptance: install
-	make -C ./spec/test
+acceptance: build
+	cd ./spec/test && PATH=$(PWD)/build:$$PATH  nix-shell --command make
 
 deps:
 	@echo "deps here"
