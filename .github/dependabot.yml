@@ -15,3 +15,10 @@ updates:
     directory: "/.github/go"
     schedule:
       interval: "daily"
+
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    ignore:
+      - dependency-name: "*"
