@@ -7,5 +7,5 @@ require (
 	github.com/google/uuid v1.2.0
 	github.com/gorilla/mux v1.8.0
 	github.com/spf13/cobra v1.1.3
-	gopkg.in/h2non/gock.v1 v1.0.16
+	gopkg.in/h2non/gock.v1 v1.1.0
 )
