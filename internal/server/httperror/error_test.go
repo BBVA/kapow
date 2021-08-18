@@ -29,7 +29,7 @@ import (
 func TestErrorJSONSetsAppJsonContentType(t *testing.T) {
 	w := httptest.NewRecorder()
 
-	httperror.ErrorJSON(w, "Not Important Here", 0)
+	httperror.ErrorJSON(w, "Not Important Here", 500)
 
 	if v := w.Result().Header.Get("Content-Type"); v != "application/json; charset=utf-8" {
 		t.Errorf("Content-Type header mismatch. Expected: %q, got: %q", "application/json; charset=utf-8", v)

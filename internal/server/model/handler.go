@@ -51,3 +51,5 @@ type Handler struct {
 	// The transfer of the body has started
 	BodyOut bool
 }
+
+// TODO: add a Handler smart constructor to initialize Status to 200
