@@ -224,7 +224,9 @@ func setResponseCookies(w http.ResponseWriter, r *http.Request, h *model.Handler
 func setResponseBody(w http.ResponseWriter, r *http.Request, h *model.Handler) {
 
 	if !h.BodyOut {
-		h.Writer.WriteHeader(h.Status)
+		if h.Status != 0 {
+			h.Writer.WriteHeader(h.Status)
+		}
 		h.BodyOut = true
 	}
 

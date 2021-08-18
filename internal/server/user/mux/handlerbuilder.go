@@ -77,7 +77,9 @@ func handlerBuilder(route model.Route) http.Handler {
 
 		// In case of the user not setting /request/body
 		if !h.BodyOut {
-			h.Writer.WriteHeader(h.Status)
+			if h.Status != 0 {
+				h.Writer.WriteHeader(h.Status)
+			}
 			h.BodyOut = true
 		}
 
