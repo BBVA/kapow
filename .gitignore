@@ -10,3 +10,5 @@ docs/Pipfile.lock
 node_modules
 
 *.swp
+
+examples/internal
