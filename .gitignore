@@ -11,4 +11,4 @@ node_modules
 
 *.swp
 
-examples/internal
+*.swpexamples/internal
