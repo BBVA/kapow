@@ -179,5 +179,5 @@ certificate.
 
 .. _some criteria are met: https://caddyserver.com/docs/automatic-https
 .. _Caddy documentation: https://caddyserver.com/docs/caddyfile/directives/tls
-.. _HAProxy documentation: https://www.haproxy.com/de/documentation/aloha/12-0/traffic-management/lb-layer7/tls/
+.. _HAProxy documentation: https://www.haproxy.com/documentation/aloha/12-0/traffic-management/lb-layer7/tls/
 .. _Nginx documentation: https://smallstep.com/hello-mtls/doc/server/nginx
