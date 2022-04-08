@@ -107,7 +107,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2.3.4
     - name: Download a single artifact
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v3
       with:
         name: binaries
     - name: Install NSIS
