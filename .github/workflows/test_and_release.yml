@@ -13,6 +13,9 @@ jobs:
     - uses: actions/setup-go@v2
       with:
         go-version: ${{ steps.go-version.outputs.go-version }}
+    - name: Build executable
+      run: |
+          make build
     - name: Lint
       uses: golangci/golangci-lint-action@v3.3.1
       with:
