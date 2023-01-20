@@ -13,14 +13,20 @@ jobs:
     - uses: actions/setup-go@v2
       with:
         go-version: ${{ steps.go-version.outputs.go-version }}
+    - name: Unit tests
+      run: |
+          make test race
+  lint:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v3.1.0
+    - uses: actions/setup-go@v2
+      with:
+        go-version: 1.17
     - name: Lint
       uses: golangci/golangci-lint-action@v3.3.1
       with:
         version: v1.31
-        skip-go-installation: true
-    - name: Unit tests
-      run: |
-          make test race
   spec-test:
     runs-on: ubuntu-20.04
     steps:
