@@ -30,7 +30,7 @@ test: build jaillover
 	$(GOTEST) -v -coverprofile=$(TMP_DIR)/c.out ./...
 
 jaillover:
-	$(GOGET) $(PROJECTREPO)/testutils/$@
+	$(GOINSTALL) -v $(PROJECTREPO)/testutils/$@
 
 race: build
 	$(GOTEST) -race -v ./...
