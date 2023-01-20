@@ -3,7 +3,7 @@ on:
   push:
 jobs:
   unit-test:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v3.1.0
     - name: Load Go version
@@ -17,7 +17,7 @@ jobs:
       run: |
           make test race
   lint:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v3.1.0
     - uses: actions/setup-go@v2
@@ -28,7 +28,7 @@ jobs:
       with:
         version: v1.31
   spec-test:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v3.1.0
     - name: Load Go version
@@ -49,7 +49,7 @@ jobs:
       run: |
         docker run --mount type=bind,source=$(pwd)/build/kapow,target=/usr/bin/kapow  bbvalabsci/kapow-spec-test-suite:latest "behave --tags=~@skip"
   doc-test:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v3.1.0
     - name: Prepare Python env
@@ -63,7 +63,7 @@ jobs:
         SPHINXOPTS="-qW --keep-going" pipenv run make linkcheck html
   release:
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: [ unit-test, spec-test, doc-test, lint ]
     steps:
     - uses: actions/checkout@v3.1.0
@@ -104,9 +104,9 @@ jobs:
           dist/*
     - name: Upload Docker images
       if: steps.docker-credentials.outputs.defined == 'true'
-      run: docker image push bbvalabsci/kapow  # /!\ Remember to use the option --all-tags whenever we update from ubuntu-20.04
+      run: docker image push --all-tags bbvalabsci/kapow
   wininstaller:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: release
     strategy:
       matrix:
