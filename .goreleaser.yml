@@ -40,12 +40,6 @@ dockers:
     goarch: amd64
     goarm: ''
 
-    binaries:
-      - kapow
-
-    builds:
-      - kapow
-
     image_templates:
       - "bbvalabsci/kapow:latest"
       - "bbvalabsci/kapow:{{ .Tag }}"
