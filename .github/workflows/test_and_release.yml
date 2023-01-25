@@ -134,7 +134,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         release="${GITHUB_REF#refs/tags/}"
-        upload_url=$(curl -s -u "$GITHUB_TOKEN" https://api.github.com/repos/nilp0inter/kapow/releases \
+        upload_url=$(curl -s -u "$GITHUB_TOKEN" https://api.github.com/repos/BBVA/kapow/releases \
                    | jq -r '.[] | if .tag_name == "'$release'" then . else empty end | .upload_url' \
                    | tail -n1)
         echo "URL: $upload_url"
