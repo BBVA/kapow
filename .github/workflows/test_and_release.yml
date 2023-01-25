@@ -137,11 +137,11 @@ jobs:
         upload_url=$(curl -s -u "$GITHUB_TOKEN" https://api.github.com/repos/nilp0inter/kapow/releases \
                    | jq -r '.[] | if .tag_name == "'$release'" then . else empty end | .upload_url' \
                    | tail -n1)
-        echo ::set-output name=upload_url::$upload_url
+        echo upload_url=$upload_url >> $GITHUB_OUTPUT
         no_rc_release=${release%%-[Rr][Cc]*}
-        echo ::set-output name=nsis_version::${no_rc_release#[Vv]}  # NSIS version only accepts \d+.\d+.\d+
+        echo nsis_version=${no_rc_release#[Vv]} >> $GITHUB_OUTPUT  # NSIS version only accepts \d+.\d+.\d+
         unversioned_binary=${{ matrix.binary }}_setup.exe
-        echo ::set-output name=nsis_installer_name::${unversioned_binary//kapow_/kapow_${release#v}_}
+        echo nsis_installer_name=${unversioned_binary//kapow_/kapow_${release#v}_} >> $GITHUB_OUTPUT
     - name: Create Windows installer
       uses: joncloud/makensis-action@v3.6
       env:
