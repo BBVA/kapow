@@ -111,7 +111,7 @@ jobs:
     needs: release
     strategy:
       matrix:
-        binary: ["kapow_windows_386", "kapow_windows_amd64"]
+        binary: ["kapow_windows_386", "kapow_windows_amd64_v1"]
     steps:
     - uses: actions/checkout@v3.1.0
     - name: Download a single artifact
