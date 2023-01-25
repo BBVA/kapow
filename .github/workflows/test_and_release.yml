@@ -143,7 +143,7 @@ jobs:
         unversioned_binary=${{ matrix.binary }}_setup.exe
         echo nsis_installer_name=${unversioned_binary//kapow_/kapow_${release#v}_} >> $GITHUB_OUTPUT
     - name: Create Windows installer
-      uses: joncloud/makensis-action@v3.6
+      uses: joncloud/makensis-action@v3.7
       env:
         NSIS_VERSION: ${{ steps.set-vars.outputs.nsis_version }}
         NSIS_INSTALLER_NAME: ${{ steps.set-vars.outputs.nsis_installer_name }}
