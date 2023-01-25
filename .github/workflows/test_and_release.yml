@@ -9,7 +9,7 @@ jobs:
     - name: Load Go version
       id: go-version
       run: |
-        echo ::set-output name=go-version::$(sed 's/^.*://' .github/go/Dockerfile)
+        echo go-version=$(sed 's/^.*://' .github/go/Dockerfile) >> $GITHUB_OUTPUT
     - uses: actions/setup-go@v2
       with:
         go-version: ${{ steps.go-version.outputs.go-version }}
@@ -34,7 +34,7 @@ jobs:
     - name: Load Go version
       id: go-version
       run: |
-        echo ::set-output name=go-version::$(sed 's/^.*://' .github/go/Dockerfile)
+        echo go-version=$(sed 's/^.*://' .github/go/Dockerfile) >> $GITHUB_OUTPUT
     - uses: actions/setup-go@v2
       with:
         go-version: ${{ steps.go-version.outputs.go-version }}
@@ -73,7 +73,7 @@ jobs:
     - name: Load Go version
       id: go-version
       run: |
-        echo ::set-output name=go-version::$(sed 's/^.*://' .github/go/Dockerfile)
+        echo go-version=$(sed 's/^.*://' .github/go/Dockerfile) >> $GITHUB_OUTPUT
     - uses: actions/setup-go@v2
       with:
         go-version: ${{ steps.go-version.outputs.go-version }}
@@ -81,11 +81,11 @@ jobs:
       id: release-notes
       run: |
         RELNOTES="docs/release-notes/RELEASE-${GITHUB_REF#refs/tags/}.md"
-        [[ -f "$RELNOTES" ]] && echo ::set-output name=ARGS::--release-notes $RELNOTES || true
+        [[ -f "$RELNOTES" ]] && echo ARGS=--release-notes $RELNOTES >> $GITHUB_OUTPUT || true
     - name: Check credentials
       id: docker-credentials
       run: |
-        echo ::set-output name=defined::$(test -n "${{ secrets.DOCKERHUB_USERNAME }}" && echo true || echo false)
+        echo defined=$(test -n "${{ secrets.DOCKERHUB_USERNAME }}" && echo true || echo false) >> $GITHUB_OUTPUT
     - name: Docker Login
       if: steps.docker-credentials.outputs.defined == 'true'
       run: |
@@ -137,6 +137,7 @@ jobs:
         upload_url=$(curl -s -u "$GITHUB_TOKEN" https://api.github.com/repos/nilp0inter/kapow/releases \
                    | jq -r '.[] | if .tag_name == "'$release'" then . else empty end | .upload_url' \
                    | tail -n1)
+        echo "URL: $upload_url"
         echo upload_url=$upload_url >> $GITHUB_OUTPUT
         no_rc_release=${release%%-[Rr][Cc]*}
         echo nsis_version=${no_rc_release#[Vv]} >> $GITHUB_OUTPUT  # NSIS version only accepts \d+.\d+.\d+
@@ -155,7 +156,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.set-vars.outputs.upload_url }}
         asset_path: .github/NSIS/${{ steps.set-vars.outputs.nsis_installer_name }}
         asset_name: ${{ steps.set-vars.outputs.nsis_installer_name }}
         asset_content_type: application/octet-stream
+        upload_url: ${{ steps.set-vars.outputs.upload_url }}
