@@ -10,7 +10,7 @@ jobs:
       id: go-version
       run: |
         echo go-version=$(sed 's/^.*://' .github/go/Dockerfile) >> $GITHUB_OUTPUT
-    - uses: actions/setup-go@v2
+    - uses: actions/setup-go@v3
       with:
         go-version: ${{ steps.go-version.outputs.go-version }}
     - name: Unit tests
@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v3.3.0
-    - uses: actions/setup-go@v2
+    - uses: actions/setup-go@v3
       with:
         go-version: 1.17
     - name: Lint
@@ -35,7 +35,7 @@ jobs:
       id: go-version
       run: |
         echo go-version=$(sed 's/^.*://' .github/go/Dockerfile) >> $GITHUB_OUTPUT
-    - uses: actions/setup-go@v2
+    - uses: actions/setup-go@v3
       with:
         go-version: ${{ steps.go-version.outputs.go-version }}
     - name: Build executable
@@ -74,7 +74,7 @@ jobs:
       id: go-version
       run: |
         echo go-version=$(sed 's/^.*://' .github/go/Dockerfile) >> $GITHUB_OUTPUT
-    - uses: actions/setup-go@v2
+    - uses: actions/setup-go@v3
       with:
         go-version: ${{ steps.go-version.outputs.go-version }}
     - name: Select custom release notes
