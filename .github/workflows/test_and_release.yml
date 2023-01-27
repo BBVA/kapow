@@ -133,7 +133,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        release="${GITHUB_REF#refs/tags/}"
+        release="${GITHUB_REF_NAME}"
         upload_url=$(curl -s -u "$GITHUB_TOKEN" https://api.github.com/repos/BBVA/kapow/releases \
                    | jq -r '.[] | if .tag_name == "'$release'" then . else empty end | .upload_url' \
                    | tail -n1)
