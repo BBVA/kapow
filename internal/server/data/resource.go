@@ -22,6 +22,7 @@ import (
 	"net/http"
 	"net/textproto"
 	"strconv"
+  "strings"
 
 	"github.com/BBVA/kapow/internal/logger"
 	"github.com/BBVA/kapow/internal/server/httperror"
@@ -248,8 +249,18 @@ func setServerLog(w http.ResponseWriter, r *http.Request, h *model.Handler) {
 	}
 	handlerId := mux.Vars(r)["handlerID"]
 	if prefix := mux.Vars(r)["prefix"]; prefix == "" {
-		logger.L.Printf("%s %s\n", handlerId, msg)
+		logger.L.Printf("%s %s\n", escapeString(handlerId), msg)
 	} else {
-		logger.L.Printf("%s %s: %s\n", handlerId, prefix, msg)
+		logger.L.Printf("%s %s: %s\n", escapeString(handlerId), escapeString(prefix), msg)
 	}
+}
+
+// function to scape strings in order to be printed in a Log
+func escapeString(s string) string {
+  s = strings.Replace(s, "\n", "", -1)
+  s = strings.Replace(s, "\r", "", -1)
+  s = strings.Replace(s, "\t", "", -1)
+  s = strings.Replace(s, "\b", "", -1)
+
+  return s
 }
