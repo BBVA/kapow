@@ -5,7 +5,7 @@ jobs:
   unit-test:
     runs-on: ubuntu-22.04
     steps:
-    - uses: actions/checkout@v3.3.0
+    - uses: actions/checkout@v3.4.0
     - name: Load Go version
       id: go-version
       run: |
@@ -19,7 +19,7 @@ jobs:
   lint:
     runs-on: ubuntu-22.04
     steps:
-    - uses: actions/checkout@v3.3.0
+    - uses: actions/checkout@v3.4.0
     - uses: actions/setup-go@v4
       with:
         go-version: 1.17
@@ -30,7 +30,7 @@ jobs:
   spec-test:
     runs-on: ubuntu-22.04
     steps:
-    - uses: actions/checkout@v3.3.0
+    - uses: actions/checkout@v3.4.0
     - name: Load Go version
       id: go-version
       run: |
@@ -51,7 +51,7 @@ jobs:
   doc-test:
     runs-on: ubuntu-22.04
     steps:
-    - uses: actions/checkout@v3.3.0
+    - uses: actions/checkout@v3.4.0
     - name: Prepare Python env
       run: |
         sudo apt install python3
@@ -67,7 +67,7 @@ jobs:
     runs-on: ubuntu-22.04
     needs: [ unit-test, spec-test, doc-test, lint ]
     steps:
-    - uses: actions/checkout@v3.3.0
+    - uses: actions/checkout@v3.4.0
       with:
         fetch-depth: 0
     - name: Load Go version
@@ -113,7 +113,7 @@ jobs:
       matrix:
         binary: ["kapow_windows_386", "kapow_windows_amd64_v1"]
     steps:
-    - uses: actions/checkout@v3.3.0
+    - uses: actions/checkout@v3.4.0
     - name: Download a single artifact
       uses: actions/download-artifact@v3
       with:
