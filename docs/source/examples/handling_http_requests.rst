@@ -54,7 +54,7 @@ Testing with :program:`curl`:
 .. note::
 
     You can read more about the ``X-Content-Type-Options: nosniff`` header `here
-    <https://developer.mozilla.org/es/docs/Web/HTTP/Headers/X-Content-Type-Options>`_.
+    <https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options>`_.
 
 
 Upload Files
