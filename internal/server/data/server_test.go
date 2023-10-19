@@ -19,7 +19,7 @@ package data
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -40,7 +40,7 @@ func checkErrorResponse(r *http.Response, expectedErrcode int, expectedReason st
 	}
 
 	errMsg := httperror.ServerErrMessage{}
-	if bodyBytes, err := ioutil.ReadAll(r.Body); err != nil {
+	if bodyBytes, err := io.ReadAll(r.Body); err != nil {
 		errList = append(errList, fmt.Errorf("Unexpected error reading response body: %v", err))
 	} else if err := json.Unmarshal(bodyBytes, &errMsg); err != nil {
 		errList = append(errList, fmt.Errorf("Response body contains invalid JSON entity: %v", err))

@@ -21,7 +21,6 @@ import (
 	"crypto/x509"
 	"errors"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 
@@ -54,7 +53,7 @@ func Delete(url string, r io.Reader, w io.Writer, clientGenerator func() *http.C
 	return Request("DELETE", url, r, w, clientGenerator, reqTuner...)
 }
 
-var devnull = ioutil.Discard
+var devnull = io.Discard
 
 // Request will perform the request to the given url and method sending the
 // content of the given reader as the body and writing all the contents

@@ -18,11 +18,10 @@ package data
 
 import (
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/textproto"
 	"strconv"
-  "strings"
+	"strings"
 
 	"github.com/BBVA/kapow/internal/logger"
 	"github.com/BBVA/kapow/internal/server/httperror"
@@ -183,7 +182,7 @@ func getRouteId(w http.ResponseWriter, r *http.Request, h *model.Handler) {
 // FIXME: Allow any  HTTP status code. Now we are limited by WriteHeader
 // capabilities
 func setResponseStatus(w http.ResponseWriter, r *http.Request, h *model.Handler) {
-	sb, err := ioutil.ReadAll(r.Body)
+	sb, err := io.ReadAll(r.Body)
 	if err != nil {
 		httperror.ErrorJSON(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
@@ -200,7 +199,7 @@ func setResponseStatus(w http.ResponseWriter, r *http.Request, h *model.Handler)
 
 func setResponseHeaders(w http.ResponseWriter, r *http.Request, h *model.Handler) {
 	name := mux.Vars(r)["name"]
-	vb, err := ioutil.ReadAll(r.Body)
+	vb, err := io.ReadAll(r.Body)
 	if err != nil {
 		httperror.ErrorJSON(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
@@ -212,7 +211,7 @@ func setResponseHeaders(w http.ResponseWriter, r *http.Request, h *model.Handler
 
 func setResponseCookies(w http.ResponseWriter, r *http.Request, h *model.Handler) {
 	name := mux.Vars(r)["name"]
-	vb, err := ioutil.ReadAll(r.Body)
+	vb, err := io.ReadAll(r.Body)
 	if err != nil {
 		httperror.ErrorJSON(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
@@ -242,7 +241,7 @@ func setResponseBody(w http.ResponseWriter, r *http.Request, h *model.Handler) {
 }
 
 func setServerLog(w http.ResponseWriter, r *http.Request, h *model.Handler) {
-	msg, err := ioutil.ReadAll(r.Body)
+	msg, err := io.ReadAll(r.Body)
 	if err != nil {
 		httperror.ErrorJSON(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return

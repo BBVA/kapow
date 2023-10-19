@@ -18,7 +18,7 @@ package httperror_test
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -53,7 +53,7 @@ func TestErrorJSONSetsBodyCorrectly(t *testing.T) {
 	httperror.ErrorJSON(w, expectedReason, http.StatusNotFound)
 
 	errMsg := httperror.ServerErrMessage{}
-	if bodyBytes, err := ioutil.ReadAll(w.Result().Body); err != nil {
+	if bodyBytes, err := io.ReadAll(w.Result().Body); err != nil {
 		t.Errorf("Unexpected error reading response body: %v", err)
 	} else if err := json.Unmarshal(bodyBytes, &errMsg); err != nil {
 		t.Errorf("Response body contains invalid JSON entity: %v", err)

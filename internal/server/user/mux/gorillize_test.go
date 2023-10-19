@@ -18,7 +18,6 @@ package mux
 
 import (
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -152,7 +151,7 @@ func TestGorillizeReturnsAMuxThatRespectsRouteOrderAB(t *testing.T) {
 
 	res := w.Result()
 
-	if body, _ := ioutil.ReadAll(res.Body); string(body) != "routeA" {
+	if body, _ := io.ReadAll(res.Body); string(body) != "routeA" {
 		t.Errorf("Mux did not respect route order %q", body)
 	}
 }
@@ -180,7 +179,7 @@ func TestGorillizeReturnsAMuxThatRespectsRouteOrderBA(t *testing.T) {
 
 	res := w.Result()
 
-	if body, _ := ioutil.ReadAll(res.Body); string(body) != "routeB" {
+	if body, _ := io.ReadAll(res.Body); string(body) != "routeB" {
 		t.Errorf("Mux did not respect route order %q", body)
 	}
 }

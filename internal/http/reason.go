@@ -19,7 +19,7 @@ package http
 import (
 	"encoding/json"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 
 	"github.com/BBVA/kapow/internal/server/httperror"
@@ -28,7 +28,7 @@ import (
 // Reason returns the reason phrase embedded within the JSON error
 // body, or an error if no reason can be extracted
 func Reason(r *http.Response) (string, error) {
-	body, err := ioutil.ReadAll(r.Body)
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		return "", errors.New("error reading response's body")
 	}

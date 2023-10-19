@@ -18,7 +18,7 @@ package control
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -103,7 +103,7 @@ var pathValidator func(string) error = func(path string) error {
 func addRoute(res http.ResponseWriter, req *http.Request) {
 	var route model.Route
 
-	payload, _ := ioutil.ReadAll(req.Body)
+	payload, _ := io.ReadAll(req.Body)
 	err := json.Unmarshal(payload, &route)
 	if err != nil {
 		httperror.ErrorJSON(res, "Malformed JSON", http.StatusBadRequest)
