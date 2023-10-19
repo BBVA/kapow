@@ -24,11 +24,11 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"os"
 	"reflect"
 	"strings"
 	"testing"
@@ -110,7 +110,7 @@ func TestGetRequestBodyWritesHandlerRequestBodyToResponseWriter(t *testing.T) {
 	getRequestBody(w, r, &h)
 
 	res := w.Result()
-	if body, _ := ioutil.ReadAll(res.Body); string(body) != "BAR" {
+	if body, _ := io.ReadAll(res.Body); string(body) != "BAR" {
 		t.Error("Body mismatch")
 	}
 }
@@ -189,7 +189,7 @@ func TestGetRequestMethodReturnsTheCorrectMethod(t *testing.T) {
 	getRequestMethod(w, r, &h)
 
 	res := w.Result()
-	if body, _ := ioutil.ReadAll(res.Body); string(body) != "FOO" {
+	if body, _ := io.ReadAll(res.Body); string(body) != "FOO" {
 		t.Error("Body mismatch")
 	}
 }
@@ -237,7 +237,7 @@ func TestGetRequestHostReturnsTheCorrectHostname(t *testing.T) {
 	getRequestHost(w, r, &h)
 
 	res := w.Result()
-	if body, _ := ioutil.ReadAll(res.Body); string(body) != "www.foo.bar:8080" {
+	if body, _ := io.ReadAll(res.Body); string(body) != "www.foo.bar:8080" {
 		t.Error("Body mismatch")
 	}
 }
@@ -288,7 +288,7 @@ func TestGetRequestVersionReturnsTheCorrectHttpVersion(t *testing.T) {
 	getRequestVersion(w, r, &h)
 
 	res := w.Result()
-	if body, _ := ioutil.ReadAll(res.Body); string(body) != h.Request.Proto {
+	if body, _ := io.ReadAll(res.Body); string(body) != h.Request.Proto {
 		t.Errorf("Version mismatch. Expected %q, got %q", h.Request.Proto, string(body))
 	}
 }
@@ -336,7 +336,7 @@ func TestGetRequestPathReturnsPath(t *testing.T) {
 	getRequestPath(w, r, &h)
 
 	res := w.Result()
-	if body, _ := ioutil.ReadAll(res.Body); string(body) != "/foo" {
+	if body, _ := io.ReadAll(res.Body); string(body) != "/foo" {
 		t.Error("Body mismatch")
 	}
 }
@@ -352,7 +352,7 @@ func TestGetRequestPathDoesntReturnQueryStringParams(t *testing.T) {
 	getRequestPath(w, r, &h)
 
 	res := w.Result()
-	if body, _ := ioutil.ReadAll(res.Body); string(body) != "/foo" {
+	if body, _ := io.ReadAll(res.Body); string(body) != "/foo" {
 		t.Errorf("Body mismatch. Expected: /foo. Got: %v", string(body))
 	}
 }
@@ -401,7 +401,7 @@ func TestGetRequestRemoteReturnsTheCorrectRemote(t *testing.T) {
 	getRequestRemote(w, r, &h)
 
 	res := w.Result()
-	if body, _ := ioutil.ReadAll(res.Body); string(body) != h.Request.RemoteAddr {
+	if body, _ := io.ReadAll(res.Body); string(body) != h.Request.RemoteAddr {
 		t.Errorf("Version mismatch. Expected %q, got %q", h.Request.RemoteAddr, string(body))
 	}
 }
@@ -456,7 +456,7 @@ func TestGetRequestMatchesReturnsTheCorrectMatchValue(t *testing.T) {
 	getRequestMatches(w, r, &h)
 
 	res := w.Result()
-	if body, _ := ioutil.ReadAll(res.Body); string(body) != "BAZ" {
+	if body, _ := io.ReadAll(res.Body); string(body) != "BAZ" {
 		t.Errorf("Body mismatch. Expected: BAZ. Got: %v", string(body))
 	}
 
@@ -521,7 +521,7 @@ func TestGetRequestParamsReturnsTheCorrectMatchValue(t *testing.T) {
 	getRequestParams(w, r, &h)
 
 	res := w.Result()
-	if body, _ := ioutil.ReadAll(res.Body); string(body) != "BAZ" {
+	if body, _ := io.ReadAll(res.Body); string(body) != "BAZ" {
 		t.Errorf("Body mismatch. Expected: BAZ. Got: %v", string(body))
 	}
 }
@@ -553,7 +553,7 @@ func TestGetRequestParamsReturnsTheFirstCorrectMatchValue(t *testing.T) {
 	getRequestParams(w, r, &h)
 
 	res := w.Result()
-	if body, _ := ioutil.ReadAll(res.Body); string(body) != "BAZ" {
+	if body, _ := io.ReadAll(res.Body); string(body) != "BAZ" {
 		t.Errorf("Body mismatch. Expected: BAZ. Got: %v", string(body))
 	}
 }
@@ -604,7 +604,7 @@ func TestGetRequestHeadersReturnsTheCorrectMatchValue(t *testing.T) {
 	getRequestHeaders(w, r, &h)
 
 	res := w.Result()
-	if body, _ := ioutil.ReadAll(res.Body); string(body) != "BAZ" {
+	if body, _ := io.ReadAll(res.Body); string(body) != "BAZ" {
 		t.Errorf("Body mismatch. Expected: BAZ. Got: %v", string(body))
 	}
 }
@@ -638,7 +638,7 @@ func TestGetRequestHeadersReturnsEmptyBodyWhenHeaderIsEmptyString(t *testing.T) 
 	getRequestHeaders(w, r, &h)
 
 	res := w.Result()
-	if body, _ := ioutil.ReadAll(res.Body); string(body) != "" {
+	if body, _ := io.ReadAll(res.Body); string(body) != "" {
 		t.Errorf(`Body mismatch. Expected "". Got: %q`, string(body))
 	}
 }
@@ -655,7 +655,7 @@ func TestGetRequestHeadersReturnsTheCorrectInsensitiveMatchValue(t *testing.T) {
 	getRequestHeaders(w, r, &h)
 
 	res := w.Result()
-	if body, _ := ioutil.ReadAll(res.Body); string(body) != "BAZ" {
+	if body, _ := io.ReadAll(res.Body); string(body) != "BAZ" {
 		t.Errorf("Body mismatch. Expected: BAZ. Got: %v", string(body))
 	}
 }
@@ -688,7 +688,7 @@ func TestGetRequestHeadersReturnsTheFirstCorrectMatchValue(t *testing.T) {
 	getRequestHeaders(w, r, &h)
 
 	res := w.Result()
-	if body, _ := ioutil.ReadAll(res.Body); string(body) != "BAZ" {
+	if body, _ := io.ReadAll(res.Body); string(body) != "BAZ" {
 		t.Errorf("Body mismatch. Expected: BAZ. Got: %v", string(body))
 	}
 }
@@ -720,7 +720,7 @@ func TestGetRequestHeadersReturnsTheCorrectValueForHostHeader(t *testing.T) {
 	getRequestHeaders(w, r, &h)
 
 	res := w.Result()
-	if body, _ := ioutil.ReadAll(res.Body); string(body) != "www.foo.bar:8080" {
+	if body, _ := io.ReadAll(res.Body); string(body) != "www.foo.bar:8080" {
 		t.Errorf("Body mismatch. Expected: %q. Got: %q", "www.foo.bar:8080", string(body))
 	}
 }
@@ -771,7 +771,7 @@ func TestGetRequestCookiesReturnsMatchedCookieValue(t *testing.T) {
 	getRequestCookies(w, r, &h)
 
 	res := w.Result()
-	if body, _ := ioutil.ReadAll(res.Body); string(body) != "BAZ" {
+	if body, _ := io.ReadAll(res.Body); string(body) != "BAZ" {
 		t.Errorf("Body mismatch. Expected: BAZ. Got: %v", string(body))
 	}
 }
@@ -804,7 +804,7 @@ func TestGetRequestCookiesReturnsTheFirstCorrectMatchValue(t *testing.T) {
 	getRequestCookies(w, r, &h)
 
 	res := w.Result()
-	if body, _ := ioutil.ReadAll(res.Body); string(body) != "BAZ" {
+	if body, _ := io.ReadAll(res.Body); string(body) != "BAZ" {
 		t.Errorf("Body mismatch. Expected: BAZ. Got: %v", string(body))
 	}
 }
@@ -869,7 +869,7 @@ func TestGetRequestFormReturnsTheCorrectMatchValue(t *testing.T) {
 	getRequestForm(w, r, &h)
 
 	res := w.Result()
-	if body, _ := ioutil.ReadAll(res.Body); string(body) != "BAZ" {
+	if body, _ := io.ReadAll(res.Body); string(body) != "BAZ" {
 		t.Errorf("Body mismatch. Expected: BAZ. Got: %v", string(body))
 	}
 }
@@ -925,7 +925,7 @@ func TestGetRequestFormReturnsEmptyBodyWhenFieldIsEmptyString(t *testing.T) {
 	getRequestForm(w, r, &h)
 
 	res := w.Result()
-	if body, _ := ioutil.ReadAll(res.Body); string(body) != "" {
+	if body, _ := io.ReadAll(res.Body); string(body) != "" {
 		t.Errorf(`Body mismatch. Expected: "". Got: %q`, string(body))
 	}
 }
@@ -1001,7 +1001,7 @@ func TestGetRequestFileNameReturnsTheCorrectFilename(t *testing.T) {
 	getRequestFileName(w, r, &h)
 
 	res := w.Result()
-	if body, _ := ioutil.ReadAll(res.Body); string(body) != "BAZ" {
+	if body, _ := io.ReadAll(res.Body); string(body) != "BAZ" {
 		t.Errorf(`Body mismatch. Expected: "BAZ". Got: %q`, string(body))
 	}
 }
@@ -1080,7 +1080,7 @@ func TestGetRequestFileContentReturnsTheCorrectFileContent(t *testing.T) {
 	getRequestFileContent(w, r, &h)
 
 	res := w.Result()
-	if body, _ := ioutil.ReadAll(res.Body); string(body) != "BAZ" {
+	if body, _ := io.ReadAll(res.Body); string(body) != "BAZ" {
 		t.Errorf(`Body mismatch. Expected: "BAZ". Got: %q`, string(body))
 	}
 }
@@ -1205,7 +1205,7 @@ func TestGetSSLClientDNSetsOctectStreamContentType(t *testing.T) {
 }
 
 func mockAuthenticateClient(tls *tls.ConnectionState) error {
-	fileData, err := ioutil.ReadFile("./testdata/client_chain.crt")
+	fileData, err := os.ReadFile("./testdata/client_chain.crt")
 	if err != nil {
 		return fmt.Errorf("Error loading certificates file: %v", err)
 	}
@@ -1237,7 +1237,7 @@ func TestGetSSLClientDNReturnsCorrectDN(t *testing.T) {
 
 	res := w.Result()
 
-	if body, _ := ioutil.ReadAll(res.Body); string(body) != h.Request.TLS.VerifiedChains[0][0].Subject.String() {
+	if body, _ := io.ReadAll(res.Body); string(body) != h.Request.TLS.VerifiedChains[0][0].Subject.String() {
 		t.Errorf("Body mismatch. Expected: %q, got: %q", h.Request.TLS.VerifiedChains[0][0].Subject.String(), string(body))
 	}
 }
@@ -1286,7 +1286,7 @@ func TestGetRouteIdReturnsTheCorrectRouteId(t *testing.T) {
 	getRouteId(w, r, &h)
 
 	res := w.Result()
-	if body, _ := ioutil.ReadAll(res.Body); string(body) != h.Route.ID {
+	if body, _ := io.ReadAll(res.Body); string(body) != h.Route.ID {
 		t.Errorf("Body mismatch. Expected: %q, got: %q", h.Route.ID, string(body))
 	}
 }
@@ -1575,7 +1575,7 @@ func TestSetResponseBodySetsTheResponseBody(t *testing.T) {
 	setResponseBody(w, r, &h)
 
 	res := hw.Result()
-	if body, _ := ioutil.ReadAll(res.Body); string(body) != "BAZ" {
+	if body, _ := io.ReadAll(res.Body); string(body) != "BAZ" {
 		t.Errorf(`Body mismatch. Expected: "BAZ". Got: %q`, string(body))
 	}
 }

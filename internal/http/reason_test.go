@@ -17,7 +17,7 @@
 package http
 
 import (
-	"io/ioutil"
+	"io"
 	nethttp "net/http"
 	"strings"
 	"testing"
@@ -26,7 +26,7 @@ import (
 func TestReasonExtractsReasonFromJSON(t *testing.T) {
 	r := &nethttp.Response{
 		Status: "200 OK",
-		Body: ioutil.NopCloser(
+		Body: io.NopCloser(
 			strings.NewReader(
 				`{"reason": "Because reasons", "foo": "bar"}`,
 			),
@@ -43,7 +43,7 @@ func TestReasonExtractsReasonFromJSON(t *testing.T) {
 func TestReasonErrorsOnJSONWithNoReason(t *testing.T) {
 	r := &nethttp.Response{
 		Status: "200 OK",
-		Body: ioutil.NopCloser(
+		Body: io.NopCloser(
 			strings.NewReader(
 				`{"madness": "Because madness", "foo": "bar"}`,
 			),
@@ -59,7 +59,7 @@ func TestReasonErrorsOnJSONWithNoReason(t *testing.T) {
 
 func TestReasonErrorsOnJSONWithEmptyReason(t *testing.T) {
 	r := &nethttp.Response{
-		Body: ioutil.NopCloser(
+		Body: io.NopCloser(
 			strings.NewReader(
 				`{"reason": "", "foo": "bar"}`,
 			),
@@ -75,7 +75,7 @@ func TestReasonErrorsOnJSONWithEmptyReason(t *testing.T) {
 
 func TestReasonErrorsOnNoJSON(t *testing.T) {
 	r := &nethttp.Response{
-		Body: ioutil.NopCloser(
+		Body: io.NopCloser(
 			strings.NewReader(""),
 		),
 	}
@@ -89,7 +89,7 @@ func TestReasonErrorsOnNoJSON(t *testing.T) {
 
 func TestReasonErrorsOnInvalidJSON(t *testing.T) {
 	r := &nethttp.Response{
-		Body: ioutil.NopCloser(
+		Body: io.NopCloser(
 			strings.NewReader(
 				`{"reason": "Because reasons", "cliffhanger...`,
 			),

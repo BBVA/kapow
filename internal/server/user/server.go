@@ -20,9 +20,9 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
-	"io/ioutil"
 	"net"
 	"net/http"
+	"os"
 	"sync"
 
 	"github.com/BBVA/kapow/internal/logger"
@@ -90,7 +90,7 @@ func Run(bindAddr string, wg *sync.WaitGroup, certFile, keyFile, cliCaFile strin
 func loadCertificatesFromFile(certFile string) (pool *x509.CertPool, err error) {
 	if certFile != "" {
 		var caCerts []byte
-		caCerts, err = ioutil.ReadFile(certFile)
+		caCerts, err = os.ReadFile(certFile)
 		if err == nil {
 			pool = x509.NewCertPool()
 			if !pool.AppendCertsFromPEM(caCerts) {
