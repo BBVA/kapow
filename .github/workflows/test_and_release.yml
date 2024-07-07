@@ -5,12 +5,12 @@ jobs:
   unit-test:
     runs-on: ubuntu-22.04
     steps:
-    - uses: actions/checkout@v3.6.0
+    - uses: actions/checkout@v4.1.1
     - name: Load Go version
       id: go-version
       run: |
         echo go-version=$(sed 's/^.*://' .github/go/Dockerfile) >> $GITHUB_OUTPUT
-    - uses: actions/setup-go@v4
+    - uses: actions/setup-go@v5
       with:
         go-version: ${{ steps.go-version.outputs.go-version }}
     - name: Unit tests
@@ -19,8 +19,8 @@ jobs:
   lint:
     runs-on: ubuntu-22.04
     steps:
-    - uses: actions/checkout@v3.6.0
-    - uses: actions/setup-go@v4
+    - uses: actions/checkout@v4.1.1
+    - uses: actions/setup-go@v5
       with:
         go-version: 1.17
     - name: Lint
@@ -30,12 +30,12 @@ jobs:
   spec-test:
     runs-on: ubuntu-22.04
     steps:
-    - uses: actions/checkout@v3.6.0
+    - uses: actions/checkout@v4.1.1
     - name: Load Go version
       id: go-version
       run: |
         echo go-version=$(sed 's/^.*://' .github/go/Dockerfile) >> $GITHUB_OUTPUT
-    - uses: actions/setup-go@v4
+    - uses: actions/setup-go@v5
       with:
         go-version: ${{ steps.go-version.outputs.go-version }}
     - name: Build executable
@@ -51,7 +51,7 @@ jobs:
   doc-test:
     runs-on: ubuntu-22.04
     steps:
-    - uses: actions/checkout@v3.6.0
+    - uses: actions/checkout@v4.1.1
     - name: Prepare Python env
       run: |
         sudo apt install python3
@@ -67,14 +67,14 @@ jobs:
     runs-on: ubuntu-22.04
     needs: [ unit-test, spec-test, doc-test, lint ]
     steps:
-    - uses: actions/checkout@v3.6.0
+    - uses: actions/checkout@v4.1.1
       with:
         fetch-depth: 0
     - name: Load Go version
       id: go-version
       run: |
         echo go-version=$(sed 's/^.*://' .github/go/Dockerfile) >> $GITHUB_OUTPUT
-    - uses: actions/setup-go@v4
+    - uses: actions/setup-go@v5
       with:
         go-version: ${{ steps.go-version.outputs.go-version }}
     - name: Select custom release notes
@@ -92,7 +92,7 @@ jobs:
         username="${{ secrets.DOCKERHUB_USERNAME }}"
         password="${{ secrets.DOCKERHUB_PASSWORD }}"
         echo "$password" | docker login --username "$username" --password-stdin
-    - uses: goreleaser/goreleaser-action@v4.4.0
+    - uses: goreleaser/goreleaser-action@v5.0.0
       with:
         args: release --rm-dist ${{ steps.release-notes.outputs.ARGS }}
       env:
@@ -113,7 +113,7 @@ jobs:
       matrix:
         binary: ["kapow_windows_386", "kapow_windows_amd64_v1"]
     steps:
-    - uses: actions/checkout@v3.6.0
+    - uses: actions/checkout@v4.1.1
     - name: Download a single artifact
       uses: actions/download-artifact@v3
       with:
