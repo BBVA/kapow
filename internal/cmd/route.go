@@ -17,7 +17,7 @@
 package cmd
 
 import (
-	"io/ioutil"
+	"io"
 	"os"
 
 	"github.com/BBVA/kapow/internal/client"
@@ -62,9 +62,9 @@ func init() {
 				var buf []byte
 				var err error
 				if commandFile == "-" {
-					buf, err = ioutil.ReadAll(os.Stdin)
+					buf, err = io.ReadAll(os.Stdin)
 				} else {
-					buf, err = ioutil.ReadFile(commandFile)
+					buf, err = os.ReadFile(commandFile)
 				}
 				if err != nil {
 					logger.L.Fatal(err)

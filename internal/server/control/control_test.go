@@ -20,7 +20,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -47,7 +47,7 @@ func checkErrorResponse(r *http.Response, expectedErrcode int, expectedReason st
 	}
 
 	errMsg := httperror.ServerErrMessage{}
-	if bodyBytes, err := ioutil.ReadAll(r.Body); err != nil {
+	if bodyBytes, err := io.ReadAll(r.Body); err != nil {
 		errList = append(errList, fmt.Errorf("Unexpected error reading response body: %v", err))
 	} else if err := json.Unmarshal(bodyBytes, &errMsg); err != nil {
 		errList = append(errList, fmt.Errorf("Response body contains invalid JSON entity: %v", err))
@@ -434,7 +434,7 @@ func TestGetRouteReturnsTheRequestedRoute(t *testing.T) {
 		t.Errorf("HTTP status mismatch. Expected: %d, got: %d", http.StatusOK, resp.StatusCode)
 	}
 
-	bBytes, _ := ioutil.ReadAll(resp.Body)
+	bBytes, _ := io.ReadAll(resp.Body)
 	if err := json.Unmarshal(bBytes, &respJson); err != nil {
 		t.Errorf("Invalid JSON response. %s", string(bBytes))
 	}
